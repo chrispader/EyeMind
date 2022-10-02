@@ -34,6 +34,8 @@ import {setState,getState} from '../dataModels/state'
 import {mapGazestoElementsFromPageSnapshotListener} from './mapping'
 import {updateProcessingMessage} from './progress'
 import {updateProcessMessageListener} from './progress'
+import {startQuestions} from './questions'
+
 //import {clicksListener} from './click-stream'
 
 const request = require('request-promise');
@@ -488,16 +490,6 @@ async function startETInteraction() {
 
           // hide startET-modal
           document.getElementById('startET-modal').style.display = "none";
-
-          // show main tab
-          console.log("state.linkingSubProcessesMode",state.linkingSubProcessesMode)
-          if(state.linkingSubProcessesMode=="withinTab") {
-            openMainTab("display",true,false);
-          }
-          else {
-            openMainTab("display",false,false);
-          }
-
           
           // update ET icons and cursor 
           document.getElementById("record-btn").src = "icons/record_disabled.svg"
@@ -509,9 +501,26 @@ async function startETInteraction() {
           document.getElementById("stop-btn").onclick = () => stopETInteraction();
 
 
+
         try {
+
           // start tracking
           startTracking(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
+
+          // show main tab
+          console.log("state.linkingSubProcessesMode",state.linkingSubProcessesMode)
+          if(state.linkingSubProcessesMode=="withinTab") {
+            openMainTab("display",true,false);
+          }
+          else {
+            openMainTab("display",false,false);
+          }
+
+          // start questions - show first question
+          startQuestions();
+
+
+
         }
         catch (error) {
           const msg = "Eror when starting the eye-tracking";
@@ -679,9 +688,6 @@ function startTracking(timestamp,code,screenX,screenY) {
     var state = getState();
 
     state.isEtOn = true;
-
-    // take snapshot
-    takesnapshot(timestamp,code,screenX,screenY);
 
 }
 

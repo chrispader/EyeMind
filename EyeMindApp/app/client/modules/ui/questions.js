@@ -119,17 +119,9 @@ function generateQuestionsSequence() {
 	console.log("generateQuestionsSequence",arguments);
 
   var state = getState();
-
 	const questions = new DataFrame(state.questions);
 
-  document.getElementById("start-questions-btn").onclick = () => {
-  
-    // record click
-    const elementOfInterest = document.getElementById("start-questions-btn");
-    sendClickEvent(Date.now(),elementOfInterest.getAttribute("data-element-id"));
-
-    nextQuestion(null, 0, questions.count() , null , null, questions.getRow(0));
-  }
+  document.getElementById("start-questions-btn").onclick = () => startQuestions();
 
   document.getElementById("questions-ready").style.display = "block";
 
@@ -234,10 +226,32 @@ function generateQuestionsSequence() {
                                                                    
    });
 
-	/// start
-	/// questions (shows when the recording starts)
-	// end
+
 }
+
+/**
+ * Title: start questions
+ *
+ * Description: show first question
+ *
+ * @param {void} . . 
+ *
+ * Returns {void}
+ *
+ *
+ * Additional notes: none
+ *
+ */
+function startQuestions() {
+
+    console.log("startQuestions",arguments);
+
+    var state = getState();
+    const questions = new DataFrame(state.questions);
+
+    nextQuestion(null, 0, questions.count() , null , null, questions.getRow(0));
+}
+
 
 /**
  * Title: move to next question
@@ -435,4 +449,4 @@ async function sendQuestionEvent(questionTimestamp, questionEventType,questionPo
 }
 
 
-export {loadQuestions, generateQuestionsSequence};
+export {loadQuestions, generateQuestionsSequence, startQuestions};

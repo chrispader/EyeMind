@@ -31,8 +31,6 @@ test("first-question-onset", async () => {
   // a delay for ET to start and start ET snapshot to be record
   await  delay(2000);
 
-  await firstWindow.locator('id=start-questions-btn').click();
-
   // a delay for the lastOnSetQuestionEvent and lastOffSetQuestionEvent to be updated
   await  delay(1000);
 
@@ -79,7 +77,6 @@ test("first-question-offset-second-question-onset", async () => {
   // a delay for ET to start and start ET snapshot to be record
   await  delay(2000);
 
-  await firstWindow.locator('id=start-questions-btn').click();
   
   await firstWindow.locator('id=long-answer-question0-answer').fill('this is the answer provided by the user');
   await firstWindow.locator('id=next-question0-btn').click();
@@ -134,8 +131,6 @@ test("last-question-offset", async () => {
 
   // a delay for ET to start and start ET snapshot to be record
   await  delay(2000);
-
-  await firstWindow.locator('id=start-questions-btn').click();
 
   await firstWindow.locator('id=next-question0-btn').click();
   await firstWindow.locator('id=next-question1-btn').click();
@@ -201,8 +196,6 @@ test("questions-start-before-ET-recording-starts", async () => {
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/links/session-no-link.json','session-no-link.json'); 
 
   await  delay(3000);
-
-  await firstWindow.locator('id=start-questions-btn').click();
 
   await  delay(15000);
  

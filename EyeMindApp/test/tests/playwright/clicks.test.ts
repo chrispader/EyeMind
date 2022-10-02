@@ -24,43 +24,6 @@ import {dragAndDropFile,delay} from "../utils/utils";
 const fs = require("fs");
 
 
-test("click-start-questions-btn", async () => {
-
-
-  const electronApp = await electron.launch({ args: ["."] });
-  const firstWindow = await electronApp.firstWindow();
-
-
-  // except no errors in console.error()
-  firstWindow.on("console", (message) => {
-    if (message.type() === "error") {
-       expect(message.text()).toBe("");
-    }
-  })
-
-
-  await firstWindow.locator('id=eye-tracking').click();
-  await firstWindow.locator('id=load-session').click();
-
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/links/session-no-link.json','session-no-link.json'); 
-
-  await  delay(3000);
-
-  await firstWindow.locator('id=record-btn').click();
-  await firstWindow.locator('id=submit-recording-form').click();
-  // a delay for ET to start and start ET snapshot to be record
-  await  delay(2000);
-
-  await firstWindow.locator('id=start-questions-btn').click();
-
-  // a delay for the lastRelevantClick to update
-  await  delay(1000);
-
-  const lastRelevantClick = await firstWindow.evaluate(() => {return window.clientTests.lastRelevantClick});
-
-  expect.soft(lastRelevantClick.clickedElement).toBe("start-questions-btn");
- 
-});
 
 
 test("click-next-button-inner-in-questionID", async () => {
@@ -90,7 +53,6 @@ test("click-next-button-inner-in-questionID", async () => {
   // a delay for ET to start and start ET snapshot to be record
   await  delay(2000);
 
-  await firstWindow.locator('id=start-questions-btn').click();
   await firstWindow.locator('id=next-question0-btn').click();
 
   // a delay for the lastRelevantClick to update
@@ -130,7 +92,7 @@ test("click-long-answer-for-questionID", async () => {
   // a delay for ET to start and start ET snapshot to be record
   await  delay(2000);
 
-  await firstWindow.locator('id=start-questions-btn').click();
+
   await firstWindow.locator('id=long-answer-question0-answer').click();
 
   // a delay for the lastRelevantClick to update

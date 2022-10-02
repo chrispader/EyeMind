@@ -8,7 +8,7 @@ const request = require('request-promise');
 /* 
 Notes: 
 	- ET server python code needs to be running in testMode
-	- Tests should be executed sequentially
+	- Tests should be executed sequentially and no other tests should be running in parrallel (the ET server should be communicate with only one thread at a time)
 */
 
 // increase tests timeout

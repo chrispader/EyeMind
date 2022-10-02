@@ -195,5 +195,5 @@ D. Instructions of Use
 			-  Check model layout, spacing, naming of activies, labels, visibility of everything shown on the model when desiging your experiment
 			- If a problem occured you can kill the ET sever with crtl+c on the terminal and start it again. However, you will need to restart the data collection in the other tools as well.
 
-			- If you kill the software during the analysis, you need to shut down the R server manually as well (using the terminal)
+			- If you kill the software during the analysis, you need to shut down the R server manually as well (using the terminal).
 	

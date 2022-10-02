@@ -1,0 +1,13 @@
+id,question,type,options
+1,Explain why it is possible to move the mortgage to main depot in an offline land registry system with no nominee bank,open-question,
+2,It is possible to move the mortgage to the main depot if the number of land registers is above 1,multiple-choice,True;False;I don't know
+3,Cover sheets are required in an online land registry system,multiple-choice,True;False;I don't know
+4,The documents should be always merged in an offline land registry system,multiple-choice,True;False;I don't know
+5,Both the nominee bank and the trustee need to sign the mortgage documents,multiple-choice,True;False;I don't know
+6,"The documents can be submitted to the land registry, only if the bank approves or signs the documents",multiple-choice,True;False;I don't know
+7,The business can be rejected even before requesting a certification,multiple-choice,True;False;I don't know
+8,The document need to be certified after being signed or approved by the bank,multiple-choice,True;False;I don't know
+9,The main book approval/rejection can happen only after the journal entry is accepted,multiple-choice,True;False;I don't know
+10,It is possible to notify the bank of journal entry and then notify the bank of main book rejection,multiple-choice,True;False;I don't know
+11,"The notification that the mortgage process is finished is sent first to the the bank, then the trustee and finally the free notary",multiple-choice,True;False;I don't know
+12,The trustee can receive a notification that the mortgage process is finished before a certification request is sent to the free notary,multiple-choice,True;False;I don't know

@@ -1,0 +1,8 @@
+id,question,type,options
+1,"Provide a valid execution covering A, E, R?",open-question,
+2,Can A and B be executed in parallel?,multiple-choice,yes;no;I don't know
+3,Is it possible to execute C before D?,multiple-choice,yes;no;I don't know
+4,Is it possible to execute E before F?,multiple-choice,yes;no;I don't know
+5,Is it possible to execute G after H?,multiple-choice,yes;no;I don't know
+6,Is it possible to execute I after J?,multiple-choice,yes;no;I don't know
+7,Can K and L be executed in parallel?,multiple-choice,yes;no;I don't know

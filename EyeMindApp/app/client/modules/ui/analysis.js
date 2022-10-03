@@ -22,11 +22,13 @@ SOFTWARE.*/
 
 
 import {registerFileUpload} from './files-setup'
-import {projectionInteraction} from './gaze-projections.js'
 import {enableHeatmapOption} from './heatmap.js'
-import {loadETSettingsView} from './fixation-filter.js'
+import {loadETSettingsView,FixationFilterCompletedProcessingListener} from './fixation-filter.js'
 import {downloadInteraction} from './download'
 import {getState} from '../dataModels/state'
+import {updateProcessMessageListener} from './progress'
+import {applyCorrectionOnGazeFragmentListener,applyingCorrectionsCompletedListener,projectionInteraction} from './gaze-projections'
+
 import $ from 'jquery';
 
 var REPORT_FREQUENCY = 1000;
@@ -55,6 +57,16 @@ async function analysisModeInteraction() {
   if(window.hasOwnProperty("electron")) {
     window.Rserver.startRserver();
    }
+
+
+  // listeners for server side interactions
+  // progress msgs
+  updateProcessMessageListener();
+  // gaze corrctions
+  applyCorrectionOnGazeFragmentListener();
+  applyingCorrectionsCompletedListener();
+  // fixation filter
+  FixationFilterCompletedProcessingListener();
 
   
   /// import 

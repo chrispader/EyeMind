@@ -28,7 +28,6 @@ import {clearHeatmap,enableHeatmapOption} from './heatmap'
 import {calculateProgress} from '../utils/utils'
 import {showGeneralWaitingScreen, hideGeneralWaitingScreen} from './progress'
 import {infoAlert,errorAlert} from '../utils/utils'
-import {updateProcessMessageListener} from './progress'
 
 
 const request = require('request-promise');
@@ -43,6 +42,7 @@ async function applyFixationSettingsInteraction() {
   // show waiting screen
   await showGeneralWaitingScreen("Please wait while the fixation filter is being applied...","wait","all-content");
   
+
 
   // set params
   const fixationFilterSettings = {
@@ -63,9 +63,7 @@ async function applyFixationSettingsInteraction() {
   fixationMappingHandling : document.getElementById("fixation-mapping-handling").value,
    };
 
-   // listeners
-   updateProcessMessageListener();
-   completeProcessingListener();
+
 
 
    window.Rserver.fixationFilter(fixationFilterSettings);
@@ -73,7 +71,7 @@ async function applyFixationSettingsInteraction() {
 
 }
 
-function completeProcessingListener(){
+function FixationFilterCompletedProcessingListener(){
 
    window.Rserver.onCompleteFixationFilterListener(async function (args) {
     console.log("completeFixationFilterListener", arguments);
@@ -142,6 +140,9 @@ async function loadETSettingsView() {
   // handle the activation/deactivation of the different sections within fixation-settings-view
   handleFixationSettingSections();
 
+  //save the process id of the R process to kill it, in case something wrong occurs
+  await window.Rserver.saveRpid();
+
 }
 
 
@@ -171,4 +172,4 @@ function handleFixationSettingSections(){
   }
 
 
-  export {loadETSettingsView}
+  export {loadETSettingsView,FixationFilterCompletedProcessingListener}

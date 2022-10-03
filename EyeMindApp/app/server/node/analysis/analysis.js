@@ -30,11 +30,10 @@ const {getState,setState} = require('../dataModels/state')
 const {globalParameters} =  require('../../../../globals.js');
 const {calculateProgress} = require('../utils/utils');
 
-/*
-Heatmap analysis
-*/
-
 /* 
+
+For Heatmap analysis
+
 Summerized fixation log
 Modes:
   Hard: Group gazes by Fixation. If the gazes within the group are mapped to different elements, discard the group

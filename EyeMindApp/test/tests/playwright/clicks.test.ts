@@ -1,7 +1,6 @@
 /* 
 	Tested clicks
 			- Question component:
-				- start-questions-btn - ok
 				- next-button-inner-in-questionID_ ok
 				- long-answer-for-questionID_ ok
 				- option-answer-radio-for-question_ ok

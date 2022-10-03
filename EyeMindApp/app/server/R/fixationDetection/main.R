@@ -124,11 +124,10 @@ function(start,end) {
 }
 
 
-
-#* @post /quit
+#* @post /getRpid
 function() {
-  message("quitting ...")
-  quit()
+  message("getRpid")
+  return(Sys.getpid())
 }
 
 

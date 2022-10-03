@@ -24,6 +24,7 @@ SOFTWARE.*/
 const { contextBridge, ipcRenderer, screen  } = require('electron');
 const {globalParameters} = require('./globals');
 
+
 // contextBridge.exposeInMainWorld listeners/window.js
 contextBridge.exposeInMainWorld(
   'electron',
@@ -63,7 +64,7 @@ contextBridge.exposeInMainWorld(
     applyCorrectionOffset: (externalMappingWindow,snapshotId,xOffset,yOffset) => ipcRenderer.invoke('applyCorrectionOffset',[externalMappingWindow,snapshotId,xOffset,yOffset]), 
     onApplyCorrectionOnGazeFragment: (func) => ipcRenderer.on('applyCorrectionOnGazeFragment',(event, ...args) => func(args)),
     gazeDataFragmentMapped: (gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset) => ipcRenderer.invoke('gazeDataFragmentMapped',[gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset]),
-    onCompleteCorrectionListener : (func) => ipcRenderer.once('completeCorrectionListener',(event, ...args) => func(args))
+    onCompleteCorrectionListener : (func) => ipcRenderer.on('completeCorrectionListener',(event, ...args) => func(args))
    }
 )
 
@@ -105,7 +106,8 @@ contextBridge.exposeInMainWorld(
    {
      startRserver: () => ipcRenderer.send('startRserver'),
      fixationFilter: (fixationFilterSettings) => ipcRenderer.invoke('fixationFilter',[fixationFilterSettings]),
-     onCompleteFixationFilterListener : (func) => ipcRenderer.once('completeFixationFilterListener',(event, ...args) => func(args))
+     onCompleteFixationFilterListener : (func) => ipcRenderer.on('completeFixationFilterListener',(event, ...args) => func(args)),
+     saveRpid: () => ipcRenderer.send('saveRpid')
    }
 )
 

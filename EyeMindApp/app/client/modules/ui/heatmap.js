@@ -392,8 +392,19 @@ function addOverlayListener(fileId, element, tooltipId) {
     
     const el = document.querySelector('[id=model'+fileId+'-container] [data-element-id="' + element.id + '"]');
 
-    el.addEventListener('mouseenter', function () { document.getElementById('model'+ fileId +'_' + tooltipId + '_tooptip_overlay').style.display = "block"; });
-    el.addEventListener('mouseleave', function () { document.getElementById('model'+ fileId +'_' + tooltipId + '_tooptip_overlay').style.display = "none"; });
+    el.addEventListener('mouseenter', function () { 
+      const tooltip = document.getElementById('model'+ fileId +'_' + tooltipId + '_tooptip_overlay');
+      if(tooltip!=null){
+         tooltip.style.display = "block"; 
+      }
+     
+    });
+    el.addEventListener('mouseleave', function () { 
+      const tooltip = document.getElementById('model'+ fileId +'_' + tooltipId + '_tooptip_overlay');
+       if(tooltip!=null){
+      tooltip.style.display = "none"; 
+       }
+    });
   }
 
 

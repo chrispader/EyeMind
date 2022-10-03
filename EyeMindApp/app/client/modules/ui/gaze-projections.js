@@ -29,7 +29,7 @@ import {mapGazetoElementsFromSvgSnapshot} from './mapping'
 import {calculateProgress} from '../utils/utils'
 import {showGeneralWaitingScreen, hideGeneralWaitingScreen, updateProcessingMessage} from './progress'
 import {infoAlert,errorAlert} from '../utils/utils'
-import {updateProcessMessageListener} from './progress'
+
 
 
 
@@ -375,14 +375,17 @@ async function generateGazeProjection(gazeData,snapshots, xOffset, yOffset,sampl
 
       const gazePoint = gazeData[k];
 
-      console.log("gazePoint",gazePoint)
+      //console.log("gazePoint",gazePoint)
 
       if(gazePoint.eventSource=="eye-tracker") {
 
         const snapshot = snapshots[gazePoint.snapshotId]; 
-        const boundingClientRect = JSON.parse(snapshot.boundingClientRect);
 
-        if(!isNaN(snapshot.id)) {
+        //console.log(snapshot.boundingClientRect, snapshot.boundingClientRect!=null, !isNaN(snapshot.id));
+        
+        if(!isNaN(snapshot.id) && snapshot.boundingClientRect!=null) {
+
+          const boundingClientRect = JSON.parse(snapshot.boundingClientRect);
 
           if(snapshot.id!=snapshotId) {
 
@@ -492,11 +495,6 @@ async function initiateOffsetCorrection(snapshots,xOffset,yOffset){
         // apply correctionOffset
         window.analysis.applyCorrectionOffset(externalMappingWindow,snapshotId,xOffset,yOffset);
         
-        // listeners
-        updateProcessMessageListener();
-        applyCorrectionOnGazeFragmentListener();
-        applyingCorrectionsCompletedListener();
-
 
     } 
     
@@ -651,7 +649,7 @@ async function applyingCorrectionsCompleted(externalMappingWindow) {
     await hideGeneralWaitingScreen("all-content","wait");
 
 
-    infoAlert("correction offset applied to data");
+    infoAlert("correction offset applied to data. \nRemember to run the fixation filter again to consider the corrected data in your analysis (e.g., for fixation heatmaps and overlays).");
 }
 
 
@@ -696,4 +694,4 @@ function createDocument(html, title) {
 }
 
 
-export {projectionInteraction}
+export {projectionInteraction,applyCorrectionOnGazeFragmentListener,applyingCorrectionsCompletedListener}

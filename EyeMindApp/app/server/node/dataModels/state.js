@@ -78,6 +78,10 @@ function setAreGazesCorrected(val) {
     state["processedGazeData"]["areGazesCorrected"] = val;
 }
 
+function areGazesCorrected(val) {
+    return  state["processedGazeData"]["areGazesCorrected"];
+}
+
 
 function areProjectionAndMappingActive() {
     return state.projectionAndMappingActive;
@@ -95,3 +99,4 @@ exports.setAreGazesCorrected = setAreGazesCorrected;
 exports.isHeatmapActive = isHeatmapActive;
 exports.areProjectionAndMappingActive = areProjectionAndMappingActive;
 exports.getQuestions = getQuestions;
+exports.areGazesCorrected = areGazesCorrected;

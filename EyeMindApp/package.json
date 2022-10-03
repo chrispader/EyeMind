@@ -38,6 +38,7 @@
     "copy-webpack-plugin": "^4.6.0",
     "cross-env": "^7.0.3",
     "dataframe-js": "",
+    "detect-port": "",
     "diagram-js": "8.2.2",
     "electron": "",
     "electron-mocha": "",
@@ -52,6 +53,7 @@
     "react-svg-loader": "",
     "request-promise": "",
     "tls": "",
+    "tree-kill": "",
     "webpack": "^4.46.0",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.14"

@@ -27,10 +27,28 @@ const {summerizedFixationLog} = require('../analysis/analysis')
 const {getState,setState} = require('../dataModels/state')
 
 
+async function getRpid() {
+
+    const partialCommunicationUriToRerver = globalParameters.COMMUNICATION_HOST_TO_R_SERVER+":"+globalParameters.R_PORT;
+
+    communication = {
+    method: globalParameters.COMMUNICATION_METHOD_TO_R_SERVER,
+    uri: partialCommunicationUriToRerver+'/getRpid', 
+    body: null,
+    json: true
+    };
+
+  try {return await request(communication);} catch(error) {return -1;}
+
+}
+
+
+
 async function fixationFilter(fixationFilterSettings,mainWindow) {
 // note: the fixation filter uses the corrected data if state.processedGazeData.areGazesCorrected = true; (see R code)
 
   // console.log("fixationFilter function",arguments);
+
 
   // get state
   var state = getState()
@@ -177,3 +195,4 @@ async function fixationFilter(fixationFilterSettings,mainWindow) {
 
 
 exports.fixationFilter = fixationFilter;
+exports.getRpid = getRpid;

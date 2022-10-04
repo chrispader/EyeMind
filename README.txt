@@ -35,11 +35,11 @@ B. Requirements to build and run the EyeMind Tool
 C. Eye-tracker setup
 	
 	1. Note: EyeMind supports currently only Tobii X3-120 eye-trackers
-	2. install Tobii eye-tracker manager and configure the eye-tracker in there
+	2. install Tobii eye-tracker manager and configure the eye-tracker in there, by setting a new display setup
 		See. https://www.tobiipro.com/produkte/eye-tracker-manager/
 	3. Installing tobii-pro lab
 		See. https://www.tobiipro.com/learn-and-support/downloads-pro/
-	4. Create a new project (we will use the name "EyeMindDemo" to refer to the project). As project type choose "screen", then follow this procedure:
+	4. In tobii-pro lab, create a new project (we will use the name "EyeMindDemo" to refer to the project). As project type choose "screen", then follow this procedure:
 		4.1 Go to design
 		4.2 Select "Eye tracker calibration", then on the right menu:
 			4.2.1 Change the background color to white
@@ -54,6 +54,7 @@ C. Eye-tracker setup
 
 	Note: EyeMind tool does not provide a calibration. Hence, the eye-tracking calibration should be done either in Tobii eye-tracker manager or using other eye-tracking tools (e.g., Tobii Pro Studio, iMotions)
 
+	Note: Tobii pro lab and EyeMind should be allowed by the Windows Defender Firewall
 
 
 D. Instructions of Use

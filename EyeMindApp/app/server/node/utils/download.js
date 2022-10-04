@@ -32,7 +32,7 @@ const {getState,setState} = require('../dataModels/state')
 
  async function stateDownload(fileName,includeTimeStampInFileName,type) {
   
-  console.log("stateDownload function",arguments);
+  //console.log("stateDownload function",arguments);
 
   const state = getState();
 
@@ -47,7 +47,7 @@ const {getState,setState} = require('../dataModels/state')
 
  async function downloadFile(state,type,fileName) {
 
-    console.log("downloadFile function",arguments);
+    //console.log("downloadFile function",arguments);
 
 
   const res = {};

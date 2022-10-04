@@ -54,7 +54,7 @@ C. Eye-tracker setup
 
 	Note: EyeMind tool does not provide a calibration. Hence, the eye-tracking calibration should be done either in Tobii eye-tracker manager or using other eye-tracking tools (e.g., Tobii Pro Studio, iMotions)
 
-	Note: Tobii pro lab and EyeMind should be allowed by the Windows Defender Firewall
+	Note: Tobii pro lab, EyeMind, Python, Electron should be allowed by the Windows Defender Firewall
 
 
 D. Instructions of Use

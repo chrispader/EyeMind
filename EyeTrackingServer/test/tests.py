@@ -393,7 +393,7 @@ class Tests(unittest.TestCase):
 
 
 
-# for now, tests should be executed in indepedent runs
+# for now, tests should be executed in independent runs
 def suite():
     suite = unittest.TestSuite()
     #suite.addTest(Tests('test_ET_setup'))

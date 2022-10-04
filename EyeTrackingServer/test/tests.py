@@ -21,6 +21,8 @@ class Tests(unittest.TestCase):
 	#			   test that all variables needed for a new data collection are reset
 	#
 	def test_ET_setup(self):
+
+		print("test_ET_setup starts")
 		
 		responseMsg = send({ "action": 'setup',
 		"xScreenDim": 1920, 
@@ -42,6 +44,8 @@ class Tests(unittest.TestCase):
 		self.assertEqual(responseMsg["isETready"], 1)
 		self.assertEqual(responseMsg["response"], "OK")
 
+		print("test_ET_setup ends")
+
 	###
 	# Title: adding several snapshots 
 	#
@@ -52,6 +56,9 @@ class Tests(unittest.TestCase):
 	#			   test that the gazes occuring before and after sending a snapshot have the correct currentSnapshotId
 	#
 	def test_addSnapshot(self):
+
+
+		print("test_addSnapshot starts")
 
 		#defs
 		len1 = 100
@@ -65,6 +72,8 @@ class Tests(unittest.TestCase):
 		responseMsg = send({ "action": 'setup',
 		"xScreenDim": 1920, 
 		"yScreenDim": 1080})
+
+		print(responseMsg["cTimestamp"])
 
 		# send some gaze points
 		gazePoints = generateGazePoints(number=len1,timestampSeed=seed1)
@@ -112,6 +121,7 @@ class Tests(unittest.TestCase):
 		for i in range (len1+len2,len1+len2+len3):
 			self.assertEqual(responseMsg[i]["snapshotId"], snapshots[1]["id"])
 			
+		print("test_addSnapshot ends")
 
 	###
 	# Title: logging serveral full snapshots
@@ -121,6 +131,8 @@ class Tests(unittest.TestCase):
 	#			   test logging several full snapshots using the implemented multi-threading approach
 	#
 	def test_logFullSnapshot(self):
+
+		print("test_logFullSnapshot starts")
 		
 		send({ "action": 'setup',
 		"xScreenDim": 1920, 
@@ -159,7 +171,7 @@ class Tests(unittest.TestCase):
 			self.assertEqual(received_snapshots[key]["tabName"], expected_snapshots[key]["tabName"])
 			self.assertEqual(received_snapshots[key]["boundingClientRect"], expected_snapshots[key]["boundingClientRect"])
 
-
+		print("test_logFullSnapshot ends")
 
 	###
 	# Title: logging serveral clicks
@@ -170,6 +182,8 @@ class Tests(unittest.TestCase):
 	#			   test that a set of clicks events are recorded correctly together with some gaze points
 	#
 	def test_addClickEvent(self):
+
+		print("test_addClickEvent starts")		
 				
 		#defs
 		lensAndSeeds = [
@@ -224,6 +238,7 @@ class Tests(unittest.TestCase):
 		# check_dtype=False because pandas looks for the best dtype when reading a csv
 		assert_frame_equal(received, expected, check_dtype=False)
 
+		print("test_addClickEvent ends")	
 
 	###
 	# Title: add question events
@@ -235,6 +250,8 @@ class Tests(unittest.TestCase):
 	#
 	# Notes: except for the first and last question events, questionOffset should come always before questionOnset
 	def test_addQuestionEvent(self):
+
+		print("test_addQuestionEvent starts")		
 				
 		#defs
 		lensAndSeeds = [
@@ -303,7 +320,7 @@ class Tests(unittest.TestCase):
 		assert_frame_equal(received, expected, check_dtype=False)
 
 			
-
+		print("test_addQuestionEvent ends")
 
 
 
@@ -317,6 +334,9 @@ class Tests(unittest.TestCase):
 	#				
 	#
 	def test_mockGazeData(self):
+
+		print("test_mockGazeData starts")
+
 		#defs
 		lensSeedsAndSleeps = [
 		{"len":120000, "seed":0, "sleep":2},
@@ -347,7 +367,7 @@ class Tests(unittest.TestCase):
 		end = start+FragmentSize if (start+FragmentSize) <=received_gazeDataSize else received_gazeDataSize
 
 		while start<received_gazeDataSize:
-			print(str(start)+" , "+str(end))
+			
 			responseMsg = send({ 'action': 'getDataFragment', 'start':start, 'end':end })
 			start = start + FragmentSize
 			end = start+FragmentSize if (start+FragmentSize) <=received_gazeDataSize else received_gazeDataSize
@@ -369,19 +389,33 @@ class Tests(unittest.TestCase):
 		assert_frame_equal(received, expected, check_dtype=False)
 
 
+		print("test_mockGazeData ends")
 
 
 
-
-
-
-
-
-
-
+# for now, tests should be executed in indepedent runs
+def suite():
+    suite = unittest.TestSuite()
+    #suite.addTest(Tests('test_ET_setup'))
+    #suite.addTest(Tests('test_addSnapshot'))
+    #suite.addTest(Tests('test_logFullSnapshot'))
+    #suite.addTest(Tests('test_addClickEvent'))
+    #suite.addTest(Tests('test_addQuestionEvent'))
+    suite.addTest(Tests('test_mockGazeData'))
+    return suite
 
 if __name__ == '__main__':
-    unittest.main()
+    runner = unittest.TextTestRunner()
+    runner.run(suite())
+
+
+
+
+
+
+
+
+
 
 
 

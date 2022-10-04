@@ -45,8 +45,8 @@ C. Eye-tracker setup
 			4.2.1 Change the background color to white
 			4.2.2 Change the target color to black
 		4.3 Add screen recording simulus (you can find it in the top bar - to the right), then on the right menu:
-			4.3.1 Reduce frame rate to 5 (This depends on your computer performance. It is used to avoid memory overload during the data recording)
-			4.3.2 Reduce video quality to Low (This depends on your computer performance. It is used to avoid memory overload during the data recording)
+			4.3.1 Reduce frame rate to 5 (This depends on your computer performance. It is used to avoid memory overload during the data recording. In our machine a frame rate of 10 worked well)
+			4.3.2 Reduce video quality to Low (This depends on your computer performance. It is used to avoid memory overload during the data recording. In our machine a medium video quality worked well)
 			4.3.3 Deselect "advance on option"
 			4.3.4 Info: When collecting the data, you can use F10 to stop the recording
 			4.3.5 Make a simple screen recording and check the quality of the obtained video
@@ -153,6 +153,7 @@ D. Instructions of Use
 
 		General notes:
 				1. you can alawys start a new data collection session using ctrl+r (refresh). Remember that when you refresh all the non-saved data is deleted. 
+				2. the model elements should have meaningful names
 
 	D.3. Anaylsis
 

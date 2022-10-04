@@ -1,0 +1,3 @@
+id,question,type,options
+1,Explain why it is possible to create a credit card without rating the customer?,open-question,
+2,Does the checking of the customer nationality on the sections list happen before matching his street with the street registry? ,multiple-choice,Yes;No;I don't know

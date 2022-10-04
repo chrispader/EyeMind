@@ -162,13 +162,13 @@ function DisableCriticalKeys() {
 
   console.log("DisableCriticalKeys",arguments);
 
-  //window.onkeydown = function(evt) {
+  window.onkeydown = function(evt) {
 
-  //   if ((evt.ctrlKey || evt.altKey) &&  evt.keyCode != 82)  
-  //   {
-  //     evt.preventDefault();
-  //   } 
-  // }
+     if ((evt.ctrlKey || evt.altKey) &&  evt.keyCode != 82)  
+     {
+       evt.preventDefault();
+     } 
+   }
 
 }
 

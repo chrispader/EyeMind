@@ -6,16 +6,13 @@ A. Requirements to install the dependecis for the eye-tracking server
 		1.2. Pip https://phoenixnap.com/kb/install-pip-windows
 
 
-	2. Unzip the EyeMind Package and place it in documents folder, then using the command line.
+	2. Aftering cloning the eyeMind repository to your local machine 
 
 		2.2. Open terminal and get to the eyeMind folder
-				e.g., "cd <root path>\Documents\EyeMind\EyeTrackingServer"
+				e.g., "cd <root path>\EyeMind\EyeTrackingServer"
 		2.3. Install dependenceis
 				pip install -r requirements.txt --user
 		2.3. The folder in "\EyeTrackingServer\out\logs" should have read and write permissions (chmod 777). In this folder, the eye-tracking raw data will be recorded. Please do not delete this data as it can be used for recovery.
-		2.4. Now you can run the eye-tracking server:
-				python.exe main.py
-
 
 B. Requirements to build and run the EyeMind Tool
 
@@ -26,7 +23,7 @@ B. Requirements to build and run the EyeMind Tool
 	2. On your command line.
 
 		2.1 Open terminal and browse to the EyeMind folder
-				cd <root path>EyeMind\EyeMindApp\
+				cd <root path>\EyeMind\EyeMindApp\
 		2.2 Install dependencies
 				npm run install-dependencies
 		2.3 Build app

@@ -9,6 +9,9 @@ library(dplyr)
 source(paste(getwd(),"/gazePreprocessing.R",sep = ""))
 source(paste(getwd(),"/ivt.R",sep = ""))
 
+cat(paste("RServerPid=",Sys.getpid(), sep = ""))
+
+
 ParamData <- NULL
 gazeData <- NULL   
 
@@ -123,12 +126,6 @@ function(start,end) {
 
 }
 
-
-#* @post /getRpid
-function() {
-  message("getRpid")
-  return(Sys.getpid())
-}
 
 
 

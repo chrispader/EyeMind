@@ -23,7 +23,9 @@ const globalParameters = {
    RQUIRED_COLUMNS_IN_QUESTION_FILE: ["id","question","type","options"],
    QUESTION_TYPES_SUPPORTED : ["open-question","multiple-choice"],
 
-   LAST_CONFIG_FILE_PATH : "temp/pastConfig.json"
+   LAST_CONFIG_FILE_PATH : "temp/pastConfig.json",
+
+   R_SERVER_PID_PRINT_PATTERN: /^RServerPid=([0-9]{1,})$/
 
 }
 

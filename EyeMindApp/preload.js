@@ -106,8 +106,7 @@ contextBridge.exposeInMainWorld(
    {
      startRserver: () => ipcRenderer.send('startRserver'),
      fixationFilter: (fixationFilterSettings) => ipcRenderer.invoke('fixationFilter',[fixationFilterSettings]),
-     onCompleteFixationFilterListener : (func) => ipcRenderer.on('completeFixationFilterListener',(event, ...args) => func(args)),
-     saveRpid: () => ipcRenderer.send('saveRpid')
+     onCompleteFixationFilterListener : (func) => ipcRenderer.on('completeFixationFilterListener',(event, ...args) => func(args))
    }
 )
 

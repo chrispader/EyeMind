@@ -3,8 +3,9 @@ const path = require('path')
 const child = require('child_process');
 const request = require('request-promise');
 const {globalParameters} = require('../globals')
-const {fixationFilter,getRpid} = require('../app/server/node/connectors/fixation-filter')
+const {fixationFilter} = require('../app/server/node/connectors/fixation-filter')
 const {setLocalRpid,getLocalRpid} = require('../app/server/node/dataModels/processes')
+
 const fs = require("fs")
 const detect = require('detect-port');
 
@@ -32,7 +33,15 @@ function fixationFilterListeners(mainWindow) {
 
 	  const childRProcess = child.spawn(execPath, ["-e", "library(plumber); pr('"+mainRPath+"') %>% pr_run(port="+globalParameters.R_PORT+");"])
 	  childRProcess.stdout.on('data', (data) => {
+	     
 	    console.log(`stdout -:${data}`)
+
+	    // log RserverPid
+	    if(globalParameters.R_SERVER_PID_PRINT_PATTERN.test(data)) {
+	    	logRserverPid(globalParameters.R_SERVER_PID_PRINT_PATTERN.exec(data.toString())[1]);
+	    }
+
+
 	  })
 	  childRProcess.stderr.on('data', (data) => {
 	    console.log(`stderr -:${data}`)
@@ -49,20 +58,18 @@ function fixationFilterListeners(mainWindow) {
 	});
 
 
-	ipcMain.on('saveRpid', async function() { 
-
-		 const childRProcessID = await getRpid();
-		 console.log("childRProcessID", childRProcessID);
-		 // setLocalRpid
-		 setLocalRpid(childRProcessID);
-		 // save the childRProcessID into a file to termine the process if found already running when re-starting the app
-		 const data = {"childRProcessID":childRProcessID}
-		 fs.writeFileSync(path.join(app.getAppPath(),globalParameters.LAST_CONFIG_FILE_PATH), JSON.stringify(data));
 
 
-	});
+}
 
 
+function logRserverPid(childRProcessID){
+	console.log("logRserverPid",arguments);
+     // setLocalRpid
+	 setLocalRpid(childRProcessID);
+	 // save the childRProcessID into a file to termine the process if found already running when re-starting the app
+	 const objectToSave = {"childRProcessID":childRProcessID}
+	 fs.writeFileSync(path.join(app.getAppPath(),globalParameters.LAST_CONFIG_FILE_PATH), JSON.stringify(objectToSave));
 }
 
 
@@ -70,7 +77,6 @@ async function shutdownFixationFilterServer() {
 	 console.log("shutdownFixationFilterServer function",arguments);
 
 	 var childRProcessID = getLocalRpid();
-	 childRProcessID = childRProcessID==-1? await getRpid() : childRProcessID;
 
 	 if(childRProcessID!=-1) {
 		kill(childRProcessID);

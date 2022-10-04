@@ -140,8 +140,6 @@ async function loadETSettingsView() {
   // handle the activation/deactivation of the different sections within fixation-settings-view
   handleFixationSettingSections();
 
-  //save the process id of the R process to kill it, in case something wrong occurs
-  await window.Rserver.saveRpid();
 
 }
 

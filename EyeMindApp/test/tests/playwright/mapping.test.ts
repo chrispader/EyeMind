@@ -16,6 +16,7 @@ test.setTimeout(100000)
 
 //test.describe("mapping-after-data-collection-is-over", async() => {
 
+
 	test("mapping-after-data-collection-is-over-no-link", async () => {
 
 
@@ -52,8 +53,18 @@ test.setTimeout(100000)
 
 		await firstWindow.locator('id=record-btn').click();
 		await firstWindow.locator('id=submit-recording-form').click();
-		// a delay for ET to start and start ET snapshot to be record
+		// a delay for ET to start 
 		await  delay(2000);
+
+
+		// clear data (i.e., to clear events sent when the recording started i.e., questionOnSet)
+		const clearAction = {"action": 'clear'}
+		await request({
+		method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
+		uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+		body: clearAction,
+		json: true
+		});
 
 		//send mock recording data // the paths are in EyeMind\EyeTrackingServer\
 		const gazeDataFilename = "test/data/recording/no-link/ETdata.bem"
@@ -84,10 +95,12 @@ test.setTimeout(100000)
 		const loadedState = readSmallJSON("test/data/recording/no-link/stateWithMappedGazeData.json");
 		const expectedMappedGazeData = loadedState.processedGazeData.gazeData
 
+		//console.log("expectedMappedGazeData.length",expectedMappedGazeData.length);
+		//console.log("obtaineMappedGazeData.length",obtaineMappedGazeData.length);
+
 		// assertions on the mapping
 		obtaineMappedGazeData.forEach((gazePoint, index) => {
-			console.log("checking obtainedgazepoint",index,gazePoint.Timestamp);
-			console.log("checking expectedgazepoint",expectedMappedGazeData[index].Timestamp);
+
 			expect.soft(gazePoint.Timestamp).toBe(expectedMappedGazeData[index].Timestamp);
 			expect.soft(gazePoint.element).toBe(expectedMappedGazeData[index].element);
 			expect.soft(gazePoint.tabName).toBe(expectedMappedGazeData[index].tabName);
@@ -99,11 +112,6 @@ test.setTimeout(100000)
 
 
 
-
-
-
-
-/*
 	test("mapping-after-data-collection-is-over-new-tab", async () => {
 
 
@@ -144,6 +152,16 @@ test.setTimeout(100000)
 		// a delay for ET to start and start ET snapshot to be record
 		await  delay(2000);
 
+
+		// clear data (i.e., to clear events sent when the recording started i.e., questionOnSet)
+		const clearAction = {"action": 'clear'}
+		await request({
+		method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
+		uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+		body: clearAction,
+		json: true
+		});
+
 		//send mock recording data // the paths are in EyeMind\EyeTrackingServer\
 		const gazeDataFilename = "test/data/recording/new-tab/ETdata.bem"
 		const snapshotsContentDataFilename = "test/data/recording/new-tab/snapshots.bem"
@@ -173,12 +191,16 @@ test.setTimeout(100000)
 		const loadedState = readSmallJSON("test/data/recording/new-tab/stateWithMappedGazeData.json");
 		const expectedMappedGazeData = loadedState.processedGazeData.gazeData
 
+		//console.log("expectedMappedGazeData.length",expectedMappedGazeData.length);
+		//console.log("obtaineMappedGazeData.length",obtaineMappedGazeData.length);
+
+
 		// assertions on the mapping
 		obtaineMappedGazeData.forEach((gazePoint, index) => {
 			//console.log("checking gazepoint",index);
-			expect(gazePoint.Timestamp).toBe(expectedMappedGazeData[index].Timestamp);
+			expect.soft(gazePoint.Timestamp).toBe(expectedMappedGazeData[index].Timestamp);
 			expect.soft(gazePoint.element).toBe(expectedMappedGazeData[index].element);
-			expect(gazePoint.tabName).toBe(expectedMappedGazeData[index].tabName);
+			expect.soft(gazePoint.tabName).toBe(expectedMappedGazeData[index].tabName);
 		})
 		
 
@@ -226,6 +248,17 @@ test.setTimeout(100000)
 		// a delay for ET to start and start ET snapshot to be record
 		await  delay(2000);
 
+
+
+		// clear data (i.e., to clear events sent when the recording started i.e., questionOnSet)
+		const clearAction = {"action": 'clear'}
+		await request({
+		method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
+		uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+		body: clearAction,
+		json: true
+		});
+
 		//send mock recording data // the paths are in EyeMind\EyeTrackingServer\
 		const gazeDataFilename = "test/data/recording/within-tab/ETdata.bem"
 		const snapshotsContentDataFilename = "test/data/recording/within-tab/snapshots.bem"
@@ -255,15 +288,18 @@ test.setTimeout(100000)
 		const loadedState = readSmallJSON("test/data/recording/within-tab/stateWithMappedGazeData.json");
 		const expectedMappedGazeData = loadedState.processedGazeData.gazeData
 
+		//console.log("expectedMappedGazeData.length",expectedMappedGazeData.length);
+		//console.log("obtaineMappedGazeData.length",obtaineMappedGazeData.length);
+
 		// assertions on the mapping
 		obtaineMappedGazeData.forEach((gazePoint, index) => {
 			//console.log("checking gazepoint",index);
-			expect(gazePoint.Timestamp).toBe(expectedMappedGazeData[index].Timestamp);
+			expect.soft(gazePoint.Timestamp).toBe(expectedMappedGazeData[index].Timestamp);
 			expect.soft(gazePoint.element).toBe(expectedMappedGazeData[index].element);
-			expect(gazePoint.tabName).toBe(expectedMappedGazeData[index].tabName);
+			expect.soft(gazePoint.tabName).toBe(expectedMappedGazeData[index].tabName);
 		})
 		
 
 	});
-*/
+
 //});

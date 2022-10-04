@@ -545,6 +545,8 @@ def getGazes():
     # data = data*100
     
     gazeDataFrame = pd.DataFrame(data)
+
+   
     
 
     # sort gazeDataFrame by Timestamp
@@ -818,6 +820,14 @@ def process():
         }
         return responseMsg;
 
+    elif data['action'] == 'clear' and isETstarted:
+        print(data)
+        gazeData = []
+        responseMsg = {
+            "response": "OK",
+        }
+        return responseMsg;
+        
     elif data['action'] == 'mockRecording' and isETstarted:
         print(data)
         gazeDataFilename = data['gazeDataFilename']
@@ -827,6 +837,8 @@ def process():
             "response": "OK",
         }
         return responseMsg;
+
+
     ############################################################
 
     return "";

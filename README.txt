@@ -151,10 +151,13 @@ D. Instructions of Use
 				3. Wait until you see a msg informing you that the data is saved. The message shows also the path of the saved data (i.e., <root path>EyeMind\EyeMindApp\outputData)
 				4. After saving the file, wait a few seconds, then check that the file is in your folder before refreshing the app using crt+R
 
+		General notes:
+				1. you can alawys start a new data collection session using ctrl+r (refresh). Remember that when you refresh all the non-saved data is deleted. 
+
 	D.3. Anaylsis
 
 		D.3.1 File import
-				1. At the moment, you can import only a single file corresponding to one data collection (including all the questions). Use the export feature to export csv gaze and fixation data, which you can analysis externally. The support for several files and the devision by question will be provided in a following version.
+				1. At the moment, you can import only a single file corresponding to one data collection (including all the questions). Use the export feature to export csv gaze and fixation data, which you can analysis externally. The support for several files will be provided in a following version.
 
 		D.3.2 File export
 				1. You can export the following
@@ -167,7 +170,7 @@ D. Instructions of Use
 
 		D.3.4 Heatmap and overlays
 				1. Use the rainbow colored icon to see the heatmaps and overlays
-				2. Choose the metric, aggregation, timestamp unit and which BPMN elements to additionally include (activites, events, gateways, labels, data objects are included by default)
+				2. Choose the question, metric, aggregation, timestamp unit and which BPMN elements to additionally include (activites, events, gateways, labels, data objects are included by default)
 				2. use the file explorer to access the models
 				3. To exit the heatmap and overlays press the same icon again
 
@@ -190,6 +193,4 @@ D. Instructions of Use
 			- The tool has been sucessfully tested internally. However, it is recommended to do several small/medium and large data collections before the experiment. In these trials, you must also check the data closely and do some basic analyses.
 			- To avoid memory issues, you should have a machine (with the configuration recommended by Tobii) and you should avoid openning unnecessary apps during the data collection
 			-  Check model layout, spacing, naming of activies, labels, visibility of everything shown on the model when desiging your experiment
-			- If a problem occured you can kill the ET sever with crtl+c on the terminal and start it again. However, you will need to restart the data collection in the other tools as well.
-		 	- If you kill the software during the analysis, you need to shut down the R server manually as well (using the terminal)
-	
+			- If a problem occured you can kill the Eye-tracking sever with crtl+c on the terminal and start it again. However, you will need to restart the data collection in the EyeMind app as well.

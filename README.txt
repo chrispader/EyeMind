@@ -91,7 +91,7 @@ D. Instructions of Use
 
 			D. 2.2.3 Models import
 
-				1. You can either select a folder containing all the models or you can select one or several models
+				1. You can drag and drop to add models
 				2. The models should have unique file names (these files names should result in a unique pattern after applying filename.replace(/[\W_,.]/g,""))
 				3. The order in which the files appear corresponds to the order in which they will show up in the file explorer
 

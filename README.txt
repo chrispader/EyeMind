@@ -141,8 +141,7 @@ D. Instructions of Use
 					4.4 Monitor size in inches
 					4.5 Recording ID
 				5. Press start recording
-				6. The main model will show up
-				7. Press start questions and here you go with the experiment.
+				6. The main model and the first question will show up
 				8. When the experiment is over, you can press the black sqaure (which refers to stop recording)
 
 		D.2.6 EyeMind Tool and Tobii Pro Lab when the recording is over
@@ -150,7 +149,7 @@ D. Instructions of Use
 				1. After pressing the black sqaure in EyeMind, you should stop the Tobii pro lab recording by pressing F10.
 				2. When ending the recording, you will see the tool rendering some snapshots of the recording. This is part of the procedure. Just wait.
 				3. Wait until you see a msg informing you that the data is saved. The message shows also the path of the saved data (i.e., <root path>EyeMind\EyeMindApp\outputData)
-				4. After saving the file, wait a few seconds, then check that the file is in your folder before refreshing the app using F10
+				4. After saving the file, wait a few seconds, then check that the file is in your folder before refreshing the app using crt+R
 
 	D.3. Anaylsis
 

@@ -154,7 +154,7 @@ D. Instructions of Use
 		General notes:
 				1. you can alawys start a new data collection session using ctrl+r (refresh). Remember that when you refresh all the non-saved data is deleted. 
 				2. the model elements should have meaningful names
-				3. In case the process takes very long, you can use ctrl+shift+i to the open the developer tool. If you see no errors in the latest lines of log, it means that the processing is still ongoing otherwise, please take a screenshot of the error and contact me
+				3. In case the processing takes very long, you can use ctrl+shift+i to the open the developer tool. If you see no errors in the latest lines of log, it means that the processing is still ongoing otherwise, please take a screenshot of the error and contact me
 
 	D.3. Anaylsis
 
@@ -188,7 +188,7 @@ D. Instructions of Use
 
 		General notes:
 				1. you can alawys start a new analysis session using ctrl+r (refresh). Remember that when you refresh all the non-saved data is deleted. 
-				2. In case the process takes very long, you can use ctrl+shift+i to the open the developer tool. If you see no errors in the latest lines of log, it means that the processing is still ongoing otherwise, please take a screenshot of the error and contact me
+				2. In case the processing takes very long, you can use ctrl+shift+i to the open the developer tool. If you see no errors in the latest lines of log, it means that the processing is still ongoing otherwise, please take a screenshot of the error and contact me
 				
 
 	D.4. Other comments

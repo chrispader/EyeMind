@@ -197,3 +197,65 @@ D. Instructions of Use
 			- To avoid memory issues, you should have a machine (with the configuration recommended by Tobii) and you should avoid openning unnecessary apps during the data collection
 			-  Check model layout, spacing, naming of activies, labels, visibility of everything shown on the model when desiging your experiment
 			- If a problem occured you can kill the Eye-tracking sever with crtl+c on the terminal and start it again. However, you will need to restart the data collection in the EyeMind app as well.
+
+
+
+
+E. Mapping gaze points to model or UI elements
+
+
+	- In the log (i.e., fixation file, gaze data file, analysis file), the attribute "element" refers to the element gazed by the user
+	- This element can be one of the following
+		- The id of a model element (e.g, activitiy, gateway)
+		- File explorer (visible in the no-link mode)
+			- Folder 
+				- Pattern: file-explorer-folder_<Folder name>
+			- File
+				- Pattern: file-explorer-file_<Model name>
+		- Process hierarchy explorer (visible in the breadcrumb mode)
+			- Pattern: process-hierarchy-sub-process-link-to_<Subprocess activity label || main>
+		- Tabs
+			- Tab header
+				- Pattern: tab-header-tab-link-to_<Model name>
+			- File Name in tab header
+				- Pattern: tab-link-to_<Model name>
+			- Close button in tab header
+				- Pattern: close-button-tab-link-to_<Model name>
+		- Quetions
+			- Question area
+				- Pattern: question-area-for-questionID_<Question id (i.e, as provided in the questions file)>
+			- Question title
+				- Pattern: title-for-questionID_<Question id>
+			- Answer area
+				- Pattern: answer_area_for_questionID_<Question id>
+			- Input field for open questions
+				- Pattern: long-answer-for-questionID_<Question id>
+			- Radio buttons for multiple choice questions
+				- Pattern: option-answer-for-questionID_<Question id>_option_<Option text (i.e., as provided in the questions file>
+			- Next button
+				- Pattern: next-button-area-in-questionID_<Question id>
+
+F. Click events
+
+	- The following click events are recorded in the gaze file and analysis file
+
+		- Model
+			- Clicks on sub processes
+				- Pattern: <Subprocess activity id>
+		- File explorer
+			-  File
+				- Pattern: file-explorer-file_<Model name>
+		- Process hierarchy explorer (visible in the breadcrumb mode)
+				- Pattern: process-hierarchy-sub-process-link-to_<Subprocess activity label || main>
+		- Tabs
+			- File Name in tab header
+				- Pattern: tab-link-to_<Model name>
+			- Close button in tab header
+				- Pattern: close-button-tab-link-to_<Model name>
+		- Questions
+			- Input field for open questions
+				- Pattern: long-answer-for-questionID_<Question id>
+			- Radio buttons for multiple choice questions
+				- Pattern: option-answer-for-questionID_<Question id>_option_<Option text (i.e., as provided in the questions file>				
+			- Next button
+				- Pattern: next-button-area-in-questionID_<Question id>

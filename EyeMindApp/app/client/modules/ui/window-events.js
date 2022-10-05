@@ -146,7 +146,7 @@ function testListeners() {
 /**
  * Title: disable critical keys
  *
- * Description: prevent ctrl and alt, except (ctrl + R)
+ * Description: prevent ctrl and alt, except (ctrl + R for refresh, and ctrl+shift+i to see the developer tool)
  *
  *
  * @param {void} . .
@@ -164,7 +164,7 @@ function DisableCriticalKeys() {
 
   window.onkeydown = function(evt) {
 
-     if ((evt.ctrlKey || evt.altKey) &&  evt.keyCode != 82)  
+     if ((evt.ctrlKey || evt.altKey) &&  evt.keyCode != 82 &&  evt.keyCode != 73)  
      {
        evt.preventDefault();
      } 

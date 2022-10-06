@@ -1,0 +1,7 @@
+id,question,type,options
+1,Is it possible to create a credit card without rating the customer?,multiple-choice,Yes;No;I don't know
+2,Does the checking of the customer nationality on the sections list happen before matching his street with the street registry? ,multiple-choice,Yes;No;I don't know
+3,Can matching the customer id card with the given data be done in parallel with matching her street with the street registry?,multiple-choice,Yes;No;I don't know
+4,Can checking the natural person sanctions list be done in parallel with analyzing the ID card scan?,multiple-choice,Yes;No;I don't know
+5,Is it possible to validate the customer data and then update it in the system?,multiple-choice,Yes;No;I don't know
+6,Should the data be emailed to the customer after updating the customer data? ,multiple-choice,Yes;No;I don't know

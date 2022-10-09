@@ -26,6 +26,11 @@ test("file-explorer-open-file-tab", async () => {
   
   await  delay(3000);
 
+  await firstWindow.locator('id=record-btn').click();
+  await firstWindow.locator('id=submit-recording-form').click();
+  // a delay for ET to start 
+  await  delay(2000);
+
   await firstWindow.locator('id=modelp52notifyinvolvedpartiesofjournalentryrefusalbpmn-explorerItem').click();
   
   var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});

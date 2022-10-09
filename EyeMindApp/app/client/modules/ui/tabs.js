@@ -346,11 +346,11 @@ function changeTab(destinationId,ignoreTabLinks,takeSnapshot) {
   for (i = 0; i < tabContainers.length; i++) {
     tabContainers[i].style.display = "none";
   }
-  
+
+
    // show the destination tab container
   const destinationIdTabContainer = document.getElementById("model"+destinationId+"-container");
   destinationIdTabContainer.style.display = "flex"; //"block";
-
 
   // change active navigation tab link if tab links are allowed
   if(!ignoreTabLinks) {
@@ -360,6 +360,7 @@ function changeTab(destinationId,ignoreTabLinks,takeSnapshot) {
       for (i = 0; i < tabLinks.length; i++) {
         tabLinks[i].className = tabLinks[i].className.replace(" active", "");
       }
+
 
       // ´activate the destination tab link
       const destinationIdTabLink = document.getElementById("model"+destinationId);
@@ -442,9 +443,9 @@ async function openWithinTab(mainModelId,mainModelprocessId,subProcessId,subProc
  *
  * Description: open the main tab
  *
- * @param {string} mode to hide or display the tab when opening it
  * @param {boolean} ignoreTabLinks whether or not to ignore tab links, allows to change active navigation tab link if tab links are allowed
  * @param {boolean} takeSnapshot whether or not to take a snapshot
+ * @param {string} modelsGroupId models group id
  *
  * Returns {void}
  *
@@ -452,16 +453,17 @@ async function openWithinTab(mainModelId,mainModelprocessId,subProcessId,subProc
  * Additional notes: none
  *
  */
-function openMainTab(mode,ignoreTabLinks,takeSnapshot) {
+function openMainTab(ignoreTabLinks,takeSnapshot,modelsGroupId) {
 
      console.log("openMainTab function",arguments);
 
      var state = getState();
 
       for (const [key, model] of Object.entries(state.models)) {
-        if(model.mainTab) {
-          if(mode=="hide") addToTabHeader(key);
-          else if(mode=="display") changeTab(key,ignoreTabLinks,takeSnapshot);
+        if(model.mainTab && model.groupId==modelsGroupId) {
+           if(!ignoreTabLinks) addToTabHeader(key);
+           changeTab(key,ignoreTabLinks,takeSnapshot);
+          break;
         }
     }
   

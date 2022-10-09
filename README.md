@@ -94,12 +94,14 @@ D. Instructions of Use
 				1. You can drag and drop to add models
 				2. The models should have unique file names (these files names should result in a unique pattern after applying filename.replace(/[\W_,.]/g,""))
 				3. The order in which the files appear corresponds to the order in which they will show up in the file explorer
+				4. Models of different processes should be asigned different group names
 
 			D. 2.2.4 Questions import
 
 				1. The questions should be formatted in a csv file, with a structure similar to  "questionSet.csv" provided in the "Examples" folder
 				2. The questions should have a unique id
 				3. the type can be "open-question" or "multiple-choice". If "multiple-choice", then the options should be provided in the following format: "<option 1>;<option 2>;<option 3>"
+				4. Each question should be mapped to a specific process using the attribute model-group
 
 			D. 2.2.5 Session saving and import
 
@@ -259,3 +261,4 @@ F. Click events
 				- Pattern: option-answer-for-questionID_<Question id>_option_<Option text (i.e., as provided in the questions file>				
 			- Next button
 				- Pattern: next-button-area-in-questionID_<Question id>
+

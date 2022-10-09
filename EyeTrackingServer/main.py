@@ -546,8 +546,6 @@ def getGazes():
     
     gazeDataFrame = pd.DataFrame(data)
 
-   
-    
 
     # sort gazeDataFrame by Timestamp
     gazeDataFrame.sort_values(by=['Timestamp'])

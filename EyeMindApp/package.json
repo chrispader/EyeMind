@@ -9,8 +9,6 @@
     "start": "electron --js-flags=--max-old-space-size=8040 .",
     "build": "webpack --mode production",
     "start:dev": "npm run build && npm start",
-    "test-electron-mocha-in-main": "electron-mocha --recursive --reporter spec",
-    "test-electron-mocha-in-renderer": "electron-mocha --renderer --recursive --reporter spec",
     "test": "npx playwright test test/tests/playwright/",
     "test-temp": "npx playwright test test/tests/playwright/mapping.test.ts"
   },

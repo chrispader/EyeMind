@@ -26,7 +26,7 @@ test("reset-model", async () => {
 
   await  delay(3000);
 
-  await firstWindow.evaluate(() => {window.clientTests.openMainTabInWithinTabLinks()});
+  await firstWindow.evaluate(() => {window.clientTests.openMainTabInWithinTabLinks(1)});
 
   await  delay(2000);
 
@@ -186,7 +186,7 @@ test("reset-nav-tabs-and-tabs-no-link-mode", async () => {
   var preResetSnapshot = await firstWindow.evaluate(() => {return window.document.body.outerHTML});
 
   // reset nav tabs and tabs
-  await firstWindow.evaluate(() => {return window.clientTests.resetNavTabsAndTabs()});
+  await firstWindow.evaluate(() => {return window.clientTests.resetNavTabsAndTabs(1)});
 
   // delay for the changes to occur
    await  delay(500);
@@ -288,7 +288,7 @@ test("reset-nav-tabs-and-tabs-new-tab-mode", async () => {
   var preResetSnapshot = await firstWindow.evaluate(() => { return window.document.body.outerHTML});
 
   // reset nav tabs and tabs
-  await firstWindow.evaluate(() => {return window.clientTests.resetNavTabsAndTabs()});
+  await firstWindow.evaluate(() => {return window.clientTests.resetNavTabsAndTabs(1)});
 
   // delay for the changes to occur
    await  delay(1000);
@@ -386,7 +386,7 @@ test("reset-nav-tabs-and-tabs-within-tab-mode", async () => {
   var preResetSnapshot = await firstWindow.evaluate(() => { return window.document.body.outerHTML});
 
   // reset nav tabs and tabs
-  await firstWindow.evaluate(() => {return window.clientTests.resetNavTabsAndTabs()});
+  await firstWindow.evaluate(() => {return window.clientTests.resetNavTabsAndTabs(1)});
 
   // delay for the changes to occur
    await  delay(1000);

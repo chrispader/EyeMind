@@ -63,7 +63,7 @@ test("click-next-button-inner-in-questionID", async () => {
  
 });
 
-
+/*
 test("click-long-answer-for-questionID", async () => {
 
 
@@ -102,7 +102,7 @@ test("click-long-answer-for-questionID", async () => {
   expect.soft(lastRelevantClick.clickedElement).toBe("long-answer-for-questionID_1");
  
 });
-
+*/
 
 
 

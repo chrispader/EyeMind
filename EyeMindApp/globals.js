@@ -20,7 +20,7 @@ const globalParameters = {
    
    AREA_OFFSET : 30, // offset due to the difference between inner and outer window sizes
 
-   RQUIRED_COLUMNS_IN_QUESTION_FILE: ["id","question","type","options"],
+   RQUIRED_COLUMNS_IN_QUESTION_FILE: ["id","question","type","options","model-group"],
    QUESTION_TYPES_SUPPORTED : ["open-question","multiple-choice"],
 
    LAST_CONFIG_FILE_PATH : "temp/pastConfig.json",

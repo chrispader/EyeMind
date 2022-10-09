@@ -70,71 +70,136 @@ function resetModel(fileId) {
  *
  * Description: reset the view by closing all closable tabs, reset the main model and reset proess hierary explorer
  *
- *
+ * @param {string} modelsGroupId models group id
  *
  * Additional notes: none
  *
  */
-function resetNavTabsAndTabs() {
+function resetNavTabsAndTabs(modelsGroupId) {
 
       console.log("resetNavTabsAndTabs",arguments);
 
       const state = getState();
 
-      // differ the execution depending on the linkingSubProcessesMode
-      if(state.linkingSubProcessesMode== "newTab" || state.linkingSubProcessesMode=="no") {
-        // get all opened navTabs
-        var navTabs = document.getElementById("nav-tabs").querySelectorAll(".tab-link");
+      if(modelsGroupId!=null) {
 
-        for (let i = 0; i < navTabs.length; ++i) {
+        // differ the execution depending on the linkingSubProcessesMode
+        if(state.linkingSubProcessesMode== "newTab" || state.linkingSubProcessesMode=="no") {
+          // get all opened navTabs
+          var navTabs = document.getElementById("nav-tabs").querySelectorAll(".tab-link");
 
-          const tabHeader = navTabs[i];
-          const fileName = tabHeader.getAttribute("file");
-          const fileId = fileName.replace(new RegExp(window.globalParameters.MODELS_ID_REGEX,"g"),"");
+          for (let i = 0; i < navTabs.length; ++i) {
 
-          // check the navTab refers to a main process or not
-          const isMain = state.models[fileId].isMain;
-          console.log(fileName+" isMain? "+isMain)
-          
-          if (!isMain) {
-            // close all closable tabs (implies reseting the underlying models as well), the third argument implies not to take snapshot
+            const tabHeader = navTabs[i];
+            const fileName = tabHeader.getAttribute("file");
+            const fileId = fileName.replace(new RegExp(window.globalParameters.MODELS_ID_REGEX,"g"),"");
+
+            // close tab
             closeTabInteraction(fileId,tabHeader,false);
+
+            /*
+            // check the navTab refers to a main process or not
+            const isMain = state.models[fileId].isMain;
+            console.log(fileName+" isMain? "+isMain)
+            
+            if (!isMain) {
+              // close all closable tabs (implies reseting the underlying models as well), the third argument implies not to take snapshot
+              closeTabInteraction(fileId,tabHeader,false);
+            }
+            else {
+              // reset the main model
+              resetModel(fileId);
+            }*/          
           }
-          else {
-            // reset the main model
-            resetModel(fileId);
+
+          // open main tab
+          openMainTab(false,false,modelsGroupId);
+
+
+         // takesnapshot
+         takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY); 
+
+        }
+        else if (state.linkingSubProcessesMode== "withinTab") {
+
+          // reset all models
+          for (const [key, model] of Object.entries(state.models)) {
+               resetModel(key);
           }
+            
+          // open main tab
+          openMainTab(true,false,modelsGroupId);
+
+          // reset process-hierarchy content if the DOM element exists
+            resetProcessHierarchy();
+
+          // takesnapshot
+         takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY); 
           
         }
-
-        // open main tab
-        openMainTab("display",false,false);
-
-       // takesnapshot
-       takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY); 
-
       }
-      else if (state.linkingSubProcessesMode== "withinTab") {
 
-        // reset all models
-        for (const [key, model] of Object.entries(state.models)) {
-             resetModel(key);
-        }
-          
-        // open main tab
-        openMainTab("display",true,false);
+      else {
 
-        // reset process-hierarchy content if the DOM element exists
-          resetProcessHierarchy();
+      // hide nav-tabs-and-tabs
+      document.getElementById("nav-tabs-and-tabs").style.display = "none"
 
-        // takesnapshot
-       takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY); 
-        
+      // takesnapshot
+      takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY); 
+      
       }
+
+
+}
+
+
+/**
+ * Title: show models corresponding to a specific process 
+ *
+ * Description: show models corresponding to a specific process 
+ *
+ *
+ * @param {void} .  .
+ *
+ * Returns {void}
+ *
+*
+ * Additional notes: none
+ *
+ */
+function showModelsGroup(groupId) {
+
+    console.log("showModelsGroup",arguments);
+
+    var state = getState();
+
+    if(groupId!=null) {
+
+     for (const model of Object.values(state.models)) {
+
+      //console.log(model,model.id,document.getElementById("model"+model.id+"-explorerItem"))
+
+      if(model.groupId==groupId) {
+        document.getElementById("model"+model.id+"-explorerItem").style.display = "block";
+      }
+      else {
+         document.getElementById("model"+model.id+"-explorerItem").style.display = "none";
+      }
+    }
+         
+    } else {
+
+      for (const model of Object.values(state.models)) {
+         document.getElementById("model"+model.id+"-explorerItem").style.display = "none";
+      }  
+
+    }
+
+
 
 
 
 }
 
 
-export{resetModel,resetNavTabsAndTabs}
+export{resetModel,resetNavTabsAndTabs,showModelsGroup}

@@ -26,7 +26,7 @@ test("process-hierarchy-explorer-browser-2-hierarchy-levels", async () => {
 
   await  delay(3000);
 
-  await firstWindow.evaluate(() => {window.clientTests.openMainTabInWithinTabLinks()});
+  await firstWindow.evaluate(() => {window.clientTests.openMainTabInWithinTabLinks(1)});
 
   await  delay(2000);
 
@@ -53,6 +53,7 @@ test("process-hierarchy-explorer-browser-2-hierarchy-levels", async () => {
   
 
 
+
 });
 
 
@@ -77,7 +78,7 @@ test("process-hierarchy-explorer-browser-2-hierarchy-levels-back", async () => {
 
   await  delay(3000);
 
-  await firstWindow.evaluate(() => {window.clientTests.openMainTabInWithinTabLinks()});
+  await firstWindow.evaluate(() => {window.clientTests.openMainTabInWithinTabLinks(1)});
 
   await  delay(2000);
 
@@ -93,7 +94,7 @@ test("process-hierarchy-explorer-browser-2-hierarchy-levels-back", async () => {
 
   const expectedDataPath = 'test/data/process-hierarchy-explorer/process-hierarchy-explorer-browser-2-hierarchy-levels-back.html';
 
-  //saveFile(expectedDataPath,bodyContent);
+ // saveFile(expectedDataPath,bodyContent);
 
   
   var expectedContent = loadFile(expectedDataPath);
@@ -130,7 +131,7 @@ test("process-hierarchy-explorer-browser-2-hierarchy-levels-back-then-2-forward"
 
   await  delay(3000);
 
-  await firstWindow.evaluate(() => {window.clientTests.openMainTabInWithinTabLinks()});
+  await firstWindow.evaluate(() => {window.clientTests.openMainTabInWithinTabLinks(1)});
 
   await  delay(2000);
 

@@ -233,7 +233,7 @@ async function traverseItemTree(item, path) {
   // item.isDirectory
   } else if (item.isDirectory) {
     console.log("item.isDirectory", item);
-    // get folder contents
+/*    // get folder contents
     var dirReader = item.createReader();
     dirReader.readEntries(async function(entries) {
       // iterate through the directory entries
@@ -243,6 +243,8 @@ async function traverseItemTree(item, path) {
       }
 
     });
+    */
+    errorAlert("Folders are not supported")
   }
 }
 
@@ -439,8 +441,8 @@ async function traverseQuestionsFile(file) {
 
   if(await loadQuestions(file) /* load questions file */) { 
       // last step of file import
-      const unclosableTabsDefined = false;
-      prepareDataCollectionContent(unclosableTabsDefined);
+      const filePropertiesDefined = false;
+      prepareDataCollectionContent(filePropertiesDefined);
    } 
 }
 
@@ -537,10 +539,12 @@ function createFileInfoBlock(file) {
     fileInfo.innerHTML =
     // file name 
     '<div class="column file-info">'+file.fileName+'</div>'+
-    // add a radiobox (i.e., set-as-main-'+file.id+') and select it if the file refers to the main model
-    '<div class="column"><input type="radio" class="set-as-main" id="set-as-main-'+file.id+'" name="set-as-main" modelId="'+file.id+'" '+defaultChecked+'/>Set as main</div>'+
+    // add a check (i.e., set-as-main-'+file.id+') and select it if the file refers to the main model
+    '<div class="column"><input type="checkbox" class="set-as-main" id="set-as-main-'+file.id+'" name="set-as-main" modelId="'+file.id+'" '+defaultChecked+'/>Set as main</div>'+
     // add a checkbox (i.e., unclosable-tab-'+file.id+') and check it if the file refers to the main model
     '<div class="column"><input class="unclosable-tab" id="unclosable-tab-'+file.id+'" modelId="'+file.id+'" type="checkbox" '+defaultChecked+'/>Unclosable Tab</div>'+
+    // add textfield to group models belonging to the same process
+   '<div class="column">Group: <input class="group-assignement" modelId="'+file.id+'" type="text" size="2" name="group-assignement-for-file-'+file.id+'" id="group-assignement-for-file-'+file.id+'" value="1"></div>'+
     // add a button allowing to remove the file
     '<div class="column"><button class="remove-btn" id="remove-'+file.id+'"">Remove</button></div>';
     /// add a click event listener call the function to remove the file
@@ -735,9 +739,8 @@ async function sessionRead(res) {
       }
 
       // last step of file import
-      const unclosableTabsDefined = true;
-      prepareDataCollectionContent(unclosableTabsDefined);
-
+      const filePropertiesDefined = true;
+      prepareDataCollectionContent(filePropertiesDefined);
 
       //infoAlert(msg);
     }
@@ -915,7 +918,7 @@ function constructDirectoryExplorer(filePath,fileName,id) {
     explorerItem.setAttribute("id", "model"+id+"-explorerItem");
     explorerItem.setAttribute("class", "file gaze-element");
     explorerItem.setAttribute("data-element-id", "file-explorer-file_"+fileName);
-
+    if(state.mode=="data-collection") explorerItem.style.display = "none";
     explorerItem.setAttribute("fileName", fileName);
     explorerItem.innerHTML = fileName;
     explorerItem.onclick = function(e) {
@@ -1157,6 +1160,8 @@ function linkSubProcesses(mainModel, mainModelId, mainModelprocessId, currentTab
             subProcessActivitySVGObjectInMainModel.addEventListener('click', function(e) {
                   // prevent the implemented bpmn-io interaction assosciated with sub-processes  
                   cancelDefault(e); 
+                  // send click event
+                  sendClickEvent(Date.now(),subProcessActivitySVGObjectInMainModel.getAttribute("data-element-id")); 
                   // open the sub-process in tab if isFileLoaded
                   if(isFileLoaded(subProcessFileName, subProcessId)) {
                       openInTab(subProcessId); 
@@ -1232,5 +1237,162 @@ function isFileLoaded(fileName, fileId) {
 
 
 
+/**
+ * Title: assinging models to groups
+ *
+ * Description: assign models to groups
+ *
+ *
+ * @param {void} .  .
+ *
+ * Returns {void}
+ *
+*
+ * Additional notes: none
+ *
+ */
+function assignModelsToGroups(){
 
-export {registerFileUpload,createModel}
+    console.log("assignModelsToGroups",arguments);
+
+    var state = getState();
+  
+    const groupAssignementList = document.getElementsByClassName("group-assignement");
+
+    for (let i = 0; i < groupAssignementList.length; i++) {
+        state.models[groupAssignementList[i].getAttribute("modelId")].groupId = groupAssignementList[i].value;
+    }
+
+
+}
+
+
+/**
+ * Title: check if the models are correctly grouped
+ *
+ * Description: check if the imported models are correctly grouped
+ *
+ *
+ * @param {void} .  .
+ *
+ * Returns {object} res object with boolean and string, refering to whether the models are correctly grouped and if no, the string contains the error message
+ *
+*
+ * Additional notes: none
+ *
+ */
+function areModelsCorrectlyGrouped() {
+
+  console.log("areModelsCorrectlyGrouped",arguments);
+
+ var res = {msg: "", sucess: true}
+
+ // check that all models have a group id
+ if(!areAllModelsAssignedToGroupId()) {
+    res.msg = "Some models are missing a group Id."
+    res.sucess = false;
+    return res;
+ }
+
+ // check that each group has only one main model
+ if(!doEachGroupHasOnlyOneMainModel()) {
+   res.msg += "Each group should have one main model.";
+   res.sucess = false;
+   return res;
+ }
+
+ return res;
+
+}
+
+
+/**
+ * Title: are all models assigned to a group id
+ *
+ * Description: check that all models have a group id
+ *
+ *
+ * @param {void} .  .
+ *
+ * Returns {boolean} whether or not all models have a group id
+ *
+*
+ * Additional notes: none
+ *
+ */
+function areAllModelsAssignedToGroupId() {
+
+    console.log("areAllModelsAssignedToGroupId",arguments);
+
+    const groupAssignementList = document.getElementsByClassName("group-assignement");
+
+    for (let i = 0; i < groupAssignementList.length; i++) {
+        if(groupAssignementList[i].value=="") {
+          return false;
+        }
+    }
+
+    return true;
+}
+
+
+/**
+ * Title: check that each group has only one main model
+ *
+ * Description: check that each group has only one main model
+ *
+ *
+ * @param {void} .  .
+ *
+ * Returns {boolean} whether or not check that each group has only one main model
+ *
+*
+ * Additional notes: none
+ *
+ */
+function doEachGroupHasOnlyOneMainModel() {
+
+    console.log("doEachGroupHasOnlyOneMainModel",arguments);
+
+    // will contain group ids and number of main models
+    var groupsAndMains = {}
+
+    const groupAssignementList = document.getElementsByClassName("group-assignement");
+
+    for (let i = 0; i < groupAssignementList.length; i++) {
+
+      // model id
+      const modelId = groupAssignementList[i].getAttribute("modelId");
+
+      // if groupId is not already in groupsAndMains then add it and set the number of main models to 0
+      const groupId = groupAssignementList[i].value;
+      if(!groupsAndMains.hasOwnProperty(groupId)) {
+           groupsAndMains[groupId] = 0;
+      }
+
+      // is model checked as main
+      const idModelCheckedAsMain = document.getElementById("set-as-main-"+modelId).checked;
+
+      // if model is checked as main then increment the count of main models in groupsAndMains
+      if(idModelCheckedAsMain) {
+        groupsAndMains[groupId] = groupsAndMains[groupId] + 1;
+      }
+ 
+    }
+
+    /// iterate over groupsAndMains values (i.e., nMainModels), if a value is larger is different then 1 return false
+    for (const nMainModels of Object.values(groupsAndMains)) {
+
+        if(nMainModels!=1) {
+          return false;
+        }
+
+     }
+
+   // all is good return true
+   return true;
+
+}
+
+
+export {registerFileUpload,createModel,assignModelsToGroups,areModelsCorrectlyGrouped}

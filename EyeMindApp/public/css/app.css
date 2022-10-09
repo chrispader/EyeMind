@@ -634,7 +634,7 @@ process hierarchy within the tab container
   border-radius: 2px;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
 
-  width: 740px;
+  width: 800px;
   height: 540px;
 
   padding: 30px;
@@ -643,7 +643,7 @@ process hierarchy within the tab container
 
 .upload-zone {
   overflow: auto;
-  width: 740px;
+  width: 800px;
   height: 400px;
   border: 4px dashed #8fa3bd;
   position: relative;
@@ -725,7 +725,7 @@ process hierarchy within the tab container
 .upload-zone .upload-text {
 
   top: 200px;
-  left: 220px;
+  left: 265px;
   position: absolute;
    font-family: "Quicksand", sans-serif;
   font-weight: 500;
@@ -742,7 +742,7 @@ process hierarchy within the tab container
 .upload-zone .upload-label {
 
   top: 200px;
-  left: 245px;
+  left: 285px;
   position: absolute;
   font-family: "Quicksand", sans-serif;
   font-weight: 500;

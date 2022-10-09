@@ -23,7 +23,7 @@ SOFTWARE.*/
 
 /*  data-collection with the support of eye-tracking   */ 
 
-import {registerFileUpload} from './files-setup'
+import {registerFileUpload,assignModelsToGroups} from './files-setup'
 import {loadModels} from './shared-interactions'
 import {openMainTab,setUnclosableTabs,setMainTab} from './tabs'
 import {generateQuestionsSequence} from './questions'
@@ -35,6 +35,7 @@ import {mapGazestoElementsFromPageSnapshotListener} from './mapping'
 import {updateProcessingMessage} from './progress'
 import {updateProcessMessageListener} from './progress'
 import {startQuestions} from './questions'
+import {areModelsCorrectlyGrouped} from'./files-setup'
 
 //import {clicksListener} from './click-stream'
 
@@ -146,6 +147,15 @@ function newSessionInteraction() {
     document.getElementById("proceed-data-collection-settings").onclick = () => importModelsInteraction();
     // questions import interactions
     document.getElementById("process-files").onclick = () => {
+
+    // check models grouping
+    const modelsCorrectlyGrouped = areModelsCorrectlyGrouped();
+    if(!modelsCorrectlyGrouped["sucess"]) {
+        const msg = modelsCorrectlyGrouped["msg"];
+        errorAlert(msg);
+        console.error(msg);
+        return false;
+    }
      
     // check if at least one model was imported
     if(!Object.keys(state.models).length==0) {
@@ -286,7 +296,7 @@ async function saveSessionInteraction() {
  *
  * Description: prepare the loaded content view for data collection
  *
- * @param {booleam} unclosableTabsDefined allows to set unclosable tabs if not already defined (that is the case when you load a session)
+ * @param {booleam} filePropertiesDefined allows to set unclosable tabs if not already defined (that is the case when you load a session)
  *
  * Returns {void}
  *
@@ -294,7 +304,7 @@ async function saveSessionInteraction() {
  * Additional notes: none
  *
  */
-function prepareDataCollectionContent(unclosableTabsDefined) {
+function prepareDataCollectionContent(filePropertiesDefined) {
         
         // showing file explorer, loading models, questions and configuring tables
 
@@ -313,18 +323,18 @@ function prepareDataCollectionContent(unclosableTabsDefined) {
         // load models
         const areModelsLoaded = loadModels();
 
-        // set unclosable tabs if not already defined (that is the case when you load a session)
-        if(!unclosableTabsDefined) {
+        // set file properties not already defined (that is the case when you load a session)
+        if(!filePropertiesDefined) {
+          assignModelsToGroups();
           setMainTab();
           setUnclosableTabs();
         }
         
 
         // openMainTab (in "hide" mode)
-        if(state.linkingSubProcessesMode!="withinTab") {
-
+/*        if(state.linkingSubProcessesMode!="withinTab") {
           openMainTab("hide",false,false);
-        }
+        }*/
         
 
         /* clicks listener */
@@ -507,14 +517,14 @@ async function startETInteraction() {
           // start tracking
           startTracking(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
 
-          // show main tab
+/*          // show main tab
           console.log("state.linkingSubProcessesMode",state.linkingSubProcessesMode)
           if(state.linkingSubProcessesMode=="withinTab") {
             openMainTab("display",true,false);
           }
           else {
             openMainTab("display",false,false);
-          }
+          }*/
 
           // start questions - show first question
           startQuestions();
@@ -1047,4 +1057,4 @@ async function completeProcessing(externalProgressWindow,msg,sucess) {
 
 
 
-export{eyeTrackingModeInteraction,prepareDataCollectionContent,takesnapshot}
+export{eyeTrackingModeInteraction,prepareDataCollectionContent,takesnapshot,stopETInteraction}

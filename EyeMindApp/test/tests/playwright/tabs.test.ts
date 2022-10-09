@@ -23,8 +23,13 @@ test("open-new-tab-from-model", async () => {
   await firstWindow.locator('id=load-session').click();
 
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/links/session-new-tab.json','session-new-tab.json'); 
-  
+
   await  delay(3000);
+
+  await firstWindow.locator('id=record-btn').click();
+  await firstWindow.locator('id=submit-recording-form').click();
+  // a delay for ET to start 
+  await  delay(2000);
 
   await firstWindow.locator('id=modelpmainprocessbpmn').click();
   await firstWindow.locator('[data-element-id="p_4_certifydocuments.bpmn"]').click();
@@ -34,8 +39,7 @@ test("open-new-tab-from-model", async () => {
   const expectedDataPath = 'test/data/tabs/open-new-tab-from-model.html';
 
   //saveFile(expectedDataPath,bodyContent);
-  
-  
+
   var expectedContent = loadFile(expectedDataPath);
   
   /// remove tag attributes with random values generated on each import
@@ -45,6 +49,8 @@ test("open-new-tab-from-model", async () => {
 
   expect(bodyContent).toBe(expectedContent);
   
+
+
 });
 
 
@@ -70,6 +76,12 @@ test("close-tabs-and-leave-no-tab-visible", async () => {
   
   await  delay(3000);
 
+  await firstWindow.locator('id=record-btn').click();
+  await firstWindow.locator('id=submit-recording-form').click();
+  // a delay for ET to start 
+  await  delay(2000);
+
+
   await firstWindow.locator('id=modelpmainprocessbpmn').click();
   await firstWindow.locator('[data-element-id="p_3_approveandsigndocuments.bpmn"]').click();
   await firstWindow.locator('id=modelpmainprocessbpmn').click();
@@ -84,7 +96,6 @@ test("close-tabs-and-leave-no-tab-visible", async () => {
   const expectedDataPath = 'test/data/tabs/close-tabs-and-leave-no-tab-visible.html';
 
   //saveFile(expectedDataPath,bodyContent);
-  
   
   var expectedContent = loadFile(expectedDataPath);
   
@@ -121,19 +132,24 @@ test("close-an-already-hidden-tab", async () => {
   
   await  delay(3000);
 
+  await firstWindow.locator('id=record-btn').click();
+  await firstWindow.locator('id=submit-recording-form').click();
+  // a delay for ET to start 
+  await  delay(2000);
+
   await firstWindow.locator('id=modelpmainprocessbpmn').click();
   await firstWindow.locator('[data-element-id="p_3_approveandsigndocuments.bpmn"]').click();
   await firstWindow.locator('id=modelpmainprocessbpmn').click();
   await firstWindow.locator('[data-element-id="p_4_certifydocuments.bpmn"]').click();
   await firstWindow.locator('[data-element-id="close-button-tab-link-to_p_3_approveandsigndocuments.bpmn"]').click();
+
   
   var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
 
   const expectedDataPath = 'test/data/tabs/close-an-already-hidden-tab.html';
 
   //saveFile(expectedDataPath,bodyContent);
-  
-  
+
   var expectedContent = loadFile(expectedDataPath);
   
   /// remove tag attributes with random values generated on each import
@@ -173,6 +189,11 @@ test("close-tabs-and-check-that-model-is-reset", async () => {
   
   await  delay(3000);
 
+  await firstWindow.locator('id=record-btn').click();
+  await firstWindow.locator('id=submit-recording-form').click();
+  // a delay for ET to start 
+  await  delay(2000);
+
   await firstWindow.locator('id=modelpmainprocessbpmn').click();
   await firstWindow.locator('[data-element-id="p_3_approveandsigndocuments.bpmn"]').click();
   
@@ -200,10 +221,10 @@ test("close-tabs-and-check-that-model-is-reset", async () => {
   var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
 
 
-  const expectedDataPath = 'test/data/tabs/close-tabs-and-leave-no-tab-visible.html';
+  const expectedDataPath = 'test/data/tabs/close-tabs-and-check-that-model-is-reset.html';
 
   //saveFile(expectedDataPath,bodyContent);
-  
+
   
   var expectedContent = loadFile(expectedDataPath);
   
@@ -240,6 +261,12 @@ test("loaded-content-view-no-link-between-sub-processes-from-loaded-session", as
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/links/session-no-link.json','session-no-link.json'); 
   
   await  delay(3000);
+
+  await firstWindow.locator('id=record-btn').click();
+  await firstWindow.locator('id=submit-recording-form').click();
+  // a delay for ET to start 
+  await  delay(2000);
+
   
   var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
 
@@ -247,7 +274,6 @@ test("loaded-content-view-no-link-between-sub-processes-from-loaded-session", as
 
   //saveFile(expectedDataPath,bodyContent);
 
-  
   var expectedContent = loadFile(expectedDataPath);
   
   /// remove tag attributes with random values generated on each import
@@ -282,6 +308,11 @@ test("set-scroll-position-openning-context-tabHeaderEndPos<containerWidth", asyn
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/links/session-no-link.json','session-no-link.json'); 
   
   await  delay(3000);
+
+  await firstWindow.locator('id=record-btn').click();
+  await firstWindow.locator('id=submit-recording-form').click();
+  // a delay for ET to start 
+  await  delay(2000);
 
  await firstWindow.locator('id=modelp52notifyinvolvedpartiesofjournalentryrefusalbpmn-explorerItem').click();
  
@@ -322,6 +353,11 @@ test("set-scroll-position-openning-context-tabHeaderEndPos>containerWidth", asyn
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/links/session-no-link.json','session-no-link.json'); 
   
   await  delay(3000);
+
+  await firstWindow.locator('id=record-btn').click();
+  await firstWindow.locator('id=submit-recording-form').click();
+  // a delay for ET to start 
+  await  delay(2000);
 
  await firstWindow.locator('id=modelp1gatherdatabpmn-explorerItem').click();
  await firstWindow.locator('id=modelp11fetchandvalidateonlinedatabpmn-explorerItem').click();
@@ -370,6 +406,11 @@ test("set-scroll-position-changing-tabheader-is-within-nav-tabs-ViewStart-nav-ta
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/links/session-no-link.json','session-no-link.json'); 
   
   await  delay(3000);
+
+  await firstWindow.locator('id=record-btn').click();
+  await firstWindow.locator('id=submit-recording-form').click();
+  // a delay for ET to start 
+  await  delay(2000);
 
  await firstWindow.locator('id=modelp1gatherdatabpmn-explorerItem').click();
  await firstWindow.locator('id=modelp11fetchandvalidateonlinedatabpmn-explorerItem').click();
@@ -421,6 +462,11 @@ test("set-scroll-position-changing-tabheader-is-not-within-nav-tabs-ViewStart-na
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/links/session-no-link.json','session-no-link.json'); 
   
   await  delay(3000);
+
+  await firstWindow.locator('id=record-btn').click();
+  await firstWindow.locator('id=submit-recording-form').click();
+  // a delay for ET to start 
+  await  delay(2000);
 
  await firstWindow.locator('id=modelp1gatherdatabpmn-explorerItem').click();
  await firstWindow.locator('id=modelp11fetchandvalidateonlinedatabpmn-explorerItem').click();

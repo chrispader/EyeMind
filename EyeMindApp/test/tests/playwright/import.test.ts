@@ -47,6 +47,7 @@ test("new-session-import-valid-models", async () => {
   const expectedDataPath = 'test/data/import-view/new-session-import-valid-models.html';
   //saveFile(expectedDataPath,bodyContent);
 
+  
   var expectedContent = loadFile(expectedDataPath);
   
   /// remove tag attributes with random values generated on each import
@@ -54,7 +55,14 @@ test("new-session-import-valid-models", async () => {
   expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
   
 
+
+
+
   expect(bodyContent).toBe(expectedContent);
+
+
+
+
   
 
 });
@@ -91,7 +99,6 @@ test("remove-one-file", async () => {
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_3_notifyinvolvedpartiesofmainbook.bpmn','p_5_3_notifyinvolvedpartiesofmainbook.bpmn');
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn','p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn');  
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_submittolandregistry.bpmn','p_5_submittolandregistry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_7_notifypartnersofcompletion.bpmn','p_7_notifypartnersofcompletion.bpmn');
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_mainprocess.bpmn','p_mainprocess.bpmn'); 
 
   await firstWindow.locator('id=remove-p4certifydocumentsbpmn').click();
@@ -112,6 +119,7 @@ test("remove-one-file", async () => {
   
 
   expect(bodyContent).toBe(expectedContent);
+  
   
 }); 
 
@@ -293,7 +301,7 @@ test("import-unexpected-model-file", async () => {
 });
 
 
-test("import-corrupted-model-file", async () => {
+test("import-corrupt-model-file", async () => {
 
 
   const electronApp = await electron.launch({ args: ["."] });
@@ -391,7 +399,7 @@ test("import-valid-question-file", async () => {
 
   //saveFile(expectedDataPath,bodyContent);
 
-  
+
   var expectedContent = loadFile(expectedDataPath);
   
   /// remove tag attributes with random values generated on each import
@@ -556,7 +564,6 @@ test("load-session-import-valid-session", async () => {
 
   var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
 
-
   const expectedDataPath = 'test/data/import-view/load-session-import-valid-session.html'
 
   //saveFile(expectedDataPath,bodyContent);
@@ -598,7 +605,7 @@ test("load-session-import-unexpected-session", async () => {
   await  delay(3000);
 });
 
-test("load-corrupted-session", async () => {
+test("load-corrupt-session", async () => {
 
 
   const electronApp = await electron.launch({ args: ["."] });
@@ -615,7 +622,7 @@ test("load-corrupted-session", async () => {
   await firstWindow.locator('id=eye-tracking').click();
   await firstWindow.locator('id=load-session').click();
 
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/corrupted-session.json','corrupted-session.json'); 
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/corrupt-session.json','corrupt-session.json'); 
   
   await  delay(3000);
 });
@@ -661,6 +668,9 @@ test("import-valid-analysis-file", async () => {
 
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/analysis/valid-analysis-file.json','valid-analysis-file.json'); 
  
+  
+  await  delay(7000);
+
   var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
 
 
@@ -678,8 +688,7 @@ test("import-valid-analysis-file", async () => {
 
   expect(bodyContent).toBe(expectedContent);
   
-  
-  await  delay(7000);
+
 
 });
 
@@ -730,3 +739,294 @@ test("import-corrupted-analysis-file", async () => {
   await  delay(7000);
 
 });
+
+
+test("import-models-from-two-groups", async () => {
+
+
+  const electronApp = await electron.launch({ args: ["."] });
+  const firstWindow = await electronApp.firstWindow();
+
+
+  // except no errors in console.error()
+  firstWindow.on("console", (message) => {
+    if (message.type() === "error") {
+       expect(message.text()).toBe("");
+    }
+  })
+
+
+  await firstWindow.locator('id=eye-tracking').click();
+  await firstWindow.locator('id=new-session').click();
+  await firstWindow.locator('id=linking-sub-processes').selectOption("newTab");
+  await firstWindow.locator('id=proceed-data-collection-settings').click();
+
+  
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_gatherdata.bpmn','p_1_gatherdata.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_1_fetchandvalidateonlinedata.bpmn','p_1_1_fetchandvalidateonlinedata.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_2_movemortgagetomaindepot.bpmn','p_1_2_movemortgagetomaindepot.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_generatedocument.bpmn','p_2_generatedocument.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_1_generateandappendreturncoversheets.bpmn','p_2_1_generateandappendreturncoversheets.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_3_approveandsigndocuments.bpmn','p_3_approveandsigndocuments.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_4_certifydocuments.bpmn','p_4_certifydocuments.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_submittolandregistry.bpmn','p_5_submittolandregistry.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_1_notifyinvolvedpartiesofjournalentry.bpmn','p_5_1_notifyinvolvedpartiesofjournalentry.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn','p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_3_notifyinvolvedpartiesofmainbook.bpmn','p_5_3_notifyinvolvedpartiesofmainbook.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn','p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn');  
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_6_bookmortgages.bpmn','p_6_bookmortgages.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_7_notifypartnersofcompletion.bpmn','p_7_notifypartnersofcompletion.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_mainprocess.bpmn','p_mainprocess.bpmn'); 
+
+
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_main.bpmn','icc_main.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_1_check-whether-existing-customer.bpmn','icc_1_check-whether-existing-customer.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_2_create-prospect.bpmn','icc_2_create-prospect.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_validate-and-rate-customer.bpmn','icc_3_validate-and-rate-customer.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_1_check-financial-income.bpmn','icc_3_1_check-financial-income.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_2_check-nationality-on-sanctions-list.bpmn','icc_3_2_check-nationality-on-sanctions-list.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_3_check-person-on-sanctions-list.bpmn','icc_3_3_check-person-on-sanctions-list.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_4_evaluate-id-document.bpmn','icc_3_4_evaluate-id-document.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_4_create-credit-card.bpmn','icc_4_create-credit-card.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_5_send-credit-card-information.bpmn','icc_5_send-credit-card-information.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_5_1_send-letter-to-customer.bpmn','icc_5_1_send-letter-to-customer.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_register-for-mobile-payment.bpmn','icc_6_register-for-mobile-payment.bpmn');  
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_1_enable_apple_pay.bpmn','icc_6_1_enable_apple_pay.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_2_enable_google_pay.bpmn','icc_6_2_enable_google_pay.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_7_update-customer-data.bpmn','icc_7_update-customer-data.bpmn'); 
+
+
+  await firstWindow.locator('id=group-assignement-for-file-iccmainbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc1check-whether-existing-customerbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc2create-prospectbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc3validate-and-rate-customerbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc31check-financial-incomebpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc32check-nationality-on-sanctions-listbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc33check-person-on-sanctions-listbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc34evaluate-id-documentbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc4create-credit-cardbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc5send-credit-card-informationbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc51send-letter-to-customerbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc6register-for-mobile-paymentbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc61enableapplepaybpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc62enablegooglepaybpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc7update-customer-databpmn').fill("2")
+
+
+
+  await firstWindow.locator('id=process-files').click();
+
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/questions/questionSet.csv','questionSet.csv'); 
+ 
+
+  var clientState = await firstWindow.evaluate(() => {return window.clientTests.getClientState()});
+
+  //console.log(clientState);
+
+    // check that group ids are correctly assigned to the imported models
+    for (const [index, [key, model]] of Object.entries(Object.entries(clientState.models))) {
+      
+      if(index<15) {
+         expect(model.groupId).toBe("1");
+      }
+      else {
+         expect(model.groupId).toBe("2");
+      }
+
+  }
+
+
+});
+
+
+
+
+test("import-models-from-two-groups-missing-groupAttribute-for-a-model", async () => {
+
+
+  const electronApp = await electron.launch({ args: ["."] });
+  const firstWindow = await electronApp.firstWindow();
+
+
+  // except no errors in console.error()
+  firstWindow.on("console", (message) => {
+    if (message.type() === "error") {
+       expect(message.text()).toBe("Some models are missing a group Id.");
+    }
+  })
+
+
+  await firstWindow.locator('id=eye-tracking').click();
+  await firstWindow.locator('id=new-session').click();
+  await firstWindow.locator('id=linking-sub-processes').selectOption("newTab");
+  await firstWindow.locator('id=proceed-data-collection-settings').click();
+
+  
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_gatherdata.bpmn','p_1_gatherdata.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_1_fetchandvalidateonlinedata.bpmn','p_1_1_fetchandvalidateonlinedata.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_2_movemortgagetomaindepot.bpmn','p_1_2_movemortgagetomaindepot.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_generatedocument.bpmn','p_2_generatedocument.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_1_generateandappendreturncoversheets.bpmn','p_2_1_generateandappendreturncoversheets.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_3_approveandsigndocuments.bpmn','p_3_approveandsigndocuments.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_4_certifydocuments.bpmn','p_4_certifydocuments.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_submittolandregistry.bpmn','p_5_submittolandregistry.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_1_notifyinvolvedpartiesofjournalentry.bpmn','p_5_1_notifyinvolvedpartiesofjournalentry.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn','p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_3_notifyinvolvedpartiesofmainbook.bpmn','p_5_3_notifyinvolvedpartiesofmainbook.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn','p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn');  
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_6_bookmortgages.bpmn','p_6_bookmortgages.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_7_notifypartnersofcompletion.bpmn','p_7_notifypartnersofcompletion.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_mainprocess.bpmn','p_mainprocess.bpmn'); 
+
+
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_main.bpmn','icc_main.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_1_check-whether-existing-customer.bpmn','icc_1_check-whether-existing-customer.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_2_create-prospect.bpmn','icc_2_create-prospect.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_validate-and-rate-customer.bpmn','icc_3_validate-and-rate-customer.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_1_check-financial-income.bpmn','icc_3_1_check-financial-income.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_2_check-nationality-on-sanctions-list.bpmn','icc_3_2_check-nationality-on-sanctions-list.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_3_check-person-on-sanctions-list.bpmn','icc_3_3_check-person-on-sanctions-list.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_4_evaluate-id-document.bpmn','icc_3_4_evaluate-id-document.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_4_create-credit-card.bpmn','icc_4_create-credit-card.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_5_send-credit-card-information.bpmn','icc_5_send-credit-card-information.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_5_1_send-letter-to-customer.bpmn','icc_5_1_send-letter-to-customer.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_register-for-mobile-payment.bpmn','icc_6_register-for-mobile-payment.bpmn');  
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_1_enable_apple_pay.bpmn','icc_6_1_enable_apple_pay.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_2_enable_google_pay.bpmn','icc_6_2_enable_google_pay.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_7_update-customer-data.bpmn','icc_7_update-customer-data.bpmn'); 
+
+
+  await firstWindow.locator('id=group-assignement-for-file-iccmainbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc1check-whether-existing-customerbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc2create-prospectbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc3validate-and-rate-customerbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc31check-financial-incomebpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc32check-nationality-on-sanctions-listbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc33check-person-on-sanctions-listbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc34evaluate-id-documentbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc4create-credit-cardbpmn').fill("")
+  await firstWindow.locator('id=group-assignement-for-file-icc5send-credit-card-informationbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc51send-letter-to-customerbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc6register-for-mobile-paymentbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc61enableapplepaybpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc62enablegooglepaybpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc7update-customer-databpmn').fill("2")
+
+
+
+  await firstWindow.locator('id=process-files').click();
+
+
+});
+
+
+test("import-models-from-two-groups-no-main-model", async () => {
+
+
+  const electronApp = await electron.launch({ args: ["."] });
+  const firstWindow = await electronApp.firstWindow();
+
+
+  // except no errors in console.error()
+  firstWindow.on("console", (message) => {
+    if (message.type() === "error") {
+       expect(message.text()).toBe("Each group should have one main model.");
+    }
+  })
+
+
+  await firstWindow.locator('id=eye-tracking').click();
+  await firstWindow.locator('id=new-session').click();
+  await firstWindow.locator('id=linking-sub-processes').selectOption("newTab");
+  await firstWindow.locator('id=proceed-data-collection-settings').click();
+
+  
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_gatherdata.bpmn','p_1_gatherdata.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_1_fetchandvalidateonlinedata.bpmn','p_1_1_fetchandvalidateonlinedata.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_2_movemortgagetomaindepot.bpmn','p_1_2_movemortgagetomaindepot.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_generatedocument.bpmn','p_2_generatedocument.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_1_generateandappendreturncoversheets.bpmn','p_2_1_generateandappendreturncoversheets.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_3_approveandsigndocuments.bpmn','p_3_approveandsigndocuments.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_4_certifydocuments.bpmn','p_4_certifydocuments.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_submittolandregistry.bpmn','p_5_submittolandregistry.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_1_notifyinvolvedpartiesofjournalentry.bpmn','p_5_1_notifyinvolvedpartiesofjournalentry.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn','p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_3_notifyinvolvedpartiesofmainbook.bpmn','p_5_3_notifyinvolvedpartiesofmainbook.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn','p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn');  
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_6_bookmortgages.bpmn','p_6_bookmortgages.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_7_notifypartnersofcompletion.bpmn','p_7_notifypartnersofcompletion.bpmn');
+
+
+
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_main.bpmn','icc_main.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_1_check-whether-existing-customer.bpmn','icc_1_check-whether-existing-customer.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_2_create-prospect.bpmn','icc_2_create-prospect.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_validate-and-rate-customer.bpmn','icc_3_validate-and-rate-customer.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_1_check-financial-income.bpmn','icc_3_1_check-financial-income.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_2_check-nationality-on-sanctions-list.bpmn','icc_3_2_check-nationality-on-sanctions-list.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_3_check-person-on-sanctions-list.bpmn','icc_3_3_check-person-on-sanctions-list.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_4_evaluate-id-document.bpmn','icc_3_4_evaluate-id-document.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_4_create-credit-card.bpmn','icc_4_create-credit-card.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_5_send-credit-card-information.bpmn','icc_5_send-credit-card-information.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_5_1_send-letter-to-customer.bpmn','icc_5_1_send-letter-to-customer.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_register-for-mobile-payment.bpmn','icc_6_register-for-mobile-payment.bpmn');  
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_1_enable_apple_pay.bpmn','icc_6_1_enable_apple_pay.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_2_enable_google_pay.bpmn','icc_6_2_enable_google_pay.bpmn');
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_7_update-customer-data.bpmn','icc_7_update-customer-data.bpmn'); 
+
+
+  await firstWindow.locator('id=group-assignement-for-file-iccmainbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc1check-whether-existing-customerbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc2create-prospectbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc3validate-and-rate-customerbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc31check-financial-incomebpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc32check-nationality-on-sanctions-listbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc33check-person-on-sanctions-listbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc34evaluate-id-documentbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc4create-credit-cardbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc5send-credit-card-informationbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc51send-letter-to-customerbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc6register-for-mobile-paymentbpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc61enableapplepaybpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc62enablegooglepaybpmn').fill("2")
+  await firstWindow.locator('id=group-assignement-for-file-icc7update-customer-databpmn').fill("2")
+
+
+
+  await firstWindow.locator('id=process-files').click();
+
+
+});
+
+
+test("import-models-from-two-groups-two-main-models", async () => {
+
+
+  const electronApp = await electron.launch({ args: ["."] });
+  const firstWindow = await electronApp.firstWindow();
+
+
+  // except no errors in console.error()
+  firstWindow.on("console", (message) => {
+    if (message.type() === "error") {
+       expect(message.text()).toBe("Each group should have one main model.");
+    }
+  })
+
+
+  await firstWindow.locator('id=eye-tracking').click();
+  await firstWindow.locator('id=new-session').click();
+  await firstWindow.locator('id=linking-sub-processes').selectOption("newTab");
+  await firstWindow.locator('id=proceed-data-collection-settings').click();
+
+  
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_mainprocess.bpmn','p_mainprocess.bpmn'); 
+
+  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_main.bpmn','icc_main.bpmn');
+
+
+  await firstWindow.locator('id=process-files').click();
+
+
+});
+

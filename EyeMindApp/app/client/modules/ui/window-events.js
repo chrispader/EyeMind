@@ -136,9 +136,9 @@ function testListeners() {
   
   window.clientTests = {}
   window.clientTests.getClientState = () => getState();
-  window.clientTests.openMainTabInWithinTabLinks = () => openMainTab("display",true,false);
+  window.clientTests.openMainTabInWithinTabLinks = (modelsGroupId) => openMainTab(true,false,modelsGroupId);
   window.clientTests.resetModel = (fileId) => resetModel(fileId);
-  window.clientTests.resetNavTabsAndTabs = () => resetNavTabsAndTabs();
+  window.clientTests.resetNavTabsAndTabs = (modelsGroupId) => resetNavTabsAndTabs(modelsGroupId);
   
 }
 

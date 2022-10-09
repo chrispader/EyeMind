@@ -24,11 +24,12 @@ SOFTWARE.*/
 
 
 import DataFrame from "dataframe-js";
-import {takesnapshot} from './data-collection'
+import {takesnapshot,stopETInteraction} from './data-collection'
 import {infoAlert,errorAlert} from '../utils/utils'
 import {getState} from '../dataModels/state'
 import {resetNavTabsAndTabs} from './canvas'
 import {sendClickEvent} from './click-stream'
+import {showModelsGroup} from './canvas'
 
 const request = require('request-promise');
 
@@ -61,7 +62,9 @@ async function loadQuestions(file) {
     const questionsTypeSupported = window.globalParameters.QUESTION_TYPES_SUPPORTED;
     
     if(!checkNeccesaryColumnsInQuestionsFile(contentAsDataFrame,requiredColumns,questionsTypeSupported)) throw "required columns or question types not suported";
-	  return true;
+	 
+
+    return true;
 
 	} catch(error) {
     const msg = "An error occured, check the validity of the file"
@@ -290,8 +293,11 @@ async function nextQuestion(currentQuestionId, nextQuestionId, questionsArrSize 
   await questionOnset(nextQuestion,nextQuestionId);
   document.getElementById("question"+nextQuestionId).style.display = "block";
 
+  // show appropriate models group
+  showModelsGroup(nextQuestion.get("model-group"))
+
   // reset nav tabs and tabs 
-  resetNavTabsAndTabs();
+  resetNavTabsAndTabs(nextQuestion.get("model-group"));
 
  }
 
@@ -302,8 +308,11 @@ async function nextQuestion(currentQuestionId, nextQuestionId, questionsArrSize 
     await questionOnset(nextQuestion,nextQuestionId);
     document.getElementById("question"+nextQuestionId).style.display = "block";
 
+   // show appropriate models group
+   showModelsGroup(nextQuestion.get("model-group"))
+
     // reset nav tabs and tabs 
-    resetNavTabsAndTabs();
+    resetNavTabsAndTabs(nextQuestion.get("model-group"));
 
  }
 
@@ -313,9 +322,14 @@ async function nextQuestion(currentQuestionId, nextQuestionId, questionsArrSize 
    await questionOffset(currentQuestion,currentQuestionId,givenAnswer);
    document.getElementById("questions-over").style.display = "block";
 
+    // show appropriate models group
+    //showModelsGroup(null)
+
     // reset nav tabs and tabs 
     resetNavTabsAndTabs();
-    
+
+    // stop eye-tracking
+    stopETInteraction();
 
  }
 
@@ -449,4 +463,45 @@ async function sendQuestionEvent(questionTimestamp, questionEventType,questionPo
 }
 
 
-export {loadQuestions, generateQuestionsSequence, startQuestions};
+
+/**
+ * Title: are model groups valid
+ *
+ * Description:  are model groups valid
+ *
+ * @param {object} questions questions
+ *
+ * Returns {boolean} whether or not  model groups are valid
+ *
+ *
+ * Additional notes: none
+ *
+ */
+ function areModelGroupsValid(questions) {
+
+  console.log("areModelGroupsValid",arguments);
+
+  const state = getState();
+
+  const df = new DataFrame(questions);
+
+  // get model groups
+  var modelGroups = []
+    for (const model of Object.values(state.models)) {
+      console.log("model",model)
+      if(!modelGroups.includes(model.groupId)) {
+        console.log("push")
+        modelGroups.push(model.groupId);
+      }
+    }
+
+  console.log("modelGroups",modelGroups);
+
+  // check
+   let checker = (arr, target) => target.every(v => arr.includes(v));
+   console.log("df.unique('model-group').toArray().flat()",df.unique('model-group').toArray().flat())
+   return checker(modelGroups,df.unique('model-group').toArray().flat());
+
+ }
+
+export {loadQuestions, generateQuestionsSequence, startQuestions, areModelGroupsValid};

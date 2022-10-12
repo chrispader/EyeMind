@@ -2,7 +2,7 @@ A. Requirements to install the dependecis for the eye-tracking server
 
 	1. Install the following:
 
-		1.1. Python 3.8.6 https://www.python.org/downloads/release/python-386/
+		1.1. Python 3.8.6 https://www.python.org/downloads/release/python-386/, make sure you choose the correct distribution 
 		1.2. Pip https://phoenixnap.com/kb/install-pip-windows
 
 
@@ -84,7 +84,7 @@ D. Instructions of Use
 				5. You should know in advnace the following
 					a. screen resolution (recommended 1920-1080)
 					b. screen dimension in inches
-					c. distance between the eye-tracker and the screen
+					c. distance between the eye-tracker and the person
 				6. There should be no display scalling in your computer
 				7. It is recommended to always start a new instance of EyeMind and the eye-tracking sever for each data-collection
 
@@ -107,7 +107,7 @@ D. Instructions of Use
 
 				1. After importing the models and the questions, you can press the start recording button, provide the eye-tracking recoding settings and then save the session (with models, questions and eye-tracking settings). Afterwards, you can import this session and directly start the recording
 
-			D 2.2.5 Data collection
+			D 2.2.6 Data collection
 
 				1. Once the models and the questions are loaded, or a session is loaded, you are ready to start the data collection
 				2. The tool will be set to full screen, but you can use the meta key to navigate to other tools

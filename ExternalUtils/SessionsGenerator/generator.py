@@ -12,8 +12,8 @@ experimentConfig = {
 	"template" :  'templates/pilot-session.json',
 
 	# no need to edit the following
-	"outDirectory": "out/" #output directory
-	"linkingSubProcessesModes": ["no","newTab","withinTab"], #linking modes accronyms for no-support, symoblic links, breadcrumb respectively
+	"outDirectory": "out/", #output directory
+	"linkingSubProcessesModes": ["no","newTab","withinTab"] #linking modes accronyms for no-support, symoblic links, breadcrumb respectively
 }
 
 # check that experimentConfig["outDirectory"] is empty

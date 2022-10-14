@@ -262,3 +262,13 @@ F. Click events
 			- Next button
 				- Pattern: next-button-area-in-questionID_<Question id>
 
+G. Generate Sessions from a template session
+	
+	- the python script in ExternalUtils/SessionsGenerator/generator.py allows to generate session variants from a given (template) session
+	- Steps:
+		1. Create a session in the EyeMind App (by loading models and question, clicking the recording button and saving the session)
+		2. Go to ExternalUtils/SessionsGenerator/generator.py, change the config in experimentConfig
+		3. Make sure that ExternalUtils/SessionsGenerator/out/ contains only README.md
+		4. Run it with "python generator.py"
+		
+		Note: you should remove the folders in ExternalUtils/SessionsGenerator/out/ everytime you run the code (keep only README.md)

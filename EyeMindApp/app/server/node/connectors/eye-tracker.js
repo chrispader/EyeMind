@@ -252,11 +252,12 @@ async function processDataFragement(start,gazeDataSize,externalProgressWindow, m
         };
 
 
-    // request to ET server to get gaze data in range [start,end]    
+    // request to ET server to get gaze data in range [start,end]     
     await request(com).then(function(res) { 
         const state = getState();
         /// send to UI to the mapping
-        mainWindow.webContents.send('mapGazestoElementsFromPageSnapshot',res,state.snapshots,start,gazeDataSize,externalProgressWindow);
+        var snapshots = start==0? state.snapshots : null;
+        mainWindow.webContents.send('mapGazestoElementsFromPageSnapshot',res,start,gazeDataSize,externalProgressWindow,snapshots);
 
     }); 
 

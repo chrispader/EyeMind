@@ -27,19 +27,24 @@ SOFTWARE.*/
 
 import {updateProcessingMessage} from './progress'
 import {calculateProgress} from '../utils/utils'
-
+import {setSnapshots,getSnapshots} from '../dataModels/snapshots'
 
 function mapGazestoElementsFromPageSnapshotListener() {
 
      window.eyeTracker.onMapGazestoElementsFromPageSnapshot(function (args) {
         console.log("mapGazestoElementsFromPageSnapshot", arguments);
         const gazeData = args[0];
-        const snapshots = args[1];
-        const start = args[2];
-        const gazeDataSize = args[3];
-        const externalProgressWindow = args[4];
+        const start = args[1];
+        const gazeDataSize = args[2];
+        const externalProgressWindow = args[3];
+        const snapshots = args[4];
+
+        if(snapshots!=null){
+         console.log("snapshots set");
+         setSnapshots(snapshots);
+     }
         
-        const dataMapped = mapGazestoElementsFromPageSnapshot(gazeData,snapshots);
+        const dataMapped = mapGazestoElementsFromPageSnapshot(gazeData);
         window.eyeTracker.dataMapped(dataMapped,start,gazeDataSize,externalProgressWindow);
 
   });
@@ -48,10 +53,11 @@ function mapGazestoElementsFromPageSnapshotListener() {
 
 
 
-function mapGazestoElementsFromPageSnapshot(gazeData,snapshots) {
+function mapGazestoElementsFromPageSnapshot(gazeData) {
 
-    // console.log("mapGazestoElementsFromPageSnapshot function ",arguments);
+    console.log("mapGazestoElementsFromPageSnapshot function ",arguments);
 
+    var snapshots = getSnapshots();
 
     var currentSnapshotID = -1;
     var dataMapped = [];

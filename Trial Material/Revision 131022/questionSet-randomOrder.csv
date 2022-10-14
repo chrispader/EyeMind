@@ -1,0 +1,27 @@
+id,question,type,options,model-group
+1,Does the process allow recording several shakes in the shelf while being moved by the robot?,multiple-choice,Yes;No;I don't know,1
+2,Is it true that the speed of the robot can change only when the product is fragile?,multiple-choice,Yes;No;I don't know,1
+14,Is it possible to request signining from the trustee several times?,multiple-choice,Yes;No;I don't know,2
+24,Is it possible to migrate prospect to customer and update her personal data?,multiple-choice,Yes;No;I don't know,3
+3,Is it possible to book mortgages before you request a mortgage booking preparation?,multiple-choice,Yes;No;I don't know,2
+15,is it possible to create a data protection information sheet after creating a prospect?,multiple-choice,Yes;No;I don't know,3
+4,"Is it possible to send ""increase mortgage finished"" to the bank, the free notary and the trustee at any order?",multiple-choice,Yes;No;I don't know,2
+9,Is it possible to request transfer to main depot in an online land registry system if the number of land registers is equal to 1?,multiple-choice,Yes;No;I don't know,2
+8,Do you need to generate and append return cover sheets in an online land registery system?,multiple-choice,Yes;No;I don't know,2
+19,is it possible to check the customer financial income before evaluating her id document?,multiple-choice,Yes;No;I don't know,3
+6,Can request transfer to main depot occur after notifying the free notary of main book?,multiple-choice,Yes;No;I don't know,2
+21,Can the activities send credit card to customer and migrate prospect to customer occur at any order?,multiple-choice,Yes;No;I don't know,3
+18,Is it possible to solve problems related to apple pay by support staff before generating a new PIN for the credit card?,multiple-choice,Yes;No;I don't know,3
+16,is it possible to send a letter to the customer with the credit card information before generating a new PIN for the credit card?,multiple-choice,Yes;No;I don't know,3
+12,Is it possible to generate the contract multiple times?,multiple-choice,Yes;No;I don't know,2
+25,Is it possible for the scoring to be ok when validating a customer whose income statement is not plausible but has enough available income?,multiple-choice,Yes;No;I don't know,3
+20,Can a customer can be validated and rated only by looking at whether his nationality is on sactions list?,multiple-choice,Yes;No;I don't know,3
+11,Is it possible to send request certification to the free notary mutiple times?,multiple-choice,Yes;No;I don't know,2
+7,Is it possible to move mortgage to main depot in an online registery system with nominee bank?,multiple-choice,Yes;No;I don't know,2
+10,"After requesting registration, if the journal entry is refused, will the trust receive a message that the increased mortgage is finished?",multiple-choice,Yes;No;I don't know,2
+17,Is it possible to check if the customer country of residence  is sanctioned before creating the data protection information sheet?,multiple-choice,Yes;No;I don't know,3
+26,Is it possible to email the information sheet to an existing customer?,multiple-choice,Yes;No;I don't know,3
+5,Can resolving the land registers occur before generating return cover sheets?,multiple-choice,Yes;No;I don't know,2
+22,Can the activities enable Google pay and update personal data occur at any order?,multiple-choice,Yes;No;I don't know,3
+23,Is it possible for the customer to skip registering in both Apple pay and Google pay?,multiple-choice,Yes;No;I don't know,3
+13,Is it possible for the bank to refuse to approve a document multiple times? ,multiple-choice,Yes;No;I don't know,2

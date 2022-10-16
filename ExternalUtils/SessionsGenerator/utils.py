@@ -50,8 +50,10 @@ def createSessions(experimentConfig):
 			newSession["questions"] = suffleStartingFromIndex(newSession["questions"],startIndex=experimentConfig["shuffleStartIndex"])
 			#Assign linkingSubProcessMode
 			newSession["linkingSubProcessesMode"] = experimentConfig["linkingSubProcessesModes"][participant % len(experimentConfig["linkingSubProcessesModes"])]
-			# Set export path and file name
-			outFile = f'{roomPath}{room}{experimentConfig["ParticipantsIdPrefix"]}{experimentConfig["participantsIdSeed"]+participant}-{newSession["linkingSubProcessesMode"]}.json'
+			# export
+			exportName = f'{experimentConfig["ParticipantsIdPrefix"]}{experimentConfig["participantsIdSeed"]+participant}-{newSession["linkingSubProcessesMode"]}'
+			os.makedirs(roomPath+room+exportName,mode=0o777)
+			outFile = f'{roomPath}{room}{exportName}/{exportName}.json'
 			print(f'outFile: {outFile}')
 			#save file
 			write_json(newSession,outFile)

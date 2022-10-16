@@ -8,11 +8,9 @@ experimentConfig = {
 	"participantsIdSeed":1, #seed from which to start when assigning ids to participants
 	"shuffleStartIndex":2, #shuffle questions list starting from startIndex=2 (to keep the amazon smart process questions first)
 
-	# path of template session file
-	"template" :  '../../Experiment-data/template.json',
 
-	# no need to edit the following
-	"outDirectory": "out/", #output directory
+	"template" :  '../../Experiment-data/template.json', #template file path
+	"outDirectory": "../../Experiment-data/Participant-data/", #output directory
 	"linkingSubProcessesModes": ["no","newTab","withinTab"] #linking modes accronyms for no-support, symoblic links, breadcrumb respectively
 }
 

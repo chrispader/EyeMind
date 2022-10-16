@@ -32,7 +32,7 @@
       <bpmn:incoming>Flow_01s9vft</bpmn:incoming>
       <bpmn:outgoing>Flow_0smyrwg</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Activity_1bosrpv" name="Solve Apple Pay Problems by Support Staff">
+    <bpmn:userTask id="Activity_1bosrpv" name="Solve Problems by Support Staff">
       <bpmn:incoming>Flow_0xg63g1</bpmn:incoming>
       <bpmn:outgoing>Flow_0k3s0tj</bpmn:outgoing>
     </bpmn:userTask>
@@ -101,10 +101,6 @@
         <di:waypoint x="500" y="290" />
         <di:waypoint x="622" y="290" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1edyhze_di" bpmnElement="Flow_1edyhze">
-        <di:waypoint x="618" y="177" />
-        <di:waypoint x="682" y="177" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xg63g1_di" bpmnElement="Flow_0xg63g1">
         <di:waypoint x="658" y="290" />
         <di:waypoint x="700" y="290" />
@@ -112,6 +108,10 @@
       <bpmndi:BPMNEdge id="Flow_0k3s0tj_di" bpmnElement="Flow_0k3s0tj">
         <di:waypoint x="800" y="290" />
         <di:waypoint x="842" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1edyhze_di" bpmnElement="Flow_1edyhze">
+        <di:waypoint x="618" y="177" />
+        <di:waypoint x="682" y="177" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_09gvkj8_di" bpmnElement="Participant_0a4v14d" isHorizontal="true">
         <dc:Bounds x="160" y="420" width="738" height="60" />

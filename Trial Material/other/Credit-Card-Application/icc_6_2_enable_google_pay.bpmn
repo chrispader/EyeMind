@@ -23,7 +23,7 @@
       <bpmn:outgoing>Flow_0xg63g1</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0cpy4os" />
     </bpmn:boundaryEvent>
-    <bpmn:userTask id="Activity_1bosrpv" name="Solve Google Pay Problems by Support Staff">
+    <bpmn:userTask id="Activity_1bosrpv" name="Solve Problems by Support Staff">
       <bpmn:incoming>Flow_0xg63g1</bpmn:incoming>
       <bpmn:outgoing>Flow_0k3s0tj</bpmn:outgoing>
     </bpmn:userTask>

@@ -1,0 +1,17 @@
+﻿Id;Model;Workflow Pattern;Question Type;Question Type;Question Text;Answer;Relevant Models
+1;Credit card;Ordering;Local;COL;"Is the task ""Create Data Protection Information Sheet"" performed after the task ""Create Prospect""?";YES;icc_2_create-prospect.bpmn
+2;Credit card;Ordering;Local;COL;"Is the activity ""Send Letter to Customer"" performed before the task ""Generate new PIN for Credit Card""?";NO;icc_5_send-credit-card-information.bpmn
+3;Credit card;Ordering;Global;COG;"Is the activity ""Evaluate ID Document"" performed before the task ""Fetch Customer by Phone or Email""?";NO;icc_3_2_check-nationality-on-sanctions-list.bpmn, icc_1_check-whether-existing-customer.bpmn
+4;Credit card;Ordering;Global;COG;"Is the task ""Solve Apple Pay Problems by Support Staff"" performed before te task ""Generate PIN Letter""?";NO;icc_6_1_enable_apple_pay.bpmn, icc_5_send-credit-card-information.bpmn
+5;Credit card;Concurrency;Local;CCL;"Are the activities ""Check Financial Income"" and ""Check Person Sanction List"" performed in parallel?";YES;icc_3_validate_and_rate_customer.bpmn
+6;Credit card;Concurrency;Local;CCL;"Can the state ""Scoring ok"" be reached only by performing the activity ""Check Person Sanction List""?";NO;icc_3_validate_and_rate_customer.bpmn
+7;Credit card;Concurrency;Global;CCG;"Can the tasks ""Send Credit Card to Customer"" and ""Migrate Prospect to Customer"" be performed in parallel?";YES;icc_4_create-credit-card.bpmn, icc_7_update-customer.bpmn
+8;Credit card;Concurrency;Global;CCG;"Can the tasks ""Enable Google pay"" and ""Update Personal Data"" be performed in parallel?";YES;icc_6_2_enable_google_pay.bpmn, icc_7_update-customer-data.bpmn
+9;Credit card;Exclusiveness;Local;CEL;"Is it possible that none of the activities ""Enable Apple Pay"" and ""Enable Google Pay"" are performed?";YES;Icc_6_register-for-mobile-payment.bpmn
+10;Credit card;Exclusiveness;Local;CEL;"Is it possible that both tasks ""Migrate Prospect to Customer"" and ""Update Personal Data"" are performed?";NO;icc_7_update-customer-data.bpmn
+11;Credit card;Exclusiveness;Global;CEG;"Is it possible to achieve the state ""scoring ok"" for a customer whose income statement is not plausible but who has enough available income?";NO;icc_3_validate_and_rate_customer.bpmn, icc_3_1_check-financial-income.bpmn
+12;Credit card;Exclusiveness;Global;CEG;"Is the task ""Email Information Sheet to Prospect"" performed if the customer is an already existing customer?";NO;icc_main, icc2_create-prospect.bpmn
+13;Credit card;Repetition;Local;CRL;"Can the task ""Request new ID Copy"" be performed multiple times?";YES;icc_3_validation.bpmn
+14;Credit card;Repetition;Local;CRL;"Is the task ""Create Credit Card"" performed only once?";NO;icc_4_createcreditcard.bpmn
+15;Credit card;Repetition;Global;CRG;"Is the task ""Read Personal Data from ID Copy"" performed only once?";NO;icc_3_4_evaluate-id-document.bpmn, icc_3_validate-and-rate-customer.bpmn
+16;Credit card;Repetition;Global;CRG;"Can the task ""Match ID data with customer data"" be performed multiple times?";YES;icc_3_4_evaluate-id-document.bpmn, icc_3_validate-and-rate-customer.bpmn

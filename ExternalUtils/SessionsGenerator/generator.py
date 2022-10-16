@@ -9,7 +9,7 @@ experimentConfig = {
 	"shuffleStartIndex":2, #shuffle questions list starting from startIndex=2 (to keep the amazon smart process questions first)
 
 	# path of template session file
-	"template" :  'templates/pilot-session.json',
+	"template" :  '../../Experiment-data/template.json',
 
 	# no need to edit the following
 	"outDirectory": "out/", #output directory

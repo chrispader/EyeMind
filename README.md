@@ -44,6 +44,7 @@ C. Eye-tracker setup
 		4.2 Select "Eye tracker calibration", then on the right menu:
 			4.2.1 Change the background color to white
 			4.2.2 Change the target color to black
+			4.2.3 Increase the number of calibration points (i.e., number of targets) to 9
 		4.3 Add screen recording simulus (you can find it in the top bar - to the right), then on the right menu:
 			4.3.1 Reduce frame rate to 5 (This depends on your computer performance. It is used to avoid memory overload during the data recording. In our machine a frame rate of 10 worked well)
 			4.3.2 Reduce video quality to Low (This depends on your computer performance. It is used to avoid memory overload during the data recording. In our machine a medium video quality worked well)

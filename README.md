@@ -269,7 +269,7 @@ G. Generate Sessions from a template session
 	- Steps:
 		1. Create a session in the EyeMind App (by loading models and question, clicking the recording button and saving the session)
 		2. Go to ExternalUtils/SessionsGenerator/generator.py, change the config in experimentConfig
-		3. Make sure that ExternalUtils/SessionsGenerator/out/ contains only README.md
+		3. Make sure that the output folder contains only README.md
 		4. Run it with "python generator.py"
 		
-		Note: you should remove the folders in ExternalUtils/SessionsGenerator/out/ everytime you run the code (keep only README.md)
+		Note: you should remove the folders in the output folder everytime you run the code (keep only README.md)

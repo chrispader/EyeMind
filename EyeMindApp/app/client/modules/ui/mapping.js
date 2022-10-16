@@ -69,7 +69,7 @@ function mapGazestoElementsFromPageSnapshot(gazeData) {
 
         // console.log("gazepoint x,y ",gazepoint.x,gazepoint.y);
         // with gazepoint.x!=null  &&  gazepoint.y!=null && gazepoint.snapshotId != null question event markers are exclued from the mapping
-        if (gazepoint.x!=null  &&  gazepoint.y!=null && gazepoint.snapshotId != null && gazepoint.snapshotId != -1 && snapshots[currentSnapshotID]!=null) {
+        if (gazepoint.x!=null  &&  gazepoint.y!=null && gazepoint.snapshotId != null && gazepoint.snapshotId != -1 && snapshots[gazepoint.snapshotId]!=null) {
             if (currentSnapshotID != gazepoint.snapshotId) {
                 currentSnapshotID = gazepoint.snapshotId
                 document.body.innerHTML = snapshots[currentSnapshotID].code;

@@ -15,7 +15,7 @@
     <bpmn:startEvent id="Event_0j87m03">
       <bpmn:outgoing>Flow_00fzj46</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Activity_1r902pd" name="Create Prospect">
+    <bpmn:serviceTask id="Activity_1r902pd" name="Create Prospect in CRM">
       <bpmn:incoming>Flow_00fzj46</bpmn:incoming>
       <bpmn:outgoing>Flow_1f7chpl</bpmn:outgoing>
     </bpmn:serviceTask>

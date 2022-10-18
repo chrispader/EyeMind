@@ -1215,11 +1215,11 @@ process hierarchy within the tab container
 .explorer li {
   list-style: none;
   color: #888;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: normal;
   min-width: 200px;
-  padding-bottom: 3px;
-  padding: 5px;
+  padding-bottom: 6px;
+  padding-top: 6px;
 }
 
 .explorer a {
@@ -1242,11 +1242,10 @@ process hierarchy within the tab container
 -------------------------------------------------------------- */
 
 .explorer li:before {
-  margin-right: 10px;
   content: "";
-  height: 20px;
+  height: 15px;
   vertical-align: middle;
-  width: 20px;
+  width: 15px;
   background-repeat: no-repeat;
   display: inline-block;
   /* file icon by default */

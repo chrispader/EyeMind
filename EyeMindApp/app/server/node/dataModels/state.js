@@ -15,6 +15,12 @@ var state = {
     }
 
 
+var states = {}
+
+
+
+/* data collection */ 
+
 function getState() {
 	return state;
 }
@@ -23,40 +29,8 @@ function setState(newState) {
 	state = newState;
 }
 
-function getSnapshots() {
-    return state.snapshots;
-}
-
-function getQuestions() {
-    return state.questions;
-}
-
-function getScreenInfo() {
-	return {
-		xScreenDim: state.processedGazeData.xScreenDim,
-		yScreenDim: state.processedGazeData.yScreenDim,
-		screenDistance: state.processedGazeData.screenDistance,
-		monitorSize: state.processedGazeData.monitorSize
-	}
-}
-
-
-
-
-function setheatmapActive(val) {
-	state["heatmapActive"] = val;
-}
-
-function SetProjectionAndMappingActive(val) {
-    state["projectionAndMappingActive"] = val;
-}
-
-function isHeatmapActive() {
-    return state.heatmapActive;
-}
-
 function clearState() {
-	state = {
+    state = {
     snapshotsCounter: 0,
     activeTab: null,
     processedGazeData: {},
@@ -66,37 +40,80 @@ function clearState() {
     temp: {},
     linkingSubProcessesMode: null,
     questions: null
-}
-
-}
-
-function getStyleParameters() {
-    return state.getStyleParameters;
-}
-
-function setAreGazesCorrected(val) {
-    state["processedGazeData"]["areGazesCorrected"] = val;
-}
-
-function areGazesCorrected(val) {
-    return  state["processedGazeData"]["areGazesCorrected"];
+ }
 }
 
 
-function areProjectionAndMappingActive() {
-    return state.projectionAndMappingActive;
+/* Analysis */
+
+
+function getStates() {
+    return states;
 }
+
+function clearStates() {
+    states = {}
+}
+
+
+function addState(filepath,state) {
+    states[filepath] = state;
+}
+
+function removeState(filePath) {
+
+    delete states[filePath];
+}
+
+function doesStateExist(filePath) {
+   
+    return states.hasOwnProperty(filePath);
+}
+
+
+function getSnapshotsOfState(filePath) {
+    return states[filePath].snapshots;
+}
+
+
+function getStyleParametersOfState(filePath) {
+    console.log(filePath);
+    console.log(states[filePath].styleParameters);
+    return states[filePath].styleParameters;
+}
+
+
+function setAreGazesCorrectedOfState(filePath,val) {
+    states[filePath]["processedGazeData"]["areGazesCorrected"] = val;
+}
+
+
+function areAreGazesCorrectedOfState(filePath) {
+    return states[filePath]["processedGazeData"]["areGazesCorrected"]
+}
+
+function getQuestions() {
+    return state.questions;
+}
+
+
+
+
+
+
 
 exports.getState = getState;
 exports.setState = setState;
-exports.getScreenInfo = getScreenInfo;
-exports.setheatmapActive = setheatmapActive;
 exports.clearState = clearState;
-exports.getSnapshots = getSnapshots;
-exports.SetProjectionAndMappingActive = SetProjectionAndMappingActive;
-exports.getStyleParameters = getStyleParameters;
-exports.setAreGazesCorrected = setAreGazesCorrected;
-exports.isHeatmapActive = isHeatmapActive;
-exports.areProjectionAndMappingActive = areProjectionAndMappingActive;
+
+exports.getStates = getStates;
+exports.clearStates = clearStates;
+exports.addState = addState;
+exports.removeState = removeState;
+exports.doesStateExist = doesStateExist;
+exports.getStyleParametersOfState = getStyleParametersOfState;
+exports.setAreGazesCorrectedOfState = setAreGazesCorrectedOfState;
+exports.getSnapshotsOfState = getSnapshotsOfState;
+exports.areAreGazesCorrectedOfState =  areAreGazesCorrectedOfState;
+
 exports.getQuestions = getQuestions;
-exports.areGazesCorrected = areGazesCorrected;

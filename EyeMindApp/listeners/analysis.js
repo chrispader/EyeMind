@@ -1,5 +1,5 @@
 const {ipcMain} = require('electron')
-const {summerizedFixationLog, generateHeatMap,shouldEnableHeatmap,getRandomGazeSet,applyCorrectionOffset,gazeDataFragmentMapped} = require('../app/server/node/analysis/analysis')
+const {summerizedFixationLog, generateHeatMap,shouldEnableHeatmap,getRandomGazeSet,applyCorrectionOffset,gazeDataFragmentMapped,getStatesInfo} = require('../app/server/node/analysis/analysis')
 
 
 
@@ -32,6 +32,10 @@ function analysisListeners(mainWindow) {
  		args.push(mainWindow)
 		return  gazeDataFragmentMapped(...args);
 	}); 
+
+    ipcMain.handle('getStatesInfo', function() {
+		return  getStatesInfo();
+	});
 
 
 

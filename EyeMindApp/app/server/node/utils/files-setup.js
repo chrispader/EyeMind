@@ -1,13 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 const json = require('big-json');
-const {getState,setState,setheatmapActive} = require('../dataModels/state')
+const {getState,setheatmapActive,addState} = require('../dataModels/state')
 
 
-function readState(file,state,mainWindow) {
+function readState(fileName,filePath,state,mainWindow) {
 
 	// read JSON and Save state
-	const readStream = fs.createReadStream(file);
+	const readStream = fs.createReadStream(filePath);
 	const parseStream = json.createParseStream();
 
 
@@ -16,16 +16,18 @@ function readState(file,state,mainWindow) {
 		if(state.temp.expectedArtifact=="analysis") {
 
 			const res = {};
-			res.msg = "File "+file+" read";
-			res.data = data.models; // updated to send only the models
+			res.msg = "File "+filePath+" read";
+			res.data = {"models":data.models, "questions":data.questions}; 
 			res.sucess = true;
-			mainWindow.webContents.send('modelsRead',res);
+			mainWindow.webContents.send('stateRead',res,fileName,filePath);
 			
 			// populate state for the server with the data obtained from the file
 			state = populateState(state,data);
+
+			console.log(filePath);
 	   
-	        // Save state in sever
-			setState(state);
+	        // add state to states
+			addState(filePath,state);
 		}
 
 		else if(state.temp.expectedArtifact=="session") {
@@ -54,7 +56,7 @@ function readState(file,state,mainWindow) {
 		res.sucess = false;
 
 		if(state.temp.expectedArtifact=="analysis") {
-			mainWindow.webContents.send('modelsRead',res);
+			mainWindow.webContents.send('stateRead',res);
 		}
 		else if(state.temp.expectedArtifact=="session") {
 			mainWindow.webContents.send('sessionRead',res);
@@ -106,7 +108,7 @@ function populateState(state,loadedState) {
       
       // control flow depending on whether the file comes directly from a data-collection or an analysis has been already applied
       if(loadedState.mode=="data-collection") {
-        console.log("The file comes directly from a data-collection. Starting new analysis");
+        console.log("The file comes directly from a data-collection");
 
       // initiate or use existing value of state.processedGazeData.areGazesCorrected
       state.processedGazeData.areGazesCorrected = false;
@@ -124,8 +126,7 @@ function populateState(state,loadedState) {
       // initiate or use existing value of state.processedGazeData.areGazesCorrected
       state.processedGazeData.areGazesCorrected = state.processedGazeData.areGazesCorrected==null ? false: state.processedGazeData.areGazesCorrected
 
-	// add an additional attribute --- to decide later whether to keep here or remove
-	setheatmapActive(false)
+	
 
 	return state; 
 	

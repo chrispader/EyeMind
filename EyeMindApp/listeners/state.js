@@ -2,7 +2,7 @@
 
 
 const {ipcMain} = require('electron')
-const {getState, getScreenInfo,setheatmapActive,clearState,getSnapshots,SetProjectionAndMappingActive,getStyleParameters,setAreGazesCorrected,isHeatmapActive,areProjectionAndMappingActive,getQuestions} = require('../app/server/node/dataModels/state')
+const {getState,clearState,getSnapshotsOfState,getStyleParametersOfState,setAreGazesCorrectedOfState,getQuestions, getStates, clearStates, removeState, doesStateExist, areAreGazesCorrectedOfState} = require('../app/server/node/dataModels/state')
 
 // check the return 
 function stateListeners() {
@@ -13,48 +13,51 @@ function stateListeners() {
 	});
 
 
-	ipcMain.handle('getScreenInfo', async function(e, args) {
-		return  await getScreenInfo(...args);
-	});
-
-
-	ipcMain.handle('setheatmapActive', async function(e, args) {
-		return  await setheatmapActive(...args);
-	});
-
-
 	ipcMain.handle('clearState', async function(e, args) {
 		return  await clearState();
 	});
 
-	ipcMain.handle('getSnapshots', async function() {
-		return  await getSnapshots();
-	});
-
-	ipcMain.handle('SetProjectionAndMappingActive', async function(e, args) {
-		return  await SetProjectionAndMappingActive(...args);
-	});
-
-	ipcMain.handle('getStyleParameters', async function() {
-		return  await getStyleParameters();
-	});
-
-	ipcMain.handle('setAreGazesCorrected', async function(e, args) {
-		return  await setAreGazesCorrected(...args);
+	ipcMain.handle('getSnapshotsOfState', async function(e,args) {
+		return  await getSnapshotsOfState(...args);
 	});
 
 
-	ipcMain.handle('isHeatmapActive', async function() {
-		return  await isHeatmapActive();
+	ipcMain.handle('getStyleParametersOfState', async function(e,args) {
+		return  await getStyleParametersOfState(...args);
 	});
 
-	ipcMain.handle('areProjectionAndMappingActive', async function() {
-		return  await areProjectionAndMappingActive();
+	ipcMain.handle('setAreGazesCorrectedOfState', async function(e, args) {
+		return  await setAreGazesCorrectedOfState(...args);
 	});
+
+
 
 	ipcMain.handle('getQuestions', async function() {
 		return  await getQuestions();
 	});
+
+
+	ipcMain.handle('getStates', async function() {
+		return  await getStates();
+	});
+
+	ipcMain.handle('clearStates', async function() {
+		return  await clearStates();
+	});
+
+	ipcMain.handle('removeState', async function() {
+		return  await removeState();
+	});	
+
+
+	ipcMain.handle('doesStateExist', async function(e, args) {
+		return  await doesStateExist(...args);
+	});	
+
+	ipcMain.handle('areAreGazesCorrectedOfState', async function(e, args) {
+		return  await areAreGazesCorrectedOfState(...args);
+	});	
+
 
 	
 

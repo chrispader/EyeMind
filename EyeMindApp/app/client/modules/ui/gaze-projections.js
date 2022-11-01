@@ -29,19 +29,20 @@ import {mapGazetoElementsFromSvgSnapshot} from './mapping'
 import {calculateProgress} from '../utils/utils'
 import {showGeneralWaitingScreen, hideGeneralWaitingScreen, updateProcessingMessage} from './progress'
 import {infoAlert,errorAlert} from '../utils/utils'
-
-
-
+import {SetProjectionAndMappingActive,areProjectionAndMappingActive} from '../dataModels/activeFeatures'
+import {setSnapshots,getSnapshots} from '../dataModels/snapshots'
+import {hideElement,displayElement,populateParticipantFileSelect,updateShownUserConfig} from '../utils/dom'
 
 
 async function projectionInteraction() {
 
   // console.log("projectionInteraction function",arguments);
 
-  // toggling mechanism of projectionAndMapping
-  const areProjectionAndMappingActive = await window.state.areProjectionAndMappingActive()
+  // populate participant file select
+  await populateParticipantFileSelect("participant-file-gaze-projection");
 
-  if(areProjectionAndMappingActive) {
+  // toggling mechanism of projectionAndMapping
+  if(areProjectionAndMappingActive()) {
     // clear projections
     await showGeneralWaitingScreen("Clearing the gaze projections","wait","all-content");
 
@@ -49,48 +50,77 @@ async function projectionInteraction() {
 
     await hideGeneralWaitingScreen("all-content","wait");
 
+    hideElement("user-configuration");
+
   }
   else {
    
   document.getElementById("close-gaze-projection").onclick = closeProjectionSettingsInteraction; 
   document.getElementById("submit-gaze-projection-form").onclick = () => applyProjectionSettings();
-  document.getElementById('gaze-projection-modal').style.display = "block";
+  displayElement("gaze-projection-modal","block");
+  infoAlert("For correct gaze corrections, make sure to set the same screen dimension as the one used for the data collection");
+
 
   }
 
 }
 
+    
 
 
 function closeProjectionSettingsInteraction() {
    // console.log("closeDownloadSettingsInteraction function",arguments);
 
-   document.getElementById('gaze-projection-modal').style.display = "none";
+   hideElement("gaze-projection-modal");
 }
 
 
 
 async function applyProjectionSettings() {
 
-  // console.log("projectionInteraction function",arguments);
+    console.log("applyProjectionSettings",arguments);
 
-   
-    const samplingRatio = parseFloat(document.getElementById("gaze-sample-size-in-percentage").value)/100;
-    
+
+
+    var samplingRatio = document.getElementById("gaze-sample-size-in-percentage").value;
+    const stateFile = document.getElementById("participant-file-gaze-projection").value;
+    console.log("stateFile",stateFile);
+    const stateFileLabel = document.getElementById("participant-file-gaze-projection").options[document.getElementById("participant-file-gaze-projection").selectedIndex].text;
+
+    if(isNaN(samplingRatio) || stateFile=="") {
+      errorAlert("missing/incorrect input fields");
+      return false;
+    }
+
+
+    if(await window.state.areAreGazesCorrectedOfState(stateFile)) {
+        infoAlert("A gaze-correction for this participant/file already exist.\nIMPORTANT NOTE: The gaze projections and corrections will be applied on the raw data and not the corrected one")
+    }
+
+    samplingRatio = parseFloat(samplingRatio)/100;
+
+    // set user config to display
+    const userConfig = {
+      "Sampling Ratio": samplingRatio,
+      "Participant/file": stateFileLabel,
+    }
+
+    // update shown user config
+    updateShownUserConfig(userConfig)
 
     // select random gaze sequence to consider for the projections
-    const randomGazeSet = await window.analysis.getRandomGazeSet(samplingRatio);
+    const randomGazeSet = await window.analysis.getRandomGazeSet(samplingRatio,stateFile);
 
     console.log("randomGazeSet",randomGazeSet);
 
     // get snapshots 
-    const snapshots = await window.state.getSnapshots();
+    const snapshots = await window.state.getSnapshotsOfState(stateFile);
 
     // generate projections
     await showGeneralWaitingScreen("Generating gaze projections","wait","all-content");
 
     // set state.projectionAndMappingActive to true 
-    await window.state.SetProjectionAndMappingActive(true);
+    SetProjectionAndMappingActive(true);
 
 
     document.getElementById("feature-text").innerText = "Gaze Projections and Mapping";
@@ -101,10 +131,12 @@ async function applyProjectionSettings() {
     const gazeProjections = await generateGazeProjection(randomGazeSet,snapshots,0,0,samplingRatio);
 
     // corrections interactions
-    correctionsInteractions(randomGazeSet,snapshots,samplingRatio);
+    correctionsInteractions(randomGazeSet,snapshots,samplingRatio,stateFile,userConfig);
 
-    generateProjectionsContainers(gazeProjections);
-    showCorrectionMenu();
+    generateProjectionsContainers(gazeProjections,null,null);
+
+    displayElement('user-configuration','block');
+    displayElement('gaze-correction','block');
 
     await hideGeneralWaitingScreen("all-content","wait");
     closeProjectionSettingsInteraction();
@@ -115,9 +147,9 @@ async function applyProjectionSettings() {
 
 async function clearProjections() {
 
-    await window.state.SetProjectionAndMappingActive(false);
+    SetProjectionAndMappingActive(false);
     document.getElementById("feature-text").innerText = ""; 
-    hideCorrectionMenu();
+    hideElement("gaze-correction");
     removeOldProjections();
     showModels();
     enableHeatmapOption();
@@ -126,18 +158,24 @@ async function clearProjections() {
 }
 
 
-function correctionsInteractions(randomGazeSet,snapshots,samplingRatio) {
+function correctionsInteractions(randomGazeSet,snapshots,samplingRatio,stateFile,userConfig) {
 
     // correction
     document.getElementById("apply-correction-offset").disabled = true;
-    document.getElementById("update-correction-offset").onclick = () => { updateCorrectionOffsetInteraction(randomGazeSet,snapshots,samplingRatio) }
-    document.getElementById("apply-correction-offset").onclick = () => { applyCorrectionOffsetInteraction(snapshots) }
+    document.getElementById("update-correction-offset").onclick = () => { updateCorrectionOffsetInteraction(randomGazeSet,snapshots,samplingRatio,userConfig) }
+    document.getElementById("apply-correction-offset").onclick = () => { applyCorrectionOffsetInteraction(snapshots,stateFile) }
     
 
 }
 
+function clearGazeCorrectionOffset() {
+  document.getElementById("gaze-correction-x-offset-model").value = "";
+  document.getElementById("gaze-correction-y-offset-model").value = "";
+}
 
-async function updateCorrectionOffsetInteraction(randomGazeSet,snapshots,samplingRatio) {
+
+
+async function updateCorrectionOffsetInteraction(randomGazeSet,snapshots,samplingRatio,userConfig) {
 
       // console.log("updateCorrectionOffsetInteraction function",arguments);
 
@@ -146,6 +184,14 @@ async function updateCorrectionOffsetInteraction(randomGazeSet,snapshots,samplin
       const yOffset = parseFloat(document.getElementById("gaze-correction-y-offset-model").value);
       // console.log("xOffset ",xOffset, "yOffset ", yOffset);
 
+      // add more info to userConfig
+      userConfig["X offset"] = xOffset
+      userConfig["Y offset"] = yOffset
+
+      // update shown userConfig
+      updateShownUserConfig(userConfig)
+
+      clearGazeCorrectionOffset();
 
       // if xOffset and yOffset are not NaN
       if(!isNaN(xOffset) && !isNaN(yOffset)) {
@@ -161,7 +207,7 @@ async function updateCorrectionOffsetInteraction(randomGazeSet,snapshots,samplin
         removeOldProjections();
 
         // generate new projections containers
-        generateProjectionsContainers(gazeProjections);
+        generateProjectionsContainers(gazeProjections,xOffset,yOffset);
 
         /// enable the user to apply the correct offset
         document.getElementById("apply-correction-offset").disabled = false;
@@ -177,17 +223,16 @@ async function updateCorrectionOffsetInteraction(randomGazeSet,snapshots,samplin
 }
 
 
-async function applyCorrectionOffsetInteraction(snapshots) {
+async function applyCorrectionOffsetInteraction(snapshots,stateFile) {
 
-  // console.log("applyCorrectionOffsetInteraction function",args);
+  console.log("applyCorrectionOffsetInteraction",arguments);
 
   const xOffset = parseFloat(document.getElementById("gaze-correction-x-offset-model").value);
   const yOffset = parseFloat(document.getElementById("gaze-correction-y-offset-model").value);
 
   if(Number.isInteger(xOffset) && Number.isInteger(yOffset)) {
-    // change parameters
-   await initiateOffsetCorrection(snapshots,xOffset,yOffset);
-  // console.log("new state",state);
+   await initiateOffsetCorrection(snapshots,xOffset,yOffset,stateFile);
+   clearGazeCorrectionOffset();
   }
    else {
     errorAlert("Please provide a valid value for both x offset and y offset.");
@@ -196,14 +241,6 @@ async function applyCorrectionOffsetInteraction(snapshots) {
 }
 
 
-function showCorrectionMenu() {
-  document.getElementById("gaze-correction").style.display = "block";
-}
-
-
-function hideCorrectionMenu() {
-  document.getElementById("gaze-correction").style.display = "none";
-}
 
 
 function hideModels() {
@@ -228,7 +265,7 @@ function showModels() {
 
 
 
-function generateProjectionsContainers(gazeProjections) {
+function generateProjectionsContainers(gazeProjections,xOffset,yOffset) {
 
     // console.log("generateProjections function",arguments);
 
@@ -263,6 +300,8 @@ function generateProjectionsContainers(gazeProjections) {
 
 
 }
+
+
 
 
 function removeOldProjections() {
@@ -349,8 +388,8 @@ function moveToSnapshot(curentSnapshotId,nextSnapshotId,fileId) {
 
   // console.log("moveToSnapshot function", arguments);
 
-  document.getElementById("model"+fileId+"-projected-model-snapshot"+curentSnapshotId).style.display = "none";
-  document.getElementById("model"+fileId+"-projected-model-snapshot"+nextSnapshotId).style.display = "block";
+  hideElement("model"+fileId+"-projected-model-snapshot"+curentSnapshotId)
+  displayElement("model"+fileId+"-projected-model-snapshot"+nextSnapshotId,"block")
 
 }
 
@@ -453,12 +492,12 @@ async function generateGazeProjection(gazeData,snapshots, xOffset, yOffset,sampl
 }
 
 
-async function initiateOffsetCorrection(snapshots,xOffset,yOffset){
+async function initiateOffsetCorrection(snapshots,xOffset,yOffset,stateFile){
 
-    // console.log("applyCorrectionOffset function", arguments);
+    console.log("initiateOffsetCorrection", arguments);
 
-    const styleParameters = await window.state.getStyleParameters();
-    // console.log("styleParameters", styleParameters);
+    const styleParameters = await window.state.getStyleParametersOfState(stateFile);
+    console.log("styleParameters", styleParameters);
 
     // find max dimension of svgs in the snapshots
     const maxArea = deriveMaxSnapshotDimension(snapshots);
@@ -493,7 +532,7 @@ async function initiateOffsetCorrection(snapshots,xOffset,yOffset){
         // hide button
         wnd.document.getElementById("startCorrection").style.display = "none";
         // apply correctionOffset
-        window.analysis.applyCorrectionOffset(externalMappingWindow,snapshotId,xOffset,yOffset);
+        window.analysis.applyCorrectionOffset(externalMappingWindow,stateFile,snapshotId,xOffset,yOffset);
         
 
     } 
@@ -504,21 +543,27 @@ function applyCorrectionOnGazeFragmentListener() {
 
      window.analysis.onApplyCorrectionOnGazeFragment(function (args) {
         console.log("onApplyCorrectionOnGazeFragment", arguments);
-        var gazeDataFragment = args[0];
-        const start = args[1];
-        const gazeDataSize = args[2];
-        const externalMappingWindow = args[3];
-        var snapshotId = args[4];
-        const snapshots = args[5];
-        const xOffset = args[6];
-        const yOffset = args[7];
+        var stateFile = args[0];
+        var gazeDataFragment = args[1];
+        const start = args[2];
+        const gazeDataSize = args[3];
+        const externalMappingWindow = args[4];
+        var snapshotId = args[5];
+        const snapshots = args[6];
+        const xOffset = args[7];
+        const yOffset = args[8];
         
-        const correctionOutput = applyCorrectionOnGazeFragment(gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,snapshots,xOffset,yOffset);
+      if(snapshots!=null){
+         console.log("snapshots set");
+         setSnapshots(snapshots);
+      }
+
+        const correctionOutput = applyCorrectionOnGazeFragment(gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset);
         
         gazeDataFragment = correctionOutput["gazeDataFragment"];
         snapshotId = correctionOutput["snapshotId"];
 
-        window.analysis.gazeDataFragmentMapped(gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset);
+        window.analysis.gazeDataFragmentMapped(stateFile,gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset);
 
   });
 
@@ -526,12 +571,14 @@ function applyCorrectionOnGazeFragmentListener() {
 
 
 
-function applyCorrectionOnGazeFragment(gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,snapshots,xOffset,yOffset) {
+function applyCorrectionOnGazeFragment(gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset) {
  
 
     // console.log("applyCorrectionOnGazeFragment",arguments);
 
     const wnd = window.externalMappingWindows[externalMappingWindow];
+
+    const snapshots = getSnapshots();
 
     // initiate a counter to report the number of mapping disparities
     //var diffCounter = 1;
@@ -628,14 +675,15 @@ function applyingCorrectionsCompletedListener() {
    window.analysis.onCompleteCorrectionListener(async function (args) {
     console.log("onCompleteCorrectionListener", arguments);
     const externalMappingWindow = args[0];
-     await applyingCorrectionsCompleted(externalMappingWindow);
+    const stateFile = args[1];
+     await applyingCorrectionsCompleted(externalMappingWindow,stateFile);
   });
 
 }
 
 
 
-async function applyingCorrectionsCompleted(externalMappingWindow) {
+async function applyingCorrectionsCompleted(externalMappingWindow,stateFile) {
 
     const wnd = window.externalMappingWindows[externalMappingWindow];
 
@@ -643,7 +691,7 @@ async function applyingCorrectionsCompleted(externalMappingWindow) {
     wnd.close(); 
 
     // set processedGazeData.gazesCorrected flag to true
-    await window.state.setAreGazesCorrected(true);
+    await window.state.setAreGazesCorrectedOfState(stateFile,true);
 
     // hide waiting screen
     await hideGeneralWaitingScreen("all-content","wait");

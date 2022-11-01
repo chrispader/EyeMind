@@ -26,7 +26,7 @@ const {getMostCommon, hasOneElement, randomNumberInRange} = require('../utils/ut
 const {DataFrame} = require('dataframe-js')
 const _ = require('lodash');
 const $ = require('jquery');
-const {getState,setState} = require('../dataModels/state')
+const {getStates} = require('../dataModels/state')
 const {globalParameters} =  require('../../../../globals.js');
 const {calculateProgress} = require('../utils/utils');
 
@@ -43,10 +43,20 @@ Modes:
 */
 
 function shouldEnableHeatmap(){
-  // get state
-  var state = getState()
 
-  return state.processedGazeData.fixationData!=null && state.processedGazeData.fixationFilterData!= null && state.processedGazeData.fixationFilterData.status == "complete";
+  // get states
+  var states = getStates();
+
+  // all states should have fixation data to enable heatmaps
+  for (const state of Object.values(states)) {
+      if(state.processedGazeData.fixationData==null 
+        || state.processedGazeData.fixationFilterData== null 
+          || state.processedGazeData.fixationFilterData.status != "complete") {
+                return false;
+      }
+  }
+
+  return true
 }
 
 
@@ -93,9 +103,9 @@ function summerizedFixationLog(data,mode,areGazesCorrected) {
    
 
     // separate element, tab and question
-     fixationDataFrame = fixationDataFrame.withColumn('Element', (row) => row.get("Element in Tab for question")[0])
-     fixationDataFrame = fixationDataFrame.withColumn('Tab', (row) => row.get("Element in Tab for question")[1])
-     fixationDataFrame = fixationDataFrame.withColumn('currentQuestion', (row) => row.get("Element in Tab for question")[2])
+     fixationDataFrame = fixationDataFrame.withColumn('element', (row) => row.get("Element in Tab for question")[0])
+     fixationDataFrame = fixationDataFrame.withColumn('tabName', (row) => row.get("Element in Tab for question")[1])
+     fixationDataFrame = fixationDataFrame.withColumn('questionID', (row) => row.get("Element in Tab for question")[2])
 
     // drop Element in Tab Element in Tab for question
     fixationDataFrame = fixationDataFrame.drop('Element in Tab for question');
@@ -117,7 +127,7 @@ function getfirstValue(group,element,tab,currentQuestion) {
 
 
 function fixationsToElementVisits(dataFrame) {
-
+    // Note: a visit to an element refers to the time interval from the onset of the first fixation on that element, to the offset of the last consecuctive fixation on that element
     // console.log("fixationsToElementVisits function",arguments);
 
     var visits = []
@@ -137,15 +147,15 @@ function fixationsToElementVisits(dataFrame) {
       // first iteration
       if (i == 0) {
           /// start new visit
-          visit = el.get("Element");
+          visit = el.get("element");
           visit_start = el.get("Fixation Start");
-          visit_tabName = el.get("Tab");
+          visit_tabName = el.get("tabName");
           visit_potential_end =  el.get("Fixation End");
-          visit_question =  el.get("currentQuestion");
+          visit_question =  el.get("questionID");
       }
 
-      /// if a change if element (i.e., visit) or tab happens
-      else if (visit != el.get("Element") || visit_tabName != el.get("Tab") ) {
+      /// change if element (i.e., visit) or tab happens
+      else if (visit != el.get("element") || visit_tabName != el.get("tabName") ) {
           /// finish with the current visit event
           visit_end = visit_potential_end;
           visits.push({
@@ -158,11 +168,11 @@ function fixationsToElementVisits(dataFrame) {
           });
 
           /// start new visit 
-          visit = el.get("Element");
+          visit = el.get("element");
           visit_start = el.get("Fixation Start");
-          visit_tabName = el.get("Tab");
+          visit_tabName = el.get("tabName");
           visit_potential_end =  el.get("Fixation End");
-          visit_question =  el.get("currentQuestion");
+          visit_question =  el.get("questionID");
       }
       // no change in element (i.e., visit) or tab happens 
       else {
@@ -275,53 +285,170 @@ function gazesToElementVisits(data,areGazesCorrected) {
 
 
 
-function generateHeatMap(elementRegistryTypes,measure, measureType, aggregation,additionalElementsToIclude,questionID) {
+function generateHeatMap(filePaths, elementRegistryTypes,measure, measureType, aggregation,additionalElementsToIclude,questionID) {
     // console.log("generateHeatmap function");
 
-    // get state, fixationData and gazeData
-    const state = getState();
-    var fixationData = state.processedGazeData.fixationData;
-    const gazeData = state.processedGazeData.gazeData;
-    const areGazesCorrected = state.processedGazeData.areGazesCorrected;
-
-    // convert FixationData to DataFrame
-    fixationData = new DataFrame(fixationData);
- 
     // derive the list the elements to exclude
     const elementsToExclude = getElementsToExclude(additionalElementsToIclude)
 
-    // from gazes to element visits
-    // additional modalities can be incorporated here e.g., pupil
+    var fixationDataFrame = null;
+    var elementVisitsDfFromGazes = null;
+    var elementVisitsDfFromFixations = null;
 
-    // console.log("fixationData",fixationData);
+    // get state, fixationData, gazeData, areGazesCorrected
+    for (const filePath of filePaths) {
 
-    const elementVisitsFromFixations = fixationsToElementVisits(fixationData);
+      const state = getStates()[filePath]; 
+      const participantID = state.processedGazeData.participantID;
+      const fixationData = new DataFrame(state.processedGazeData.fixationData) 
+      const gazeData = state.processedGazeData.gazeData;
+      const areGazesCorrected = state.processedGazeData.areGazesCorrected;
 
-    const elementVisitsFromGazes = gazesToElementVisits(gazeData,areGazesCorrected);
+      console.log("generateHeatMap: processing ",participantID, "(", filePath ,")");
 
-    //console.log("elementVisitsFromFixations", elementVisitsFromFixations);
-    //console.log("elementVisitsFromGazes", elementVisitsFromGazes);
-
-
-
-    // create dataframe from elementVisitsFromFixations, filter out rows with empty element or tabName, filter in rows with required questionID
-    var elementVisitsDfFromFixations = new DataFrame(elementVisitsFromFixations);    
-    elementVisitsDfFromFixations = elementVisitsDfFromFixations.filter(row => row.get('element') != "" && row.get("tabName") != null && row.get("questionID") == questionID)
-
-    // create dataframe from elementVisitsFromGazes, filter out rows with empty element or tabName, filter in rows with required questionID
-    var elementVisitsDfFromGazes = new DataFrame(elementVisitsFromGazes);
-    elementVisitsDfFromGazes = elementVisitsDfFromGazes.filter(row => row.get('element') != "" && row.get("tabName") != null && row.get("questionID") == questionID)
+      // convert FixationData to DataFrame
+      var fixationDataOfState = new DataFrame(fixationData);
+      // new columns  with participant ID and filePath
+      fixationDataOfState = fixationDataOfState.withColumn('participantID', () => participantID)
+      fixationDataOfState = fixationDataOfState.withColumn('file', () => filePath)
+      // concat
+      fixationDataFrame = fixationDataFrame!=null? fixationDataFrame.union(fixationDataOfState): fixationDataOfState
 
 
-    // apply threshold - removed
-    //elementVisitsDf = elementVisitsDf.filter(row => row.get('visit_duration')>=visitDurationThreshold);
+      // from gazes to element visits 
+      const elementVisitsFromGazesOfState = gazesToElementVisits(gazeData,areGazesCorrected);
+      // create dataframe from elementVisitsFromGazes
+      var elementVisitsDfFromGazesOfState = new DataFrame(elementVisitsFromGazesOfState);
+      // new columns  with participant ID and filePath
+      elementVisitsDfFromGazesOfState = elementVisitsDfFromGazesOfState.withColumn('participantID', () => participantID)
+      elementVisitsDfFromGazesOfState = elementVisitsDfFromGazesOfState.withColumn('file', () => filePath)
+      // concat
+      elementVisitsDfFromGazes = elementVisitsDfFromGazes!=null ? elementVisitsDfFromGazes.union(elementVisitsDfFromGazesOfState): elementVisitsDfFromGazesOfState
 
-      ///group by element and tabName
-    const groupedDfElementVisitsFromFixations = elementVisitsDfFromFixations.groupBy('element', 'tabName');
-    const groupedDfElementVisitsFromGazes = elementVisitsDfFromGazes.groupBy('element', 'tabName');
+      // from fixations to element visits 
+      const elementVisitsFromFixationsOfState = fixationsToElementVisits(fixationDataOfState);
+      // create dataframe from elementVisitsFromFixations
+      var elementVisitsDfFromFixationsOfState = new DataFrame(elementVisitsFromFixationsOfState);  
+      // new columns  with participant ID and filePath
+      elementVisitsDfFromFixationsOfState = elementVisitsDfFromFixationsOfState.withColumn('participantID', () => participantID)
+      elementVisitsDfFromFixationsOfState = elementVisitsDfFromFixationsOfState.withColumn('file', () => filePath)
+      // concat
+      elementVisitsDfFromFixations = elementVisitsDfFromFixations!=null ? elementVisitsDfFromFixations.union(elementVisitsDfFromFixationsOfState) : elementVisitsDfFromFixationsOfState
+
+    }
+
+    //fixationDataFrame.toCSV(true, 'fixationDataFrame.csv')
+    //elementVisitsDfFromGazes.toCSV(true, 'elementVisitsDfFromGazes.csv')
+    //elementVisitsDfFromFixations.toCSV(true, 'elementVisitsDfFromFixations.csv')
+
+    // in fixationDatam filter out rows with empty element or tabName, filter in rows with required questionID  
+    var fixationDataFiltered = fixationDataFrame.filter(row => row.get('element') != "" && row.get("tabName") != null && row.get("questionID") == questionID)
+    // group fixationDataFiltered by element and tabName
+    const groupedDfFixationData = fixationDataFiltered.groupBy('element', 'tabName');
+
+
+    // in elementVisitsDfFromGazes, filter out rows with empty element or tabName, filter in rows with required questionID
+    const elementVisitsDfFromGazesFiltered = elementVisitsDfFromGazes.filter(row => row.get('element') != "" && row.get("tabName") != null && row.get("questionID") == questionID)
+    // group elementVisitsDfFromGazesFiltered by element and tabName from gazes 
+    const groupedDfElementVisitsFromGazes = elementVisitsDfFromGazesFiltered.groupBy('element', 'tabName');
+
+
+    // in elementVisitsDfFromFixations, filter out rows with empty element or tabName, filter in rows with required questionID  
+    const elementVisitsDfFromFixationsFiltered = elementVisitsDfFromFixations.filter(row => row.get('element') != "" && row.get("tabName") != null && row.get("questionID") == questionID)
+    // group elementVisitsDfFromFixationsFiltered by element and tabName
+    const groupedDfElementVisitsFromFixations = elementVisitsDfFromFixationsFiltered.groupBy('element', 'tabName');
+
+
 
     /// generate customized heatmap
-    return customizedHeatMap(fixationData, groupedDfElementVisitsFromFixations, groupedDfElementVisitsFromGazes, elementRegistryTypes, measure, measureType, aggregation,elementsToExclude);
+    return customizedHeatMap(groupedDfFixationData, groupedDfElementVisitsFromFixations, groupedDfElementVisitsFromGazes, elementRegistryTypes, measure, measureType, aggregation,elementsToExclude, questionID);
+
+}
+
+
+
+function customizedHeatMap(groupedDfFixationData, groupedDfFromFixations, groupedDfFromGazes, elementRegistryTypes, measure, measureType, aggregation,elementsToExclude, questionID) {
+
+    // console.log("customizedHeatMap function ",arguments);
+
+
+    var aggregatedDf;
+
+     // differ the execution depending on the measure type (see measures in modal in app/client/index.html)
+     if(measureType=='element_level') // i.e., visit level
+      { 
+
+        aggregatedDf = groupedDfFromFixations.aggregate(grpObj => {
+          // for each group apply the following aggregations
+          switch (aggregation) {
+             case "sum": return grpObj.stat.sum(measure);
+             case "max": return grpObj.stat.max(measure);
+             case "min": return grpObj.stat.min(measure);
+             case "mean": return grpObj.stat.mean(measure);
+             case "count": return grpObj.count();
+             default: { console.error("aggrgation function \"", aggregation , "\" is not supported"); return false; }
+          }
+
+        }).rename('aggregation', measure + '_' + aggregation);
+
+    }
+    else if(measureType=='fixation_level') {
+
+             aggregatedDf = groupedDfFixationData.aggregate(grpObj => {        
+            // for each group apply the following aggregations             
+             switch (aggregation) {
+              case "sum": return grpObj.stat.sum(measure); 
+              case "max": return grpObj.stat.max(measure); 
+              case "min": return grpObj.stat.min(measure);
+              case "mean": return grpObj.stat.mean(measure);
+              case "count": return grpObj.count(); 
+              default: { console.error("aggrgation function \"", aggregation , "\" is not supported"); return false; }
+              }
+
+            }
+            ).rename('aggregation', measure + '_' + aggregation); 
+
+    }
+    else if(measureType=='gaze_level') 
+        { 
+
+        aggregatedDf = groupedDfFromGazes.aggregate(grpObj => {
+          // for each group apply the following aggregations
+          
+          switch (aggregation) {
+             case "sum": return grpObj.stat.sum(measure);
+             case "max": return grpObj.stat.max(measure);
+             case "min": return grpObj.stat.min(measure);
+             case "mean": return grpObj.stat.mean(measure);
+             case "count": return grpObj.count();
+             default: { console.error("aggrgation function \"", aggregation , "\" is not supported"); return false; }
+          }
+
+        }).rename('aggregation', measure + '_' + aggregation);
+
+    }
+
+    else {
+      console.error("measure type \"", measureType, "\" is unkown");
+    }
+
+
+     // include/exclude the BPMN elements selected in the heatMapSettingModal
+    aggregatedDf = aggregatedDf.filter(row => shouldIncludeElement(row.get('tabName'),row.get('element'),elementRegistryTypes,elementsToExclude) );
+
+
+    // set the measure in a ratio scale which will be used to generate the heatmap color for the corresponding element
+    aggregatedDf = putMeasureInColorScale(aggregatedDf, measure + '_' + aggregation);
+
+
+    // obtain the heatmap color depending on the derived ratio
+    aggregatedDf = deriveHeatMapColors(aggregatedDf, measure + '_' + aggregation);
+
+
+    // console.log(aggregatedDf);
+
+
+    return aggregatedDf.toCollection();
 
 }
 
@@ -358,102 +485,6 @@ function getElementsToExclude(additionalElementsToIclude) {
 
 
     return elementsToExclude;
-}
-
-
-function customizedHeatMap(fixationData, groupedDfFromFixations, groupedDfFromGazes, elementRegistryTypes, measure, measureType, aggregation,elementsToExclude) {
-
-    // console.log("customizedHeatMap function ",arguments);
-
-
-    var aggregatedDf;
-
-
-     if(measureType=='element_level') 
-      { 
-
-        aggregatedDf = groupedDfFromFixations.aggregate(grpObj => {
-          
-          switch (aggregation) {
-             case "sum": return grpObj.stat.sum(measure);
-             case "max": return grpObj.stat.max(measure);
-             case "min": return grpObj.stat.min(measure);
-             case "mean": return grpObj.stat.mean(measure);
-             case "count": return grpObj.count();
-             default: { console.error("aggrgation function \"", aggregation , "\" is not supported"); return false; }
-          }
-
-        }).rename('aggregation', measure + '_' + aggregation);
-
-    }
-    else if(measureType=='fixation_level') {
-
-          aggregatedDf = groupedDfFromFixations.aggregate(grpObj => {
-
-            // console.log("gr",grpObj)
-            // console.log(grpObj.head(1),grpObj.tail(1))
-
-             const intervalStart = grpObj.head(1).select("visit_start").toArray()[0][0]
-             const intervalEnd = grpObj.tail(1).select("visit_end").toArray()[0][0]
-
-             // console.log(intervalStart, "-" , intervalEnd);
-
-             const selectedFixationData = fixationData.filter(row => (row.get('Fixation Start') >= intervalStart && row.get('Fixation End') <= intervalEnd));        
-            
-            // console.log("selectedFixationData", selectedFixationData)
-             
-             switch (aggregation) {
-              case "sum": return selectedFixationData.stat.sum(measure); 
-              case "max": return selectedFixationData.stat.max(measure); 
-              case "min": return selectedFixationData.stat.min(measure);
-              case "mean": return selectedFixationData.stat.mean(measure);
-              case "count": return selectedFixationData.count(); 
-              default: { console.error("aggrgation function \"", aggregation , "\" is not supported"); return false; }
-              }
-
-            }
-            ).rename('aggregation', measure + '_' + aggregation); 
-
-
-    }
-    else if(measureType=='gaze_level') 
-        { 
-
-        aggregatedDf = groupedDfFromGazes.aggregate(grpObj => {
-          
-          switch (aggregation) {
-             case "sum": return grpObj.stat.sum(measure);
-             case "max": return grpObj.stat.max(measure);
-             case "min": return grpObj.stat.min(measure);
-             case "mean": return grpObj.stat.mean(measure);
-             case "count": return grpObj.count();
-             default: { console.error("aggrgation function \"", aggregation , "\" is not supported"); return false; }
-          }
-
-        }).rename('aggregation', measure + '_' + aggregation);
-
-    }
-    else {
-      console.error("measure type \"", measureType, "\" is unkown");
-    }
-
-
-     // include/exclude the BPMN elements selected in the heatMapSettingModal
-    aggregatedDf = aggregatedDf.filter(row => shouldIncludeElement(row.get('tabName'),row.get('element'),elementRegistryTypes,elementsToExclude) );
-
-    // set the measure in a ratio scale which will be used to generate the heatmap color for the corresponding element
-    aggregatedDf = putMeasureInColorScale(aggregatedDf, measure + '_' + aggregation);
-
-
-    // obtain the heatmap color depending on the derived ratio
-    aggregatedDf = deriveHeatMapColors(aggregatedDf, measure + '_' + aggregation);
-
-
-    // console.log(aggregatedDf);
-
-
-    return aggregatedDf.toCollection();
-
 }
 
 
@@ -528,9 +559,9 @@ Gaze correction analysis
 */
 
 
-function getRandomGazeSet(samplingRatio) {
+function getRandomGazeSet(samplingRatio,filePath) {
 
-    const state = getState();
+    const state = getStates()[filePath];
 
     const gazeDataKeys = Object.keys(state.processedGazeData.gazeData);
     const numberOfGazesToSelect = Math.floor(samplingRatio*gazeDataKeys.length);
@@ -546,26 +577,25 @@ function getRandomGazeSet(samplingRatio) {
 }
 
 
-function applyCorrectionOffset(externalMappingWindow,snapshotId,xOffset,yOffset,mainWindow) {
+function applyCorrectionOffset(externalMappingWindow,stateFile,snapshotId,xOffset,yOffset,mainWindow) {
 
   // gaze data size
-  const state = getState();
+  const state = getStates()[stateFile];
   const gazeDataSize = state.processedGazeData.gazeData.length;
 
   // set temporary attribute to store the corrections
   state.processedGazeData.temporaryCorrectedGazeData = []
-  setState(state);
 
   // fragment start
   const start = 0;
  
   // get gazeData fragment
-  correctGazeDataFragment(start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset,mainWindow);
+  correctGazeDataFragment(stateFile, start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset,mainWindow);
 
 }
 
 
-function correctGazeDataFragment(start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset,mainWindow) {
+function correctGazeDataFragment(stateFile, start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset,mainWindow) {
 
   //console.log("correctGazeDataFragment",arguments);
 
@@ -574,15 +604,15 @@ function correctGazeDataFragment(start,gazeDataSize,externalMappingWindow,snapsh
   console.log("start ",start,"end ",end,"DATA_FRAGMENT_SIZE",globalParameters.DATA_FRAGMENT_SIZE,"gazeDataSize",gazeDataSize);
 
   // get gaze data
-  const state = getState();
+  const state = getStates()[stateFile];
   const gazeData = state.processedGazeData.gazeData;
-  const snapshots = state.snapshots;
+  const snapshots = start==0? state.snapshots : null;
 
   // select gaze data fragment
   const gazeDataFragment =  gazeData.slice(start,end);
 
   /// provide data fragment for mapping
-  mainWindow.webContents.send('applyCorrectionOnGazeFragment',gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,snapshots,xOffset,yOffset);
+  mainWindow.webContents.send('applyCorrectionOnGazeFragment',stateFile,gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,snapshots,xOffset,yOffset);
   
   // report progress through updateProcessingMessage
   mainWindow.webContents.send('updateProcessingMessage',"Applying gaze correction: "+calculateProgress(end,gazeDataSize)+"% complete",'');
@@ -590,19 +620,18 @@ function correctGazeDataFragment(start,gazeDataSize,externalMappingWindow,snapsh
 }
 
 
-async function gazeDataFragmentMapped(gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset,mainWindow) {
+async function gazeDataFragmentMapped(stateFile, gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset,mainWindow) {
 
     // console.log("gazeDataFragmentMapped",arguments);
 
     
-    const state = getState();
+    const state = getStates()[stateFile];
     state.processedGazeData.temporaryCorrectedGazeData.push.apply(state.processedGazeData.temporaryCorrectedGazeData,gazeDataFragment);  // check if the use of a global variable here is ok
-    setState(state); // implementation: to be kept so afterwards stateDownload would not need a parameter state.
 
     // move to next iteration 
     start = start + globalParameters.DATA_FRAGMENT_SIZE;
     if(start<gazeDataSize) { // to check
-         await correctGazeDataFragment(start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset,mainWindow);
+         await correctGazeDataFragment(stateFile, start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset,mainWindow);
     }
     else {
 
@@ -614,16 +643,25 @@ async function gazeDataFragmentMapped(gazeDataFragment,start,gazeDataSize,extern
         // remove state.processedGazeData.temporaryCorrectedGazeData attribute
         delete state.processedGazeData.temporaryCorrectedGazeData
 
-        // save state
-        setState(state);
-
         // report progress through updateProcessingMessage
         mainWindow.webContents.send('updateProcessingMessage',"Corrections complete",'');
 
         // send message to call the complete correction procedure
-        mainWindow.webContents.send('completeCorrectionListener',externalMappingWindow);
+        mainWindow.webContents.send('completeCorrectionListener',externalMappingWindow,stateFile);
         
     }
+
+}
+
+function getStatesInfo() {
+
+  const states = getStates();
+
+  var info = {}
+
+  Object.keys(states).forEach((key) => {info[key] = states[key].processedGazeData.participantID});
+
+  return info;
 
 }
 
@@ -635,4 +673,4 @@ exports.shouldEnableHeatmap = shouldEnableHeatmap;
 exports.getRandomGazeSet = getRandomGazeSet;
 exports.applyCorrectionOffset = applyCorrectionOffset;
 exports.gazeDataFragmentMapped = gazeDataFragmentMapped;
-
+exports.getStatesInfo = getStatesInfo;

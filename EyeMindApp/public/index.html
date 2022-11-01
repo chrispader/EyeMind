@@ -95,6 +95,7 @@
 
           <div class="fixation-settings-box" id="fixation-settings-box">
 
+            <span class="close" id="close-fixation-settings-projection"><img class="close-icon" id="close-icon" src="icons/close.svg"></span>
          
 
              <h2 >
@@ -104,43 +105,25 @@
          Using the Velocity-Threshold Identification (I-VT) fixation classification algorithm
       </h3>
 
-        <div class="section">
-        <div class="title">  Recording Information: </div>
-        <div class="row">
-        <div class="column"><span class="text"> X Screen dimension in pixels: </span></div>
-        <div class="column" id="x-dim-info">  </div>
-
-        <div class="column"><span class="text"> Y Screen dimension in pixels: </span></div>
-        <div class="column" id="y-dim-info">  </div>
-        </div>
-
-        <div class="row">
-        <div class="column"><span class="text"> Screen distance: </span></div>
-        <div class="column" id="screen-distance-info">  </div>
-
-        <div class="column"><span class="text"> Monitor size in inches: </span></div>
-        <div class="column" id="monitor-size-info">  </div>
-        </div>
-        </div>
 
         <div class="section">
-        <div class="title">  Interpolation: <input type="checkbox" id="is-interpolation" checked></div> 
+        <div class="title">  Interpolation: <input type="checkbox" id="is-interpolation"></div> 
         <div class="row">
         <div class="column"><span class="text"> Max gap length in ms: </span></div>
-        <div class="column"> <input class="form-input is-interpolation" id="max-gap-length" type="text"  value="75" /></div>
+        <div class="column"> <input class="form-input is-interpolation" id="max-gap-length" type="text"  value="75" disabled/></div>
         </div>
       </div>
 
         <div class="section">
-        <div class="title">  Noise reduction: <input type="checkbox" id="is-noice-reduction"></div> 
+        <div class="title">  Noise reduction: <input type="checkbox" id="is-noice-reduction" checked></div> 
         <div class="row">
         <div class="column"><span class="text"> Method: </span></div>
-        <div class="column"> <select class="form-select-short is-noice-reduction" id="noise-reduction-method" disabled>
-                <option value="Average" selected>Moving average</option>
-                <option value="Median">Moving median</option>
+        <div class="column"> <select class="form-select-short is-noice-reduction" id="noise-reduction-method">
+                <option value="Average">Moving average</option>
+                <option value="Median" selected>Moving median</option>
         </select></div>
         <div class="column"><span class="text"> Window size in samples: </span></div>
-        <div class="column"> <input class="form-input is-noice-reduction" id="window-size" type="text"  value="3" disabled /></div>
+        <div class="column"> <input class="form-input is-noice-reduction" id="window-size" type="text"  value="3"  /></div>
         </div>
         </div>
    
@@ -155,20 +138,20 @@
         </div>
 
         <div class="section">
-        <div class="title">  Discard short fixations: <input type="checkbox" id="is-discard-short-fixations"></div> 
+        <div class="title">  Discard short fixations: <input type="checkbox" id="is-discard-short-fixations" checked></div> 
         <div class="row">
         <div class="column"><span class="text"> Minimum fixation duration in ms: </span></div>
-        <div class="column"> <input class="form-input is-discard-short-fixations" id="minimum-fixation-duration" type="text" value="60" disabled/></div>
+        <div class="column"> <input class="form-input is-discard-short-fixations" id="minimum-fixation-duration" type="text" value="60"/></div>
         </div>
         </div>
 
          <div class="section">
-        <div class="title">  Merge adjacent fixations: <input type="checkbox" id="is-merge-adjacent-fixations"></div> 
+        <div class="title">  Merge adjacent fixations: <input type="checkbox" id="is-merge-adjacent-fixations" checked></div> 
         <div class="row">
         <div class="column"><span class="text"> Maximum time between fixations in ms: </span></div>
-        <div class="column"> <input class="form-input is-merge-adjacent-fixations" id="maximum-time-between-fixations" type="text"  value="75" disabled /></div>
+        <div class="column"> <input class="form-input is-merge-adjacent-fixations" id="maximum-time-between-fixations" type="text"  value="75"  /></div>
         <div class="column"><span class="text"> Maximum angle between fixations in degree: </span></div>
-        <div class="column"> <input class="form-input is-merge-adjacent-fixations" id="maximum-angle-between-fixations" type="text" value="0.5" disabled /></div>
+        <div class="column"> <input class="form-input is-merge-adjacent-fixations" id="maximum-angle-between-fixations" type="text" value="0.5" /></div>
         </div>
         </div>
 
@@ -177,8 +160,8 @@
         <div class="row">
         <div class="column"><span class="text"> Handling of fixation spanning over multiple elements, tabs or questions </span></div>
         <div class="column"><select id="fixation-mapping-handling" class="form-select-long">
-          <option value="hard">Discard</option>
            <option value="soft">Assign to the element/tab/question with max gaze points</option>
+           <option value="hard">Discard</option>
         </select> </div>
         </div>
         </div>
@@ -242,6 +225,50 @@
   </div>
 
 
+  <div id="user-configuration" class="user-configuration">
+    <div class='row'>
+      <div class='column-title'>
+        <span class='title-text-container'>User Configuration</span>
+      </div>
+      <div class='column'>
+        <div id="user-config-content"></div>
+      </div>
+  </div>
+</div>
+
+
+  <div id="gaze-correction" class="gaze-correction">
+    <div class='row'>
+      <div class='column-title'>
+        <span class='title-text-container'>General offset correction</span>
+      </div>
+      <div class='column'>
+        <span class='field-text-container'>x offset: </span>
+      </div>
+      <div class='column'>
+        <input class='form-input' type='number' id='gaze-correction-x-offset-model'/>
+      </div>
+      <div class='column'>
+        <span class='field-text-container'>y offset: </span>
+      </div>
+      <div class='column'>
+        <input class='form-input' type='number' id='gaze-correction-y-offset-model'/>
+      </div>
+      <div class='column'>
+      </div>
+      <div class='column'>
+        <button class='btn' id='update-correction-offset'>Update</button>
+      </div>
+      <div class="column" style="width: 200px">
+        
+      </div>
+      <div class="column">
+        <button class='btn-long' id='apply-correction-offset'>Apply correction to data</button>
+      </div>
+    </div>
+  </div>
+
+
   <div class="nav-tabs-and-tabs" id="nav-tabs-and-tabs">
   <div id="nav-tabs-container" class="nav-tabs-container">
     <div id="to-tab-left" class="to-tab-left gaze-element" data-element-id="to-tab-left-button"><</div>
@@ -255,36 +282,6 @@
     <ul id="explorer-groups" class="root"></ul>
   </div>
   <div id="tabs-containers" class="tabs-containers"> 
-    <div id="gaze-correction" class="gaze-correction">
-      <div class='row'>
-        <div class='column-title'>
-          <span class='title-text-container'>General offset correction</span>
-        </div>
-        <div class='column'>
-          <span class='field-text-container'>x offset: </span>
-        </div>
-        <div class='column'>
-          <input class='form-input' type='number' id='gaze-correction-x-offset-model'/>
-        </div>
-        <div class='column'>
-          <span class='field-text-container'>y offset: </span>
-        </div>
-        <div class='column'>
-          <input class='form-input' type='number' id='gaze-correction-y-offset-model'/>
-        </div>
-        <div class='column'>
-        </div>
-        <div class='column'>
-          <button class='btn' id='update-correction-offset'>Update</button>
-        </div>
-        <div class="column" style="width: 200px">
-          
-        </div>
-        <div class="column">
-          <button class='btn-long' id='apply-correction-offset'>Apply correction to data</button>
-        </div>
-      </div>
-    </div>
     <div id="process-hierarchy" class="process-hierarchy">
       <div id="process-hierarchy-content" class="process-hierarchy-content gaze-element" data-element-id="process-hierarchy-content-area"></div>
     </div>
@@ -378,6 +375,13 @@
       </h2>
 
         <div>
+
+        <div class="row">
+        <div class="column"><span class="text">Participant  (File) </span></div>
+        <div class="column"> <select class="form-select-multiple" multiple id="participants-files-heatmap">
+        </select>
+        </div>
+      </div>
 
         <div class="row">
         <div class="column"><span class="text">Question ID: </span></div>
@@ -514,7 +518,14 @@
         </div>
       </div>
 
-          
+
+        <div class="row">
+        <div class="column"><span class="text">Participant (File) </span></div>
+        <div class="column"><select class="form-select" id="participant-file-gaze-projection">
+                <option value="">Select</option>
+        </select>
+        </div>
+      </div>          
     
 
           <div class="row">

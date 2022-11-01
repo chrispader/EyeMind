@@ -28,7 +28,7 @@ import {downloadInteraction} from './download'
 import {getState} from '../dataModels/state'
 import {updateProcessMessageListener} from './progress'
 import {applyCorrectionOnGazeFragmentListener,applyingCorrectionsCompletedListener,projectionInteraction} from './gaze-projections'
-
+import {loadModels} from './shared-interactions'
 import $ from 'jquery';
 
 var REPORT_FREQUENCY = 1000;
@@ -47,7 +47,7 @@ async function analysisModeInteraction() {
   state.mode="analysis"; 
 
   // set state import mode
-  state.importMode = "single";
+  state.importMode = "multiple";
 
   // set expected  artifact and extensions 
   state.temp.expectedArtifact = "analysis";
@@ -72,7 +72,7 @@ async function analysisModeInteraction() {
   /// import 
   document.getElementById("main-view").style.display = "none"; 
   document.getElementById("import-view").style.display = "flex"; 
-  document.getElementById("upload-label").innerText = "Drop one BPM Eye Mind gaze file"; 
+  document.getElementById("upload-label").innerText = "Drop BPM Eye Mind gaze files"; 
   registerFileUpload();
   
 
@@ -99,8 +99,13 @@ async function analysisModeInteraction() {
   // // adjust layout
   //  document.getElementById("nav-tabs-and-tabs").style.height = "calc(100% - 110px)"; // not neede
 
-
-
+  /// load models and enable heatmap options when clicking process-files button
+ document.getElementById("process-files").onclick = () => {
+    // call load models        
+    loadModels();
+    // call enable heatmap options to see whether the heatmap options should be enabled or not
+    enableHeatmapOption();
+ }
   
 }
 

@@ -27,40 +27,40 @@ const fs = require('fs');
 const path = require('path');
 const bfj = require('bfj');
 const {globalParameters} =  require('../../../../globals.js');
-const {getState,setState} = require('../dataModels/state')
+const {getState,getStates} = require('../dataModels/state')
+const {parseOriginalFileName} = require('../utils/utils')
+
 
 
  async function stateDownload(fileName,includeTimeStampInFileName,type) {
   
   //console.log("stateDownload function",arguments);
 
-  const state = getState();
-
-  const timestamp = Date.now();
   const fileExtension = (type=='analysis-data'  || type=='collected-data' || type=='session-data' ) ? "json": "csv" 
+  const timestamp = Date.now();
 
-  fileName = globalParameters.SAVING_PATH+"/"+globalParameters.EXPORT_FILES_PREFIX + type + (includeTimeStampInFileName? fileName+"_"+timestamp : fileName) + "_"+type+"."+fileExtension;
-  
-  return await downloadFile(state,type,fileName); 
+  return await downloadFile(fileName,type,fileExtension,includeTimeStampInFileName,type,timestamp); 
 
 }
 
- async function downloadFile(state,type,fileName) {
+ async function downloadFile(fileName,type,fileExtension,includeTimeStampInFileName,type,timestamp) {
 
     //console.log("downloadFile function",arguments);
 
-
   const res = {};
 
-  if(type=='analysis-data'  || type=='collected-data'  || type=='session-data' ) {
+  if(type=='collected-data'  || type=='session-data' ) {
+
+    const savingPath = globalParameters.SAVING_PATH+"/"+globalParameters.EXPORT_FILES_PREFIX + (includeTimeStampInFileName? fileName+"_"+timestamp : fileName) + "_"+type+"."+fileExtension;
+    const state = getState();
 
     // create file
-    fs.closeSync(fs.openSync(fileName, 'w'));
+    fs.closeSync(fs.openSync(savingPath, 'w'));
 
     // populate json to file using bfj
     try {
-      await bfj.write(fileName, state)
-      const msg = "File exported to "+fileName;
+      await bfj.write(savingPath, state)
+      const msg = "File exported to "+savingPath;
       res.msg = msg;
       res.sucess = true;
     }
@@ -73,45 +73,137 @@ const {getState,setState} = require('../dataModels/state')
     
 
   }
+
+  else if(type=="analysis-data"){
+
+    const states = getStates();
+
+    const savingDir = globalParameters.SAVING_PATH+"/analysis_"+timestamp
+    //create savingDir directory
+    fs.mkdirSync(savingDir);
+
+    var error = false;
+    var errorDetails = {};
+
+    for (const [key, state] of Object.entries(states)) {
+
+      const originalFilename = parseOriginalFileName(key)
+      const savingPath = savingDir+"/"+originalFilename+"."+fileExtension
+
+      // create file
+      fs.closeSync(fs.openSync(savingPath, 'w'));
+
+      // populate json to file using bfj
+      try {
+        await bfj.write(savingPath, state)
+      }
+      catch(error) {
+        error = true;
+        errorDetails[originalFilename] = error;
+      }      
+
+    }
+
+    if(!error) {
+        const msg = "Files exported to "+savingDir;
+        res.msg = msg;
+        res.sucess = true;
+    }
+    else {
+        const msg = "An error occured while exporting the files. See the console for details";
+        console.error("errorDetails ",errorDetails);
+        res.msg = msg;
+        res.sucess = false;
+    }
+
+  }
+
+
   else if(type=="gaze-data")	{
+
+    const savingPath = globalParameters.SAVING_PATH+"/"+globalParameters.EXPORT_FILES_PREFIX + (includeTimeStampInFileName? fileName+"_"+timestamp : fileName) + "_"+type+"."+fileExtension;
+
+    const states = getStates();
+
+    var dataframe = null;
+    
+     for (const [key, state] of Object.entries(states)) {
         
-         const dataframe = new DataFrame(state.processedGazeData.gazeData);
-         try {
-          dataframe.toCSV(true, fileName);
-          const msg = "File exported to "+fileName;
-          res.msg = msg;
-          res.sucess = true;
-         }
-         catch(error) {
-            const msg = "An error occured while exporting the data"+error;
-            console.error(msg);
-            res.msg = msg;
-            res.sucess = false;
-         }
+        const participantID = state.processedGazeData.participantID;
+
+        var dataframeForState = new DataFrame(state.processedGazeData.gazeData);
+        dataframeForState = dataframeForState.withColumn('participantID', () => participantID)
+        dataframeForState = dataframeForState.withColumn('file', () => key)
+
+        dataframe = dataframe!=null ? dataframe.union(dataframeForState) : dataframeForState;
+    }
+
+     try {
+      dataframe.toCSV(true, savingPath);
+      const msg = "File exported to "+savingPath;
+      res.msg = msg;
+      res.sucess = true;
+     }
+     catch(error) {
+        const msg = "An error occured while exporting the data"+error;
+        console.error(msg);
+        res.msg = msg;
+        res.sucess = false;
+     }
 
   }
   else if(type=="fixation-data")  {
-    if(state.processedGazeData.fixationData!=null) {
-       const dataframe = new DataFrame(state.processedGazeData.fixationData);
-         try {
-          dataframe.toCSV(true, fileName);
-          const msg = "File exported to "+fileName;
-          res.msg = msg;
-          res.sucess = true;
-         }
-         catch(error) {
-            const msg = "An error occured while exporting the data"+error;
-            console.error(msg);
+
+        const savingPath = globalParameters.SAVING_PATH+"/"+globalParameters.EXPORT_FILES_PREFIX + (includeTimeStampInFileName? fileName+"_"+timestamp : fileName) + "_"+type+"."+fileExtension;
+
+        const states = getStates();
+
+        var dataframe = null;
+
+        var error = false;
+        var errorDetails = {};
+
+
+         for (const [key, state] of Object.entries(states)) {
+            
+            const participantID = state.processedGazeData.participantID;
+
+            if(state.processedGazeData.fixationData!=null) {
+              var dataframeForState = new DataFrame(state.processedGazeData.fixationData);
+              dataframeForState = dataframeForState.withColumn('participantID', () => participantID)
+              dataframeForState = dataframeForState.withColumn('file', () => key)
+
+              dataframe = dataframe!=null ? dataframe.union(dataframeForState) : dataframeForState;
+            }
+            else {
+               error = true;
+               errorDetails[key] = error;
+            }
+        }
+
+
+        if(!error) {
+           try {
+            dataframe.toCSV(true, savingPath);
+            const msg = "File exported to "+savingPath;
             res.msg = msg;
-            res.sucess = false;
+            res.sucess = true;
+           }
+           catch(error) {
+              const msg = "An error occured while exporting the data"+error;
+              console.error(msg);
+              res.msg = msg;
+              res.sucess = false;
+           }
          }
-    }
-    else {
-      const msg = "The analysis does not have fixation data. Please use the fixation filter to generate it";
-      console.error(msg);
-      res.msg = msg;
-      res.sucess = false;
-    }
+         else {
+          const msg = "Some files do not have fixation data. Please use the fixation filter to generate it. See the console for details";
+          console.error("errorDetails ",errorDetails);
+          res.msg = msg;
+          res.sucess = false;
+         }
+
+
 
   }
    

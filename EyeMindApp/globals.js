@@ -17,6 +17,8 @@ const globalParameters = {
 
    SAVING_PATH: 'outputData',
 
+   QUESTION_TEXT_PREVIEW_LENGTH: 200,
+
    
    AREA_OFFSET : 30, // offset due to the difference between inner and outer window sizes
 

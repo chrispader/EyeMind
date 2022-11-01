@@ -34,8 +34,7 @@ import {cancelDefault,readFileContent} from '../utils/utils'
 import {prepareDataCollectionContent} from './data-collection'
 import {addToTabHeader,changeTab,openInTab,openWithinTab} from './tabs'
 import {loadQuestions} from './questions'
-import {loadModels} from './shared-interactions'
-import {enableHeatmapOption} from './heatmap'
+
 
 import {sendClickEvent} from './click-stream'
 
@@ -48,6 +47,7 @@ import {hideElement} from '../utils/dom'
 
 import {addModel} from '../DataModels/generalModelsRegistry'
 import {setState,getState} from '../dataModels/state'
+import {setFiles,shiftFile,nFiles} from '../dataModels/filesBuffer'
 
 
 import DataFrame from "dataframe-js";
@@ -59,7 +59,6 @@ const modelers = {"BpmnModeler":BpmnModeler,
 "OdmModeler":OdmModeler,
 "OdmNavigatedViewer":OdmNavigatedViewer
 }
-
 
 
 
@@ -123,7 +122,7 @@ function handleDragOver(e) {
  *
  * Description: handle files when they are dropped
  *
- * Control-flow summary: cancel default interaction, get list of dropped items, differ execution denpending on the state.importMode (i.e., multiple or single), call traverseItemTree or traverseItem depending on tate.importMode. traverseItemTree allows to delve into directories
+ * Control-flow summary: cancel default interaction, get list of dropped items, differ execution denpending on the state.importMode (i.e., multiple or single), call traverseItem 
  *
  * @param {object} event
  *
@@ -140,7 +139,7 @@ async function handleDroppedFiles(event) {
     //////////////////////////////////////////////////////
     // a hack to support the testing of a single file upload using the drag/drop feature as the testing library playwright have an issue with webkitGetAsEntry returning always null
     if(event.dataTransfer.isForTestingPurpose) {
-      traverseItem(event.dataTransfer.files[0],"");
+      traverseItem(event.dataTransfer.files[0]);
       return;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,29 +148,19 @@ async function handleDroppedFiles(event) {
 
     cancelDefault(event);
 
-    // get dropped items
-    const items = event.dataTransfer.items;
+    // get dropped files
+    const files = event.dataTransfer.files;
 
+    setFiles(files);
 
     //  differ execution denpending on the state.importMode
-    // state.importMode=="multiple"
     if(state.importMode=="multiple") {
 
       console.log("multiple files import mode");
+      console.log("files",files);
       
-      // iterate the through the different items
-      for (let i=0; i<items.length; i++) {
-
-        // get item
-        const item = items[i].webkitGetAsEntry();
-        console.log("item",item);
-        if (item) {
-            // traverse the item tree to delve into any potential directories
-            await traverseItemTree(item);
-          }
-
-      
-      }
+      // traverse first file item
+      await traverseItem(shiftFile()); 
 
     }
     // state.importMode=="single"
@@ -180,12 +169,9 @@ async function handleDroppedFiles(event) {
       console.log("single file import mode");
 
       // ensure that you have only one single item
-      if(items.length==1 && items[0].webkitGetAsEntry().isFile) {
-
-        // traverse the item
-        items[0].webkitGetAsEntry().file(async function(file) {
-          await traverseItem(file, "/"); 
-        });
+      if(nFiles()==1) {
+        // traverse the file item
+        await traverseItem(shiftFile());
 
       }
       // not a single item
@@ -201,54 +187,6 @@ async function handleDroppedFiles(event) {
 
 
 /**
- * Title: traverse item tree
- *
- * Description: iterate over items and differ the execution depending on whether the item is a file or a directory. 
- *
- * Control-flow summary: iterate over items and differ the execution depending on whether the item is a file or a directory. If the item is a file then call traverseItem() if the item is a directory then recurseively call traverseItemTree() for the directory
- *
- * @param {object} item item 
- * @param {string} path item path 
- *
- * Returns {void}
- *
-*
- * Additional notes: the function calls either traverseItem or traverseItemTree
- *
- */
-async function traverseItemTree(item, path) {
-
-  console.log("traverseItemTree", arguments);
-
-  path = path || "";
-
-  /// apply a different processing depending on whether the item is a file or a directory
-  // item.isFile
-  if (item.isFile) {
-    console.log("item.isFile", item);
-    // get file
-    item.file(async function(file) {
-      await traverseItem(file, path);
-    });
-  // item.isDirectory
-  } else if (item.isDirectory) {
-    console.log("item.isDirectory", item);
-/*    // get folder contents
-    var dirReader = item.createReader();
-    dirReader.readEntries(async function(entries) {
-      // iterate through the directory entries
-      for (var i=0; i<entries.length; i++) {
-        // recursively call traverseItemTree()
-        await traverseItemTree(entries[i], path + item.name + "/");
-      }
-
-    });
-    */
-    errorAlert("Folders are not supported")
-  }
-}
-
-/**
  * Title: traverse item 
  *
  * Description: differ the execution depending on whether the item refers to a data-collection file or an analysis file
@@ -256,7 +194,6 @@ async function traverseItemTree(item, path) {
  * Control-flow summary: get state, apply a different processing depending on whether the item refers to a data-collection file or an analysis file
  *
  * @param {object} file file  
- * @param {string} path file path 
  *
  * Returns {void}
  *
@@ -264,21 +201,24 @@ async function traverseItemTree(item, path) {
  * Additional notes: none
  *
  */
-async function traverseItem(file, path) {
+async function traverseItem(file) {
 
-      console.log("traverseItem arguments",arguments);
+      console.log("traverseItem",arguments);
 
       var state = getState();
 
       // apply a different processing to the file depending on whether it is a model for data collection or a json file for the analysis
       // data-collection mode
       if(state.mode=="data-collection") {
-        // readFileContent then traverseDataCollectionFile
-        readFileContent(file, async (content) => { await traverseDataCollectionFile(file,path,content) });      
+        // readFileContent then traverseDataCollectionFile and traverseMoreItems
+        readFileContent(file, async (content) => { 
+          await traverseDataCollectionFile(file,content)
+          await traverseMoreItems();
+         });      
       }
       // analysis mode
       else if(state.mode=="analysis") {
-        // traverseAnalysisFile
+        // traverseAnalysisFile (traverseMoreItems is in the callback in window.utils.onStateRead (or in traverseAnalysisFile() if the file already exists))
         await traverseAnalysisFile(file);
       }
   
@@ -286,11 +226,39 @@ async function traverseItem(file, path) {
 
 
 /**
+ * Title: traverse more items
+ *
+ * Description: traverse more item files if they exist
+ *
+ * @param {void} .
+ *
+ * Returns {void}
+ *
+*
+ * Additional notes: none
+ *
+ */
+async function traverseMoreItems() {
+    if(nFiles()>0){
+      // traverse first file
+      await traverseItem(shiftFile()); 
+    }
+    else {
+      await hideGeneralWaitingScreen("all-content","wait");
+    }
+}
+
+
+
+
+
+/**
  * Title: traverse analysis file 
  *
  * Description: differ the execution depending on whether the item refers to a data-collection file or an analysis file
  *
- * Control-flow summary: get state, get file extentsion, check if the file has the expected extension and artifact for the analysis mode, if so, call window.utils.readState(file.path,state) to read the state within the file in the server side, then call modelsReadListener() to listen to an event incoming from the server side when the models are read
+ * Control-flow summary: get state, get file extentsion, check if the file has the expected extension and artifact for the analysis mode, if so, call window.utils.readState(file.path,state) to read the state within the file in the server side, 
+                      then call stateReadListener() to listen to an event incoming from the server side when the models are read
  *
  * @param {object} file file  
  *
@@ -310,7 +278,17 @@ async function traverseAnalysisFile(file) {
   const fileExtension = fileName.split('.').pop();
 
   var filePath = file.path
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // move to next file if the file state already exists
+  if(await window.state.doesStateExist(filePath)) {
+      const msg = "analysis file already exists";
+      errorAlert(msg);
+      console.error(msg);
+      await traverseMoreItems();
+      return;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////// might need updates
   // a hack to support the testing of a single file upload using the drag/drop feature
     if(file.isForTestingPurpose) {
       filePath = file.localFilePath;
@@ -321,11 +299,11 @@ async function traverseAnalysisFile(file) {
   // check if the file has the expected extension and artifact for the analysis mode
   if(state.temp.expectedExtensions.includes(fileExtension) && state.temp.expectedArtifact=="analysis") {
     
-      await showGeneralWaitingScreen("Please wait while the file is being loaded <br> This step can take several minutes depending on the size of the file","wait","all-content");          
+      await showGeneralWaitingScreen("Loading "+fileName+"... <br><br> This step can take several minutes depending on the size of the file","wait","all-content");          
 
-      window.utils.readState(filePath,state);
+      window.utils.readState(fileName,filePath,state);
 
-      modelsReadListener();
+      stateReadListener();
   }
   else {
 
@@ -334,7 +312,6 @@ async function traverseAnalysisFile(file) {
   }
 
 }
-
 
 
 /**
@@ -352,7 +329,7 @@ async function traverseAnalysisFile(file) {
  * Additional notes: none
  *
  */
-async function traverseDataCollectionFile(file,path,content) {
+async function traverseDataCollectionFile(file,content) {
 
     console.log("traverseDataCollectionFile function", arguments);
 
@@ -363,6 +340,8 @@ async function traverseDataCollectionFile(file,path,content) {
 
     console.log("fileExtension",fileExtension);
 
+    await showGeneralWaitingScreen("Loading "+fileName+"...","wait","all-content");          
+
     /// apply different processing depending on the file extension and expected artifact
     if(state.temp.expectedExtensions.includes(fileExtension) && state.temp.expectedArtifact=="session") {
       // traverseSessionFile
@@ -370,7 +349,7 @@ async function traverseDataCollectionFile(file,path,content) {
     }
     else if(state.temp.expectedExtensions.includes(fileExtension) && state.temp.expectedArtifact=="models") {
       // traverseModelsFile
-      await traverseModelsFile(fileName,content,path)
+      await traverseModelsFile(fileName,content)
     }
     else if(state.temp.expectedExtensions.includes(fileExtension) && state.temp.expectedArtifact=="questions") {
        // traverseQuestionsFile
@@ -415,7 +394,7 @@ async function traverseSessionFile(file,callback) {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-  await window.utils.readState(filePath,state,callback);
+  await window.utils.readState(file.name,filePath,state,callback);
   sessionReadListener();
 }
 
@@ -455,6 +434,7 @@ async function traverseQuestionsFile(file) {
 
  * @param {string} fileName  name of the file  
  * @param {string} content file content 
+ * @param {string} path (optional) file path within a directory
  *
  * Returns {void}
  *
@@ -462,7 +442,7 @@ async function traverseQuestionsFile(file) {
  * Additional notes: none
  *
  */
-async function traverseModelsFile(fileName,content,path) {
+async function traverseModelsFile(fileName,content,path="") {
 
   console.log("traverseModelsFile",arguments);
 
@@ -483,11 +463,11 @@ async function traverseModelsFile(fileName,content,path) {
           // process model
           await processModel(file.xml,file.id,file.fileName,file.path); 
           // create file info menu
-          createFileInfoBlock(file);
+          createModelFileInfoBlock(file);
       }
       catch(error) {
         // something wrong happened with the opening of the diagram
-        removeFile(file);
+        removeModelFile(file);
         console.error(file.fileName+" is invalid");
         errorAlert(file.fileName+" is invalid");
       }
@@ -506,9 +486,9 @@ async function traverseModelsFile(fileName,content,path) {
 
 
 /**
- * Title: create file info block
+ * Title: create model file info block
  *
- * Description: creating a file info block with information and setting options about the imported file
+ * Description: creating a file info block with information and setting options about the imported model file
  *
  * Control-flow summary: create fileInfo block about the imported model,  hide upload label, fill in the file info block with filename, a radio-box allowing to set the file as a main model and a checkbox allowing to set the tab refering to the model as unclosabled. Then, allow to remove the file
 
@@ -520,9 +500,9 @@ async function traverseModelsFile(fileName,content,path) {
  * Additional notes: none
  *
  */
-function createFileInfoBlock(file) {
+function createModelFileInfoBlock(file) {
 
-    console.log("createFileInfoBlock",arguments);
+    console.log("createModelFileInfoBlock",arguments);
 
     var state = getState();
 
@@ -557,11 +537,54 @@ function createFileInfoBlock(file) {
 }
 
 
+/**
+ * Title: create analysis file info block
+ *
+ * Description: creating a file info block with information and setting options about the imported analysis file
+ *
+ * @param {object} file file with the following attributes {"name", "path"}
+ *
+ * Returns {void}
+ *
+*
+ * Additional notes: none
+ *
+ */
+function createAnalysisFileInfoBlock(file) {
+
+    console.log("createAnalysisFileInfoBlock",arguments);
+
+    var state = getState();
+
+    /// create fileInfo block about the imported model
+    const fileInfo = document.createElement("div");
+    fileInfo.setAttribute("id", "fileinfo-"+file.path);
+    fileInfo.setAttribute("class", "row");
+
+    // hide upload label
+    hideElement("upload-label")
+    
+    // fill in the file info block
+    fileInfo.innerHTML =
+    // file name 
+    '<div class="column file-info">'+file.name+'</div>';
+    // add a button allowing to remove the file
+    // '<div class="column"><button class="remove-btn" id="remove-'+file.path+'"">Remove</button></div>'; -- not fully working -> the loaded models and questions should be deleted as well and not only the state in the server
+    /// add a click event listener call the function to remove the file
+
+    /// add the file info block to the file-list
+    document.getElementById("file-list").appendChild(fileInfo);
+
+   // document.getElementById("remove-"+file.path).onclick = () => removeAnalysisFile(file);
+
+}
+
+
 
 /**
- * Title: remove file
+ * Title: remove model file
  *
- * Description: procedure to remove an imported file
+ * Description: procedure to remove an imported model file
  *
  * Control-flow summary: get state, remove the file attribute from state.models and remove the DOM elements related to the file
 
@@ -573,8 +596,8 @@ function createFileInfoBlock(file) {
  * Additional notes: none
  *
  */
-function removeFile(file) {
-      console.log("removeFileInfoMenu",arguments);
+function removeModelFile(file) {
+      console.log("removeModelFile",arguments);
 
       var state = getState();
       delete state.models[file.id];
@@ -585,12 +608,33 @@ function removeFile(file) {
 
 
 /**
+ * Title: remove analysis file
+ *
+ * Description: procedure to remove an imported analysis file
+ *
+ * @param {object} file file with the following attributes {"name", "path"}
+ *
+ * Returns {void}
+ *
+*
+ * Additional notes: none
+ *
+ */
+async function removeAnalysisFile(file) {
+      console.log("removeAnalysisFile",arguments);
+      if(document.getElementById("fileinfo-"+file.path)!=null) {
+        await window.state.removeState(file.path);
+        document.getElementById("fileinfo-"+file.path).remove();
+      }
+
+}
+
+
+/**
  * Title: models read listener
  *
- * Description: a listener that enacts when models are read in the server side
+ * Description: a listener that enacts when a new state is read in the server side
  *
- * Control-flow summary: call modelsRead()
-
  * @param {void} . .
  *
  * Returns {void}
@@ -600,29 +644,36 @@ function removeFile(file) {
  *
  */
 
- function modelsReadListener() {
+ function stateReadListener() {
 
-     console.log("modelsReadListener",arguments);
+     console.log("stateReadListener",arguments);
 
-     window.utils.onModelsRead(async function (args) {
+     window.utils.onStateRead(async function (args) {
 
-        console.log("onModelsRead", arguments);
+        console.log("onStateRead", arguments);
+
         const res = args[0];
+
+        const file = {"name": args[1], "path":  args[2]}
+
+        createAnalysisFileInfoBlock(file);
+
+        await stateRead(res);
+
+        await traverseMoreItems();
         
-        await modelsRead(res);
+       
 
   });
 
 }
 
 /**
- * Title: models read
+ * Title: state read
  *
- * Description: update client state with the models read from the server side and call the methods nessary to prepare the analysis view
+ * Description: update client state with new models read from the server side
  *
- * Control-flow summary: update client state with the models read from the server side and call the methods nessary to prepare the analysis view (i.e., processModel(),  loadModels(), enableHeatmapOption() )
-
- * @param {object} res an object coming from the server side with the following attributes: sucess (boolean), msg (string) and data (object refering to the models)
+ * @param {object} res an object coming from the server side with the following attributes: sucess (boolean), msg (string) and data (object with the models and the questions)
  *
  * Returns {void}
  *
@@ -630,9 +681,9 @@ function removeFile(file) {
  * Additional notes: none
  *
  */
- async function modelsRead(res) {
+ async function stateRead(res) {
 
-          console.log("modelsRead",arguments);
+          console.log("stateRead",arguments);
 
           // get client state
           var state = getState();
@@ -640,23 +691,37 @@ function removeFile(file) {
           // if the server res.sucess coming from the server is true
           if(res.sucess) {
 
-              // get models
-              const models = res.data;
 
-              console.log("loaded models", models);
-
-              // set state.models to models
-              state.models = models;
-
-              //process the open the models within the loaded state
-              for (const [key, value] of Object.entries(state.models)) {
-                   await processModel(state.models[key].xml,state.models[key].id,state.models[key].fileName,state.models[key].path);
+              //process the models within the loaded state
+              for (const [key, value] of Object.entries(res.data.models)) {
+                // add the new models to (client) state.models 
+                if(!state.models.hasOwnProperty(key)) {
+                  console.log("new model ",res.data.models[key]);
+                  state.models[key] = res.data.models[key];
+                  await processModel(state.models[key].xml,state.models[key].id,state.models[key].fileName,state.models[key].path);
                 }
+              }
               
-              // call load models        
-              loadModels();
-              // call enable heatmap options to see whether the heatmap options should be enabled or not
-              enableHeatmapOption();
+              //process the questions within the loaded state
+              if(state.questions==null) {
+                state.questions = []
+              }
+
+              res.data.questions.forEach(function (question) {
+
+                // add the new questions to (client) state.quetions 
+                if(state.questions.find(existingQuestion => existingQuestion.id==question.id) == null) {
+                  console.log("new question ",question);
+                  state.questions.push(question);
+                }
+                else {
+                  console.log("existng question", question);
+                }
+
+              });
+
+
+
           
       }
       else {
@@ -1393,6 +1458,62 @@ function doEachGroupHasOnlyOneMainModel() {
    return true;
 
 }
+
+
+
+
+
+
+
+
+/**
+ * Title: traverse item tree
+ *
+ * Description: iterate over items and differ the execution depending on whether the item is a file or a directory. 
+ *
+ * Control-flow summary: iterate over items and differ the execution depending on whether the item is a file or a directory. If the item is a file then call traverseItem() if the item is a directory then recurseively call traverseItemTree() for the directory
+ *
+ * @param {object} item item 
+ * @param {string} path item path 
+ *
+ * Returns {void}
+ *
+*
+ * Additional notes: the function calls either traverseItem or traverseItemTree
+ *
+ */
+/*async function traverseItemTree(item, path) {
+
+  console.log("traverseItemTree", arguments);
+
+  path = path || "";
+
+  /// apply a different processing depending on whether the item is a file or a directory
+  // item.isFile
+  if (item.isFile) {
+    console.log("item.isFile", item);
+    // get file
+    item.file(async function(file) {
+      await traverseItem(file, path);
+    });
+  // item.isDirectory
+  } else if (item.isDirectory) {
+    console.log("item.isDirectory", item);
+/*    // get folder contents
+    var dirReader = item.createReader();
+    dirReader.readEntries(async function(entries) {
+      // iterate through the directory entries
+      for (var i=0; i<entries.length; i++) {
+        // recursively call traverseItemTree()
+        await traverseItemTree(entries[i], path + item.name + "/");
+      }
+
+    });
+   
+    errorAlert("Folders are not supported")
+  }
+}*/
+
 
 
 export {registerFileUpload,createModel,assignModelsToGroups,areModelsCorrectlyGrouped}

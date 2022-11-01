@@ -27,9 +27,12 @@ import {showGeneralWaitingScreen, hideGeneralWaitingScreen} from './progress'
 import {infoAlert,errorAlert} from '../utils/utils'
 import $ from 'jquery';
 import {getGeneralModelsRegistry} from '../DataModels/generalModelsRegistry'
+import {setheatmapActive,isHeatmapActive} from '../dataModels/activeFeatures'
+import {getState} from '../dataModels/state'
+import {hideElement,displayElement,populateParticipantFileSelect,getSelectValues, updateShownUserConfig} from '../utils/dom'
+
 
 const {DataFrame} = require('dataframe-js');
-
 
 
 async function enableHeatmapOption() {
@@ -60,29 +63,29 @@ function disableHeatmapOption() {
 
 async function heatmapInteraction(){
 
-  console.log("heatmapInteraction function",arguments);
-
- 
+  console.log("heatmapInteraction",arguments);
 
   // toggling mechanism of heatmaps (clearing heatmap and showing heatmap-settings-modal)
-  const isHeatmapActive = await window.state.isHeatmapActive();
-  if(isHeatmapActive) {
+  if(isHeatmapActive()) {
 
       await showGeneralWaitingScreen("Clearing the heatmap and overlays","wait","all-content");
 
   		await clearHeatmap();
 
       await hideGeneralWaitingScreen("all-content","wait");
+
+      hideElement("user-configuration");
   }
   else {
 
 
     await populateQuestionIDSelect();
+    await populateParticipantFileSelect("participants-files-heatmap");
 
 	  document.getElementById("measure").onchange = heatmapAggregationsInteraction; 
 	  document.getElementById("close-heatmap-settings").onclick = closeHeatmapSettingsInteraction; 
 	  document.getElementById("submit-heatmap-form").onclick = () => applyHeatmapSettingsInteraction();
-	  document.getElementById('heatmap-settings-modal').style.display = "block";
+    displayElement("heatmap-settings-modal","block")
   }
 
 }
@@ -96,15 +99,17 @@ async function populateQuestionIDSelect() {
 
    const questionIDSelect = document.getElementById("question");
 
+   const questionTextLength = await window.globalParameters.QUESTION_TEXT_PREVIEW_LENGTH;
+
    if(questionIDSelect.options.length<=1) {
 
-      const questions = await window.state.getQuestions();
+      const questions = getState().questions;
 
       for(let i=0; i<questions.length; i++) {
 
           var opt = document.createElement('option');
           opt.value = questions[i].id;
-          opt.innerHTML = questions[i].id;
+          opt.innerHTML = questions[i].id+ " (" +questions[i].question.slice(0,questionTextLength)+(questions[i].question.length>questionTextLength? "..." : "")    +")";
           questionIDSelect.appendChild(opt);       
       }
 
@@ -121,25 +126,31 @@ async function applyHeatmapSettingsInteraction() {
    const generalModelsRegistry = getGeneralModelsRegistry();
    console.log("generalModelsRegistry",generalModelsRegistry);
 
+   const stateFiles = getSelectValues("participants-files-heatmap","value");
+   const stateFilesLabels =  getSelectValues("participants-files-heatmap","text");
+
    const measureSelect = document.getElementById("measure")
    const measure = measureSelect.options[measureSelect.selectedIndex].getAttribute('measure');
    const measureType = measureSelect.options[measureSelect.selectedIndex].getAttribute('measureType');
 
 
    const aggregationSelect = document.getElementById("aggregation")
-   const aggregation = document.getElementById("aggregation").value
+   const aggregation = aggregationSelect.value
    const aggregationType = aggregationSelect.options[aggregationSelect.selectedIndex].getAttribute('aggregationType');
 
    const questionIDSelect = document.getElementById("question");
-   const questionID = document.getElementById("question").value
+   const questionID = questionIDSelect.value
+   const questionText = questionIDSelect.options[questionIDSelect.selectedIndex].innerText
 
 
-    if(measure=='' ||  aggregation=='' || questionID=='') {
-      errorAlert("Please select a measure/aggregation/questionID ");
+    console.log("questionID",questionID);
+
+
+    if(measure=='' ||  aggregation=='' || questionID=='' || stateFiles.length==0) {
+      errorAlert("Please select a participants/measure/aggregation/questionID ");
       return false;
     }
 
-    console.log("questionID",questionID);
 
     await showGeneralWaitingScreen("Preparing the heatmap and the overlays","wait","all-content");
 
@@ -154,10 +165,20 @@ async function applyHeatmapSettingsInteraction() {
     } 
 
    // generate and show heatmap
-   await window.state.setheatmapActive(true) // used afterwards for the toggling
+   setheatmapActive(true) // used afterwards for the toggling
 
    const timestampUnit = document.getElementById("timestamp-unit").value;
-   console.log("measure and type",measure,measureType)
+
+    // set user config to display
+    const userConfig = {
+      "Participants": stateFilesLabels.toString(),
+      "Question": questionText,
+      "Measure": measure,
+      "Aggregation": aggregation
+    }
+
+    // update shown user config
+    updateShownUserConfig(userConfig)
 
    // derive elementRegistryTypes
    const elementRegistryTypes = {};
@@ -172,12 +193,14 @@ async function applyHeatmapSettingsInteraction() {
 
    console.log("elementRegistryTypes", elementRegistryTypes);
 
-   const heatmap = await window.analysis.generateHeatMap(elementRegistryTypes,measure, measureType, aggregation,additionalElementsToIclude,questionID);
+   const heatmap = await window.analysis.generateHeatMap(stateFiles, elementRegistryTypes,measure, measureType, aggregation,additionalElementsToIclude,questionID);
    
    visitsHeatMap(heatmap,generalModelsRegistry,measure,aggregation,aggregationType, timestampUnit);
 
    document.getElementById("feature-text").innerText = "Heatmap and Overlays"; 
    closeHeatmapSettingsInteraction();
+
+   displayElement("user-configuration","block")
 
    await hideGeneralWaitingScreen("all-content","wait");
 
@@ -334,7 +357,7 @@ async function clearHeatmap() {
 
 	   // clear heatmap
 
-     await window.state.setheatmapActive(false);
+     setheatmapActive(false);
 
     // get generalModelsRegistry
     const generalModelsRegistry = getGeneralModelsRegistry();
@@ -361,7 +384,7 @@ function heatmapAggregationsInteraction() {
    Array.prototype.forEach.call(document.getElementsByClassName("aggr"), function(element) { element.style.display = "none"});
 
    if(aggegationsType!="") aggegationsType.split("-").forEach(function (item) {
-    document.getElementById(item+"-aggr").style.display = "block";
+    displayElement(item+"-aggr","block")
   });
 
    aggregationSelect.options[0].selected = true;
@@ -374,7 +397,7 @@ function closeHeatmapSettingsInteraction(){
 
   console.log("closeHeatmapSettingsInteraction function",arguments);
 
-  document.getElementById('heatmap-settings-modal').style.display = "none";
+  hideElement('heatmap-settings-modal')
 
 }
 

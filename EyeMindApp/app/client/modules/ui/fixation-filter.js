@@ -28,7 +28,7 @@ import {clearHeatmap,enableHeatmapOption} from './heatmap'
 import {calculateProgress} from '../utils/utils'
 import {showGeneralWaitingScreen, hideGeneralWaitingScreen} from './progress'
 import {infoAlert,errorAlert} from '../utils/utils'
-
+import {hideElement,displayElement} from '../utils/dom'
 
 const request = require('request-promise');
 const {DataFrame} = require('dataframe-js');
@@ -100,8 +100,8 @@ async function completeProcessing(msg,sucess) {
 
 
   /// proceed by hiding fixation-settings-view and displaying loaded-content-view
-  document.getElementById("loaded-content-view").style.display = "flex";
-  document.getElementById("fixation-settings-view").style.display = "none";
+  displayElement("loaded-content-view","flex")
+  hideElement("fixation-settings-view")
 
    }
 
@@ -118,20 +118,12 @@ async function completeProcessing(msg,sucess) {
 
 async function loadETSettingsView() {
 
-   console.log("loadETSettingsView function", arguments);
+   console.log("loadETSettingsView", arguments);
 
-
-   const screenInfo = await window.state.getScreenInfo();
 
   /// move to fixation-settings-view
-  document.getElementById("loaded-content-view").style.display = "none";
-  document.getElementById("fixation-settings-view").style.display = "flex";
-
-  /// get information from the loaded json file and display it to the user
-  document.getElementById("x-dim-info").innerHTML = screenInfo.xScreenDim;
-  document.getElementById("y-dim-info").innerHTML = screenInfo.yScreenDim;
-  document.getElementById("screen-distance-info").innerText = screenInfo.screenDistance;
-  document.getElementById("monitor-size-info").innerHTML = screenInfo.monitorSize;
+  hideElement("loaded-content-view")
+  displayElement("fixation-settings-view","flex")
 
   // console.log("state by the end of loadETSettingsView function",state);
 
@@ -141,8 +133,18 @@ async function loadETSettingsView() {
   handleFixationSettingSections();
 
 
+  document.getElementById("close-fixation-settings-projection").onclick = () => {closeFixationSettings(); } 
+
 }
 
+async function closeFixationSettings() {
+
+   console.log("closeFixationSettings", arguments);
+   hideElement("fixation-settings-view")
+   displayElement("loaded-content-view","flex")
+
+
+}
 
 
 

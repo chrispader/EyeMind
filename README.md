@@ -162,7 +162,7 @@ D. Instructions of Use
 	D.3. Anaylsis
 
 		D.3.1 File import
-				1. At the moment, you can import only a single file corresponding to one data collection (including all the questions). Use the export feature to export csv gaze and fixation data, which you can analysis externally. The support for several files will be provided in a following version.
+				1. You can import sveral files corresponding to several data collection sessions. Use the export feature to export csv gaze and fixation data, which you can analysis externally.
 
 		D.3.2 File export
 				1. You can export the following
@@ -175,7 +175,7 @@ D. Instructions of Use
 
 		D.3.4 Heatmap and overlays
 				1. Use the rainbow colored icon to see the heatmaps and overlays
-				2. Choose the question, metric, aggregation, timestamp unit and which BPMN elements to additionally include (activites, events, gateways, labels, data objects are included by default)
+				2. Choose the one or several participants, question, metric, aggregation, timestamp unit and which BPMN elements to additionally include (activites, events, gateways, labels, data objects are included by default)
 				2. use the file explorer to access the models
 				3. To exit the heatmap and overlays press the same icon again
 
@@ -186,7 +186,7 @@ D. Instructions of Use
 				5. use the "general offset correction" menu to set corrections on the x and y axes. Note that the corrections here are only made to the data sample. so no data is affected yet.
 				6. Use the file explorer to see the snapshots with gaze projections on each model after the correction
 				7. If you are happy with the correction you can apply it to the whole dataset. For this press "Apply correction to data", then a pop-up will open, press start, and wait until the rendering of snapshots (to redo the mapping) is complete
-				8. Note: for now, the gaze projections and corrections were tested on a machine with the same resolution on which the data correction has occured.
+				8. Very Important note: for now, the gaze projections and corrections were tested on a machine with the same resolution on which the data correction has occured.
 				9. To exit the gaze offset correction press its icon again
 
 		General notes:
@@ -273,3 +273,6 @@ G. Generate Sessions from a template session
 		4. Run it with "python generator.py"
 		
 		Note: you should remove the folders in the output folder everytime you run the code (keep only README.md)
+
+
+

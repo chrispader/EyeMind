@@ -105,6 +105,40 @@ function hideElement(domElementId) {
 }
 
 
+
+/**
+ * Title: display dom element
+ *
+ * Description: display dom element
+ *
+ * Control-flow summary:  display dom element
+ *
+ * @param {string} domElementId  the id of the dom element to display
+ * @param {string} mode  display mode (e.g., block,flex)
+ *
+ * Returns {void}
+ *
+ * Tests: none
+ *
+ * Additional notes: none
+ *
+ */
+function displayElement(domElementId,mode) {
+
+	console.log("displayElement", arguments);
+
+	if(mode!="none") {
+		document.getElementById(domElementId).style.display = mode;
+	}
+	else {
+		console.error("Use hideElement() instead");
+	}
+	
+}
+
+
+
+
 /**
  * Title: hide html of child elements
  *
@@ -134,4 +168,104 @@ function hideChildElements(domElementId) {
 }
 
 
-export{moveFromTo,updateTextAndDisplayDomElement,hideElement,hideChildElements}
+/**
+ * Title: populate element with participant/file info
+ *
+ * Description: populate (select) element with participant/file info
+ *
+ * @param {string} targetDomId  id of the dom element to populate 
+ *
+ * Returns {void}
+ *
+ * Tests: none
+ *
+ * Additional notes: none
+ *
+ */
+async function populateParticipantFileSelect(targetDomId) {
+  
+   console.log("populateParticipantFileSelect",arguments);
+
+   var pariticipantFileSelect = document.getElementById(targetDomId);
+
+   if(pariticipantFileSelect.options.length==0 || (pariticipantFileSelect.options.length==1 && pariticipantFileSelect.options[0].value=="") ) {
+
+      const statesInfo = await window.analysis.getStatesInfo();
+
+      for (const [key, participantID] of Object.entries(statesInfo)) {
+
+          var opt = document.createElement('option');
+          opt.value = key;
+          opt.innerHTML = participantID + " ("+key+")";
+          pariticipantFileSelect.appendChild(opt);       
+      }
+
+   }
+
+}
+
+
+/**
+ * Title: get select values
+ *
+ * Description: get select values
+ *
+ * @param {string} selectId  id of the select dom element
+ * @param {string} outType  return the value or the text of the select option
+ *
+ * Returns an array of the selected opion values
+ *
+ * Tests: none
+ *
+ * Additional notes: none
+ *
+ */
+function getSelectValues(selectId,outType) {
+  const select = document.getElementById(selectId)
+  var result = [];
+  var options = select && select.options;
+  var opt;
+
+  if(outType!="value" && outType!="text"){
+  	console.error("unsuported outType", outType);
+  	return null;
+  }
+
+  for (var i=0, iLen=options.length; i<iLen; i++) {
+    opt = options[i];
+
+    if (opt.selected) {
+      result.push(opt[outType]);
+    }
+  }
+  return result;
+}
+
+
+
+/**
+ * Title: update user configuration
+ *
+ * Description: update the chosen user configuration
+ *
+ * @param {object} userConfig  user configuration
+ *
+ * Returns {void}
+ *
+ * Tests: none
+ *
+ * Additional notes: none
+ *
+ */
+function updateShownUserConfig(userConfig) {
+   console.log("updateShownUserConfig",arguments);
+
+   document.getElementById("user-config-content").innerHTML = "";
+
+   for (const [key, value] of Object.entries(userConfig)) {
+      document.getElementById("user-config-content").innerHTML += "<span class=key>"+ key + "</span>: <span class=value>" + value + "</span><br>";  
+   }
+}
+
+
+export{moveFromTo,updateTextAndDisplayDomElement,hideElement,hideChildElements,displayElement,populateParticipantFileSelect,getSelectValues,updateShownUserConfig}

@@ -44,8 +44,13 @@ function randomNumberInRange(min,max) {
 
 }
 
+function parseOriginalFileName(path) {
+  return path.substring(path.lastIndexOf('\\') + 1,path.lastIndexOf('.'));
+}
+
 
 exports.getMostCommon = getMostCommon;
 exports.hasOneElement = hasOneElement;
 exports.calculateProgress = calculateProgress;
 exports.randomNumberInRange = randomNumberInRange;
+exports.parseOriginalFileName = parseOriginalFileName;

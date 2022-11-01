@@ -10,7 +10,7 @@
     "build": "webpack --mode production",
     "start:dev": "npm run build && npm start",
     "test": "npx playwright test test/tests/playwright/",
-    "test-temp": "npx playwright test test/tests/playwright/mapping.test.ts"
+    "test-temp": "npx playwright test test/tests/playwright/import.test.ts"
   },
   "repository": {
     "type": "git",

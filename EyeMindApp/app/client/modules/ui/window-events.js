@@ -41,7 +41,7 @@ import $ from 'jquery';
  *
  * Description: Calls to be made when the window is refreshed
  *
- * Control-flow summary: call window.electron.removeFullScreen() and window.state.clearState()
+ * Control-flow summary: call window.electron.removeFullScreen(), window.state.clearState() andwindow.state.clearStates
  *
  * @param {void} . .
  *
@@ -58,8 +58,14 @@ function handleWindowRefresh() {
   // remove full screen in case of window refresh
     window.electron.removeFullScreen();
   
-  // clear sever state in case of window refresh
+  // clear sever state in case of window refresh (for data collection)
     window.state.clearState();
+
+
+  // clear sever state in case of window refresh (for analysis)
+    window.state.clearStates();
+
+
 }
 
 

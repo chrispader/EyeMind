@@ -56,7 +56,6 @@ fileWrittingSnapshotLock = threading.Lock()
 # constants
 GAZE_BUFFER_SIZE = 10000
 COMMUNICATION_PORT_WITH_EYE_MIND = 5000
-ROUNDING_PRECISION = 4
 N_CONNECTION_TRIALS = 10
 #############
 
@@ -494,26 +493,6 @@ def unpack_gaze_data(gaze_data):
 
 
 ###
- # Title: compute euclidan distance
- #
- # Description: compute euclidan distance
- #
- # @param {float} x   
- # @param {float} y   
- # @param {float} z   
- # Returns {float} distance.euclidean((x/10,y/10,z/10), (0, 0, 0)) euclidan distance
- #
- # Additional notes: none
- #
- #/
-def dist(x,y,z):
-    if np.isnan(x) or np.isnan(y) or np.isnan(z):
-        return float('nan')
-    else:
-        return distance.euclidean((x/10,y/10,z/10), (0, 0, 0))
-
-
-###
  # Title: load and get gaze data
  #
  # Description: load and get gaze data
@@ -569,26 +548,33 @@ def getGazes():
     gazeDataFrame["y"] = gazeDataFrame["YRatio"]*yScreenDim
 
 
-    gazeDataFrame["leftDistance"] = gazeDataFrame.apply(lambda row:  dist(row["leftXOrigin"],row["leftYOrigin"],row["leftZOrigin"]),axis=1)
-    gazeDataFrame["rightDistance"] = gazeDataFrame.apply(lambda row:  dist(row["rightXOrigin"],row["rightYOrigin"],row["rightZOrigin"]),axis=1)
+    gazeDataFrame["leftDistance"] = gazeDataFrame["leftZOrigin"]
+    gazeDataFrame["rightDistance"] = gazeDataFrame["rightZOrigin"]
 
 
     gazeDataFrame.to_csv("out/logs/EyeMindFinalGazeData"+str(now)+".csv")
 
-    # rounding and dropping uncessary columns for the data to be send to EyeMind (the full data was already stored)
+
+    # rounding and dropping uncessary columns for the data to be send to EyeMind (the full data was already stored) (rounding is similar to iMotions)
+    # round 
     gazeDataFrame = gazeDataFrame.round({
-        'leftX': ROUNDING_PRECISION,
-        'leftY': ROUNDING_PRECISION,
-        'rightX': ROUNDING_PRECISION,
-        'rightY': ROUNDING_PRECISION,
-        'x': ROUNDING_PRECISION,
-        'y': ROUNDING_PRECISION,
-        'leftDistance': ROUNDING_PRECISION,
-        'rightDistance': ROUNDING_PRECISION,
-        'leftPupilDiameter': ROUNDING_PRECISION,
-        'rightPupilDiameter':ROUNDING_PRECISION
+        'leftX': 0,
+        'leftY': 0,
+        'rightX': 0,
+        'rightY': 0,
      })
 
+    # recompute x and y with rounded data
+    gazeDataFrame["x"] = gazeDataFrame[["leftX","rightX"]].mean(axis=1)
+    gazeDataFrame["y"] = gazeDataFrame[["leftY","rightY"]].mean(axis=1)
+
+    # round x and y after recomputation
+    gazeDataFrame = gazeDataFrame.round({
+        'x': 1,
+        'y': 1,
+     })
+
+    # drop uncessary columns
     gazeDataFrame = gazeDataFrame.drop(columns=['leftXOrigin', 'leftYOrigin','leftZOrigin','rightXOrigin','rightYOrigin','rightZOrigin',
                                                    'leftXRatio','leftYRatio','rightXRatio','rightYRatio','XRatio','YRatio' ])
     

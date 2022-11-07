@@ -27,8 +27,22 @@ const globalParameters = {
 
    LAST_CONFIG_FILE_PATH : "temp/pastConfig.json",
 
-   R_SERVER_PID_PRINT_PATTERN: /^RServerPid=([0-9]{1,})$/
+   R_SERVER_PID_PRINT_PATTERN: /^RServerPid=([0-9]{1,})$/,
 
+
+   PATTERNS_FOR_ELEMENTS_OUTSIDE_MODEL_AREA : ["^file-explorer-folder_", 
+   "^file-explorer-file_", 
+   "^file-explorer-area",
+   "^process-hierarchy-sub-process-link-to_",
+   "^tab-header-tab-link-to_",
+   "^tab-link-to_",
+   "^close-button-tab-link-to_",
+   "^question-area-for-questionID_",
+   "^title-for-questionID_",
+   "^answer_area_for_questionID_",
+   "^long-answer-for-questionID_",
+   "^option-answer-for-questionID_",
+   "^next-button-area-in-questionID_"]
 }
 
 

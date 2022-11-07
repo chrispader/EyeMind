@@ -432,8 +432,10 @@ function customizedHeatMap(groupedDfFixationData, groupedDfFromFixations, groupe
       console.error("measure type \"", measureType, "\" is unkown");
     }
 
+    // excludes gazes on elements outside the model
+    aggregatedDf = aggregatedDf.filter(row => !globalParameters.PATTERNS_FOR_ELEMENTS_OUTSIDE_MODEL_AREA.some(rx => RegExp(rx).test(row.get('element'))));
 
-     // include/exclude the BPMN elements selected in the heatMapSettingModal
+    // include/exclude the BPMN elements selected in the heatMapSettingModal
     aggregatedDf = aggregatedDf.filter(row => shouldIncludeElement(row.get('tabName'),row.get('element'),elementRegistryTypes,elementsToExclude) );
 
 

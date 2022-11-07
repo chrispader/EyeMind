@@ -121,13 +121,21 @@ const {parseOriginalFileName} = require('../utils/utils')
 
   else if(type=="gaze-data")	{
 
-    const savingPath = globalParameters.SAVING_PATH+"/"+globalParameters.EXPORT_FILES_PREFIX + (includeTimeStampInFileName? fileName+"_"+timestamp : fileName) + "_"+type+"."+fileExtension;
+    //const savingPath = globalParameters.SAVING_PATH+"/"+globalParameters.EXPORT_FILES_PREFIX + (includeTimeStampInFileName? fileName+"_"+timestamp : fileName) + "_"+type+"."+fileExtension;
+
+    var error = false;
+    var errorDetails = {};
 
     const states = getStates();
 
-    var dataframe = null;
-    
+    const savingDir = globalParameters.SAVING_PATH+"/gazeData_"+timestamp
+    //create savingDir directory
+    fs.mkdirSync(savingDir);
+
      for (const [key, state] of Object.entries(states)) {
+
+        const originalFilename = parseOriginalFileName(key)
+        const savingPath = savingDir+"/gazeData_"+originalFilename+"."+fileExtension
         
         const participantID = state.processedGazeData.participantID;
 
@@ -135,21 +143,28 @@ const {parseOriginalFileName} = require('../utils/utils')
         dataframeForState = dataframeForState.withColumn('participantID', () => participantID)
         dataframeForState = dataframeForState.withColumn('file', () => key)
 
-        dataframe = dataframe!=null ? dataframe.union(dataframeForState) : dataframeForState;
-    }
+        console.log("saving ",savingPath);
+        try {
+          dataframeForState.toCSV(true, savingPath);
+        }
+        catch(error) {
+          error = true;
+          errorDetails[originalFilename] = error;
+        }  
 
-     try {
-      dataframe.toCSV(true, savingPath);
-      const msg = "File exported to "+savingPath;
-      res.msg = msg;
-      res.sucess = true;
-     }
-     catch(error) {
-        const msg = "An error occured while exporting the data"+error;
-        console.error(msg);
-        res.msg = msg;
-        res.sucess = false;
-     }
+      }
+
+      if(!error) {
+          const msg = "Files exported to "+savingDir;
+          res.msg = msg;
+          res.sucess = true;
+      }
+      else {
+          const msg = "An error occured while exporting the files. See the console for details";
+          console.error("errorDetails ",errorDetails);
+          res.msg = msg;
+          res.sucess = false;
+      }
 
   }
   else if(type=="fixation-data")  {

@@ -84,9 +84,6 @@ function() {
   #filtering: keeping only events with eventSource=="eye-tracker"
   gazeData <<- gazeData[eventSource == "eye-tracker"]
 
-  # filter out gazes with empty x or y coordinates
-  gazeData <<- gazeData[!is.na(x) & !is.na(y)]
-
 
   # main processing
   results <- mainProcessing(ParamData,gazeData)

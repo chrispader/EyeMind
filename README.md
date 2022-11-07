@@ -211,6 +211,8 @@ E. Mapping gaze points to model or UI elements
 	- This element can be one of the following
 		- The id of a model element (e.g, activitiy, gateway)
 		- File explorer (visible in the no-link mode)
+			- File explorer area
+				- file-explorer-area
 			- Folder 
 				- Pattern: file-explorer-folder_<Folder name>
 			- File

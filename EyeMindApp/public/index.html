@@ -107,23 +107,23 @@
 
 
         <div class="section">
-        <div class="title">  Interpolation: <input type="checkbox" id="is-interpolation"></div> 
+        <div class="title">  Interpolation: <input type="checkbox" id="is-interpolation" checked></div> 
         <div class="row">
         <div class="column"><span class="text"> Max gap length in ms: </span></div>
-        <div class="column"> <input class="form-input is-interpolation" id="max-gap-length" type="text"  value="75" disabled/></div>
+        <div class="column"> <input class="form-input is-interpolation" id="max-gap-length" type="text"  value="75"/></div>
         </div>
       </div>
 
         <div class="section">
-        <div class="title">  Noise reduction: <input type="checkbox" id="is-noice-reduction" checked></div> 
+        <div class="title">  Noise reduction: <input type="checkbox" id="is-noice-reduction"></div> 
         <div class="row">
         <div class="column"><span class="text"> Method: </span></div>
-        <div class="column"> <select class="form-select-short is-noice-reduction" id="noise-reduction-method">
+        <div class="column"> <select class="form-select-short is-noice-reduction" id="noise-reduction-method" disabled>
                 <option value="Average">Moving average</option>
                 <option value="Median" selected>Moving median</option>
         </select></div>
         <div class="column"><span class="text"> Window size in samples: </span></div>
-        <div class="column"> <input class="form-input is-noice-reduction" id="window-size" type="text"  value="3"  /></div>
+        <div class="column"> <input class="form-input is-noice-reduction" id="window-size" type="text"  value="3"  disabled /></div>
         </div>
         </div>
    

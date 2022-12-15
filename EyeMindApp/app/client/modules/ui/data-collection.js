@@ -144,7 +144,17 @@ function newSessionInteraction() {
 
     /// data collection settings view interactions
     // models import interactions
-    document.getElementById("proceed-data-collection-settings").onclick = () => importModelsInteraction();
+    document.getElementById("proceed-data-collection-settings").onclick = () => {
+
+      // set linkingSubProcessesMode
+      const linkingSubProcessesSelect = document.getElementById("linking-sub-processes");
+      state.linkingSubProcessesMode = linkingSubProcessesSelect.options[linkingSubProcessesSelect.selectedIndex].value;
+      
+      console.log("state.linkingSubProcessesMode",state.linkingSubProcessesMode);
+
+
+      importModelsInteraction()
+    };
     // questions import interactions
     document.getElementById("process-files").onclick = () => {
 

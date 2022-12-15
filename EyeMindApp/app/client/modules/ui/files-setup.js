@@ -1213,14 +1213,6 @@ function linkSubProcesses(mainModel, mainModelId, mainModelprocessId, currentTab
           // locate the svg element refering to a collasped subprocess
           const subProcessActivitySVGObjectInMainModel = document.getElementById(currentTabContainerId).querySelector('[data-element-id="' + subProcessFileName + '"]');
           
-          /// if state.linkingSubProcessesMode is not already set from a loaded session, then based on user input, choose whether the linking of sub-processes is supported and if so what type (newTab or withinTab)
-          if(state.linkingSubProcessesMode==null) {
-             const linkingSubProcessesSelect = document.getElementById("linking-sub-processes");
-             state.linkingSubProcessesMode = linkingSubProcessesSelect.options[linkingSubProcessesSelect.selectedIndex].value;
-          }
-         
-          console.log("state.linkingSubProcessesMode",state.linkingSubProcessesMode);
-          
           if(state.linkingSubProcessesMode=="newTab") {
             subProcessActivitySVGObjectInMainModel.addEventListener('click', function(e) {
                   // prevent the implemented bpmn-io interaction assosciated with sub-processes  

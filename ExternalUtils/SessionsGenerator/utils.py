@@ -2,6 +2,7 @@ import json
 import random
 import os
 import copy
+import numpy as np
 
 
 def isDirectoryEmpty(path):
@@ -18,18 +19,22 @@ def read_json(path):
 	with open(path) as inFile:
 		return json.load(inFile)
 
-def suffleStartingFromIndex(data,startIndex):
+def suffleTasksStartingFromIndex(data,taskStartIndex,questionsPerTask):
 
+	# convert data to np.array
+	data = np.array(data)
+	# organize questions per task 
+	data = np.split(data,len(data)/questionsPerTask) 
 	#start by copying the data that should not be shuffled
-	new_data = copy.deepcopy(data[0:startIndex])
+	new_data = copy.deepcopy(data[0:taskStartIndex])
 	#copy the remaining data
-	remaining_data = copy.deepcopy(data[startIndex:])
+	remaining_data = copy.deepcopy(data[taskStartIndex:])
 	#suffle remaining data
 	random.shuffle(remaining_data) 
 	#extend new_data with suffled remaining_data
 	new_data.extend(remaining_data)	
 
-	return new_data
+	return list(np.concatenate(new_data).flat)
 
 
 def createSessions(experimentConfig):
@@ -46,8 +51,8 @@ def createSessions(experimentConfig):
 		for participant in range(0,experimentConfig["participantsPerRoom"]):
 			#make new session from template
 			newSession = copy.deepcopy(template)
-			#shuffle questions list starting from a given index 
-			newSession["questions"] = suffleStartingFromIndex(newSession["questions"],startIndex=experimentConfig["shuffleStartIndex"])
+			#shuffle newSession["questions"] list starting from a given index 
+			newSession["questions"] = suffleTasksStartingFromIndex(newSession["questions"],taskStartIndex=experimentConfig["shuffleStartTaskIndex"], questionsPerTask=experimentConfig['questionsPerTask'])	
 			#Assign linkingSubProcessMode
 			newSession["linkingSubProcessesMode"] = experimentConfig["linkingSubProcessesModes"][participant % len(experimentConfig["linkingSubProcessesModes"])]
 			# export

@@ -271,7 +271,9 @@ def gaze_data_callback(gaze_data):
 
             "currentQuestion": currentQuestion,
 
-            "eventSource": eventSource
+            "eventSource": eventSource,
+
+            "systemTimestamp": time.time_ns()
       
             }
 
@@ -439,7 +441,8 @@ def logQuestionData(questionTimestamp,questionEventType,questionText,questionAns
                 "questionAnswer" : questionAnswer,
                 "questionPosition" : questionPosition,
                 "questionID": questionID,
-                "eventSource": eventSource   
+                "eventSource": eventSource,
+                "systemTimestamp": time.time_ns()   
                 }
 
     gazeData.append(entry)
@@ -465,7 +468,8 @@ def logClickData(clickTimestamp,clickedElement):
 
     entry = {   "clickTimestamp" : clickTimestamp,
                 "clickedElement" : clickedElement,
-                "eventSource": eventSource   
+                "eventSource": eventSource,
+                "systemTimestamp": time.time_ns()   
                 }
 
     gazeData.append(entry)
@@ -576,7 +580,7 @@ def getGazes():
 
     # drop uncessary columns
     gazeDataFrame = gazeDataFrame.drop(columns=['leftXOrigin', 'leftYOrigin','leftZOrigin','rightXOrigin','rightYOrigin','rightZOrigin',
-                                                   'leftXRatio','leftYRatio','rightXRatio','rightYRatio','XRatio','YRatio' ])
+                                                   'leftXRatio','leftYRatio','rightXRatio','rightYRatio','XRatio','YRatio','systemTimestamp' ])
     
     return gazeDataFrame
 

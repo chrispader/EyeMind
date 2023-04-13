@@ -1,8 +1,8 @@
-#Overview
+### Overview
 
 EyeMind supports Eye-tracking on BPMN process models
 
-#Usage
+### Usage
 
 A. Requirements to install the dependecis for the eye-tracking server
 

@@ -63,7 +63,7 @@
 
    8.4. [Test Cases](#Test-Cases)
 
-    8.4.1 [Eye-Mind App Test Cases](#Eye-Mind-App-Test-Cases)
+    8.4.1 [EyeMind App Test Cases](#Eye-Mind-App-Test-Cases)
 
    8.4.2 [Eye-Tracking Server Test Cases](#Eye-Tracking-Server-Test-Cases)
 
@@ -75,6 +75,8 @@ Among the key features of EyeMind are the following:
 - Automated mapping of gazes to dynamic areas of interests (corresponding to the process model elements)
 - Analysis of eye-tracking data: gaze correction, fixation filter, heatmaps and overlays
 
+The following video demonstrates the features of EyeMind https://andaloussi.org/SoftwareX2023/demo.html.
+
 # Citation
 
 ``ARTICLE UNDER REVIEW. THE CITATION WILL BE PROVIDED ONCE THE ARTICLE IS ACCEPTED``
@@ -83,7 +85,7 @@ Among the key features of EyeMind are the following:
 
 MIT License
 
-Copyright (c) 2023 Eye-Mind.
+Copyright (c) 2023 EyeMind.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -99,7 +101,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 - To run EyeMind for data collection, you need an eye-tracking device and Computer Machine with Windows 10 or 11.
 
-    Eye-mind uses the Tobii Pro SDK (i.e., https://developer.tobiipro.com/python/python-getting-started.html) supporting Tobii Screen-based Eye-trackers (i.e., https://www.tobii.com/products/eye-trackers/screen-based). The tool was tested on Tobii X3-120 (i.e., https://connect.tobii.com/s/x3-downloads?language=en_US)
+    EyeMind uses the Tobii Pro SDK (i.e., https://developer.tobiipro.com/python/python-getting-started.html) supporting Tobii Screen-based Eye-trackers (i.e., https://www.tobii.com/products/eye-trackers/screen-based). The tool was tested on Tobii X3-120 (i.e., https://connect.tobii.com/s/x3-downloads?language=en_US)
 
 - To run EyeMind for data analysis, you need a Computer Machine with Windows 10 or 11.
 
@@ -419,7 +421,7 @@ Our Python Notebook in [DataCollectionValidation/dataCollectionValidation.ipynb]
 ## Test Cases
 
 
-#### Eye-Mind App Test Cases
+#### EyeMind App Test Cases
 
 
 The test cases for the EyeMind App are written using the playwright library (i.e., https://playwright.dev/).

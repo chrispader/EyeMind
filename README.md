@@ -397,11 +397,15 @@ Follow the steps below to install the Eye-Tracking Server:
 
 The following video demonstrates the features of EyeMind
 
-``TO ADD``
+https://andaloussi.org/SoftwareX2023/demo.html
 
 ## Demonstration Material
 
-``ADD IN EXAMPLES AND PROVIDE LINKS``
+The material used in the demonstration video and generated throughout the demonstration video is available in [Examples/Video demonstration material](Examples/video%20demonstration%20material).
+
+- [Experiment-workflow](Examples/video%20demonstration%20material/Experiment-workflow): This directory contains the material used for the data collection (i.e., Process models in a BPMN format, questions file in a csv format, eye-tracking session pre-loaded with all the experimental workflow files (models, questions) and settings)
+
+- [collectedData](Examples/video%20demonstration%20material/Collected-data): This directory contains the data collected during the demo (i.e., EyeMind json file containing all the recorded raw data, fixation and gaze data in CSV format)
 
 ## Validation of Data Quality
 

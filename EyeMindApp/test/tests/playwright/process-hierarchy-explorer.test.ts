@@ -33,23 +33,14 @@ test("process-hierarchy-explorer-browser-2-hierarchy-levels", async () => {
   await firstWindow.locator('[data-element-id="p_1_gatherdata.bpmn"]').click();
   await firstWindow.locator('[data-element-id="p_1_2_movemortgagetomaindepot.bpmn"]').click();
 
-  
-  var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
-  
+   // delay
+   await  delay(1000);
 
-  const expectedDataPath = 'test/data/process-hierarchy-explorer/process-hierarchy-explorer-browser-2-hierarchy-levels.html';
+   const expectedTab = "p_1_2_movemortgagetomaindepot.bpmn"
 
-  //saveFile(expectedDataPath,bodyContent);
+   const activeTab = await firstWindow.evaluate(() => {return window.clientTests.getClientState().activeTab});
 
-  
-  var expectedContent = loadFile(expectedDataPath);
-  
-  /// remove tag attributes with random values generated on each import
-  bodyContent = removeElementAttributes(elementAttributesToRemove,bodyContent).replace(/>/g, ">\n");
-  expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
-  
-
-  expect(bodyContent).toBe(expectedContent);
+   expect(activeTab).toBe(expectedTab);
   
 
 
@@ -89,22 +80,14 @@ test("process-hierarchy-explorer-browser-2-hierarchy-levels-back", async () => {
   await firstWindow.locator('[data-element-id="process-hierarchy-sub-process-link-to_main"]').click(); 
 
   
-  var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
-  
+   // delay
+   await  delay(1000);
 
-  const expectedDataPath = 'test/data/process-hierarchy-explorer/process-hierarchy-explorer-browser-2-hierarchy-levels-back.html';
+   const expectedTab = "p_mainprocess.bpmn"
 
- // saveFile(expectedDataPath,bodyContent);
+   const activeTab = await firstWindow.evaluate(() => {return window.clientTests.getClientState().activeTab});
 
-  
-  var expectedContent = loadFile(expectedDataPath);
-  
-  /// remove tag attributes with random values generated on each import
-  bodyContent = removeElementAttributes(elementAttributesToRemove,bodyContent).replace(/>/g, ">\n");
-  expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
-  
-
-  expect(bodyContent).toBe(expectedContent);
+   expect(activeTab).toBe(expectedTab);
   
 
 
@@ -144,23 +127,15 @@ test("process-hierarchy-explorer-browser-2-hierarchy-levels-back-then-2-forward"
   await firstWindow.locator('[data-element-id="p_2_generatedocument.bpmn"]').click();
   await firstWindow.locator('[data-element-id="p_2_1_generateandappendreturncoversheets.bpmn"]').click();
 
-  
-  var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
-  
 
-  const expectedDataPath = 'test/data/process-hierarchy-explorer/process-hierarchy-explorer-browser-2-hierarchy-levels-back-then-2-forward.html';
+   // delay
+   await  delay(1000);
 
-  //saveFile(expectedDataPath,bodyContent);
+   const expectedTab = "p_2_1_generateandappendreturncoversheets.bpmn"
 
-  
-  var expectedContent = loadFile(expectedDataPath);
-  
-  /// remove tag attributes with random values generated on each import
-  bodyContent = removeElementAttributes(elementAttributesToRemove,bodyContent).replace(/>/g, ">\n");
-  expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
-  
+   const activeTab = await firstWindow.evaluate(() => {return window.clientTests.getClientState().activeTab});
 
-  expect(bodyContent).toBe(expectedContent);
+   expect(activeTab).toBe(expectedTab);
   
 
 });

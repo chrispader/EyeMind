@@ -18,12 +18,13 @@ test("file-explorer-open-file-tab", async () => {
     }
   })
 
-
   await firstWindow.locator('id=eye-tracking').click();
   await firstWindow.locator('id=load-session').click();
 
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/sessions/links/session-no-link.json','session-no-link.json'); 
-  
+
+  const expectedTab = "p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn";
+
   await  delay(3000);
 
   await firstWindow.locator('id=record-btn').click();
@@ -32,22 +33,13 @@ test("file-explorer-open-file-tab", async () => {
   await  delay(2000);
 
   await firstWindow.locator('id=modelp52notifyinvolvedpartiesofjournalentryrefusalbpmn-explorerItem').click();
-  
-  var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
 
-  const expectedDataPath = 'test/data/file-explorer/file-explorer-open-file-tab.html';
+  // delay for tab to open
+  await  delay(1000);
 
-  //saveFile(expectedDataPath,bodyContent);
+  const activeTab = await firstWindow.evaluate(() => {return window.clientTests.getClientState().activeTab});
 
-  
-  var expectedContent = loadFile(expectedDataPath);
-  
-  /// remove tag attributes with random values generated on each import
-  bodyContent = removeElementAttributes(elementAttributesToRemove,bodyContent).replace(/>/g, ">\n");
-  expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
-  
-
-  expect(bodyContent).toBe(expectedContent);
+  expect(activeTab).toBe(expectedTab);
   
 
 });

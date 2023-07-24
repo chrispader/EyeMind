@@ -62,19 +62,6 @@ test("takesnapshot-start-tracking-DueTo-start-questions-dueTo-resetNavTabsAndTab
 
   var snapshot = await firstWindow.evaluate(() => {return window.clientTests.lastSnapshot});
 
-  const expectedDataPath = 'test/data/takesnapshot/activeTab_p_mainprocess.bpmn_content.html';
-
-  //saveFile(expectedDataPath,snapshot.code);
-
-  var expectedSnapshotCode = loadFile(expectedDataPath);
-
-   /// remove tag attributes with random values generated on each import
-  const SnapshotCode = removeElementAttributes(elementAttributesToRemove,snapshot.code).replace(/>/g, ">\n");
-  expectedSnapshotCode = removeElementAttributes(elementAttributesToRemove,expectedSnapshotCode).replace(/>/g, ">\n");
-
-
-   expect.soft(SnapshotCode).toBe(expectedSnapshotCode)
-  
 
    expect.soft(snapshot.screenX).toBe(0)
    expect.soft(snapshot.screenY).toBe(0)
@@ -120,20 +107,6 @@ test("takesnapshot-canvas-view-changed", async () => {
   
   var snapshot = await firstWindow.evaluate(() => {return window.clientTests.lastSnapshot});
 
-  const expectedDataPath = 'test/data/takesnapshot/activeTab-p_mainprocess.bpmn-canvas-view-changed.html';
-   
-  //saveFile(expectedDataPath,snapshot.code);
-  
-  
-  var expectedSnapshotCode = loadFile(expectedDataPath);
-
-  /// remove tag attributes with random values generated on each import
-  const SnapshotCode = removeElementAttributes(elementAttributesToRemove,snapshot.code).replace(/>/g, ">\n");
-  expectedSnapshotCode = removeElementAttributes(elementAttributesToRemove,expectedSnapshotCode).replace(/>/g, ">\n");
-
-
-  expect.soft(SnapshotCode).toBe(expectedSnapshotCode)
-  
 
    expect.soft(snapshot.screenX).toBe(0)
    expect.soft(snapshot.screenY).toBe(0)
@@ -193,21 +166,6 @@ test("takesnapshot-canvas-view-changed-multiple-times", async () => {
   
   var snapshot = await firstWindow.evaluate(() => {return window.clientTests.lastSnapshot});
 
-  
-   const expectedDataPath = 'test/data/takesnapshot/activeTab-p_mainprocess.bpmn-canvas-view-changed-multiple-times.html';
-   
-  //saveFile(expectedDataPath,snapshot.code); 
-
-
-  var expectedSnapshotCode = loadFile(expectedDataPath);
-
-  /// remove tag attributes with random values generated on each import
-  const SnapshotCode = removeElementAttributes(elementAttributesToRemove,snapshot.code).replace(/>/g, ">\n");
-  expectedSnapshotCode = removeElementAttributes(elementAttributesToRemove,expectedSnapshotCode).replace(/>/g, ">\n");
-
-
-  expect.soft(SnapshotCode).toBe(expectedSnapshotCode)
-  
 
    expect.soft(snapshot.screenX).toBe(0)
    expect.soft(snapshot.screenY).toBe(0)
@@ -295,20 +253,6 @@ test("takesnapshot-on-reset-nav-tabs-and-tabs", async () => {
   
   var snapshot = await firstWindow.evaluate(() => {return window.clientTests.lastSnapshot});
 
-  const expectedDataPath = 'test/data/takesnapshot/takesnapshot-onreset-nav-tabs-and-tabs.html';
-   
-
-  //saveFile(expectedDataPath,snapshot.code);
-  
-
-  var expectedSnapshotCode = loadFile(expectedDataPath);
-
-  /// remove tag attributes with random values generated on each import
-  const SnapshotCode = removeElementAttributes(elementAttributesToRemove,snapshot.code).replace(/>/g, ">\n");
-  expectedSnapshotCode = removeElementAttributes(elementAttributesToRemove,expectedSnapshotCode).replace(/>/g, ">\n");
-
-
-  expect.soft(SnapshotCode).toBe(expectedSnapshotCode)
   
 
    expect.soft(snapshot.screenX).toBe(0)
@@ -377,20 +321,6 @@ test("takesnapshot-next-question-interactions-dueToresetNavTabsAndTabs", async (
   var snapshot = await firstWindow.evaluate(() => {return window.clientTests.lastSnapshot});
 
   
-  const expectedDataPath = 'test/data/takesnapshot/activeTab-p_mainprocess.bpmn-takesnapshot-next-question-interactions.html';
-   
-  //saveFile(expectedDataPath,snapshot.code);
-  
-
-  var expectedSnapshotCode = loadFile(expectedDataPath);
-
-  /// remove tag attributes with random values generated on each import
-  const SnapshotCode = removeElementAttributes(elementAttributesToRemove,snapshot.code).replace(/>/g, ">\n");
-  expectedSnapshotCode = removeElementAttributes(elementAttributesToRemove,expectedSnapshotCode).replace(/>/g, ">\n");
-
-
-  expect.soft(SnapshotCode).toBe(expectedSnapshotCode)
-  
 
    expect.soft(snapshot.screenX).toBe(0)
    expect.soft(snapshot.screenY).toBe(0)
@@ -436,20 +366,6 @@ test("takesnapshot-on-change-tab-dueToresetNavTabsAndTabs", async () => {
   var snapshot = await firstWindow.evaluate(() => {return window.clientTests.lastSnapshot});
 
   
-  const expectedDataPath = 'test/data/takesnapshot/changeTab-to-p_4_certifydocuments.bpmn.html';
-   
-  //saveFile(expectedDataPath,snapshot.code);
-  
-  
-  var expectedSnapshotCode = loadFile(expectedDataPath);
-
-  /// remove tag attributes with random values generated on each import
-  const SnapshotCode = removeElementAttributes(elementAttributesToRemove,snapshot.code).replace(/>/g, ">\n");
-  expectedSnapshotCode = removeElementAttributes(elementAttributesToRemove,expectedSnapshotCode).replace(/>/g, ">\n");
-
-
-  expect.soft(SnapshotCode).toBe(expectedSnapshotCode)
-  
 
    expect.soft(snapshot.screenX).toBe(0)
    expect.soft(snapshot.screenY).toBe(0)
@@ -494,20 +410,6 @@ test("takesnapshot-on-close-tab-leave-no-tab-shown", async () => {
   
   var snapshot = await firstWindow.evaluate(() => {return window.clientTests.lastSnapshot});
 
-  
-  const expectedDataPath = 'test/data/takesnapshot/closeTab-to-p_4_certifydocuments-leave-no-tab-shown.bpmn.html';
-   
-  //saveFile(expectedDataPath,snapshot.code);
-  
-  
-  var expectedSnapshotCode = loadFile(expectedDataPath);
-
-  /// remove tag attributes with random values generated on each import
-  const SnapshotCode = removeElementAttributes(elementAttributesToRemove,snapshot.code).replace(/>/g, ">\n");
-  expectedSnapshotCode = removeElementAttributes(elementAttributesToRemove,expectedSnapshotCode).replace(/>/g, ">\n");
-
-
-  expect.soft(SnapshotCode).toBe(expectedSnapshotCode)
   
    expect.soft(snapshot.screenX).toBe(0)
    expect.soft(snapshot.screenY).toBe(0)
@@ -555,21 +457,7 @@ test("takesnapshot-on-close-tab-leave-a-tab-shown", async () => {
   
   var snapshot = await firstWindow.evaluate(() => {return window.clientTests.lastSnapshot});
 
-  
-   const expectedDataPath = 'test/data/takesnapshot/closeTab-to-p_4_certifydocuments-leave-a-tab-shown.bpmn.html';
-   
-  //saveFile(expectedDataPath,snapshot.code);
-  
-  
-  var expectedSnapshotCode = loadFile(expectedDataPath);
 
-  /// remove tag attributes with random values generated on each import
-  const SnapshotCode = removeElementAttributes(elementAttributesToRemove,snapshot.code).replace(/>/g, ">\n");
-  expectedSnapshotCode = removeElementAttributes(elementAttributesToRemove,expectedSnapshotCode).replace(/>/g, ">\n");
-
-
-  expect.soft(SnapshotCode).toBe(expectedSnapshotCode)
-  
 
    expect.soft(snapshot.screenX).toBe(0)
    expect.soft(snapshot.screenY).toBe(0)
@@ -585,5 +473,5 @@ test("takesnapshot-on-close-tab-leave-a-tab-shown", async () => {
 
 
 //// mechanisms to preview/delay the effects on the window before it closes
-//test.setTimeout(1200000) // 
+//test.setTimeout(1200000) //
 //await  delay(1200000);

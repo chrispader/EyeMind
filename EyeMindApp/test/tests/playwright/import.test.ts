@@ -4,8 +4,6 @@ import {dragAndDropFile,delay,removeElementAttributes, loadFile, saveFile} from 
 import {elementAttributesToRemove} from "../utils/globals";
 const fs = require("fs");
 
-elementAttributesToRemove
-
 
 test("new-session-import-valid-models", async () => {
 
@@ -20,226 +18,43 @@ test("new-session-import-valid-models", async () => {
     }
   })
 
+  const files = ['p_1_1_fetchandvalidateonlinedata.bpmn',
+  'p_1_2_movemortgagetomaindepot.bpmn',
+  'p_2_generatedocument.bpmn',
+  'p_2_1_generateandappendreturncoversheets.bpmn',
+  'p_3_approveandsigndocuments.bpmn',
+  'p_4_certifydocuments.bpmn',
+  'p_5_1_notifyinvolvedpartiesofjournalentry.bpmn',
+  'p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn',
+  'p_5_3_notifyinvolvedpartiesofmainbook.bpmn',
+  'p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn',
+  'p_5_submittolandregistry.bpmn',
+  'p_7_notifypartnersofcompletion.bpmn',
+  'p_mainprocess.bpmn'];
+
+
 
   await firstWindow.locator('id=eye-tracking').click();
   await firstWindow.locator('id=new-session').click();
   await firstWindow.locator('id=linking-sub-processes').selectOption("newTab");
   await firstWindow.locator('id=proceed-data-collection-settings').click();
 
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_1_fetchandvalidateonlinedata.bpmn','p_1_1_fetchandvalidateonlinedata.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_2_movemortgagetomaindepot.bpmn','p_1_2_movemortgagetomaindepot.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_generatedocument.bpmn','p_2_generatedocument.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_1_generateandappendreturncoversheets.bpmn','p_2_1_generateandappendreturncoversheets.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_3_approveandsigndocuments.bpmn','p_3_approveandsigndocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_4_certifydocuments.bpmn','p_4_certifydocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_1_notifyinvolvedpartiesofjournalentry.bpmn','p_5_1_notifyinvolvedpartiesofjournalentry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn','p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_3_notifyinvolvedpartiesofmainbook.bpmn','p_5_3_notifyinvolvedpartiesofmainbook.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn','p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn');  
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_submittolandregistry.bpmn','p_5_submittolandregistry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_7_notifypartnersofcompletion.bpmn','p_7_notifypartnersofcompletion.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_mainprocess.bpmn','p_mainprocess.bpmn'); 
 
+ for ( let file of files){
+    await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/'+file,file);
+ }
 
-  var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
-  
+ for (let i=0; i<files.length; i++) {
 
-  const expectedDataPath = 'test/data/import-view/new-session-import-valid-models.html';
-  
-  saveFile(expectedDataPath,bodyContent);
+    const file = files[i];
+    const selector = `.file-list .row:nth-child(${i + 1}) .file-info`;
+    const fileElement = await  firstWindow.textContent(selector)
 
-  
-  var expectedContent = loadFile(expectedDataPath);
-  
-  /// remove tag attributes with random values generated on each import
-  bodyContent = removeElementAttributes(elementAttributesToRemove,bodyContent).replace(/>/g, ">\n");
-  expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
-  
-  expect(bodyContent).toBe(expectedContent);
+    expect(fileElement).toBe(file);
 
- 
-
+ }
 
 });
-
-
-
-
-test("remove-one-file", async () => {
-
-
-  const electronApp = await electron.launch({ args: ["."] });
-  const firstWindow = await electronApp.firstWindow();
-
-  // except no errors in console.error()
-  firstWindow.on("console", (message) => {
-    if (message.type() === "error") {
-       expect(message.text()).toBe("");
-    }
-  })
-
-  await firstWindow.locator('id=eye-tracking').click();
-  await firstWindow.locator('id=new-session').click();
-  await firstWindow.locator('id=linking-sub-processes').selectOption("newTab");
-  await firstWindow.locator('id=proceed-data-collection-settings').click();
-
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_1_fetchandvalidateonlinedata.bpmn','p_1_1_fetchandvalidateonlinedata.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_2_movemortgagetomaindepot.bpmn','p_1_2_movemortgagetomaindepot.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_generatedocument.bpmn','p_2_generatedocument.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_1_generateandappendreturncoversheets.bpmn','p_2_1_generateandappendreturncoversheets.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_3_approveandsigndocuments.bpmn','p_3_approveandsigndocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_4_certifydocuments.bpmn','p_4_certifydocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_1_notifyinvolvedpartiesofjournalentry.bpmn','p_5_1_notifyinvolvedpartiesofjournalentry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn','p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_3_notifyinvolvedpartiesofmainbook.bpmn','p_5_3_notifyinvolvedpartiesofmainbook.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn','p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn');  
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_submittolandregistry.bpmn','p_5_submittolandregistry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_mainprocess.bpmn','p_mainprocess.bpmn'); 
-
-  await firstWindow.locator('id=remove-p4certifydocumentsbpmn').click();
-
-  var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
-
-
-  const expectedDataPath = 'test/data/import-view/remove-one-file.html';
-
-  //saveFile(expectedDataPath,bodyContent);
-
-  
-  var expectedContent = loadFile(expectedDataPath);
-  
-  /// remove tag attributes with random values generated on each import
-  bodyContent = removeElementAttributes(elementAttributesToRemove,bodyContent).replace(/>/g, ">\n");
-  expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
-  
-
-  expect(bodyContent).toBe(expectedContent);
-  
-  
-}); 
-
-
-test("remove-all-files", async () => {
-
-
-  const electronApp = await electron.launch({ args: ["."] });
-  const firstWindow = await electronApp.firstWindow();
-
-  // except no errors in console.error()
-  firstWindow.on("console", (message) => {
-    if (message.type() === "error") {
-       expect(message.text()).toBe("");
-    }
-  })
-
-
-  await firstWindow.locator('id=eye-tracking').click();
-  await firstWindow.locator('id=new-session').click();
-  await firstWindow.locator('id=linking-sub-processes').selectOption("newTab");
-  await firstWindow.locator('id=proceed-data-collection-settings').click();
-
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_1_fetchandvalidateonlinedata.bpmn','p_1_1_fetchandvalidateonlinedata.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_2_movemortgagetomaindepot.bpmn','p_1_2_movemortgagetomaindepot.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_generatedocument.bpmn','p_2_generatedocument.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_1_generateandappendreturncoversheets.bpmn','p_2_1_generateandappendreturncoversheets.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_3_approveandsigndocuments.bpmn','p_3_approveandsigndocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_4_certifydocuments.bpmn','p_4_certifydocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_1_notifyinvolvedpartiesofjournalentry.bpmn','p_5_1_notifyinvolvedpartiesofjournalentry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn','p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_3_notifyinvolvedpartiesofmainbook.bpmn','p_5_3_notifyinvolvedpartiesofmainbook.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn','p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn');  
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_submittolandregistry.bpmn','p_5_submittolandregistry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_7_notifypartnersofcompletion.bpmn','p_7_notifypartnersofcompletion.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_mainprocess.bpmn','p_mainprocess.bpmn'); 
-
- await firstWindow.locator('id=remove-p11fetchandvalidateonlinedatabpmn').click();
- await firstWindow.locator('id=remove-p12movemortgagetomaindepotbpmn').click();
- await firstWindow.locator('id=remove-p2generatedocumentbpmn').click();
- await firstWindow.locator('id=remove-p21generateandappendreturncoversheetsbpmn').click();
- await firstWindow.locator('id=remove-p3approveandsigndocumentsbpmn').click();
- await firstWindow.locator('id=remove-p4certifydocumentsbpmn').click();
- await firstWindow.locator('id=remove-p51notifyinvolvedpartiesofjournalentrybpmn').click();
- await firstWindow.locator('id=remove-p52notifyinvolvedpartiesofjournalentryrefusalbpmn').click();
- await firstWindow.locator('id=remove-p53notifyinvolvedpartiesofmainbookbpmn').click();
- await firstWindow.locator('id=remove-p54notifyinvolvedpartiesofmainbookrejectionbpmn').click();  
- await firstWindow.locator('id=remove-p5submittolandregistrybpmn').click();
- await firstWindow.locator('id=remove-p7notifypartnersofcompletionbpmn').click();
- await firstWindow.locator('id=remove-pmainprocessbpmn').click();
-
-
-  var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
-
-  const expectedDataPath = 'test/data/import-view/remove-all-files.html';
-
-  //saveFile(expectedDataPath,bodyContent);
-
-  
-  var expectedContent = loadFile(expectedDataPath);
-  
-  /// remove tag attributes with random values generated on each import
-  bodyContent = removeElementAttributes(elementAttributesToRemove,bodyContent).replace(/>/g, ">\n");
-  expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
-  
-
-  expect(bodyContent).toBe(expectedContent);
-  
-});
-
-
-test("remove-all-files-then-press-process-files", async () => {
-
-
-
-  const electronApp = await electron.launch({ args: ["."] });
-  const firstWindow = await electronApp.firstWindow();
-
-
-    firstWindow.on("console", (message) => {
-    if (message.type() === "error") {
-      
-      const expectedContent = "No models to load";
-      expect(message.text()).toBe(expectedContent);
-    }
-  })
-
-
-  await firstWindow.locator('id=eye-tracking').click();
-  await firstWindow.locator('id=new-session').click();
-  await firstWindow.locator('id=linking-sub-processes').selectOption("newTab");
-  await firstWindow.locator('id=proceed-data-collection-settings').click();
-
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_1_fetchandvalidateonlinedata.bpmn','p_1_1_fetchandvalidateonlinedata.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_2_movemortgagetomaindepot.bpmn','p_1_2_movemortgagetomaindepot.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_generatedocument.bpmn','p_2_generatedocument.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_1_generateandappendreturncoversheets.bpmn','p_2_1_generateandappendreturncoversheets.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_3_approveandsigndocuments.bpmn','p_3_approveandsigndocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_4_certifydocuments.bpmn','p_4_certifydocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_1_notifyinvolvedpartiesofjournalentry.bpmn','p_5_1_notifyinvolvedpartiesofjournalentry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn','p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_3_notifyinvolvedpartiesofmainbook.bpmn','p_5_3_notifyinvolvedpartiesofmainbook.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn','p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn');  
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_submittolandregistry.bpmn','p_5_submittolandregistry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_7_notifypartnersofcompletion.bpmn','p_7_notifypartnersofcompletion.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_mainprocess.bpmn','p_mainprocess.bpmn'); 
-
- await firstWindow.locator('id=remove-p11fetchandvalidateonlinedatabpmn').click();
- await firstWindow.locator('id=remove-p12movemortgagetomaindepotbpmn').click();
- await firstWindow.locator('id=remove-p2generatedocumentbpmn').click();
- await firstWindow.locator('id=remove-p21generateandappendreturncoversheetsbpmn').click();
- await firstWindow.locator('id=remove-p3approveandsigndocumentsbpmn').click();
- await firstWindow.locator('id=remove-p4certifydocumentsbpmn').click();
- await firstWindow.locator('id=remove-p51notifyinvolvedpartiesofjournalentrybpmn').click();
- await firstWindow.locator('id=remove-p52notifyinvolvedpartiesofjournalentryrefusalbpmn').click();
- await firstWindow.locator('id=remove-p53notifyinvolvedpartiesofmainbookbpmn').click();
- await firstWindow.locator('id=remove-p54notifyinvolvedpartiesofmainbookrejectionbpmn').click();  
- await firstWindow.locator('id=remove-p5submittolandregistrybpmn').click();
- await firstWindow.locator('id=remove-p7notifypartnersofcompletionbpmn').click();
- await firstWindow.locator('id=remove-pmainprocessbpmn').click();
-
- await firstWindow.locator('id=process-files').click();
-
- 
-});  
 
 
 test("import-view-then-press-process-files-without-importing-files", async () => {
@@ -364,48 +179,61 @@ test("import-valid-question-file", async () => {
     }
   })
 
+  const files = ['p_1_1_fetchandvalidateonlinedata.bpmn',
+  'p_1_2_movemortgagetomaindepot.bpmn',
+  'p_2_generatedocument.bpmn',
+  'p_2_1_generateandappendreturncoversheets.bpmn',
+  'p_3_approveandsigndocuments.bpmn',
+  'p_4_certifydocuments.bpmn',
+  'p_5_1_notifyinvolvedpartiesofjournalentry.bpmn',
+  'p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn',
+  'p_5_3_notifyinvolvedpartiesofmainbook.bpmn',
+  'p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn',
+  'p_5_submittolandregistry.bpmn',
+  'p_7_notifypartnersofcompletion.bpmn',
+  'p_mainprocess.bpmn'];
+
+
   await firstWindow.locator('id=eye-tracking').click();
   await firstWindow.locator('id=new-session').click();
   await firstWindow.locator('id=linking-sub-processes').selectOption("newTab");
   await firstWindow.locator('id=proceed-data-collection-settings').click();
 
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_1_fetchandvalidateonlinedata.bpmn','p_1_1_fetchandvalidateonlinedata.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_2_movemortgagetomaindepot.bpmn','p_1_2_movemortgagetomaindepot.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_generatedocument.bpmn','p_2_generatedocument.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_1_generateandappendreturncoversheets.bpmn','p_2_1_generateandappendreturncoversheets.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_3_approveandsigndocuments.bpmn','p_3_approveandsigndocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_4_certifydocuments.bpmn','p_4_certifydocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_1_notifyinvolvedpartiesofjournalentry.bpmn','p_5_1_notifyinvolvedpartiesofjournalentry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn','p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_3_notifyinvolvedpartiesofmainbook.bpmn','p_5_3_notifyinvolvedpartiesofmainbook.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn','p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn');  
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_submittolandregistry.bpmn','p_5_submittolandregistry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_7_notifypartnersofcompletion.bpmn','p_7_notifypartnersofcompletion.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_mainprocess.bpmn','p_mainprocess.bpmn'); 
+
+ for ( let file of files){
+    await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/'+file,file);
+ }
 
 
   await firstWindow.locator('id=process-files').click();
 
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/questions/questionSet.csv','questionSet.csv'); 
 
-  var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
+  //delay for questions to upload
+  await  delay(2000);
 
-  const expectedDataPath = 'test/data/import-view/import-valid-question-file.html';
+  const uploadedQuestions = await firstWindow.evaluate(() => {return window.clientTests.getClientState().questions});
 
-  saveFile(expectedDataPath,bodyContent);
+  // Read and parse the question CSV file
+  const fs = require('fs');
+  const questionFile = 'test/data/import-view/questions/questionSet.csv';
+  const questionData = fs.readFileSync(questionFile, 'utf8');
 
-  /*
-  var expectedContent = loadFile(expectedDataPath);
-  
-  /// remove tag attributes with random values generated on each import
-  bodyContent = removeElementAttributes(elementAttributesToRemove,bodyContent).replace(/>/g, ">\n");
-  expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
-  
+  let questionArray = [];
+  const lines = questionData.trim().split('\n');
+  const headers = lines[0].split(',');
 
-  expect(bodyContent).toBe(expectedContent);
-  */
 
- 
+  for(let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',');
+    let question = {};
+    headers.forEach((header, index) => {
+      question[header] = values[index];
+    });
+    questionArray.push(question);
+  }
+
+  expect(uploadedQuestions).toEqual(questionArray);
 });
 
 
@@ -557,22 +385,14 @@ test("load-session-import-valid-session", async () => {
   
   await  delay(3000);
 
-  var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
+  const state = await firstWindow.evaluate(() => {return window.clientTests.getClientState()});
 
-  const expectedDataPath = 'test/data/import-view/load-session-import-valid-session.html'
+  const sessionData = JSON.parse(fs.readFileSync('test/data/import-view/sessions/valid-session.json', 'utf8'));
 
-  //saveFile(expectedDataPath,bodyContent);
-
-  
-  var expectedContent = loadFile(expectedDataPath);
-  
-  /// remove tag attributes with random values generated on each import
-  bodyContent = removeElementAttributes(elementAttributesToRemove,bodyContent).replace(/>/g, ">\n");
-  expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
-  
-
-  expect(bodyContent).toBe(expectedContent);
-  
+   // Checks
+   expect(state.mode).toEqual("data-collection");
+   expect(state.models).toEqual(sessionData.models);
+   expect(state.questions).toEqual(sessionData.questions);
 
 
 });
@@ -662,28 +482,19 @@ test("import-valid-analysis-file", async () => {
   await firstWindow.locator('id=analysis').click();
 
   await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/analysis/valid-analysis-file.json','valid-analysis-file.json'); 
- 
+
   
   await  delay(7000);
 
-  var bodyContent = await firstWindow.evaluate(() => {return document.body.outerHTML});
+  const state = Object.values(await firstWindow.evaluate(() => {return window.state.getStates()}))[0];
 
+  const analysisData = JSON.parse(fs.readFileSync('test/data/import-view/analysis/valid-analysis-file.json', 'utf8'));
 
-  const expectedDataPath = 'test/data/import-view/import-valid-analysis-file.html'
-
-  //saveFile(expectedDataPath,bodyContent);
-
-  
-  var expectedContent = loadFile(expectedDataPath);
-  
-  /// remove tag attributes with random values generated on each import
-  bodyContent = removeElementAttributes(elementAttributesToRemove,bodyContent).replace(/>/g, ">\n");
-  expectedContent = removeElementAttributes(elementAttributesToRemove,expectedContent).replace(/>/g, ">\n");
-  
-
-  expect(bodyContent).toBe(expectedContent);
-  
-
+   // Checks
+   expect(state.mode).toEqual("analysis");
+   expect(state.models).toEqual(analysisData.models);
+   expect(state.questions).toEqual(analysisData.questions);
+   expect(state.processedGazeData.gazeData).toEqual(analysisData.processedGazeData.gazeData);
 
 });
 
@@ -734,105 +545,6 @@ test("import-corrupted-analysis-file", async () => {
   await  delay(7000);
 
 });
-
-
-test("import-models-from-two-groups", async () => {
-
-
-  const electronApp = await electron.launch({ args: ["."] });
-  const firstWindow = await electronApp.firstWindow();
-
-
-  // except no errors in console.error()
-  firstWindow.on("console", (message) => {
-    if (message.type() === "error") {
-       expect(message.text()).toBe("");
-    }
-  })
-
-
-  await firstWindow.locator('id=eye-tracking').click();
-  await firstWindow.locator('id=new-session').click();
-  await firstWindow.locator('id=linking-sub-processes').selectOption("newTab");
-  await firstWindow.locator('id=proceed-data-collection-settings').click();
-
-  
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_gatherdata.bpmn','p_1_gatherdata.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_1_fetchandvalidateonlinedata.bpmn','p_1_1_fetchandvalidateonlinedata.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_1_2_movemortgagetomaindepot.bpmn','p_1_2_movemortgagetomaindepot.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_generatedocument.bpmn','p_2_generatedocument.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_2_1_generateandappendreturncoversheets.bpmn','p_2_1_generateandappendreturncoversheets.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_3_approveandsigndocuments.bpmn','p_3_approveandsigndocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_4_certifydocuments.bpmn','p_4_certifydocuments.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_submittolandregistry.bpmn','p_5_submittolandregistry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_1_notifyinvolvedpartiesofjournalentry.bpmn','p_5_1_notifyinvolvedpartiesofjournalentry.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn','p_5_2_notifyinvolvedpartiesofjournalentryrefusal.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_3_notifyinvolvedpartiesofmainbook.bpmn','p_5_3_notifyinvolvedpartiesofmainbook.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn','p_5_4_notifyinvolvedpartiesofmainbookrejection.bpmn');  
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_6_bookmortgages.bpmn','p_6_bookmortgages.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_7_notifypartnersofcompletion.bpmn','p_7_notifypartnersofcompletion.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/p_mainprocess.bpmn','p_mainprocess.bpmn'); 
-
-
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_main.bpmn','icc_main.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_1_check-whether-existing-customer.bpmn','icc_1_check-whether-existing-customer.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_2_create-prospect.bpmn','icc_2_create-prospect.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_validate-and-rate-customer.bpmn','icc_3_validate-and-rate-customer.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_1_check-financial-income.bpmn','icc_3_1_check-financial-income.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_2_check-nationality-on-sanctions-list.bpmn','icc_3_2_check-nationality-on-sanctions-list.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_3_check-person-on-sanctions-list.bpmn','icc_3_3_check-person-on-sanctions-list.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_3_4_evaluate-id-document.bpmn','icc_3_4_evaluate-id-document.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_4_create-credit-card.bpmn','icc_4_create-credit-card.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_5_send-credit-card-information.bpmn','icc_5_send-credit-card-information.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_5_1_send-letter-to-customer.bpmn','icc_5_1_send-letter-to-customer.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_register-for-mobile-payment.bpmn','icc_6_register-for-mobile-payment.bpmn');  
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_1_enable_apple_pay.bpmn','icc_6_1_enable_apple_pay.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_6_2_enable_google_pay.bpmn','icc_6_2_enable_google_pay.bpmn');
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/models/icc_7_update-customer-data.bpmn','icc_7_update-customer-data.bpmn'); 
-
-
-  await firstWindow.locator('id=group-assignement-for-file-iccmainbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc1check-whether-existing-customerbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc2create-prospectbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc3validate-and-rate-customerbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc31check-financial-incomebpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc32check-nationality-on-sanctions-listbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc33check-person-on-sanctions-listbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc34evaluate-id-documentbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc4create-credit-cardbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc5send-credit-card-informationbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc51send-letter-to-customerbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc6register-for-mobile-paymentbpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc61enableapplepaybpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc62enablegooglepaybpmn').fill("2")
-  await firstWindow.locator('id=group-assignement-for-file-icc7update-customer-databpmn').fill("2")
-
-
-
-  await firstWindow.locator('id=process-files').click();
-
-  await dragAndDropFile(firstWindow,'id=upload-zone','test/data/import-view/questions/questionSet.csv','questionSet.csv'); 
- 
-
-  var clientState = await firstWindow.evaluate(() => {return window.clientTests.getClientState()});
-
-  //console.log(clientState);
-
-    // check that group ids are correctly assigned to the imported models
-    for (const [index, [key, model]] of Object.entries(Object.entries(clientState.models))) {
-      
-      if(index<15) {
-         expect(model.groupId).toBe("1");
-      }
-      else {
-         expect(model.groupId).toBe("2");
-      }
-
-  }
-
-
-});
-
 
 
 

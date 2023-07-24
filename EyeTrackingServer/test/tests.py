@@ -5,6 +5,11 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 
+## Important note:
+    #the eye-tracking server needs to be running in testMode: python main.py testMode.
+    #Use the following command to run a test "python -m unittest tests.Tests.<<testName>>"
+
+
 ###
  # Title: Tests
  #
@@ -13,7 +18,6 @@ from pandas.testing import assert_frame_equal
  # Additional notes: none
  #
 class Tests(unittest.TestCase):
-
 	###
 	# Title: setup eye-tracker
 	#
@@ -23,9 +27,9 @@ class Tests(unittest.TestCase):
 	def test_ET_setup(self):
 
 		print("test_ET_setup starts")
-		
+
 		responseMsg = send({ "action": 'setup',
-		"xScreenDim": 1920, 
+		"xScreenDim": 1920,
 		"yScreenDim": 1080})
 
 		self.assertEqual(responseMsg["gazeData"], [])
@@ -47,9 +51,9 @@ class Tests(unittest.TestCase):
 		print("test_ET_setup ends")
 
 	###
-	# Title: adding several snapshots 
+	# Title: adding several snapshots
 	#
-	# Description: test "action": 'addSnapshot' communication 
+	# Description: test "action": 'addSnapshot' communication
 	#					"action": 'PrepareGazeDataAndInitiateTransfer' (is received_gazeDataSize correct?)
 	#					"action": getDataFragment
 	#			   test that currentSnapshotId and currentSnapshotTimestamp (global variables) are changed
@@ -68,9 +72,9 @@ class Tests(unittest.TestCase):
 		seed1 = 0
 		seed2 = len1
 		seed3 = len2
-		
+
 		responseMsg = send({ "action": 'setup',
-		"xScreenDim": 1920, 
+		"xScreenDim": 1920,
 		"yScreenDim": 1080})
 
 		print(responseMsg["cTimestamp"])
@@ -107,10 +111,10 @@ class Tests(unittest.TestCase):
 		received_gazeDataSize = responseMsg["gazeDataSize"]
 		self.assertEqual(received_gazeDataSize, len1+len2+len3)
 
-		#"action": 'getDataFragment' 
+		#"action": 'getDataFragment'
 		responseMsg = send({ 'action': 'getDataFragment', 'start':0, 'end':received_gazeDataSize })
-		
-		
+
+
 		#assertions to check whether currentSnapshotId was corectly assigned to gazes of the first, second and third sets
 		for i in range (0,len1):
 			self.assertEqual(responseMsg[i]["snapshotId"], -1)
@@ -120,7 +124,7 @@ class Tests(unittest.TestCase):
 
 		for i in range (len1+len2,len1+len2+len3):
 			self.assertEqual(responseMsg[i]["snapshotId"], snapshots[1]["id"])
-			
+
 		print("test_addSnapshot ends")
 
 	###
@@ -133,9 +137,9 @@ class Tests(unittest.TestCase):
 	def test_logFullSnapshot(self):
 
 		print("test_logFullSnapshot starts")
-		
+
 		send({ "action": 'setup',
-		"xScreenDim": 1920, 
+		"xScreenDim": 1920,
 		"yScreenDim": 1080})
 
 		# send several snapshots
@@ -152,7 +156,7 @@ class Tests(unittest.TestCase):
     	#request gazeDataSize and snapshots through "action": 'PrepareGazeDataAndInitiateTransfer'
 		responseMsg = send({ "action": 'PrepareGazeDataAndInitiateTransfer'})
 		received_snapshots = responseMsg["snapshots"]
-		
+
 		#prepare expected snapshots
 		expected_snapshots = dict()
 		for snapshot in snapshots:
@@ -181,10 +185,10 @@ class Tests(unittest.TestCase):
 	#
 	#			   test that a set of clicks events are recorded correctly together with some gaze points
 	#
-	def test_addClickEvent(self):
+	def test_addClickEvents(self):
 
-		print("test_addClickEvent starts")		
-				
+		print("test_addClickEvent starts")
+
 		#defs
 		lensAndSeeds = [
 		{"len":5, "seed":0},
@@ -200,9 +204,9 @@ class Tests(unittest.TestCase):
 		]
 
 		mockClickEvents = ["el1","el2","el3","el4","el5","el6","el7","el8","el9","el10"]
-		
+
 		responseMsg = send({ "action": 'setup',
-		"xScreenDim": 1920, 
+		"xScreenDim": 1920,
 		"yScreenDim": 1080})
 
 
@@ -210,9 +214,9 @@ class Tests(unittest.TestCase):
 			# send some gaze points
 			gazePoints = generateGazePoints(number=lensAndSeeds[i]["len"],timestampSeed=lensAndSeeds[i]["seed"])
 			send({ "action": 'mockGazeData', "content": gazePoints})
-			# send a click event	
-			send({"action": 'addClickEvent', 
-			  "clickTimestamp": i+1, 
+			# send a click event
+			send({"action": 'addClickEvent',
+			  "clickTimestamp": i+1,
 			  "clickedElement": mockClickEvents[i]
 			});
 
@@ -221,9 +225,9 @@ class Tests(unittest.TestCase):
 		responseMsg = send({ "action": 'PrepareGazeDataAndInitiateTransfer'})
 		received_gazeDataSize = responseMsg["gazeDataSize"]
 
-		#"action": 'getDataFragment' 
+		#"action": 'getDataFragment'
 		responseMsg = send({ 'action': 'getDataFragment', 'start':0, 'end':received_gazeDataSize })
-		
+
 		#df = pd.DataFrame.from_dict(responseMsg)
 		#df = df.mask(df == '')
 		#df.to_csv("data/clicks/gazePointsAndClicks.csv", index=False)
@@ -234,11 +238,11 @@ class Tests(unittest.TestCase):
 		#construct resulting dataframe
 		received = pd.DataFrame.from_dict(responseMsg)
 		received = received.mask(received == '')
-		
+
 		# check_dtype=False because pandas looks for the best dtype when reading a csv
 		assert_frame_equal(received, expected, check_dtype=False)
 
-		print("test_addClickEvent ends")	
+		print("test_addClickEvent ends")
 
 	###
 	# Title: add question events
@@ -249,10 +253,10 @@ class Tests(unittest.TestCase):
 	#			   test that a set of question events are recorded correctly together with some gaze points
 	#
 	# Notes: except for the first and last question events, questionOffset should come always before questionOnset
-	def test_addQuestionEvent(self):
+	def test_addQuestionEvents(self):
 
-		print("test_addQuestionEvent starts")		
-				
+		print("test_addQuestionEvent starts")
+
 		#defs
 		lensAndSeeds = [
 		{"len":5, "seed":0},
@@ -268,9 +272,9 @@ class Tests(unittest.TestCase):
 		]
 
 		mockClickEvents = ["el1","el2","el3","el4","el5","el6","el7","el8","el9","el10"]
-		
+
 		responseMsg = send({ "action": 'setup',
-		"xScreenDim": 1920, 
+		"xScreenDim": 1920,
 		"yScreenDim": 1080})
 
 
@@ -278,33 +282,33 @@ class Tests(unittest.TestCase):
 			# send some gaze points
 			gazePoints = generateGazePoints(number=lensAndSeeds[i]["len"],timestampSeed=lensAndSeeds[i]["seed"])
 			send({ "action": 'mockGazeData', "content": gazePoints})
-			# send a click event	
+			# send a click event
 			if i!=0:
-				send({"action": 'addQuestionEvent', 
-					"questionTimestamp": i, 
-					"questionEventType": "questionOffset", 
-					"questionPosition": i-1, 
-					"questionText": "testQtext", 
+				send({"action": 'addQuestionEvent',
+					"questionTimestamp": i,
+					"questionEventType": "questionOffset",
+					"questionPosition": i-1,
+					"questionText": "testQtext",
 					"questionAnswer": "testQanswer",
 					"questionID": "testQId"+str(i)
 				})
 			if i!=len(mockClickEvents)-1:
-				send({"action": 'addQuestionEvent', 
-					"questionTimestamp": i+1, 
-					"questionEventType": "questionOnset", 
-					"questionPosition": i, 
-					"questionText": "testQtext", 
+				send({"action": 'addQuestionEvent',
+					"questionTimestamp": i+1,
+					"questionEventType": "questionOnset",
+					"questionPosition": i,
+					"questionText": "testQtext",
 					"questionAnswer": "testQanswer",
 					"questionID": "testQId"+str(i+1)
-				})			
+				})
 
 		#"action": 'PrepareGazeDataAndInitiateTransfer' and do assertion for received_gazeDataSize
 		responseMsg = send({ "action": 'PrepareGazeDataAndInitiateTransfer'})
 		received_gazeDataSize = responseMsg["gazeDataSize"]
 
-		#"action": 'getDataFragment' 
+		#"action": 'getDataFragment'
 		responseMsg = send({ 'action': 'getDataFragment', 'start':0, 'end':received_gazeDataSize })
-		
+
 		#df = pd.DataFrame.from_dict(responseMsg)
 		#df = df.mask(df == '')
 		#df.to_csv("data/questions/gazePointsAndQuestions.csv", index=False)
@@ -315,11 +319,11 @@ class Tests(unittest.TestCase):
 		#construct resulting dataframe
 		received = pd.DataFrame.from_dict(responseMsg)
 		received = received.mask(received == '')
-		
+
 		# check_dtype=False because pandas looks for the best dtype when reading a csv
 		assert_frame_equal(received, expected, check_dtype=False)
 
-			
+
 		print("test_addQuestionEvent ends")
 
 
@@ -331,7 +335,7 @@ class Tests(unittest.TestCase):
 	# Description: test "action": 'mockGazeData'
 	#					"action": 'getDataFragment'
 	#			   test that a large number of gazeData is recorded correctly (taking into consideration the implemented period storage strategy based on multi-threading)
-	#				
+	#
 	#
 	def test_mockGazeData(self):
 
@@ -347,9 +351,9 @@ class Tests(unittest.TestCase):
 		FragmentSize = 10000
 
 		allGazes = [];
-		
+
 		responseMsg = send({ "action": 'setup',
-		"xScreenDim": 1920, 
+		"xScreenDim": 1920,
 		"yScreenDim": 1080})
 
 		for lss in lensSeedsAndSleeps:
@@ -367,16 +371,16 @@ class Tests(unittest.TestCase):
 		end = start+FragmentSize if (start+FragmentSize) <=received_gazeDataSize else received_gazeDataSize
 
 		while start<received_gazeDataSize:
-			
+
 			responseMsg = send({ 'action': 'getDataFragment', 'start':start, 'end':end })
 			start = start + FragmentSize
 			end = start+FragmentSize if (start+FragmentSize) <=received_gazeDataSize else received_gazeDataSize
 			allGazes.extend(responseMsg)
 		#to do extend dataframe
 
-		# df = pd.DataFrame.from_dict(allGazes)
-		# df = df.mask(df == '')
-		# df.to_csv("data/gazes/gazes.csv", index=False)
+		#df = pd.DataFrame.from_dict(allGazes)
+		#df = df.mask(df == '')
+		#df.to_csv("data/gazes/gazes.csv", index=False)
 
 		#load expected dataframe
 		expected = pd.read_csv("data/gazes/gazes.csv")
@@ -384,35 +388,12 @@ class Tests(unittest.TestCase):
 		#construct resulting dataframe
 		received = pd.DataFrame.from_dict(allGazes)
 		received = received.mask(received == '')
-		
+
 		# check_dtype=False because pandas looks for the best dtype when reading a csv
 		assert_frame_equal(received, expected, check_dtype=False)
 
 
 		print("test_mockGazeData ends")
-
-
-
-# for now, tests should be executed in independent runs
-def suite():
-    suite = unittest.TestSuite()
-    #suite.addTest(Tests('test_ET_setup'))
-    #suite.addTest(Tests('test_addSnapshot'))
-    #suite.addTest(Tests('test_logFullSnapshot'))
-    #suite.addTest(Tests('test_addClickEvent'))
-    #suite.addTest(Tests('test_addQuestionEvent'))
-    suite.addTest(Tests('test_mockGazeData'))
-    return suite
-
-if __name__ == '__main__':
-    runner = unittest.TextTestRunner()
-    runner.run(suite())
-
-
-
-
-
-
 
 
 

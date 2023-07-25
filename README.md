@@ -99,7 +99,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Hardware Requirements
 
-- To run EyeMind for data collection, you need an eye-tracking device and Computer Machine with Windows 10 or 11.
+- To run EyeMind for data collection, you need an eye-tracking device and a Computer Machine with Windows 10 or 11.
 
     EyeMind uses the Tobii Pro SDK (i.e., https://developer.tobiipro.com/python/python-getting-started.html) supporting Tobii Screen-based Eye-trackers (i.e., https://www.tobii.com/products/eye-trackers/screen-based). The tool was tested on Tobii X3-120 (i.e., https://connect.tobii.com/s/x3-downloads?language=en_US)
 
@@ -115,7 +115,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 # Installation Procedure
 
-EyeMind is composed of two interconnected components: the Eye-Tracking Server and the EyeMind App. This guide will walk you through the installation process for both services.
+EyeMind is composed of two services: the Eye-Tracking Server and the EyeMind App. This guide will walk you through the installation process for both services.
 
 Start by cloning EyeMind to your local machine. In the following we will assume that the cloning folder is called "EyeMind".
 
@@ -167,6 +167,8 @@ Follow the steps below to install the Eye-Tracking Server:
 
 # User Manual
 
+The video in  https://andaloussi.org/SoftwareX2023/demo.html illustrates the procedures explained in this section.
+
 ## Data Collection
 
 ### Important Notes
@@ -205,11 +207,13 @@ Follow the steps below to install the Eye-Tracking Server:
 -  The main process model should have the id "main" or "Main"
 - The sub-processes should be stored in different files (avoid using the sub-processes links available in bpmn.io where one collasped sub-process, leads you to the underlying model)
 - You should know in advance the following information
-    a. screen resolution (recommended 1920-1080)
-    b. screen dimension in inches
-    c. distance between the eye-tracker and the person
+
+    - a. screen resolution (recommended 1920-1080)
+
+    - b. screen dimension in inches
+  
+    - c. distance between the eye-tracker and the participant
 -  There should be no display scalling in your computer
-- It is recommended to always start a new instance of EyeMind and the eye-tracking sever for each data-collection
 
 ##### Models Import
 
@@ -220,14 +224,14 @@ Follow the steps below to install the Eye-Tracking Server:
 
 #### Questions Import
 
-- The questions should be formatted in a csv file, with a structure similar to  [Examples/questions.csv](Examples/questionSet.csv) provided in the "Examples" folder
+- The questions should be formatted in a csv file, with a structure similar to  [Examples/video demonstration material/Experiment-workflow/questions.csv/](Examples/video%20demonstration%20material/Experiment-workflow/questions.csv)
 - The questions should have a unique id
-- The type can be "open-question" or "multiple-choice". If "multiple-choice", then the options should be provided in the following format: "<option 1>;<option 2>;<option 3>"
+- The type of each question can be "open-question" or "multiple-choice". If "multiple-choice", then the options should be provided in the following format: "<option 1>;<option 2>;<option 3>"
 - Each question should be mapped to a specific process using the attribute model-group
 
-####  Saving and Import of Experimental Worflows for Future Data Collection
+####  Saving and Importing of Experimental Worflows for Future Data Collection
 
-- After importing the models and the questions, you can press the start recording button, provide the eye-tracking recoding settings and then save the session (with models, questions and eye-tracking settings)
+- After importing the models and the questions, you can press the red recording button at the top of the main view, provide the eye-tracking recoding settings and then save the session (with models, questions and eye-tracking settings)
 - Afterwards, you can import this session and directly start the recording
 
 #### Data Recording
@@ -255,11 +259,11 @@ Follow the steps below to install the Eye-Tracking Server:
 
 ### Calibration of the Eye-tracking device
 
-- Use Tobii Pro Eye Tracker Manager to calibrate the eye-tracking device
+- Use Tobii Pro Eye Tracker Manager to calibrate the eye-tracking device (cf.  https://andaloussi.org/SoftwareX2023/demo.html).
 
 ### Recording of The Eye-tracking Data using the EyeMind App
 
-- Instruct the participants *NOT TO* to press the following: ctrl+r (refresh the app), ctrl+esc (go out from the full screen), alt (show advanced menu), F10 (stop recording in Tobii)
+- Instruct the participants *NOT TO* to press the following: ctrl+r (refresh the app), ctrl+esc (go out from the full screen), alt (show advanced menu)
 
 -  No window should superpose the recording window at any time
 	
@@ -285,7 +289,8 @@ Follow the steps below to install the Eye-Tracking Server:
 ### General Notes:
 
 - You can always start a new data collection session using ctrl+r (refresh). Remember that when you refresh all the non-saved data is deleted.
-- In case the processing takes very long, you can use ctrl+shift+i to the open the developer tool and inspect the error
+- In case the processing takes very long, you can use ctrl+shift+i to the open the developer tool and inspect the error.
+- It is recommended to start a new instance of Eye-Mind for every new data collection or analysis session.
 
 ## Analysis
 
@@ -301,33 +306,27 @@ Follow the steps below to install the Eye-Tracking Server:
     - Fixation data (csv) (you need to apply the fixation filter before you can export the fixation data)
 
 ### Fixation Filter
-   - Use green icon on the top menu access the fixation filter
+   - Use green filter button on the top menu access the fixation filter
 
 ### Heatmap and Overlays
-  - Use the rainbow colored icon to see the heatmaps and overlays
+  - Use the rainbow colored button to see the heatmaps and overlays
   - Choose one or several participants, question, metric, aggregation, timestamp unit and which BPMN elements to additionally include (activites, events, gateways, labels, data objects are included by default)
   - Use the file explorer to access the models 
   - To exit the heatmap and overlays press the same icon again
 
 ### Gaze Offset Correction
-  - Use the red icon on the top menu to access the gaze correction offet
+  - Use the red pointer icon on the top menu to access the gaze correction feature
   - Choose the data sample percentage on which you want to see the projections (for better performance, it is recommended to choose a small sample)
   - Use the file explorer to see the snapshots with gaze projections on each model
   - use the "general offset correction" menu to set corrections on the x and y axes. Note that the corrections here are only made to the data sample. so no data is affected yet.
   - Use the file explorer to see the snapshots with gaze projections on each model after the correction
-  - If you are satisified with the correction you can apply it to the whole dataset. For this press "Apply correction to data", then a pop-up will open, press start, and wait until the rendering of snapshots (to redo the mapping) is complete
-  - Very Important note: for now, the gaze projections and corrections were tested on a machine with the same resolution on which the data correction has occured.
+  - If you are satisified with the correction you can apply it to the whole dataset. For this press "Apply correction to data", then a pop-up will open, press start, and wait until the rendering of snapshots (to redo the mapping between gazes and dynamic AOIs) is complete
+  - Very Important note: for now, the gaze projections and corrections were tested on a computer with the same resolution on which the data collection has occurred.
   - To exit the gaze offset correction press its icon again
 
 ### General Notes
-  - you can always start a new analysis session using ctrl+r (refresh). Remember that when you refresh all the non-saved data is deleted. 
+  - you can always start a new analysis session using ctrl+r (refresh). Remember that when you refresh all the non-saved data is lost. 
   - In case the processing takes very long, you can use ctrl+shift+i to the open the developer tool and inspect the error.
-
-### Other Comments
-
-- To avoid memory issues, you should have a machine (with the configuration recommended by Tobii) and you should avoid opening unnecessary apps during the data collection
-- Check model layout, spacing, naming of activies, labels, visibility of everything shown on the model when designing your experiment
-- a problem occured you can end the Eye-Tracking Sever with crtl+c on the terminal and start it again. However, you will need to restart the data collection in the EyeMind App as well.
 
 
 # Interpreting EyeMind Data
@@ -373,12 +372,12 @@ Follow the steps below to install the Eye-Tracking Server:
 
     - Model
         - Clicks on sub processes
-            - Pattern: <Subprocess activity id>
+            - Pattern: .<Subprocess activity id
     - File explorer
         -  File
             - Pattern: file-explorer-file_<Model name>
     - Process hierarchy explorer (visible in the breadcrumb mode)
-            - Pattern: process-hierarchy-sub-process-link-to_<Subprocess activity label || main>
+      - Pattern: process-hierarchy-sub-process-link-to_<Subprocess activity label || main>
     - Tabs
         - File Name in tab header
             - Pattern: tab-link-to_<Model name>
@@ -427,7 +426,7 @@ Our Python Notebook in [DataCollectionValidation/dataCollectionValidation.ipynb]
 The test cases for the EyeMind App are written using the playwright library (i.e., https://playwright.dev/).
 They can be found under [EyeMindApp/test/tests/playwright](EyeMindApp/test/tests/playwright)
 
-To run the automated testing procedure using the following terminal commands
+To run the automated testing procedure, use the following terminal commands
 
 - Start the Eye-Tracking Server in Test Mode
 
@@ -442,7 +441,7 @@ To run the automated testing procedure using the following terminal commands
     npm test
     ```
 
-In total **57** functional test cases were formulated. These test cases a distributed over several files (cf. [EyeMindApp/test/tests/playwright](EyeMindApp/test/tests/playwright)) as follows. 
+In total **57** functional test cases were formulated. These test cases are distributed over several files (cf. [EyeMindApp/test/tests/playwright](EyeMindApp/test/tests/playwright)) as follows. 
 
 - **canvas.test.ts** [EyeMindApp/test/tests/playwright/canvas.test.ts](EyeMindApp/test/tests/playwright/canvas.test.ts) _(4 tests)_: The file contains functional test cases testing the canvas (i.e., the area where the process models are shown) of the EyeMind App. 
 - **clicks.test.ts** [EyeMindApp/test/tests/playwright/clicks.test.ts](EyeMindApp/test/tests/playwright/clicks.test.ts)  _(6 tests)_:  The file contains functional test cases testing different click interaction events registered by the EyeMind App.
@@ -472,7 +471,7 @@ To run the test cases for a specific test file, use the following commands:
 
 #### Eye-Tracking Server Test Cases
 
-The est cases for the Eye-Tracking Server are written using unittest Library in Python
+The test cases for the Eye-Tracking Server are written using the unittest Library in Python
 
 In total **6** test cases were formulated. To run them, please use the following commands 
 

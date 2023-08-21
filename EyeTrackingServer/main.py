@@ -548,15 +548,32 @@ def getGazes():
     gazeDataFrame["XRatio"] = gazeDataFrame[["leftXRatio","rightXRatio"]].mean(axis=1)
     gazeDataFrame["YRatio"] = gazeDataFrame[["leftYRatio","rightYRatio"]].mean(axis=1)
 
-    gazeDataFrame["x"] = gazeDataFrame["XRatio"]*xScreenDim
-    gazeDataFrame["y"] = gazeDataFrame["YRatio"]*yScreenDim
-
+    #gazeDataFrame["x"] = gazeDataFrame["XRatio"]*xScreenDim
+    #gazeDataFrame["y"] = gazeDataFrame["YRatio"]*yScreenDim
 
     gazeDataFrame["leftDistance"] = gazeDataFrame["leftZOrigin"]
     gazeDataFrame["rightDistance"] = gazeDataFrame["rightZOrigin"]
 
 
     gazeDataFrame.to_csv("out/logs/EyeMindFinalGazeData"+str(now)+".csv")
+
+    # version to send back to EyeMind
+
+    # Set negative leftX, leftY, rightX, rightY to nan
+    gazeDataFrame.loc[gazeDataFrame["leftX"] < 0, "leftX"] = np.nan
+    gazeDataFrame.loc[gazeDataFrame["leftY"] < 0, "leftY"] = np.nan
+    gazeDataFrame.loc[gazeDataFrame["rightX"] < 0, "rightX"] = np.nan
+    gazeDataFrame.loc[gazeDataFrame["rightY"] < 0, "rightY"] = np.nan
+
+     
+    # Set leftX, rightX to nan if value > xScreenDim
+    gazeDataFrame.loc[gazeDataFrame["leftX"] > xScreenDim, "leftX"] = np.nan
+    gazeDataFrame.loc[gazeDataFrame["rightX"] > xScreenDim, "rightX"] = np.nan
+
+     
+    # Set leftY or rightY to nan if value > yScreenDim
+    gazeDataFrame.loc[gazeDataFrame["leftY"] > yScreenDim, "leftY"] = np.nan
+    gazeDataFrame.loc[gazeDataFrame["rightY"] > yScreenDim, "rightY"] = np.nan
 
 
     # rounding and dropping uncessary columns for the data to be send to EyeMind (the full data was already stored) (rounding is similar to iMotions)
@@ -568,7 +585,7 @@ def getGazes():
         'rightY': 0,
      })
 
-    # recompute x and y with rounded data
+    # compute x and y with rounded data
     gazeDataFrame["x"] = gazeDataFrame[["leftX","rightX"]].mean(axis=1)
     gazeDataFrame["y"] = gazeDataFrame[["leftY","rightY"]].mean(axis=1)
 

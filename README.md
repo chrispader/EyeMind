@@ -408,6 +408,10 @@ The material used in the demonstration video and generated throughout the demons
 
 - [collectedData](Examples/video%20demonstration%20material/Collected-data): This directory contains the data collected during the demo (i.e., EyeMind json file containing all the recorded raw data, fixation and gaze data in CSV format)
 
+## Data Collection Material
+
+The material (i.e., process models and questions) used in the experiment validating EyeMind is available at [DataCollectionValidation/experimentMaterial/](DataCollectionValidation/experimentMaterial/).
+
 ## Validation of Data Quality
 
 To validate the quality of the eye-tracking data collected with EyeMind, we compared random data samples collected with EyeMind with corresponding samples recorded simultaneously using the commercial tool Tobii Pro Lab (cf. https://www.tobii.com/products/software/behavior-research-software/tobii-pro-lab?gclid=EAIaIQobChMIzMXW9padgAMVM0GRBR0gxgC9EAAYASABEgLnEvD_BwE). 

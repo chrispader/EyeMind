@@ -79,7 +79,9 @@ The following video demonstrates the features of EyeMind https://andaloussi.org/
 
 # Citation
 
-Amine Abbad-Andaloussi, Daniel Lübke, Barbara Weber (2023). "Conducting Eye-tracking Studies On Large Process Models Using EyeMind" in Software X, 101564 Elsevier.
+  ```
+  Amine Abbad-Andaloussi, Daniel Lübke, Barbara Weber (2023). "Conducting Eye-tracking Studies On Large Process Models Using EyeMind" in Software X, 101564 Elsevier.
+  ```
 
 # License
 

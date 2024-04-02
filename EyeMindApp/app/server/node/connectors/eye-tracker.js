@@ -22,7 +22,7 @@ async function setupTracking(xScreenDim, yScreenDim) {
         try {
             const response = await request(communication);
             console.log(response);
-            if(response["isETready"]==1) { 
+            if(response["isETready"]==1) {
                 res.sucess = true;
             }
             else {
@@ -32,10 +32,10 @@ async function setupTracking(xScreenDim, yScreenDim) {
         }
         catch(error) {
            const msg = 'A problem occured when setting up the eye-tracker. '+error;
-            res.msg = msg 
+            res.msg = msg
             res.sucess = false;
         }
-        
+
 
         return res;
 
@@ -63,7 +63,7 @@ async function sendSnapshotID(snapshot) {
     }
     catch(error) {
         const msg = 'A problem occured when sending the snapshot id. '+error;
-        res.msg = msg 
+        res.msg = msg
         res.sucess = false;
     }
 
@@ -93,7 +93,7 @@ async function sendFullSnapshot(snapshot) {
     }
     catch(error) {
         const msg = 'A problem occured when sending the full snapshot. '+error;
-        res.msg = msg 
+        res.msg = msg
         res.sucess = false;
     }
 
@@ -108,11 +108,11 @@ async function sendQuestionEvent(questionTimestamp, questionEventType,questionPo
 
 
         // send question event data to the eye-tracking server
-        const data = {"action": 'addQuestionEvent', 
-          "questionTimestamp": questionTimestamp, 
-          "questionEventType": questionEventType, 
-          "questionPosition": questionPosition, 
-          "questionText": questionText, 
+        const data = {"action": 'addQuestionEvent',
+          "questionTimestamp": questionTimestamp,
+          "questionEventType": questionEventType,
+          "questionPosition": questionPosition,
+          "questionText": questionText,
           "questionAnswer": questionAnswer,
             "questionID": questionID
         };
@@ -133,7 +133,7 @@ async function sendQuestionEvent(questionTimestamp, questionEventType,questionPo
         }
         catch(error) {
             const msg = 'A problem occured when sending the question event. '+error;
-            res.msg = msg 
+            res.msg = msg
             res.sucess = false;
         }
 
@@ -150,8 +150,8 @@ async function sendClickEvent(clickTimestamp,clickedElement) {
 
 
         // send question event data to the eye-tracking server
-        const data = {"action": 'addClickEvent', 
-          "clickTimestamp": clickTimestamp, 
+        const data = {"action": 'addClickEvent',
+          "clickTimestamp": clickTimestamp,
           "clickedElement": clickedElement
         };
 
@@ -170,7 +170,7 @@ async function sendClickEvent(clickTimestamp,clickedElement) {
         }
         catch(error) {
             const msg = 'A problem occured when sending the click event. '+error;
-            res.msg = msg 
+            res.msg = msg
             res.sucess = false;
         }
 
@@ -209,30 +209,75 @@ async function requestGazeData(clientState,externalProgressWindow,mainWindow) {
 
 
     const response = await request(communication)
-       
+
     // console.log("gaze data received from eye-tracking server ",response);
 
     // report progress through updateProcessingMessage
     mainWindow.webContents.send('updateProcessingMessage',"Initiating data transfer and mapping",externalProgressWindow);
 
-    // set clientState.snapshots
-    clientState.snapshots = response["snapshots"];
-
     // get gazeDataSize (coming as response from py eye-tracking server)
     const gazeDataSize = response["gazeDataSize"];
 
+    // get snapshotsSize (coming as response from py eye-tracking server)
+    const snapshotsSize = response["snapshotsSize"];
+
     console.log("gazeDataSize",gazeDataSize);
+    console.log("snapshotsSize",snapshotsSize);
+
 
     // initiate clientState.processedGazeData.gazeData
     clientState.processedGazeData.gazeData = [];
 
+     // initiate clientState.snapshots
+     clientState.snapshots = [];
+
     // set state
     setState(clientState);
 
+     // get snapshots in fragements
+     var start = 0;
+     while(start!=snapshotsSize) {
+       start = await fetchSnapshotsInFragement(start,snapshotsSize, externalProgressWindow,mainWindow);
+     }
+
     // process gazeData in fragements
     await processDataFragement(0,gazeDataSize,externalProgressWindow,mainWindow);
-           
+
 }
+
+async function fetchSnapshotsInFragement(start,snapshotsSize, externalProgressWindow, mainWindow) {
+
+    //console.log("fetchSnapshotsInFragement",arguments);
+
+    const end = (start+globalParameters.SNAPSHOTS_FRAGMENT_SIZE) <=snapshotsSize? start+globalParameters.SNAPSHOTS_FRAGMENT_SIZE: snapshotsSize;
+
+    console.log("start ",start,"end ",end,"SNAPSHOTS_FRAGMENT_SIZE",globalParameters.SNAPSHOTS_FRAGMENT_SIZE,"snapshotsSize",snapshotsSize);
+
+    const req = { 'action': 'getSnapshotFragment', 'start':start, 'end':end };
+    const com = {
+    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    body: req,
+    json: true
+        };
+
+    // request to ET server to snapshots in range [start,end]
+    await request(com).then(function(res) {
+        const state = getState();
+        Object.assign(state.snapshots, res);
+
+    });
+
+     const state = getState();
+     console.log(Object.keys(state.snapshots).length);
+
+    // report progress through updateProcessingMessage
+    mainWindow.webContents.send('updateProcessingMessage',"Transferring snapshots data: "+calculateProgress(end,snapshotsSize)+"% complete",externalProgressWindow);
+
+    return end;
+
+}
+
 
 
 async function processDataFragement(start,gazeDataSize,externalProgressWindow, mainWindow) {
@@ -252,14 +297,14 @@ async function processDataFragement(start,gazeDataSize,externalProgressWindow, m
         };
 
 
-    // request to ET server to get gaze data in range [start,end]     
-    await request(com).then(function(res) { 
+    // request to ET server to get gaze data in range [start,end]
+    await request(com).then(function(res) {
         const state = getState();
         /// send to UI to the mapping
         var snapshots = start==0? state.snapshots : null;
         mainWindow.webContents.send('mapGazestoElementsFromPageSnapshot',res,start,gazeDataSize,externalProgressWindow,snapshots);
 
-    }); 
+    });
 
     // report progress through updateProcessingMessage
     mainWindow.webContents.send('updateProcessingMessage',"Data transfer and mapping: "+calculateProgress(end,gazeDataSize)+"% complete",externalProgressWindow);
@@ -277,22 +322,22 @@ async function dataMapped(dataMapped, start,gazeDataSize, externalProgressWindow
 
     // set next start
     start = start + globalParameters.DATA_FRAGMENT_SIZE;
-    // move to next iteration 
+    // move to next iteration
     if(start<gazeDataSize) {
          await processDataFragement(start,gazeDataSize,externalProgressWindow,mainWindow);
     }
     else {
 
         // report progress through updateProcessingMessage
-        
+
         console.log("All is mapped, show making the state download");
 
         mainWindow.webContents.send('updateProcessingMessage',"Exporting the file. This operation can take serveral minutes for long recordings",externalProgressWindow);
         const downloadOutput = await stateDownload("EyeMind",true,"collected-data");
         mainWindow.webContents.send('completeProcessingListener',externalProgressWindow,downloadOutput.msg,downloadOutput.sucess);
-        
+
     }
-   
+
 
 }
 

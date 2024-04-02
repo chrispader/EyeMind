@@ -61,7 +61,7 @@ contextBridge.exposeInMainWorld(
    	generateHeatMap: (filePaths,elementRegistryTypes,measure, measureType, aggregation,additionalElementsToIclude,questionID) =>  ipcRenderer.invoke('generateHeatMap',[filePaths,elementRegistryTypes,measure, measureType, aggregation,additionalElementsToIclude,questionID]),
     shouldEnableHeatmap: () => ipcRenderer.invoke('shouldEnableHeatmap',[]),
     getRandomGazeSet: (samplingRatio,stateFile) =>  ipcRenderer.invoke('getRandomGazeSet',[samplingRatio,stateFile]),
-    applyCorrectionOffset: (externalMappingWindow,stateFile,snapshotId,xOffset,yOffset) => ipcRenderer.invoke('applyCorrectionOffset',[externalMappingWindow,stateFile,snapshotId,xOffset,yOffset]), 
+    applyCorrectionOffset: (externalMappingWindow,stateFile,snapshotId,xOffset,yOffset) => ipcRenderer.invoke('applyCorrectionOffset',[externalMappingWindow,stateFile,snapshotId,xOffset,yOffset]),
     onApplyCorrectionOnGazeFragment: (func) => ipcRenderer.on('applyCorrectionOnGazeFragment',(event, ...args) => func(args)),
     gazeDataFragmentMapped: (stateFile,gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset) => ipcRenderer.invoke('gazeDataFragmentMapped',[stateFile,gazeDataFragment,start,gazeDataSize,externalMappingWindow,snapshotId,xOffset,yOffset]),
     onCompleteCorrectionListener : (func) => ipcRenderer.on('completeCorrectionListener',(event, ...args) => func(args)),
@@ -70,7 +70,7 @@ contextBridge.exposeInMainWorld(
 )
 
 
-// contextBridge.exposeInMainWorld listeners/download.js
+// contextBridge.exposeInMainWorld listeners/download.js, session.js
 contextBridge.exposeInMainWorld(
   'utils',
    {
@@ -78,6 +78,7 @@ contextBridge.exposeInMainWorld(
     readState: (fileName,filePath,state) => ipcRenderer.invoke('readState',[fileName,filePath,state]),
     onStateRead: (func) => ipcRenderer.once('stateRead',(event, ...args) => func(args)),
     saveSession: (state) => ipcRenderer.invoke('saveSession',[state]),
+    recoverSession: (gazeDataFilename,snapshotsContentDataFilename) => ipcRenderer.invoke('recoverSession',[gazeDataFilename,snapshotsContentDataFilename]),
     onSessionRead: (func) => ipcRenderer.once('sessionRead',(event, ...args) => func(args)),
    }
 )
@@ -91,12 +92,12 @@ contextBridge.exposeInMainWorld(
     sendSnapshotID: (snapshot) => ipcRenderer.invoke('sendSnapshotID',[snapshot]),
     sendFullSnapshot: (snapshot) => ipcRenderer.invoke('sendFullSnapshot',[snapshot]),
     sendQuestionEvent: (questionTimestamp, questionEventType,questionPosition, questionText,questionAnswer,questionID) => ipcRenderer.invoke('sendQuestionEvent',[questionTimestamp, questionEventType,questionPosition, questionText,questionAnswer,questionID]),
-    processGazeData: (state, externalProgressWindow) => ipcRenderer.invoke('processGazeData',[state, externalProgressWindow]), 
+    processGazeData: (state, externalProgressWindow) => ipcRenderer.invoke('processGazeData',[state, externalProgressWindow]),
     onMapGazestoElementsFromPageSnapshot : (func) => ipcRenderer.on('mapGazestoElementsFromPageSnapshot',(event, ...args) => func(args)),
     dataMapped: (dataMapped,start,gazeDataSize,externalProgressWindow) => ipcRenderer.invoke('dataMapped',[dataMapped,start,gazeDataSize,externalProgressWindow]),
     onCompleteProcessingListener : (func) => ipcRenderer.once('completeProcessingListener',(event, ...args) => func(args)),
     sendClickEvent: (clickTimestamp,clickedElement) => ipcRenderer.invoke('sendClickEvent',[clickTimestamp,clickedElement])
-    
+
    }
 )
 
@@ -125,8 +126,8 @@ contextBridge.exposeInMainWorld(
     clearStates: () => ipcRenderer.invoke('clearStates'),
     removeState: (filePath) => ipcRenderer.invoke('removeState',[filePath]),
     doesStateExist: (filePath) => ipcRenderer.invoke('doesStateExist',[filePath]),
-    getSnapshotsOfState: (filePath) => ipcRenderer.invoke('getSnapshotsOfState',[filePath]), 
-    areAreGazesCorrectedOfState : (filePath) => ipcRenderer.invoke('areAreGazesCorrectedOfState',[filePath]), 
+    getSnapshotsOfState: (filePath) => ipcRenderer.invoke('getSnapshotsOfState',[filePath]),
+    areAreGazesCorrectedOfState : (filePath) => ipcRenderer.invoke('areAreGazesCorrectedOfState',[filePath]),
 
   }
 )

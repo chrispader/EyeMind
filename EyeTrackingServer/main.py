@@ -30,7 +30,7 @@ import random
 import os
 import sys
 from flask import Flask, request
-import json 
+import json
 import math
 import pandas as pd
 import statistics
@@ -93,6 +93,8 @@ GAZE_ATTRIBUTES = [
 # variables to be reset at each (ET) setup
 gazeData = []
 gazeFullData = None
+snapshotsFullData = None
+
 
 gazeDataFilename = ""
 snapshotsContentDataFilename = ""
@@ -100,8 +102,8 @@ snapshotsContentDataFilename = ""
 fileWrittingGazeThreads = []
 fileWrittingSnapshotThreads = []
 
-currentSnapshotId = -1 
-currentSnapshotTimestamp = -1 
+currentSnapshotId = -1
+currentSnapshotTimestamp = -1
 currentQuestion = ""
 
 isETready = 0
@@ -121,7 +123,7 @@ isETstarted = False
  #
  # Description: finding the connected eye-tracker
  #
- # @param {void} . . 
+ # @param {void} . .
  # Returns {boolean} eye-tracker found or not
  #
  # Additional notes: none
@@ -145,8 +147,8 @@ def find_eyeTracker():
         print("Found Tobii Tracker at '%s'" % (mt.address))
         return True
     else:
-        print("No Eye Trackers found!") 
-        return False 
+        print("No Eye Trackers found!")
+        return False
 
 
 ###
@@ -154,7 +156,7 @@ def find_eyeTracker():
  #
  # Description: start gaze tracking
  #
- # @param {void} . . 
+ # @param {void} . .
  # Returns {void}
  #
  # Additional notes: none
@@ -171,8 +173,8 @@ def start_gaze_tracking():
  #
  # Description: end gaze tracking
  #
- # @param {void} . . 
- # Returns {void} 
+ # @param {void} . .
+ # Returns {void}
  #
  # Additional notes: none
  #
@@ -185,7 +187,7 @@ def end_gaze_tracking():
  #
  # Description: a function to be called when you gaze data is received
  #
- # @param {object} gaze_data a gaze data object with many attributes refering to gaze characteristics 
+ # @param {object} gaze_data a gaze data object with many attributes refering to gaze characteristics
  # Returns {void}
  #
  # Additional notes: none
@@ -204,7 +206,7 @@ def gaze_data_callback(gaze_data):
 
         # sts = gaze_data['system_time_stamp'] / 1000000.
 
-        
+
         # if sts > last_report + 5:
         #     sys.stdout.write("%14.3f: %10d packets\r" % (sts, N))
         #     last_report = sts
@@ -218,7 +220,7 @@ def gaze_data_callback(gaze_data):
 
         validLeft = d[1]
         validright = d[2]
-        
+
         leftXRatio = d[3]
         leftYRatio = d[4]
 
@@ -239,7 +241,7 @@ def gaze_data_callback(gaze_data):
         rightYOrigin = d[15]
         rightZOrigin = d[16]
 
-        
+
 
         entry = {
             "Timestamp": timestamp,
@@ -247,10 +249,10 @@ def gaze_data_callback(gaze_data):
             "validLeft": validLeft,
             "validRight": validright,
 
-            "leftXRatio": leftXRatio, 
-            "leftYRatio": leftYRatio, 
-            "rightXRatio": rightXRatio, 
-            "rightYRatio": rightYRatio, 
+            "leftXRatio": leftXRatio,
+            "leftYRatio": leftYRatio,
+            "rightXRatio": rightXRatio,
+            "rightYRatio": rightYRatio,
 
             "leftPupilValidity": leftPupilValidity,
             "rightPupilValidity": rightPupilValidity,
@@ -274,7 +276,7 @@ def gaze_data_callback(gaze_data):
             "eventSource": eventSource,
 
             "systemTimestamp": time.time_ns()
-      
+
             }
 
         gazeData.append(entry)
@@ -291,7 +293,7 @@ def gaze_data_callback(gaze_data):
  #
  # Description: periodic storage of gaze data to a file
  #
- # @param {void} . .   
+ # @param {void} . .
  # Returns {void}
  #
  # Additional notes: none
@@ -302,7 +304,7 @@ def storeGazeDataPeriodically():
 
     # if the length of gazeData exceeds the GAZE_BUFFER_SIZE
     if len(gazeData)>=GAZE_BUFFER_SIZE:
-        print("storing gaze data ...") 
+        print("storing gaze data ...")
 
         # make a deep copy of a gazeData fragment [:GAZE_BUFFER_SIZE]. This strategy avoid issues when gazeData is being updated externally from logQuestionData() or logClickData()
         tempData = copy.deepcopy(gazeData[:GAZE_BUFFER_SIZE])
@@ -320,7 +322,7 @@ def storeGazeDataPeriodically():
  #
  # Description: append gazes to file
  #
- # @param {object}  tempData a fragment of gazeData  
+ # @param {object}  tempData a fragment of gazeData
  #
  # Returns {void}
  #
@@ -348,7 +350,7 @@ def appendGazesToFile(tempData):
             print("Fresh gazes file")
             print("tempData len",len(tempData))
             pickle.dump(tempData, file)
-            file.close()           
+            file.close()
 
 
         print("periodic writting to file ended");
@@ -358,7 +360,7 @@ def appendGazesToFile(tempData):
  #
  # Description: log the snapshot with all its details
  #
- # @param {object}  snapshotContent snapshot object   
+ # @param {object}  snapshotContent snapshot object
  # Returns {void}
  #
  # Additional notes: none
@@ -370,7 +372,7 @@ def logFullSnapshot(snapshotContent):
     thread = threading.Thread(target=appendSnapshotContentToFile, args=(snapshotContent, ))
     thread.start()
     fileWrittingSnapshotThreads.append(thread)
-    
+
 
 
 ###
@@ -378,7 +380,7 @@ def logFullSnapshot(snapshotContent):
  #
  # Description: append snpashot content to file
  #
- # @param {object}  snapshotContent snapshot object  
+ # @param {object}  snapshotContent snapshot object
  # Returns {void}
  #
  # Additional notes: none
@@ -387,7 +389,7 @@ def logFullSnapshot(snapshotContent):
 def appendSnapshotContentToFile(snapshotContent):
 
 
-    # fileWrittingSnapshotLock is a lock, makking the load and the writting to the file thread-safe 
+    # fileWrittingSnapshotLock is a lock, makking the load and the writting to the file thread-safe
     with fileWrittingSnapshotLock:
         print("append snapshots content data to snapshots file started");
 
@@ -408,7 +410,7 @@ def appendSnapshotContentToFile(snapshotContent):
             data[snapshotContent["id"]] = snapshotContent;
             print("data len",len(data))
             pickle.dump(data, file)
-            file.close()    
+            file.close()
 
         print("append snapshots content data to snapshots file finished");
 
@@ -423,7 +425,7 @@ def appendSnapshotContentToFile(snapshotContent):
  # @param {string} questionText  question text
  # @param {string} questionAnswer answer text
  # @param {int} questionPosition question position (i.e., nextQuestionId)
- # @param {string} questionID id of the question  
+ # @param {string} questionID id of the question
  # Returns {void}
  #
  # Additional notes: none
@@ -442,7 +444,7 @@ def logQuestionData(questionTimestamp,questionEventType,questionText,questionAns
                 "questionPosition" : questionPosition,
                 "questionID": questionID,
                 "eventSource": eventSource,
-                "systemTimestamp": time.time_ns()   
+                "systemTimestamp": time.time_ns()
                 }
 
     gazeData.append(entry)
@@ -469,7 +471,7 @@ def logClickData(clickTimestamp,clickedElement):
     entry = {   "clickTimestamp" : clickTimestamp,
                 "clickedElement" : clickedElement,
                 "eventSource": eventSource,
-                "systemTimestamp": time.time_ns()   
+                "systemTimestamp": time.time_ns()
                 }
 
     gazeData.append(entry)
@@ -479,7 +481,7 @@ def logClickData(clickTimestamp,clickedElement):
  #
  # Description: unpack gaze data
  #
- # @param {object} gaze_data gaze data   
+ # @param {object} gaze_data gaze data
  # Returns {object} x gaze data
  #
  # Additional notes: none
@@ -501,7 +503,7 @@ def unpack_gaze_data(gaze_data):
  #
  # Description: load and get gaze data
  #
- # @param {void} . .   
+ # @param {void} . .
  # Returns {object} gazeDataFrame gaze data
  #
  # Additional notes: none
@@ -519,14 +521,14 @@ def getGazes():
 
 
     # open gazeDataFilename
-    file = open(gazeDataFilename, 'rb')  
+    file = open(gazeDataFilename, 'rb')
     # load its content i.e., gazeData
     data = pickle.load(file)
 
 
-    # for stress simulation: 
+    # for stress simulation:
     # data = data*100
-    
+
     gazeDataFrame = pd.DataFrame(data)
 
 
@@ -536,7 +538,7 @@ def getGazes():
     now = int( time.time() )
 
 
-    gazeDataFrame["Timestamp"] = gazeDataFrame["Timestamp"]/1000  #convert from micro to milliseconds  
+    gazeDataFrame["Timestamp"] = gazeDataFrame["Timestamp"]/1000  #convert from micro to milliseconds
     # for timestamp simulation: gazeDataFrame["Timestamp"] = 325905.354 + (gazeDataFrame.index *  8.348)
 
     gazeDataFrame["leftX"] = gazeDataFrame["leftXRatio"]*xScreenDim
@@ -565,19 +567,19 @@ def getGazes():
     gazeDataFrame.loc[gazeDataFrame["rightX"] < 0, "rightX"] = np.nan
     gazeDataFrame.loc[gazeDataFrame["rightY"] < 0, "rightY"] = np.nan
 
-     
+
     # Set leftX, rightX to nan if value > xScreenDim
     gazeDataFrame.loc[gazeDataFrame["leftX"] > xScreenDim, "leftX"] = np.nan
     gazeDataFrame.loc[gazeDataFrame["rightX"] > xScreenDim, "rightX"] = np.nan
 
-     
+
     # Set leftY or rightY to nan if value > yScreenDim
     gazeDataFrame.loc[gazeDataFrame["leftY"] > yScreenDim, "leftY"] = np.nan
     gazeDataFrame.loc[gazeDataFrame["rightY"] > yScreenDim, "rightY"] = np.nan
 
 
     # rounding and dropping uncessary columns for the data to be send to EyeMind (the full data was already stored) (rounding is similar to iMotions)
-    # round 
+    # round
     gazeDataFrame = gazeDataFrame.round({
         'leftX': 0,
         'leftY': 0,
@@ -598,7 +600,7 @@ def getGazes():
     # drop uncessary columns
     gazeDataFrame = gazeDataFrame.drop(columns=['leftXOrigin', 'leftYOrigin','leftZOrigin','rightXOrigin','rightYOrigin','rightZOrigin',
                                                    'leftXRatio','leftYRatio','rightXRatio','rightYRatio','XRatio','YRatio','systemTimestamp' ])
-    
+
     return gazeDataFrame
 
 
@@ -607,7 +609,7 @@ def getGazes():
  #
  # Description: get the content of the snapshots
  #
- # @param {void} . .   
+ # @param {void} . .
  # Returns {object} snapshots
  #
  # Additional notes: none
@@ -622,7 +624,7 @@ def getSnapshotsContent():
     # try except depending on whether snapshotsContentDataFilename was created on not yet. If the file was not created, this meaning that there are not snapshots
     try:
         # open snapshotsContentDataFilename
-        file = open(snapshotsContentDataFilename, 'rb')  
+        file = open(snapshotsContentDataFilename, 'rb')
         # load its content i.e., snapshotsContent
         data = pickle.load(file)
         # close file
@@ -646,7 +648,7 @@ def processMockGazeData(gazes):
 
 ########################################################################
 
-######################## main control-flow 
+######################## main control-flow
 
 # check if not testMode
 if not testMode:
@@ -660,10 +662,11 @@ else:
 
 app = Flask(__name__)
 
-@app.route('/BPMeyeMind', methods = ['POST']) 
-def process(): 
+@app.route('/BPMeyeMind', methods = ['POST'])
+def process():
     global gazeData
-    global gazeFullData 
+    global gazeFullData
+    global snapshotsFullData
     global gazeDataFilename
     global snapshotsContentDataFilename
     global fileWrittingGazeThreads
@@ -679,9 +682,9 @@ def process():
     global isETstarted
 
 
-    data = request.get_json() 
+    data = request.get_json()
     print("-----------------------new data received -----------------");
-    
+
 
     if data['action']=='setup':
         print(data)
@@ -691,15 +694,16 @@ def process():
 
         gazeData = []
         gazeFullData = None
+        snapshotsFullData = None
         cTimestamp = "t"+str(int( time.time() ))
         gazeDataFilename = "out/logs/EyeMindTemporalGazeData_"+cTimestamp+".bem"
         snapshotsContentDataFilename = "out/logs/EyeMindTemporalSnapshotsContentData_"+cTimestamp+".bem"
-        
+
         fileWrittingGazeThreads = []
         fileWrittingSnapshotThreads = []
 
         currentSnapshotId = -1
-        currentSnapshotTimestamp = -1 
+        currentSnapshotTimestamp = -1
         currentQuestion = "";
         # last_report = 0
         # N = 0
@@ -718,11 +722,12 @@ def process():
         responseMsg = {
             "gazeData": gazeData,
             "gazeFullData": gazeFullData,
+            "snapshotsFullData": snapshotsFullData,
             "cTimestamp": cTimestamp,
             "gazeDataFilename": gazeDataFilename,
             "snapshotsContentDataFilename": snapshotsContentDataFilename,
             "currentSnapshotId": currentSnapshotId,
-            "currentSnapshotTimestamp": currentSnapshotTimestamp,    
+            "currentSnapshotTimestamp": currentSnapshotTimestamp,
             "fileWrittingGazeThreads": fileWrittingGazeThreads,
             "fileWrittingSnapshotThreads": fileWrittingSnapshotThreads,
             "currentQuestion": currentQuestion,
@@ -765,7 +770,7 @@ def process():
             currentQuestion = ""
 
         logQuestionData(questionTimestamp,questionEventType,questionText,questionAnswer,questionPosition,questionID)
-        
+
         responseMsg = {
             "response": "OK",
         }
@@ -788,7 +793,7 @@ def process():
         print("snapshot content received");
         #print(data['content']["boundingClientRect"])
         logFullSnapshot(data['content'])
-        
+
         responseMsg = {
             "response": "OK",
         }
@@ -803,8 +808,9 @@ def process():
             end_gaze_tracking() # stop the data collection
 
         gazeFullData = getGazes();
+        snapshotsFullData = getSnapshotsContent();
         output = {"gazeDataSize" : len(gazeFullData),
-                  "snapshots": getSnapshotsContent()
+                  "snapshotsSize": len(snapshotsFullData)
                   }
         print("gaze data ready to send")
         return output
@@ -812,8 +818,14 @@ def process():
     elif data['action'] == 'getDataFragment' and isETstarted:
         print(data)
         print("getting a data fragement in range %s, %s" % (data['start'], data['end']) )
-        
+
         return gazeFullData.iloc[data['start']:data['end']].to_json(orient = 'records')
+
+    elif data['action'] == 'getSnapshotFragment' and isETstarted:
+        print(data)
+        print("getting a snapshot fragement in range %s, %s" % (data['start'], data['end']) )
+
+        return {k: snapshotsFullData[k] for k in list(snapshotsFullData)[data['start']:data['end']]}
 
 
     ###########FOR TESTING PURPOSE#############################
@@ -832,7 +844,7 @@ def process():
             "response": "OK",
         }
         return responseMsg;
-        
+
     elif data['action'] == 'mockRecording' and isETstarted:
         print(data)
         gazeDataFilename = data['gazeDataFilename']
@@ -847,8 +859,8 @@ def process():
     ############################################################
 
     return "";
-   
-if __name__ == "__main__": 
+
+if __name__ == "__main__":
     #app.run(port=5000)
     serve(app, host="0.0.0.0", port=COMMUNICATION_PORT_WITH_EYE_MIND)
 

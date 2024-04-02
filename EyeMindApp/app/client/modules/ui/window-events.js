@@ -24,7 +24,7 @@ SOFTWARE.*/
 /* Window Events */
 
 
-import {takesnapshot} from './data-collection'
+import {takesnapshot,stopETInteraction} from './data-collection'
 import {getState} from '../dataModels/state'
 import {openMainTab} from './tabs'
 import {resetModel,resetNavTabsAndTabs} from './canvas'
@@ -57,7 +57,7 @@ function handleWindowRefresh() {
 
   // remove full screen in case of window refresh
     window.electron.removeFullScreen();
-  
+
   // clear sever state in case of window refresh (for data collection)
     window.state.clearState();
 
@@ -70,7 +70,7 @@ function handleWindowRefresh() {
 
 
 /**
- * Title: Take snapshot when the app window is resized  
+ * Title: Take snapshot when the app window is resized
  *
  * Description: Definition of an event listener to take a snapshot when the window is resized
  *
@@ -95,7 +95,7 @@ function takeSnapshotOnWindowResize() {
 
 
 /**
- * Title: Take snapshot when the app window is moved  
+ * Title: Take snapshot when the app window is moved
  *
  * Description: Definition of an event listener to take a snapshot when the window is moved
  *
@@ -139,14 +139,17 @@ function takeSnapshotOnWindowMovement() {
 function testListeners() {
 
   console.log("testListeners",arguments);
-  
+
   window.clientTests = {}
   window.clientTests.getClientState = () => getState();
   window.clientTests.openMainTabInWithinTabLinks = (modelsGroupId) => openMainTab(true,false,modelsGroupId);
   window.clientTests.resetModel = (fileId) => resetModel(fileId);
   window.clientTests.resetNavTabsAndTabs = (modelsGroupId) => resetNavTabsAndTabs(modelsGroupId);
-  
+
 }
+
+
+
 
 
 /**
@@ -170,10 +173,10 @@ function DisableCriticalKeys() {
 
   window.onkeydown = function(evt) {
 
-     if ((evt.ctrlKey || evt.altKey) &&  evt.keyCode != 82 &&  evt.keyCode != 73)  
+     if ((evt.ctrlKey || evt.altKey) &&  evt.keyCode != 82 &&  evt.keyCode != 73)
      {
        evt.preventDefault();
-     } 
+     }
    }
 
 }

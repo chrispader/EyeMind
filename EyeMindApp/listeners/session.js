@@ -1,15 +1,19 @@
 const {ipcMain} = require('electron')
-const {saveSession} = require('../app/server/node/utils/session')
+const {saveSession,recoverSession} = require('../app/server/node/utils/session')
 
 
 
-// check the return 
+// check the return
 function sessionListeners() {
-	
+
 
 	ipcMain.handle('saveSession', function(e, args) {
 		return  saveSession(...args);
 	});
+
+		ipcMain.handle('recoverSession', function(e, args) {
+    		return  recoverSession(...args);
+    	});
 
 
 }

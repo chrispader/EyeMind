@@ -534,37 +534,43 @@ The recorded data include:
 - **All the data that was previously recorded**, i.e., gaze and click data on the different process model elements and specific parts of the EyeMind user interface (cf. the Section on [Interpreting EyeMind Data](#Interpreting-EyeMind-Data))
 
 - **Gazes on the different elements of the simulator**
-
-    - Button to toggle the simulation: _element id in the log:_ bts-toggle-simulation-<file name.bpmn>
-    - Button to play/pause the simulation: _element id in the log:_ bts-entry-<file name.bpmn>-Play/Pause Simulation
-    - Button to reset the simulation: _element id in the log:_ bts-entry-<file name.bpmn>-Reset Simulation
-    - Button to toggle the simulation log: _element id in the log:_ bts-entry-<file name.bpmn>-Toggle Simulation Log
-    - Buttons to set the animation speed: _element ids in the log_: 
+    
+    - Button to toggle the simulation: _element attribute value in the log:_ bts-toggle-simulation-<file name.bpmn>
+    - Button to play/pause the simulation: _element attribute value in the log:_ bts-entry-<file name.bpmn>-Play/Pause Simulation
+    - Button to reset the simulation: _element attribute value in the log:_ bts-entry-<file name.bpmn>-Reset Simulation
+    - Button to toggle the simulation log: _element attribute value in the log:_ bts-entry-<file name.bpmn>-Toggle Simulation Log
+    - Buttons to set the animation speed: _element attribute values in the log_: 
       - bts-speed-button--<file name.bpmn>--Set animation speed = Slow-0.5
       - bts-speed-button--<file name.bpmn>--Set animation speed = Normal-1
       - bts-speed-button--<file name.bpmn>--Set animation speed = Fast-2
-    - Buttons to trigger an event in the model: _element id in the log_: Trigger Event - <event-id>
-    - Buttons to Add a pause point in the model: _element id in the log_: Add pause point - <activity-id>
-    - Buttons to set sequence flow: _element id in the log_: Set Sequence Flow - <gateway-id>
+    - Buttons to trigger an event in the model: _element attribute value in the log_: Trigger Event - <event-id>
+    - Buttons to Add a pause point in the model: _element attribute value in the log_: Add pause point - <activity-id>
+    - Buttons to set sequence flow: _element attribute value in the log_: Set Sequence Flow - <gateway-id>
 
-- **Clicks on the different elements of the simulator**
+- **Clicks on the different elements of the simulator** 
 
-    - Button to toggle the simulation: _clicked element attribute value in the log_: ['<file name.bpmn>', 'bts-toggle-simulation']
-    - Button to play/pause the simulation: _clicked element attribute value in the log_: ['<file name.bpmn>', 'Play/Pause Simulation']
-    - Button to reset the simulation:  _clicked element attribute value in the log_: ['<file name.bpmn>', 'Reset Simulation']
-    - Button to toggle the simulation log: _clicked element attribute value in the log_: ['<file name.bpmn>', 'Toggle Simulation Log']
-    - Buttons to set the animation speed: _clicked element attribute values in the log_:
+    - The "eventSource" in the log file is "ClickStream"
+    - Button to toggle the simulation: _clickedElement attribute value in the log_: ['<file name.bpmn>', 'bts-toggle-simulation']
+    - Button to play/pause the simulation: _clickedElement attribute value in the log_: ['<file name.bpmn>', 'Play/Pause Simulation']
+    - Button to reset the simulation:  _clickedElement attribute value in the log_: ['<file name.bpmn>', 'Reset Simulation']
+    - Button to toggle the simulation log: _clickedElement attribute value in the log_: ['<file name.bpmn>', 'Toggle Simulation Log']
+    - Buttons to set the animation speed: _clickedElement attribute values in the log_:
       - ['<file name.bpmn>', 'Set animation speed = Slow', '0.5']
       - ['<file name.bpmn>', 'Set animation speed = Normal', '1']
       - ['<file name.bpmn>', 'Set animation speed = Fast', '2']
-    - Buttons to trigger an event in the model: _clicked element attribute values in the log_: ['<file name.bpmn>', 'Trigger Event', '<event-name>']
-    - Buttons to Add a pause point in the model: _clicked element attribute values in the log_: ['<file name.bpmn>', 'Add pause point', '<activity-id>']
-    - Buttons to set sequence flow: element id in the log: _clicked element attribute values in the log_: ['<file name.bpmn>', 'Set Sequence Flow', '<gateway-id>']
+    - Buttons to trigger an event in the model: _clickedElement attribute values in the log_: ['<file name.bpmn>', 'Trigger Event', '<event-name>']
+    - Buttons to Add a pause point in the model: _clickedElement attribute values in the log_: ['<file name.bpmn>', 'Add pause point', '<activity-id>']
+    - Buttons to set sequence flow: element id in the log: _clickedElement attribute values in the log_: ['<file name.bpmn>', 'Set Sequence Flow', '<gateway-id>']
 
 
-- **Simulation log showing all the executed events**
+- **Simulation log showing all the executed events** 
     
-  -Simulation events can be found in the log and have the following format
-  - 'action': 'addSimulationEvent', 'simulationEventTimestamp': '<timestamp>', 'fileName': '<file name.bpmn>', 'simulationID': '<simulation id as shown in the simulation log>', 'simulationEvent': '<name of the simulation event>'
+  - Simulation events can be found in the log file. 
+  - The "eventSource" attribute in the log file is "ModelSimulator"
+  - The simulation events have the following attributes:
+    -  'simulationEventTimestamp': '<timestamp>',
+    - 'fileName': '<file name.bpmn>', 
+    - 'simulationID': '<simulation id as shown in the simulation log>', 
+    - 'simulationEvent': '<name of the simulation event>'
 
     

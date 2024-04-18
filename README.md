@@ -519,7 +519,7 @@ Please contact Dr. Amine Abbad-Andaloussi at amine.abbad-andaloussi[at]unisg.ch 
 
 ## Demo Material
 
-The demo material including some models, a question file and a session file (which can be directly loaded) are available at [simulation support material](Examples/simulation%20support%20demo%20material/questions%20-withSimOption.csv)
+The demo material including some models, a question file and a session file (which can be directly loaded) are available at [simulation support material](Examples/simulation%20support%20demo%20material/)
 
 ## Enabling Simulation in the experiment tasks
 
@@ -567,5 +567,4 @@ The recorded data include:
   -Simulation events can be found in the log and have the following format
   - 'action': 'addSimulationEvent', 'simulationEventTimestamp': '<timestamp>', 'fileName': '<file name.bpmn>', 'simulationID': '<simulation id as shown in the simulation log>', 'simulationEvent': '<name of the simulation event>'
 
-
-
+    

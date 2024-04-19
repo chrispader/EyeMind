@@ -561,8 +561,8 @@ The recorded data include:
       - ['<file name.bpmn>', 'Set animation speed = Fast', '2']
     - Buttons to trigger an event in the model: _clickedElement attribute values in the log_: ['<file name.bpmn>', 'Trigger Event', '<event-name>']
     - Buttons to Add a pause point in the model: _clickedElement attribute values in the log_: ['<file name.bpmn>', 'Add pause point', '<activity-id>']
-    - Buttons to set sequence flow: element id in the log: _clickedElement attribute values in the log_: ['<file name.bpmn>', 'Set Sequence Flow', '<gateway-id>']
-
+    - Buttons to set sequence flow:  _clickedElement attribute values in the log_: ['<file name.bpmn>', 'Set Sequence Flow', '<gateway-id>']
+    - Buttons to close the simulation log:  _clickedElement attribute values in the log_: ['<file name.bpmn>', 'bts-simulation-log-close']
 
 - **Simulation log showing all the executed events** 
     
@@ -574,4 +574,4 @@ The recorded data include:
     - 'simulationID': '<simulation id as shown in the simulation log>', 
     - 'simulationEvent': '<name of the simulation event>'
 
-
+    

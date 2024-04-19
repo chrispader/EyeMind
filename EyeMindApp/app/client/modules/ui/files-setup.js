@@ -1158,6 +1158,8 @@ function setupClickEventsForModelContainer(id, filename) {
     // For elements with class 'bts-entry'
     container.querySelectorAll('.bts-entry').forEach(element => {
         element.addEventListener('click', () => {
+            // take snapshot on canvas.viewbox.changed
+            takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
             const title = element.getAttribute('title') || '';
             sendClickEvent(Date.now(), [filename, title]);
             console.log("click -- bts-entry", [filename, title]);
@@ -1167,15 +1169,30 @@ function setupClickEventsForModelContainer(id, filename) {
         // For elements with class 'bts-toggle-mode'
         container.querySelectorAll('.bts-toggle-mode').forEach(element => {
             element.addEventListener('click', () => {
+                // take snapshot on canvas.viewbox.changed
+                takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
                 const title = "bts-toggle-simulation"
                 sendClickEvent(Date.now(), [filename, title]);
                 console.log("click -- bts-toggle-mode", [filename, title]);
             });
         });
 
+        // For elements with class '.bts-log .bts-icon, .bts-log .bts-close'
+                container.querySelectorAll('.bts-log .bts-icon, .bts-log .bts-close').forEach(element => {
+                    element.addEventListener('click', () => {
+                        // take snapshot on canvas.viewbox.changed
+                        takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
+                        const title = "bts-simulation-log-close"
+                        sendClickEvent(Date.now(), [filename, title]);
+                        console.log("click -- bts-log-close", [filename, title]);
+                    });
+                });
+
     // For elements with class 'bts-animation-speed-button' and 'data-speed' attribute
     container.querySelectorAll('.bts-animation-speed-button[data-speed]').forEach(element => {
         element.addEventListener('click', () => {
+            // take snapshot on canvas.viewbox.changed
+            takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
             const title = element.getAttribute('title') || '';
             const speed = element.getAttribute('data-speed');
             sendClickEvent(Date.now(), [filename, title, speed]);
@@ -1189,6 +1206,8 @@ function setupClickEventsForModelContainer(id, filename) {
         // Check if the clicked element or any of its parents have the .bts-context-pad class
         const target = event.target.closest('.bts-context-pad');
         if (target) {
+            // take snapshot on canvas.viewbox.changed
+            takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
             const title = target.getAttribute('title') || '';
             const containerId = target.closest('[data-container-id]') ? target.closest('[data-container-id]').getAttribute('data-container-id') : '';
             sendClickEvent(Date.now(), [filename, title, containerId]);
@@ -1298,6 +1317,10 @@ function observeBtsEntryAdditions(targetSelector,fileName) {
                 mutation.addedNodes.forEach(node => {
                     // Check if the added node is a 'bts-entry info'
                     if (node.nodeType === 1 && node.classList.contains('bts-entry') && node.classList.contains('info')) {
+
+                        // take snapshot on canvas.viewbox.changed
+                        takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
+
                         // Extract the simulation ID
                         const simulationId = node.getAttribute('data-scope-id');
 

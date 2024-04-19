@@ -535,6 +535,7 @@ The recorded data include:
 
 - **Gazes on the different elements of the simulator**
     
+    - Simulation log: _element attribute value in the log:_element attribute value in the log:_ bts-log-<file name.bpmn>
     - Button to toggle the simulation: _element attribute value in the log:_ bts-toggle-simulation-<file name.bpmn>
     - Button to play/pause the simulation: _element attribute value in the log:_ bts-entry-<file name.bpmn>-Play/Pause Simulation
     - Button to reset the simulation: _element attribute value in the log:_ bts-entry-<file name.bpmn>-Reset Simulation
@@ -573,4 +574,4 @@ The recorded data include:
     - 'simulationID': '<simulation id as shown in the simulation log>', 
     - 'simulationEvent': '<name of the simulation event>'
 
-    
+

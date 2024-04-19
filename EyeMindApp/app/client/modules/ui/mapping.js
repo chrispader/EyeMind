@@ -114,31 +114,40 @@ function mapGazetoElementsFromSvgSnapshot(rX,rY,snapshotSvg,screenX,screenY) {
 
 function doMapping(x, y, screenX, screenY, container) {
 
+
+
     container = container || document;
     const relativeX = parseFloat(x) - screenX;
     const relativeY = parseFloat(y) - screenY;
 
     const target = container.elementFromPoint(relativeX, relativeY);
-    const selector = "svg, .djs-element, .gaze-element, .bts-entry, .bts-animation-speed-button[data-speed], .bts-notifications, .bts-log, .bts-toggle-mode";
+    const selector = "svg, .djs-element, .gaze-element, .bts-entry, .bts-context-pad, .bts-animation-speed-button[data-speed], .bts-notifications, .bts-log, .bts-toggle-mode";
 
     const delegateTarget = closest(target, selector, true);
     let out = delegateTarget != null ? delegateTarget.getAttribute("data-element-id") : "";
 
-    if(out==null || out=="") {
+
+    if(delegateTarget != null && out==null) {
 
         // Try to find data-container-id and get context pad title
-        const dataContainer = closest(target, '[data-container-id]');
+        const dataContainer = closest(target, '[data-container-id]',true);
+
+
+
         if (dataContainer) {
+
                 const contextPad = dataContainer.querySelector('.bts-context-pad');
                 if (contextPad) {
                     const containerId = dataContainer.getAttribute('data-container-id');
                     const title = contextPad.getAttribute('title');
                     out = `${title} - ${containerId}`;
                 }
-        } else {
+        }
+
+         else {
 
             // If data-container-id not found, try to find an ancestor with data-element-id within bts-log context
-            const btsLogAncestor = closest(target, '.bts-log');
+            const btsLogAncestor = closest(target, '.bts-log', true);
             if (btsLogAncestor) {
                 const ancestorWithElementId = closest(btsLogAncestor, '[data-element-id]', true);
                 if (ancestorWithElementId) {
@@ -155,7 +164,6 @@ function doMapping(x, y, screenX, screenY, container) {
 
 function closest(element, selector, checkYourSelf) {
 
-    // console.log("closest function ",arguments);
 
     var currentElem = checkYourSelf ? element : element.parentNode;
 

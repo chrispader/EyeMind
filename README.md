@@ -535,15 +535,15 @@ The recorded data include:
 
 - **Gazes on the different elements of the simulator**
     
-    - Simulation log: _element attribute value in the log:_element attribute value in the log:_ bts-log-<file name.bpmn>
-    - Button to toggle the simulation: _element attribute value in the log:_ bts-toggle-simulation-<file name.bpmn>
-    - Button to play/pause the simulation: _element attribute value in the log:_ bts-entry-<file name.bpmn>-Play/Pause Simulation
-    - Button to reset the simulation: _element attribute value in the log:_ bts-entry-<file name.bpmn>-Reset Simulation
-    - Button to toggle the simulation log: _element attribute value in the log:_ bts-entry-<file name.bpmn>-Toggle Simulation Log
+    - Simulation log: _element attribute value in the log:_element attribute value in the log:_ bts-log
+    - Button to toggle the simulation: _element attribute value in the log:_ bts-toggle-simulation
+    - Button to play/pause the simulation: _element attribute value in the log:_ bts-entry-Play/Pause Simulation
+    - Button to reset the simulation: _element attribute value in the log:_ bts-entry-Reset Simulation
+    - Button to toggle the simulation log: _element attribute value in the log:_ bts-entry-Toggle Simulation Log
     - Buttons to set the animation speed: _element attribute values in the log_: 
-      - bts-speed-button--<file name.bpmn>--Set animation speed = Slow-0.5
-      - bts-speed-button--<file name.bpmn>--Set animation speed = Normal-1
-      - bts-speed-button--<file name.bpmn>--Set animation speed = Fast-2
+      - bts-speed-button-Set animation speed = Slow
+      - bts-speed-button-Set animation speed = Normal
+      - bts-speed-button-Set animation speed = Fast
     - Buttons to trigger an event in the model: _element attribute value in the log_: Trigger Event - <event-id>
     - Buttons to Add a pause point in the model: _element attribute value in the log_: Add pause point - <activity-id>
     - Buttons to set sequence flow: _element attribute value in the log_: Set Sequence Flow - <gateway-id>
@@ -551,18 +551,18 @@ The recorded data include:
 - **Clicks on the different elements of the simulator** 
 
     - The "eventSource" in the log file is "ClickStream"
-    - Button to toggle the simulation: _clickedElement attribute value in the log_: ['<file name.bpmn>', 'bts-toggle-simulation']
-    - Button to play/pause the simulation: _clickedElement attribute value in the log_: ['<file name.bpmn>', 'Play/Pause Simulation']
-    - Button to reset the simulation:  _clickedElement attribute value in the log_: ['<file name.bpmn>', 'Reset Simulation']
-    - Button to toggle the simulation log: _clickedElement attribute value in the log_: ['<file name.bpmn>', 'Toggle Simulation Log']
+    - Button to toggle the simulation: _clickedElement attribute value in the log_: bts-toggle-simulation
+    - Button to play/pause the simulation: _clickedElement attribute value in the log_: Play/Pause Simulation
+    - Button to reset the simulation:  _clickedElement attribute value in the log_: Reset Simulation
+    - Button to toggle the simulation log: _clickedElement attribute value in the log_: Toggle Simulation Log
     - Buttons to set the animation speed: _clickedElement attribute values in the log_:
-      - ['<file name.bpmn>', 'Set animation speed = Slow', '0.5']
-      - ['<file name.bpmn>', 'Set animation speed = Normal', '1']
-      - ['<file name.bpmn>', 'Set animation speed = Fast', '2']
-    - Buttons to trigger an event in the model: _clickedElement attribute values in the log_: ['<file name.bpmn>', 'Trigger Event', '<event-name>']
-    - Buttons to Add a pause point in the model: _clickedElement attribute values in the log_: ['<file name.bpmn>', 'Add pause point', '<activity-id>']
-    - Buttons to set sequence flow:  _clickedElement attribute values in the log_: ['<file name.bpmn>', 'Set Sequence Flow', '<gateway-id>']
-    - Buttons to close the simulation log:  _clickedElement attribute values in the log_: ['<file name.bpmn>', 'bts-simulation-log-close']
+        - bts-speed-button-Set animation speed = Slow
+        - bts-speed-button-Set animation speed = Normal
+        - bts-speed-button-Set animation speed = Fast
+    - Buttons to trigger an event in the model: _clickedElement attribute values in the log_: Trigger Event - <event-id>
+    - Buttons to Add a pause point in the model: _clickedElement attribute values in the log_: Add pause point - <activity-id>
+    - Buttons to set sequence flow:  _clickedElement attribute values in the log_: Set Sequence Flow - <gateway-id>
+    - Buttons to close the simulation log:  _clickedElement attribute values in the log_: bts-simulation-log-close
 
 - **Simulation log showing all the executed events** 
     
@@ -574,4 +574,3 @@ The recorded data include:
     - 'simulationID': '<simulation id as shown in the simulation log>', 
     - 'simulationEvent': '<name of the simulation event>'
 
-    

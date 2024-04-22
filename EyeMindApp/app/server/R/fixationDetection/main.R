@@ -83,12 +83,14 @@ function() {
 
   #filtering: keeping only events with eventSource=="eye-tracker"
   gazeData <<- gazeData[eventSource == "eye-tracker"]
-
+    
 
   # main processing
   results <- mainProcessing(ParamData,gazeData)
   # output processing
   gazeData <<- outputProcessing(results,"IVT")
+
+
 
   #message(paste(getwd(),"/output.csv",sep=""))
   #fwrite(output,paste(getwd(),"/output.csv",sep=""));

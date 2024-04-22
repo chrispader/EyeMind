@@ -1161,7 +1161,7 @@ function setupClickEventsForModelContainer(id, filename) {
             // take snapshot on canvas.viewbox.changed
             takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
             const title = element.getAttribute('title') || '';
-            sendClickEvent(Date.now(), [filename, title]);
+            sendClickEvent(Date.now(), title);
             console.log("click -- bts-entry", [filename, title]);
         });
     });
@@ -1172,7 +1172,7 @@ function setupClickEventsForModelContainer(id, filename) {
                 // take snapshot on canvas.viewbox.changed
                 takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
                 const title = "bts-toggle-simulation"
-                sendClickEvent(Date.now(), [filename, title]);
+                sendClickEvent(Date.now(), title);
                 console.log("click -- bts-toggle-mode", [filename, title]);
             });
         });
@@ -1183,7 +1183,7 @@ function setupClickEventsForModelContainer(id, filename) {
                         // take snapshot on canvas.viewbox.changed
                         takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
                         const title = "bts-simulation-log-close"
-                        sendClickEvent(Date.now(), [filename, title]);
+                        sendClickEvent(Date.now(), title);
                         console.log("click -- bts-log-close", [filename, title]);
                     });
                 });
@@ -1195,7 +1195,7 @@ function setupClickEventsForModelContainer(id, filename) {
             takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
             const title = element.getAttribute('title') || '';
             const speed = element.getAttribute('data-speed');
-            sendClickEvent(Date.now(), [filename, title, speed]);
+            sendClickEvent(Date.now(), title);
             console.log("click -- bts-animation-speed-button[data-speed]", [filename, title,speed]);
         });
     });
@@ -1210,7 +1210,7 @@ function setupClickEventsForModelContainer(id, filename) {
             takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
             const title = target.getAttribute('title') || '';
             const containerId = target.closest('[data-container-id]') ? target.closest('[data-container-id]').getAttribute('data-container-id') : '';
-            sendClickEvent(Date.now(), [filename, title, containerId]);
+            sendClickEvent(Date.now(), title+" - "+containerId);
             console.log("click -- bts-context-pad", [filename, title, containerId]);
         }
     });
@@ -1228,26 +1228,26 @@ function addDataElementIdAttributes(id, filename) {
 
     container.querySelectorAll('.bts-entry').forEach(element => {
         const title = element.getAttribute('title') || '';
-        element.setAttribute('data-element-id', "bts-entry-" + filename + "-" + title);
+        element.setAttribute('data-element-id', "bts-entry - " + title);
     });
 
     container.querySelectorAll('.bts-animation-speed-button[data-speed]').forEach(element => {
         const title = element.getAttribute('title') || '';
         const speed = element.getAttribute('data-speed');
-        element.setAttribute('data-element-id', "bts-speed-button-" + filename + "-" + title + "-" + speed);
+        element.setAttribute('data-element-id', "bts-speed-button - " + title);
     });
 
         container.querySelectorAll('.bts-log').forEach(element => {
-            element.setAttribute('data-element-id', "bts-log-" + filename);
+            element.setAttribute('data-element-id', "bts-log");
         });
 
 
         container.querySelectorAll('.bts-notifications').forEach(element => {
-            element.setAttribute('data-element-id', "bts-notifications-" + filename);
+            element.setAttribute('data-element-id', "bts-notifications");
         });
 
         container.querySelectorAll('.bts-toggle-mode').forEach(element => {
-                    element.setAttribute('data-element-id', "bts-toggle-simulation-" + filename);
+                    element.setAttribute('data-element-id', "bts-toggle-simulation");
         });
 
 }

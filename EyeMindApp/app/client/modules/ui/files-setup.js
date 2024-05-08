@@ -1203,12 +1203,19 @@ function setupClickEventsForModelContainer(id, filename) {
 
     // For elements with class 'bts-context-pad' // done this way since the dom elements are not created immediatly
     container.addEventListener('click', (event) => {
-        // Check if the clicked element or any of its parents have the .bts-context-pad class
-        const target = event.target.closest('.bts-context-pad');
+
+     // Get the x and y coordinates of the click event relative to the viewport
+        const clickX = event.clientX;
+        const clickY = event.clientY;
+
+        // Find the element at the specified x, y coordinates
+        const target = document.elementFromPoint(clickX, clickY).closest('.bts-context-pad');
+
         if (target) {
             // take snapshot on canvas.viewbox.changed
             takesnapshot(Date.now(),document.body.innerHTML,window.screenX,window.screenY);
-            const title = target.getAttribute('title') || '';
+            let title = target.getAttribute('title') || '';
+            if(title=="Remove pause point"  || title=="Add pause point"  || title=="Trigger Event") title="pause point/ trigger event on activity";
             const containerId = target.closest('[data-container-id]') ? target.closest('[data-container-id]').getAttribute('data-container-id') : '';
             sendClickEvent(Date.now(), title+" - "+containerId);
             console.log("click -- bts-context-pad", [filename, title, containerId]);

@@ -139,7 +139,8 @@ function doMapping(x, y, screenX, screenY, container) {
                 const contextPad = dataContainer.querySelector('.bts-context-pad');
                 if (contextPad) {
                     const containerId = dataContainer.getAttribute('data-container-id');
-                    const title = contextPad.getAttribute('title');
+                    let title = contextPad.getAttribute('title');
+                    if(title=="Remove pause point"  || title=="Add pause point"  || title=="Trigger Event") title="pause point/ trigger event on activity";
                     out = `${title} - ${containerId}`;
                 }
         }

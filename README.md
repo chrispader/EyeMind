@@ -574,3 +574,7 @@ The recorded data include:
     - 'simulationID': '<simulation id as shown in the simulation log>', 
     - 'simulationEvent': '<name of the simulation event>'
 
+Bugs:
+
+- Add Pause point no working: no detected activity
+- Trigger event wrongly set in gaze tracking

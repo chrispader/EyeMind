@@ -5,7 +5,7 @@
   "description": "Eye tracking in conceptual models",
   "main": "main.js",
   "scripts": {
-    "install-dependencies": "(cd extra/object-diagram-modeler && npm install && cd .. && npm install webpack)",
+    "install-dependencies": "(cd extra/object-diagram-modeler && npm install && cd .. && cd dcr-modeler/modeler/ && npm install &&  cd starter && npm install && cd ../../.. && npm install webpack)",
     "start": "electron --js-flags=--max-old-space-size=8040 .",
     "build": "webpack --mode production",
     "start:dev": "npm run build && npm start",

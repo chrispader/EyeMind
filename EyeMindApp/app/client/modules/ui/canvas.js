@@ -192,12 +192,15 @@ function showModelsGroup(groupId,showSimulation) {
       if(model.groupId==groupId) {
         document.getElementById("model"+model.id+"-explorerItem").style.display = "block";
         // hide or show the simulation button depending on showSimulation
-        document.querySelector("#model"+ model.id + "-container .bts-toggle-mode").style.display = showSimulation==1 ? 'block' : 'none';
+        // TODO. fix needed
+        //document.querySelector("#model"+ model.id + "-container .bts-toggle-mode").style.display = showSimulation==1 ? 'block' : 'none';
+
       }
       else {
          document.getElementById("model"+model.id+"-explorerItem").style.display = "none";
          // hide the simulation button
-         document.querySelector("#model"+ model.id + "-container .bts-toggle-mode").style.display = 'none';
+         // TODO. fix needed
+         //document.querySelector("#model"+ model.id + "-container .bts-toggle-mode").style.display = 'none';
       }
     }
          

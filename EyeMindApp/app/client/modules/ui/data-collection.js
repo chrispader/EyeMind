@@ -211,7 +211,7 @@ function importModelsInteraction() {
     // settings for importing models files
     state.importMode = "multiple"; 
     state.temp.expectedArtifact = "models";
-    state.temp.expectedExtensions = ["bpmn","odm"];
+    state.temp.expectedExtensions = ["bpmn","odm","dcr"];
 
 }
 

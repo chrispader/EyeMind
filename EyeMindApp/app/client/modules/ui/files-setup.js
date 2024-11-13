@@ -25,6 +25,10 @@ SOFTWARE.*/
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import BpmnNavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
 
+import DCRNavigatedViewerOld from '../../../../extra/dcr-modeler/modeler/lib-old-notation/NavigatedViewer';
+import DCRNavigatedViewerProposed from '../../../../extra/dcr-modeler/modeler/lib-proposed-notation/NavigatedViewer';
+import DCRNavigatedViewerNew from '../../../../extra/dcr-modeler/modeler/lib-new-notation/NavigatedViewer';
+
 import TokenSimulationModule from 'bpmn-js-token-simulation/lib/viewer';
 
 
@@ -62,7 +66,11 @@ import $ from 'jquery';
 const modelers = {"BpmnModeler":BpmnModeler,
 "BpmnNavigatedViewer":BpmnNavigatedViewer, 
 "OdmModeler":OdmModeler,
-"OdmNavigatedViewer":OdmNavigatedViewer
+"OdmNavigatedViewer":OdmNavigatedViewer,
+// Additions for DCR
+"DCRNavigatedViewerOld":DCRNavigatedViewerOld,
+"DCRNavigatedViewerProposed":DCRNavigatedViewerProposed,
+"DCRNavigatedViewerNew":DCRNavigatedViewerNew
 }
 
 
@@ -475,7 +483,7 @@ async function traverseModelsFile(fileName,content,path="") {
       catch(error) {
         // something wrong happened with the opening of the diagram
         removeModelFile(file);
-        console.error(file.fileName+" is invalid");
+        console.error(file.fileName+" is invalid" + error);
         errorAlert(file.fileName+" is invalid");
       }
 
@@ -1091,9 +1099,20 @@ async function createModel(fileName,id,xml,currentTabContainerId) {
       /// choice based on type of file (bpmn or odm) and whether it is for data-collection (NavigatedViewer) or for anaylsis (Modeler) (i.e., Modeler is used to allow coloring the activities, which is required for the heatmaps)
       var view = null;
       var language = null;
+
       // support for bpmn and odm file
-      if(fileName.endsWith("bpmn")) language = "Bpmn"; else if(fileName.endsWith("odm")) language="Odm"; else throw 'Unknown file format';
-      if(state.mode=="data-collection") view="NavigatedViewer"; else if(state.mode=="analysis") view="Modeler"; else throw 'Unknown state';
+      //if(fileName.endsWith("bpmn")) language = "Bpmn"; else if(fileName.endsWith("odm")) language="Odm"; else throw 'Unknown file format';
+      if(fileName.endsWith("bpmn")) language = "Bpmn"; else if(fileName.endsWith("odm")) language="Odm"; else if(fileName.endsWith("dcr")) language="DCR"; else throw 'Unknown file format';
+      // anlaysis on models besides BPMN (e.g., DCR) not supported
+      if(state.mode=="data-collection") view="NavigatedViewer"; else if(state.mode=="analysis" && language == "Bpmn") view="Modeler"; else throw 'Unknown state';
+
+
+      // Processing specific to DCR
+      if(language=="DCR") {
+        if(fileName.endsWith("_old.dcr"))  view = view + "Old";
+        else if(fileName.endsWith("_proposed.dcr"))  view = view + "Proposed";
+        else if(fileName.endsWith("_new.dcr"))  view = view + "New";
+      }
 
 
       // create modeler, set language and import xml file
@@ -1123,8 +1142,11 @@ async function createModel(fileName,id,xml,currentTabContainerId) {
        }
 
 
-      /// remove BPMN.io logo, to avoid unwanted interactions during the data collection
-      removeBPMNioLogo(currentTabContainerId+'-model'+id+'-object');
+      /// remove BPMN.io logo, to avoid unwanted interactions during the data collection for BPMN
+      if(language=="Bpmn") {
+        removeBPMNioLogo(currentTabContainerId+'-model'+id+'-object');
+      }
+
 
       // set default cursor to all the elements within an element to prevent the default cross-hair cursor of bpmn-js
       //setCursor(document.getElementById("model"+ id + "-container"),".djs-hit, .djs-hit-all","default");
@@ -1397,12 +1419,23 @@ async function setUpModelerObject(language, view, currentTabContainerId, id, xml
         console.log("TokenSimulationModule added");
     }
 
+    /*
+    // Conditionally add additionalModules if language is "DCR" and view is "NavigatedViewer"
+     if (language === "DCR" && view === "NavigatedViewer") {
+            const markerNotation = 'newMarkers';
+            modelerConfig.markerNotation = markerNotation;
+            console.log("DCR visual notations customization specified", modelerConfig.markerNotation);
+        }
+    */
+
     // Create the modeler with the possibly augmented configuration
     const modeler = new modelers[language + view](modelerConfig);
+
     modeler.language = language;
 
     // Proceed with XML import and return the modeler
     await modeler.importXML(xml);
+
     return modeler;
 }
 

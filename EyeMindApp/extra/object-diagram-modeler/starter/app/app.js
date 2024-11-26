@@ -11,7 +11,7 @@ var modeler = new ODModeler({
   container: '#canvas',
   keyboard: {
     bindTo: window,
-  }
+  },
 });
 
 /* screen interaction */
@@ -43,29 +43,35 @@ const state = {
   fullScreen: false,
   keyboardHelp: false,
 };
-document.getElementById('js-toggle-fullscreen').addEventListener('click', function() {
-  state.fullScreen = !state.fullScreen;
-  if (state.fullScreen) {
-    enterFullscreen(document.documentElement);
-  } else {
-    exitFullscreen();
-  }
-});
-document.getElementById('js-toggle-keyboard-help').addEventListener('click', function() {
-  state.keyboardHelp = !state.keyboardHelp;
-  let displayProp = 'none';
-  if (state.keyboardHelp) {
-    displayProp = 'block';
-  }
-  document.getElementById('io-dialog-main').style.display = displayProp;
-});
-document.getElementById('io-dialog-main').addEventListener('click', function() {
-  state.keyboardHelp = !state.keyboardHelp;
-  let displayProp = 'none';
-  if (!state.keyboardHelp) {
+document
+  .getElementById('js-toggle-fullscreen')
+  .addEventListener('click', function() {
+    state.fullScreen = !state.fullScreen;
+    if (state.fullScreen) {
+      enterFullscreen(document.documentElement);
+    } else {
+      exitFullscreen();
+    }
+  });
+document
+  .getElementById('js-toggle-keyboard-help')
+  .addEventListener('click', function() {
+    state.keyboardHelp = !state.keyboardHelp;
+    let displayProp = 'none';
+    if (state.keyboardHelp) {
+      displayProp = 'block';
+    }
     document.getElementById('io-dialog-main').style.display = displayProp;
-  }
-});
+  });
+document
+  .getElementById('io-dialog-main')
+  .addEventListener('click', function() {
+    state.keyboardHelp = !state.keyboardHelp;
+    let displayProp = 'none';
+    if (!state.keyboardHelp) {
+      document.getElementById('io-dialog-main').style.display = displayProp;
+    }
+  });
 
 /* file functions */
 function openFile(file, callback) {
@@ -74,7 +80,8 @@ function openFile(file, callback) {
   if (!window.FileReader) {
     return window.alert(
       'Looks like you use an older browser that does not support drag and drop. ' +
-      'Try using a modern browser such as Chrome, Firefox or Internet Explorer > 10.');
+        'Try using a modern browser such as Chrome, Firefox or Internet Explorer > 10.'
+    );
   }
 
   // no file chosen
@@ -85,7 +92,6 @@ function openFile(file, callback) {
   var reader = new FileReader();
 
   reader.onload = function(e) {
-
     var xml = e.target.result;
 
     callback(xml);
@@ -94,15 +100,17 @@ function openFile(file, callback) {
   reader.readAsText(file);
 }
 
-var fileInput = $('<input type="file" />').appendTo(document.body).css({
-  width: 1,
-  height: 1,
-  display: 'none',
-  overflow: 'hidden'
-}).on('change', function(e) {
-  openFile(e.target.files[0], openBoard);
-});
-
+var fileInput = $('<input type="file" />')
+  .appendTo(document.body)
+  .css({
+    width: 1,
+    height: 1,
+    display: 'none',
+    overflow: 'hidden',
+  })
+  .on('change', function(e) {
+    openFile(e.target.files[0], openBoard);
+  });
 
 function openBoard(xml) {
 
@@ -124,7 +132,6 @@ function saveBoard() {
 
 // bootstrap board functions
 $(function() {
-
   var downloadLink = $('#js-download-board');
   var downloadSvgLink = $('#js-download-svg');
 
@@ -143,8 +150,8 @@ $(function() {
 
     if (data) {
       link.addClass('active').attr({
-        'href': 'data:application/xml;charset=UTF-8,' + encodedData,
-        'download': name
+        href: 'data:application/xml;charset=UTF-8,' + encodedData,
+        download: name,
       });
     } else {
       link.removeClass('active');
@@ -152,7 +159,6 @@ $(function() {
   }
 
   var exportArtifacts = debounce(function() {
-
     saveSVG().then(function(result) {
       setEncoded(downloadSvgLink, 'object-diagram.svg', result.svg);
     });
@@ -175,11 +181,9 @@ $(function() {
     input.val('');
     input.trigger('click');
   });
-
 });
 
 openBoard(sampleBoardXML);
-
 
 // helpers //////////////////////
 

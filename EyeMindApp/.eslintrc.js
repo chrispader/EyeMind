@@ -1,9 +1,11 @@
 module.exports = {
   root: true,
   ignorePatterns: [
-    "**/node_modules",
-    "**/public",
-    "**/.eslintrc.js",
+    '**/node_modules',
+    'environments',
+    '**/public',
+    '**/lib',
+    '**/dist',
   ],
   extends: ['plugin:prettier/recommended'],
   plugins: ['prettier'],
@@ -12,7 +14,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-   'prettier/prettier': [
+    'prettier/prettier': [
       'warn',
       {
         quoteProps: 'consistent',

@@ -30,11 +30,7 @@
  * ```
  */
 
-import {
-  isFunction,
-  forEach,
-  merge
-} from 'min-dash';
+import { isFunction, forEach, merge } from 'min-dash';
 
 import TestContainer from 'mocha-test-container-support';
 
@@ -43,7 +39,6 @@ import Modeler from '../../lib/Modeler';
 var OPTIONS, POSTIT_JS;
 
 export function boostrapPostitJS(PostitJS, diagram, options, locals) {
-
   return function() {
     var testContainer;
 
@@ -79,12 +74,16 @@ export function boostrapPostitJS(PostitJS, diagram, options, locals) {
       _locals = _locals();
     }
 
-    _options = merge({
-      container: testContainer,
-      canvas: {
-        deferUpdate: false
-      }
-    }, OPTIONS, _options);
+    _options = merge(
+      {
+        container: testContainer,
+        canvas: {
+          deferUpdate: false,
+        },
+      },
+      OPTIONS,
+      _options
+    );
 
     if (_locals) {
       var mockModule = {};
@@ -106,14 +105,16 @@ export function boostrapPostitJS(PostitJS, diagram, options, locals) {
 
     setPostitJS(instance);
 
-    return instance.importXML(diagram).then(function(result) {
-      return { error: null, warnings: result.warnings };
-    }).catch(function(err) {
-      return { error: err, warnings: err.warnings };
-    });
+    return instance
+      .importXML(diagram)
+      .then(function(result) {
+        return { error: null, warnings: result.warnings };
+      })
+      .catch(function(err) {
+        return { error: err, warnings: err.warnings };
+      });
   };
 }
-
 
 export function bootstrapModeler(diagram, options, locals) {
   return boostrapPostitJS(Modeler, diagram, options, locals);
@@ -121,11 +122,10 @@ export function bootstrapModeler(diagram, options, locals) {
 
 export function inject(fn) {
   return function() {
-
     if (!POSTIT_JS) {
       throw new Error(
         'no bootstraped postit-js instance, ' +
-        'ensure you created it via #boostrap(Modeler|Viewer)'
+          'ensure you created it via #boostrap(Modeler|Viewer)'
       );
     }
 

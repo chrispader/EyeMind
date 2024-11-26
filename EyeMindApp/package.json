@@ -11,7 +11,7 @@
     "start:dev": "npm run build && npm start",
     "test": "npx playwright test test/tests/playwright/",
     "test-temp": "npx playwright test test/tests/playwright/import.test.ts",
-    "lint": "eslint \"**/*.{js,ts,tsx}\" --fix"
+    "lint": "eslint \"**/*.js\" --fix"
   },
   "repository": {
     "type": "git",

@@ -15,24 +15,16 @@ var absoluteBasePath = path.resolve(path.join(__dirname, basePath));
 
 var suite = 'test/testBundle.js';
 
-
 module.exports = function(karma) {
-
   var config = {
-
     basePath,
 
-    frameworks: [
-      'mocha',
-      'sinon-chai'
-    ],
+    frameworks: [ 'mocha', 'sinon-chai' ],
 
-    files: [
-      suite
-    ],
+    files: [ suite ],
 
     preprocessors: {
-      [ suite ]: [ 'webpack', 'env' ]
+      [suite]: [ 'webpack', 'env' ],
     },
 
     reporters: [ 'progress' ],
@@ -50,33 +42,28 @@ module.exports = function(karma) {
         rules: [
           {
             test: /\.css|\.xml$/,
-            use: 'raw-loader'
+            use: 'raw-loader',
           },
           {
             test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
             use: [ 'file-loader' ],
-          }
-        ]
+          },
+        ],
       },
       resolve: {
-        mainFields: [
-          'dev:module',
-          'browser',
-          'module',
-          'main'
-        ],
-        modules: [
-          'node_modules',
-          absoluteBasePath
-        ]
+        mainFields: [ 'dev:module', 'browser', 'module', 'main' ],
+        modules: [ 'node_modules', absoluteBasePath ],
       },
-      devtool: 'eval-source-map'
-    }
+      devtool: 'eval-source-map',
+    },
   };
 
   if (singleStart) {
     config.browsers = [].concat(config.browsers, 'Debug');
-    config.envPreprocessor = [].concat(config.envPreprocessor || [], 'SINGLE_START');
+    config.envPreprocessor = [].concat(
+      config.envPreprocessor || [],
+      'SINGLE_START'
+    );
   }
 
   karma.set(config);

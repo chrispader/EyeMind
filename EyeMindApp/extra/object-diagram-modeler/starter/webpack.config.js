@@ -2,10 +2,10 @@ const webpack = require('webpack');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const SOURCE_VERSION = process.env.SOURCE_VERSION || process.env.npm_package_gitHead || 'dev';
+const SOURCE_VERSION =
+  process.env.SOURCE_VERSION || process.env.npm_package_gitHead || 'dev';
 
 module.exports = (env) => {
-
   let outputPath = __dirname + '/public';
   if (env.production) {
 
@@ -51,13 +51,20 @@ module.exports = (env) => {
               },
             },
           ],
-        }
+        },
       ],
     },
     plugins: [
-      new CopyWebpackPlugin({ patterns: [ { from: '**/*.{html,css,woff,ttf,eot,svg,woff2,ico}', context: 'app/' } ] }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: '**/*.{html,css,woff,ttf,eot,svg,woff2,ico}',
+            context: 'app/',
+          },
+        ],
+      }),
       new webpack.DefinePlugin({
-        'process.env.SOURCE_VERSION': JSON.stringify(SOURCE_VERSION || null)
+        'process.env.SOURCE_VERSION': JSON.stringify(SOURCE_VERSION || null),
       }),
     ],
     mode: 'development',

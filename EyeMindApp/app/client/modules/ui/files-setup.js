@@ -231,14 +231,14 @@ async function traverseMoreItems() {
 }
 
 /**
- * Title: traverse analysis file 
+ * Title: traverse analysis file
  *
  * Description: differ the execution depending on whether the item refers to a data-collection file or an analysis file
  *
- * Control-flow summary: get state, get file extentsion, check if the file has the expected extension and artifact for the analysis mode, if so, call window.utils.readState(file.path,state) to read the state within the file in the server side, 
+ * Control-flow summary: get state, get file extentsion, check if the file has the expected extension and artifact for the analysis mode, if so, call window.utils.readState(file.path,state) to read the state within the file in the server side,
                       then call stateReadListener() to listen to an event incoming from the server side when the models are read
  *
- * @param {object} file file  
+ * @param {object} file file
  *
  * Returns {void}
  *
@@ -384,13 +384,13 @@ async function traverseSessionFile(file, callback) {
 }
 
 /**
- * Title: traverse questions file 
+ * Title: traverse questions file
  *
  * Description: load the questions from the file and call prepareDataCollectionContent()
  *
  * Control-flow summary: if questions are loaded, then call prepareDataCollectionContent()
 
- * @param {object} file file  
+ * @param {object} file file
  *
  * Returns {void}
  *
@@ -409,14 +409,14 @@ async function traverseQuestionsFile(file) {
 }
 
 /**
- * Title: traverse models file 
+ * Title: traverse models file
  *
- * Description: 
+ * Description:
  *
- * Control-flow summary: 
+ * Control-flow summary:
 
- * @param {string} fileName  name of the file  
- * @param {string} content file content 
+ * @param {string} fileName  name of the file
+ * @param {string} content file content
  * @param {string} path (optional) file path within a directory
  *
  * Returns {void}
@@ -658,7 +658,7 @@ function stateReadListener() {
  *
  * Description: update client state with new models read from the server side
  *
- * @param {object} res an object coming from the server side with the following attributes: sucess (boolean), msg (string) and data (object with the models and the questions)
+ * @param {object} res an object coming from the server side with the following attributes: success (boolean), msg (string) and data (object with the models and the questions)
  *
  * Returns {void}
  *
@@ -672,8 +672,8 @@ async function stateRead(res) {
   // get client state
   var state = getState()
 
-  // if the server res.sucess coming from the server is true
-  if (res.sucess) {
+  // if the server res.success coming from the server is true
+  if (res.success) {
     //process the models within the loaded state
     for (const [key, value] of Object.entries(res.data.models)) {
       // add the new models to (client) state.models
@@ -748,7 +748,7 @@ function sessionReadListener() {
  *
  * Control-flow summary: update client state with the state read in the server side (i.e., refering to the loaded session) and call the methods nessary to prepare the data collection view (i.e., processModel(),  prepareDataCollectionContent() )
 
- * @param {object} res an object coming from the server side with the following attributes: sucess (boolean), msg (string) and data (state)
+ * @param {object} res an object coming from the server side with the following attributes: success (boolean), msg (string) and data (state)
  *
  * Returns {void}
  *
@@ -759,11 +759,11 @@ function sessionReadListener() {
 async function sessionRead(res) {
   console.log('sessionRead', arguments)
 
-  const sucess = res.sucess
+  const success = res.success
   const msg = res.msg
   const data = res.data
 
-  if (sucess) {
+  if (success) {
     setState(data)
 
     var state = getState()
@@ -1089,12 +1089,12 @@ async function createModel(fileName, id, xml, currentTabContainerId) {
  *
  * @param {string} language e.g., Bpmn, ODM
  * @param {string} view  NavigatedViewer or Modeler
- * @param {string} currentTabContainerId  the container of the model 
+ * @param {string} currentTabContainerId  the container of the model
  * @param {string} id  the id of the file
  * @param {string} xml  xml refering the content of the model
 
  *
- * Returns {object} modeler modeler object 
+ * Returns {object} modeler modeler object
  *
 *
  * Additional notes: none
@@ -1333,19 +1333,19 @@ function assignModelsToGroups() {
 function areModelsCorrectlyGrouped() {
   console.log('areModelsCorrectlyGrouped', arguments)
 
-  var res = { msg: '', sucess: true }
+  var res = { msg: '', success: true }
 
   // check that all models have a group id
   if (!areAllModelsAssignedToGroupId()) {
     res.msg = 'Some models are missing a group Id.'
-    res.sucess = false
+    res.success = false
     return res
   }
 
   // check that each group has only one main model
   if (!doEachGroupHasOnlyOneMainModel()) {
     res.msg += 'Each group should have one main model.'
-    res.sucess = false
+    res.success = false
     return res
   }
 
@@ -1479,7 +1479,7 @@ function doEachGroupHasOnlyOneMainModel() {
       }
 
     });
-   
+
     errorAlert("Folders are not supported")
   }
 }*/

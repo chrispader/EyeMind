@@ -164,7 +164,7 @@ function newSessionInteraction() {
   document.getElementById('process-files').onclick = () => {
     // check models grouping
     const modelsCorrectlyGrouped = areModelsCorrectlyGrouped()
-    if (!modelsCorrectlyGrouped['sucess']) {
+    if (!modelsCorrectlyGrouped['success']) {
       const msg = modelsCorrectlyGrouped['msg']
       errorAlert(msg)
       console.error(msg)
@@ -284,7 +284,7 @@ async function saveSessionInteraction() {
 
     const res = await window.utils.saveSession(state)
 
-    if (res.sucess) {
+    if (res.success) {
       infoAlert(res.msg)
     } else {
       errorAlert(res.msg)
@@ -668,7 +668,7 @@ async function setupTracking(xScreenDim, yScreenDim) {
 
   const res = await window.eyeTracker.setupTracking(xScreenDim, yScreenDim)
   console.log('res', res)
-  if (!res.sucess) {
+  if (!res.success) {
     throw res.msg
   }
 }
@@ -797,7 +797,7 @@ async function sendSnapshotID(snapshot) {
   console.log('sendSnapshotID', arguments)
 
   const res = await window.eyeTracker.sendSnapshotID(snapshot)
-  if (!res.sucess) {
+  if (!res.success) {
     console.error(res.msg)
   }
 }
@@ -819,7 +819,7 @@ async function sendFullSnapshot(snapshot) {
   console.log('sendFullSnapshot ', arguments)
 
   const res = await window.eyeTracker.sendFullSnapshot(snapshot)
-  if (!res.sucess) {
+  if (!res.success) {
     console.error(res.msg)
   }
 }
@@ -922,7 +922,7 @@ function processGazeData(externalProgressWindow) {
   window.eyeTracker.processGazeData(state, externalProgressWindow)
 
   /*    const res = await window.eyeTracker.processGazeData(state,externalDocumentName);
-    if(!res.sucess){
+    if(!res.success){
       console.error(res.msg);
     }*/
 }
@@ -985,8 +985,8 @@ function completeProcessingListener() {
     console.log('onCompleteProcessingListener', arguments)
     const externalProgressWindow = args[0]
     const msg = args[1]
-    const sucess = args[2]
-    await completeProcessing(externalProgressWindow, msg, sucess)
+    const success = args[2]
+    await completeProcessing(externalProgressWindow, msg, success)
   })
 }
 
@@ -1003,7 +1003,7 @@ function completeProcessingListener() {
  * Additional notes: none
  *
  */
-async function completeProcessing(externalProgressWindow, msg, sucess) {
+async function completeProcessing(externalProgressWindow, msg, success) {
   console.log('completeProcessing', arguments)
 
   // close progress report
@@ -1018,7 +1018,7 @@ async function completeProcessing(externalProgressWindow, msg, sucess) {
     window.electron.removeFullScreen()
   }
 
-  if (sucess) {
+  if (success) {
     infoAlert(msg)
   } else {
     errorAlert(msg)

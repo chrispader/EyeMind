@@ -79,12 +79,12 @@ async function downloadFile(
       await bfj.write(savingPath, state)
       const msg = 'File exported to ' + savingPath
       res.msg = msg
-      res.sucess = true
+      res.success = true
     } catch (error) {
       const msg = 'An error occured while exporting the data' + error
       console.error(msg)
       res.msg = msg
-      res.sucess = false
+      res.success = false
     }
   } else if (type == 'analysis-data') {
     const states = getStates()
@@ -116,13 +116,13 @@ async function downloadFile(
     if (!error) {
       const msg = 'Files exported to ' + savingDir
       res.msg = msg
-      res.sucess = true
+      res.success = true
     } else {
       const msg =
         'An error occured while exporting the files. See the console for details'
       console.error('errorDetails ', errorDetails)
       res.msg = msg
-      res.sucess = false
+      res.success = false
     }
   } else if (type == 'gaze-data') {
     //const savingPath = globalParameters.SAVING_PATH+"/"+globalParameters.EXPORT_FILES_PREFIX + (includeTimeStampInFileName? fileName+"_"+timestamp : fileName) + "_"+type+"."+fileExtension;
@@ -162,13 +162,13 @@ async function downloadFile(
     if (!error) {
       const msg = 'Files exported to ' + savingDir
       res.msg = msg
-      res.sucess = true
+      res.success = true
     } else {
       const msg =
         'An error occured while exporting the files. See the console for details'
       console.error('errorDetails ', errorDetails)
       res.msg = msg
-      res.sucess = false
+      res.success = false
     }
   } else if (type == 'fixation-data') {
     const savingPath =
@@ -216,19 +216,19 @@ async function downloadFile(
         dataframe.toCSV(true, savingPath)
         const msg = 'File exported to ' + savingPath
         res.msg = msg
-        res.sucess = true
+        res.success = true
       } catch (error) {
         const msg = 'An error occured while exporting the data' + error
         console.error(msg)
         res.msg = msg
-        res.sucess = false
+        res.success = false
       }
     } else {
       const msg =
         'Some files do not have fixation data. Please use the fixation filter to generate it. See the console for details'
       console.error('errorDetails ', errorDetails)
       res.msg = msg
-      res.sucess = false
+      res.success = false
     }
   }
 

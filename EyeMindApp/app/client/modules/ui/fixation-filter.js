@@ -79,16 +79,16 @@ function FixationFilterCompletedProcessingListener() {
   window.Rserver.onCompleteFixationFilterListener(async function (args) {
     console.log('completeFixationFilterListener', arguments)
     const msg = args[0]
-    const sucess = args[1]
-    await completeProcessing(msg, sucess)
+    const success = args[1]
+    await completeProcessing(msg, success)
   })
 }
 
-async function completeProcessing(msg, sucess) {
+async function completeProcessing(msg, success) {
   //// to implement: error handling
-  console.log(msg, sucess)
+  console.log(msg, success)
 
-  if (sucess) {
+  if (success) {
     // clearing the heatmap
     clearHeatmap()
 

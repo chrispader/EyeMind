@@ -541,7 +541,7 @@ async function sendQuestionEvent(
     questionAnswer,
     questionID
   )
-  if (!res.sucess) {
+  if (!res.success) {
     console.error(res.msg)
   }
 }

@@ -25,7 +25,7 @@ async function setupTracking(xScreenDim, yScreenDim) {
     const response = await request(communication)
     console.log(response)
     if (response['isETready'] == 1) {
-      res.sucess = true
+      res.success = true
     } else {
       const error = 'The tracker sent a not ready signal'
       throw error
@@ -33,7 +33,7 @@ async function setupTracking(xScreenDim, yScreenDim) {
   } catch (error) {
     const msg = 'A problem occured when setting up the eye-tracker. ' + error
     res.msg = msg
-    res.sucess = false
+    res.success = false
   }
 
   return res
@@ -59,11 +59,11 @@ async function sendSnapshotID(snapshot) {
 
   try {
     const response = await request(communication)
-    res.sucess = true
+    res.success = true
   } catch (error) {
     const msg = 'A problem occured when sending the snapshot id. ' + error
     res.msg = msg
-    res.sucess = false
+    res.success = false
   }
 
   return res
@@ -85,11 +85,11 @@ async function sendFullSnapshot(snapshot) {
 
   try {
     const response = await request(communication)
-    res.sucess = true
+    res.success = true
   } catch (error) {
     const msg = 'A problem occured when sending the full snapshot. ' + error
     res.msg = msg
-    res.sucess = false
+    res.success = false
   }
 
   return res
@@ -125,11 +125,11 @@ async function sendQuestionEvent(
 
   try {
     const response = await request(communication)
-    res.sucess = true
+    res.success = true
   } catch (error) {
     const msg = 'A problem occured when sending the question event. ' + error
     res.msg = msg
-    res.sucess = false
+    res.success = false
   }
 
   return res
@@ -154,11 +154,11 @@ async function sendClickEvent(clickTimestamp, clickedElement) {
 
   try {
     const response = await request(communication)
-    res.sucess = true
+    res.success = true
   } catch (error) {
     const msg = 'A problem occured when sending the click event. ' + error
     res.msg = msg
-    res.sucess = false
+    res.success = false
   }
 
   return res
@@ -403,7 +403,7 @@ async function dataMapped(
       'completeProcessingListener',
       externalProgressWindow,
       downloadOutput.msg,
-      downloadOutput.sucess
+      downloadOutput.success
     )
   }
 }

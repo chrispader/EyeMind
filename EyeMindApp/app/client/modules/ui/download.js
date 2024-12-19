@@ -69,7 +69,7 @@ async function applyDownloadSettings() {
 
   await hideGeneralWaitingScreen('all-content', 'wait')
 
-  if (downloadOutput.sucess) {
+  if (downloadOutput.success) {
     infoAlert(downloadOutput.msg)
   } else {
     errorAlert(downloadOutput.msg)

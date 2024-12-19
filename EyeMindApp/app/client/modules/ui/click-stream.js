@@ -28,7 +28,7 @@ import { getState } from '../dataModels/state'
 
  * @param {int} clickTimestamp timestamp when the click occured
  * @param {string} clickedElement clicked element
- * 
+ *
  * Returns {void}
  *
  *
@@ -44,7 +44,7 @@ async function sendClickEvent(clickTimestamp, clickedElement) {
       clickTimestamp,
       clickedElement
     )
-    if (!res.sucess) {
+    if (!res.success) {
       console.error(res.msg)
     }
 
@@ -78,7 +78,7 @@ async function sendClickEvent(clickTimestamp, clickedElement) {
 
 	 	const el = relevantElements[i];
 	 	registerClickEventForLogging(el);
-	 		
+
 	}
 
 }*/
@@ -125,7 +125,7 @@ function registerClickEventForLogging(el) {
 
 	});
 
-} 
+}
 */
 
 export { sendClickEvent }

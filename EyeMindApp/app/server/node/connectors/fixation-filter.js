@@ -41,8 +41,8 @@ async function fixationFilter(fixationFilterSettings, mainWindow) {
 
   // notify client on completion
   const msg = 'fixation filter completed'
-  const sucess = true
-  mainWindow.webContents.send('completeFixationFilterListener', msg, sucess)
+  const success = true
+  mainWindow.webContents.send('completeFixationFilterListener', msg, success)
 }
 
 async function applyFixationFilter(

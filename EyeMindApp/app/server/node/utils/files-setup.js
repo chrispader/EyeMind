@@ -13,7 +13,7 @@ function readState(fileName, filePath, state, mainWindow) {
       const res = {}
       res.msg = 'File ' + filePath + ' read'
       res.data = { models: data.models, questions: data.questions }
-      res.sucess = true
+      res.success = true
       mainWindow.webContents.send('stateRead', res, fileName, filePath)
 
       // populate state for the server with the data obtained from the file
@@ -38,7 +38,7 @@ function readState(fileName, filePath, state, mainWindow) {
     const res = {}
     const msg = 'An error occured while reading the file'
     res.msg = msg
-    res.sucess = false
+    res.success = false
 
     if (state.temp.expectedArtifact == 'analysis') {
       mainWindow.webContents.send('stateRead', res)
@@ -56,12 +56,12 @@ function readSession(loadedState) {
   if (!loadedState.processedGazeData.hasOwnProperty('gazeData')) {
     res.data = loadedState
     res.msg = 'State Loaded'
-    res.sucess = true
+    res.success = true
   } else {
     res.data = null
     res.msg =
       'Could not load the session file because it contains gaze data already'
-    res.sucess = false
+    res.success = false
   }
 
   return res

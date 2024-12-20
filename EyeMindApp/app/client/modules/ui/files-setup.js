@@ -444,10 +444,19 @@ async function traverseModelsFile(fileName, content, path = '') {
     state.models[fileId] = file
 
     try {
-      // process model
-      await processModel(file.xml, file.id, file.fileName, file.path)
-      // create file info menu
-      createModelFileInfoBlock(file)
+      if (file.fileName.endsWith('bpmn')) {
+        // process model
+        await processBpmnModel(file.xml, file.id, file.fileName, file.path)
+        // create file info menu
+        createModelFileInfoBlock(file)
+      } else if (file.fileName.endsWith('svg')) {
+        // process model
+        await processSvgModel(file.xml, file.id, file.fileName, file.path)
+        // create file info menu
+        createModelFileInfoBlock(file)
+      } else {
+        throw 'unknown file format'
+      }
     } catch (error) {
       // something wrong happened with the opening of the diagram
       removeModelFile(file)
@@ -680,7 +689,7 @@ async function stateRead(res) {
       if (!state.models.hasOwnProperty(key)) {
         console.log('new model ', res.data.models[key])
         state.models[key] = res.data.models[key]
-        await processModel(
+        await processBpmnModel(
           state.models[key].xml,
           state.models[key].id,
           state.models[key].fileName,
@@ -771,7 +780,7 @@ async function sessionRead(res) {
 
     //process the open the models within the loaded state
     for (const [key, value] of Object.entries(state.models)) {
-      await processModel(
+      await processBpmnModel(
         state.models[key].xml,
         state.models[key].id,
         state.models[key].fileName,
@@ -808,8 +817,8 @@ async function sessionRead(res) {
  * Additional notes: none
  *
  */
-async function processModel(xml, id, fileName, filePath) {
-  console.log('processModel', arguments)
+async function processBpmnModel(xml, id, fileName, filePath) {
+  console.log('processBpmnModel', arguments)
 
   // get state
   var state = getState()
@@ -830,6 +839,43 @@ async function processModel(xml, id, fileName, filePath) {
     // state.models[id].isMain if the model is the main model of the process (cf. isMain())
     state.models[id].isMain = isMain(modeler)
   }
+  if (state.mode == 'analysis') {
+    // add attributes needed to show the heatmaps
+    var generalModelRegistry = {}
+    generalModelRegistry.elementRegistry = modeler.get('elementRegistry')
+    if (modeler.language == 'Bpmn')
+      generalModelRegistry.commandStack = modeler.get('commandStack') /// odm do not have a commandStack
+    generalModelRegistry.overlays = modeler.get('overlays')
+    generalModelRegistry.language = modeler.language
+    // add model to the generalModelsRegistry
+    addModel(id, generalModelRegistry)
+  }
+
+  console.log(fileName, 'is valid')
+}
+
+async function processSvgModel(xml, id, fileName, filePath) {
+  console.log('processSvgModel', arguments)
+
+  // get state
+  var state = getState()
+
+  /// construct/update the directory explorer
+  constructDirectoryExplorer(filePath, fileName, id)
+
+  // create tab container
+  createTabContainer(id, fileName)
+
+  // create model
+  console.log('creating model')
+  // var modeler = await createModel(fileName, id, xml)
+  console.log('model created')
+
+  // differ the execution depending on the state.mode
+  // if (state.mode == 'data-collection') {
+  //   // state.models[id].isMain if the model is the main model of the process (cf. isMain())
+  //   state.models[id].isMain = isMain(modeler)
+  // }
   if (state.mode == 'analysis') {
     // add attributes needed to show the heatmaps
     var generalModelRegistry = {}

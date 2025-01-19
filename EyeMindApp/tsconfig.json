@@ -50,7 +50,7 @@
         "src/app/client/modules/*"
       ],
       "@models/*": [
-        "src/app/client/modules/DataModels/*"
+        "src/app/client/modules/dataModels/*"
       ],
       "@ui/*": [
         "src/app/client/modules/ui/*"

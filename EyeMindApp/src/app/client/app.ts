@@ -31,7 +31,7 @@ import {
   modeSelectionListeners,
   closeModalOutsideClickInteraction,
 } from '@modules/ui/shared-interactions'
-import { loadServerStateIntoClient } from '@root/src/app/client/modules/DataModels/state'
+import { loadServerStateIntoClient } from '@root/src/app/client/modules/dataModels/state'
 
 /// load the server state ás a client state then
 loadServerStateIntoClient().then(() => {

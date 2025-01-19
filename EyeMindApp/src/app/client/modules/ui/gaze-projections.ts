@@ -31,8 +31,8 @@ import { infoAlert, errorAlert, calculateProgress } from '@utils/utils'
 import {
   SetProjectionAndMappingActive,
   areProjectionAndMappingActive,
-} from '@root/src/app/client/modules/DataModels/activeFeatures'
-import { setSnapshots, getSnapshots } from '@root/src/app/client/modules/DataModels/snapshots'
+} from '@root/src/app/client/modules/dataModels/activeFeatures'
+import { setSnapshots, getSnapshots } from '@root/src/app/client/modules/dataModels/snapshots'
 import {
   hideElement,
   displayElement,

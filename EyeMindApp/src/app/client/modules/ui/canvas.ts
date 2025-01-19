@@ -23,7 +23,7 @@ SOFTWARE.*/
 import { closeTabInteraction, openMainTab } from './tabs'
 import { takesnapshot } from './data-collection'
 import { resetProcessHierarchy } from './process-hierarchy-explorer'
-import { getState } from '@root/src/app/client/modules/DataModels/state'
+import { getState } from '@root/src/app/client/modules/dataModels/state'
 
 /**
  * Title: Reset model

@@ -23,7 +23,7 @@ SOFTWARE.*/
 /* Window Events */
 
 import { takesnapshot } from './data-collection'
-import { getState } from '@root/src/app/client/modules/DataModels/state'
+import { getState } from '@root/src/app/client/modules/dataModels/state'
 import { openMainTab } from './tabs'
 import { resetModel, resetNavTabsAndTabs } from './canvas'
 

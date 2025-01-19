@@ -24,7 +24,7 @@ SOFTWARE.*/
 
 import { openWithinTab } from './tabs'
 //import {registerClickEventForLogging} from './click-stream'
-import { getState } from '@root/src/app/client/modules/DataModels/state'
+import { getState } from '@root/src/app/client/modules/dataModels/state'
 import { sendClickEvent } from './click-stream'
 
 /**

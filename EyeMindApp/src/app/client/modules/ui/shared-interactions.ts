@@ -24,7 +24,7 @@ SOFTWARE.*/
 
 import { eyeTrackingModeInteraction } from './data-collection'
 import { analysisModeInteraction } from './analysis'
-import { getState } from '@root/src/app/client/modules/DataModels/state'
+import { getState } from '@root/src/app/client/modules/dataModels/state'
 
 /**
  * Title: Mode selection listeners.

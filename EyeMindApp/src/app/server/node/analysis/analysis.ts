@@ -22,7 +22,7 @@ SOFTWARE.*/
 
 import { DataFrame } from 'dataframe-js';
 import _ from "lodash";
-import { getStates } from "@root/src/app/server/node/DataModels/state";
+import { getStates } from "@root/src/app/server/node/dataModels/state";
 import { globalParameters } from "@src/globals";
 import {
   calculateProgress,

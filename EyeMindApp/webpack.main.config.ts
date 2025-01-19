@@ -10,7 +10,6 @@ export const mainConfig: Configuration = merge(commonConfig, {
    */
   entry: './src/main.ts',
   // Put your normal webpack config below here
-  target: "node",
   module: {
     rules: rules,
   },

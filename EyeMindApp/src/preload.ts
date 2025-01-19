@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-import { contextBridge, ipcRenderer, screen } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { globalParameters } from './globals'
 
 // contextBridge.exposeInMainWorld listeners/window.js
@@ -45,11 +45,7 @@ contextBridge.exposeInMainWorld('globalParameters', globalParameters)
 // contextBridge.exposeInMainWorld listeners/analysis.js
 contextBridge.exposeInMainWorld('analysis', {
   summerizedFixationLog: (data, mode, areGazesCorrected) =>
-    ipcRenderer.invoke('summerizedFixationLog', [
-      data,
-      mode,
-      areGazesCorrected,
-    ]),
+    ipcRenderer.invoke('summerizedFixationLog', [data, mode, areGazesCorrected]),
   generateHeatMap: (
     filePaths,
     elementRegistryTypes,
@@ -57,7 +53,7 @@ contextBridge.exposeInMainWorld('analysis', {
     measureType,
     aggregation,
     additionalElementsToIclude,
-    questionID
+    questionID,
   ) =>
     ipcRenderer.invoke('generateHeatMap', [
       filePaths,
@@ -76,7 +72,7 @@ contextBridge.exposeInMainWorld('analysis', {
     stateFile,
     snapshotId,
     xOffset,
-    yOffset
+    yOffset,
   ) =>
     ipcRenderer.invoke('applyCorrectionOffset', [
       externalMappingWindow,
@@ -86,9 +82,7 @@ contextBridge.exposeInMainWorld('analysis', {
       yOffset,
     ]),
   onApplyCorrectionOnGazeFragment: (func) =>
-    ipcRenderer.on('applyCorrectionOnGazeFragment', (event, ...args) =>
-      func(args)
-    ),
+    ipcRenderer.on('applyCorrectionOnGazeFragment', (event, ...args) => func(args)),
   gazeDataFragmentMapped: (
     stateFile,
     gazeDataFragment,
@@ -97,7 +91,7 @@ contextBridge.exposeInMainWorld('analysis', {
     externalMappingWindow,
     snapshotId,
     xOffset,
-    yOffset
+    yOffset,
   ) =>
     ipcRenderer.invoke('gazeDataFragmentMapped', [
       stateFile,
@@ -110,9 +104,7 @@ contextBridge.exposeInMainWorld('analysis', {
       yOffset,
     ]),
   onCompleteCorrectionListener: (func) =>
-    ipcRenderer.on('completeCorrectionListener', (event, ...args) =>
-      func(args)
-    ),
+    ipcRenderer.on('completeCorrectionListener', (event, ...args) => func(args)),
   getStatesInfo: () => ipcRenderer.invoke('getStatesInfo'),
 })
 
@@ -126,8 +118,7 @@ contextBridge.exposeInMainWorld('utils', {
     ]),
   readState: (fileName, filePath, state) =>
     ipcRenderer.invoke('readState', [fileName, filePath, state]),
-  onStateRead: (func) =>
-    ipcRenderer.once('stateRead', (event, ...args) => func(args)),
+  onStateRead: (func) => ipcRenderer.once('stateRead', (event, ...args) => func(args)),
   saveSession: (state) => ipcRenderer.invoke('saveSession', [state]),
   recoverSession: (gazeDataFilename, snapshotsContentDataFilename) =>
     ipcRenderer.invoke('recoverSession', [
@@ -142,17 +133,15 @@ contextBridge.exposeInMainWorld('utils', {
 contextBridge.exposeInMainWorld('eyeTracker', {
   setupTracking: (xScreenDim, yScreenDim) =>
     ipcRenderer.invoke('setupTracking', [xScreenDim, yScreenDim]),
-  sendSnapshotID: (snapshot) =>
-    ipcRenderer.invoke('sendSnapshotID', [snapshot]),
-  sendFullSnapshot: (snapshot) =>
-    ipcRenderer.invoke('sendFullSnapshot', [snapshot]),
+  sendSnapshotID: (snapshot) => ipcRenderer.invoke('sendSnapshotID', [snapshot]),
+  sendFullSnapshot: (snapshot) => ipcRenderer.invoke('sendFullSnapshot', [snapshot]),
   sendQuestionEvent: (
     questionTimestamp,
     questionEventType,
     questionPosition,
     questionText,
     questionAnswer,
-    questionID
+    questionID,
   ) =>
     ipcRenderer.invoke('sendQuestionEvent', [
       questionTimestamp,
@@ -165,9 +154,7 @@ contextBridge.exposeInMainWorld('eyeTracker', {
   processGazeData: (state, externalProgressWindow) =>
     ipcRenderer.invoke('processGazeData', [state, externalProgressWindow]),
   onMapGazestoElementsFromPageSnapshot: (func) =>
-    ipcRenderer.on('mapGazestoElementsFromPageSnapshot', (event, ...args) =>
-      func(args)
-    ),
+    ipcRenderer.on('mapGazestoElementsFromPageSnapshot', (event, ...args) => func(args)),
   dataMapped: (dataMapped, start, gazeDataSize, externalProgressWindow) =>
     ipcRenderer.invoke('dataMapped', [
       dataMapped,
@@ -176,9 +163,7 @@ contextBridge.exposeInMainWorld('eyeTracker', {
       externalProgressWindow,
     ]),
   onCompleteProcessingListener: (func) =>
-    ipcRenderer.once('completeProcessingListener', (event, ...args) =>
-      func(args)
-    ),
+    ipcRenderer.once('completeProcessingListener', (event, ...args) => func(args)),
   sendClickEvent: (clickTimestamp, clickedElement) =>
     ipcRenderer.invoke('sendClickEvent', [clickTimestamp, clickedElement]),
 })
@@ -189,9 +174,7 @@ contextBridge.exposeInMainWorld('Rserver', {
   fixationFilter: (fixationFilterSettings) =>
     ipcRenderer.invoke('fixationFilter', [fixationFilterSettings]),
   onCompleteFixationFilterListener: (func) =>
-    ipcRenderer.on('completeFixationFilterListener', (event, ...args) =>
-      func(args)
-    ),
+    ipcRenderer.on('completeFixationFilterListener', (event, ...args) => func(args)),
 })
 
 // contextBridge.exposeInMainWorld listeners/state.js
@@ -206,8 +189,7 @@ contextBridge.exposeInMainWorld('state', {
   getStates: () => ipcRenderer.invoke('getStates'),
   clearStates: () => ipcRenderer.invoke('clearStates'),
   removeState: (filePath) => ipcRenderer.invoke('removeState', [filePath]),
-  doesStateExist: (filePath) =>
-    ipcRenderer.invoke('doesStateExist', [filePath]),
+  doesStateExist: (filePath) => ipcRenderer.invoke('doesStateExist', [filePath]),
   getSnapshotsOfState: (filePath) =>
     ipcRenderer.invoke('getSnapshotsOfState', [filePath]),
   areAreGazesCorrectedOfState: (filePath) =>

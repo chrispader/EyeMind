@@ -60,10 +60,7 @@ module.exports = function (karma) {
 
   if (singleStart) {
     config.browsers = [].concat(config.browsers, 'Debug')
-    config.envPreprocessor = [].concat(
-      config.envPreprocessor || [],
-      'SINGLE_START'
-    )
+    config.envPreprocessor = [].concat(config.envPreprocessor || [], 'SINGLE_START')
   }
 
   karma.set(config)

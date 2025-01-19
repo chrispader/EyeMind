@@ -33,7 +33,7 @@ import {
   moveFromTo,
   hideChildElements,
 } from '@utils/dom'
-import { getState } from '@models/state'
+import { getState } from '@root/src/app/client/modules/DataModels/state'
 import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
 import { updateProcessMessageListener } from './progress'
 import { startQuestions } from './questions'

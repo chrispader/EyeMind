@@ -27,7 +27,7 @@ import {
   FixationFilterCompletedProcessingListener,
 } from './fixation-filter'
 import { downloadInteraction } from './download'
-import { getState } from '@models/state'
+import { getState } from '@root/src/app/client/modules/DataModels/state'
 import { updateProcessMessageListener } from './progress'
 import {
   applyCorrectionOnGazeFragmentListener,

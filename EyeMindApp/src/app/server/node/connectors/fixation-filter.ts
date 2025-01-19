@@ -24,7 +24,7 @@ import request from 'request-promise'
 import { globalParameters } from '@src/globals'
 import { calculateProgress } from '@server/utils/utils'
 import { summerizedFixationLog } from '../analysis/analysis'
-import { getStates } from '@server/dataModels/state'
+import { getStates } from '@root/src/app/server/node/DataModels/state'
 
 export async function fixationFilter(fixationFilterSettings, mainWindow) {
   // note: the fixation filter uses the corrected data if state.processedGazeData.areGazesCorrected = true; (see R code)

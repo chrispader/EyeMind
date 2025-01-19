@@ -41,9 +41,9 @@ import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
 
 import { hideElement } from '@utils/dom'
 
-import { addModel } from '@models/generalModelsRegistry'
-import { setState, getState } from '@models/state'
-import { setFiles, shiftFile, nFiles } from '@models/filesBuffer'
+import { addModel } from '@root/src/app/client/modules/DataModels/generalModelsRegistry'
+import { setState, getState } from '@root/src/app/client/modules/DataModels/state'
+import { setFiles, shiftFile, nFiles } from '@root/src/app/client/modules/DataModels/filesBuffer'
 
 // types of modeler objects supported by the tool
 const modelers = {

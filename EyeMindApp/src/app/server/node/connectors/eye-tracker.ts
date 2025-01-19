@@ -2,7 +2,7 @@ import request from 'request-promise'
 import { globalParameters } from '@src/globals'
 import { stateDownload } from '@server/utils/download'
 import { calculateProgress } from '@server/utils/utils'
-import { getState, setState } from '@server/dataModels/state'
+import { getState, setState } from '@root/src/app/server/node/DataModels/state'
 
 export async function setupTracking(xScreenDim, yScreenDim) {
   // console.log("setupTracking function");

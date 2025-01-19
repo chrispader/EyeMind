@@ -1,6 +1,6 @@
 import fs from 'fs'
 import json from 'big-json'
-import { addState } from '@server/dataModels/state'
+import { addState } from '@root/src/app/server/node/DataModels/state'
 
 export function readState(fileName, filePath, state, mainWindow) {
   // read JSON and Save state

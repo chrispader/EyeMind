@@ -1,4 +1,4 @@
-import { setState } from '@server/dataModels/state'
+import { setState } from '@root/src/app/server/node/DataModels/state'
 import { stateDownload } from '@server/utils/download'
 import { globalParameters } from '@src/globals'
 import request from 'request-promise'

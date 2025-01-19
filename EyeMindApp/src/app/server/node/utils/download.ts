@@ -24,7 +24,7 @@ import { DataFrame } from 'dataframe-js'
 import fs from 'fs'
 import bfj from 'bfj'
 import { globalParameters } from '@src/globals'
-import { getState, getStates } from '@server/dataModels/state'
+import { getState, getStates } from '@root/src/app/server/node/DataModels/state'
 import { parseOriginalFileName } from './utils'
 
 export async function stateDownload(fileName, includeTimeStampInFileName, type) {

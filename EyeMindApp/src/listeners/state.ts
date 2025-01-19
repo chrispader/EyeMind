@@ -11,7 +11,7 @@ import {
   removeState,
   doesStateExist,
   areAreGazesCorrectedOfState,
-} from '@server/dataModels/state'
+} from '@root/src/app/server/node/DataModels/state'
 
 // check the return
 export function stateListeners() {

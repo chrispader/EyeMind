@@ -22,9 +22,9 @@ SOFTWARE.*/
 
 import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
 import { errorAlert } from '../utils/utils'
-import { getGeneralModelsRegistry } from '@models/generalModelsRegistry'
-import { setheatmapActive, isHeatmapActive } from '@models/activeFeatures'
-import { getState } from '@models/state'
+import { getGeneralModelsRegistry } from '@root/src/app/client/modules/DataModels/generalModelsRegistry'
+import { setheatmapActive, isHeatmapActive } from '@root/src/app/client/modules/DataModels/activeFeatures'
+import { getState } from '@root/src/app/client/modules/DataModels/state'
 import {
   hideElement,
   displayElement,

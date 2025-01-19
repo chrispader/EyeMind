@@ -26,7 +26,7 @@ import {
   createUpdateProcessHierarchyExplorer,
   renderProcessHierarchyExplorer,
 } from './process-hierarchy-explorer'
-import { getState } from '@models/state'
+import { getState } from '@root/src/app/client/modules/DataModels/state'
 import { sendClickEvent } from './click-stream'
 //import {registerClickEventForLogging} from './click-stream'
 import { resetModel } from './canvas'

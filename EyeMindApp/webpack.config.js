@@ -36,8 +36,18 @@ module.exports = {
     path: __dirname + '/public',
     filename: 'app.js',
   },
+  resolve: {
+    extensions: ['.js'],
+  },
+  optimization: {
+    minimize: false,
+  },
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+      },
       {
         test: /\.bpmn$/,
         use: 'raw-loader',

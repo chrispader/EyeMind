@@ -1,0 +1,75 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowUnreachableCode": false,
+    "allowImportingTsExtensions": true,
+    "allowUnusedLabels": false,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": false,
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noStrictGenericChecks": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext",
+    "sourceMap": true,
+    "outDir": "dist",
+    "paths": {
+      "*": [
+        "node_modules/*"
+      ],
+      "@root/*": [
+        "*"
+      ],
+      "@src/*": [
+        "src/*"
+      ],
+      "@listeners/*": [
+        "src/listeners/*"
+      ],
+      "@client/*": [
+        "src/app/client/*"
+      ],
+      "@modules/*": [
+        "src/app/client/modules/*"
+      ],
+      "@models/*": [
+        "src/app/client/modules/DataModels/*"
+      ],
+      "@ui/*": [
+        "src/app/client/modules/ui/*"
+      ],
+      "@utils/*": [
+        "src/app/client/modules/utils/*"
+      ],
+      "@server/*": [
+        "src/app/server/node/*"
+      ],
+    }
+  },
+  "include": [
+    "src/**/*",
+    ".eslintrc.js",
+    "webpack*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

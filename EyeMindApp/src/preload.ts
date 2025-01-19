@@ -20,8 +20,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-const { contextBridge, ipcRenderer, screen } = require('electron')
-const { globalParameters } = require('./globals')
+import { contextBridge, ipcRenderer, screen } from 'electron'
+import { globalParameters } from './globals'
 
 // contextBridge.exposeInMainWorld listeners/window.js
 contextBridge.exposeInMainWorld('electron', {

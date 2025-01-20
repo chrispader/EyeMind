@@ -101,7 +101,7 @@ export async function sendQuestionEvent(
   questionPosition,
   questionText,
   questionAnswer,
-  questionID
+  questionID,
 ) {
   const res = {}
 
@@ -164,11 +164,7 @@ export async function sendClickEvent(clickTimestamp, clickedElement) {
   return res
 }
 
-export async function processGazeData(
-  clientState,
-  externalProgressWindow,
-  mainWindow
-) {
+export async function processGazeData(clientState, externalProgressWindow, mainWindow) {
   // console.log("processGazeData function ",arguments);
   console.log('externalProgressWindow in connector', externalProgressWindow)
 
@@ -177,17 +173,13 @@ export async function processGazeData(
   mainWindow.webContents.send(
     'updateProcessingMessage',
     'Preparing eye-tracking data',
-    externalProgressWindow
+    externalProgressWindow,
   )
 
   await requestGazeData(clientState, externalProgressWindow, mainWindow)
 }
 
-export async function requestGazeData(
-  clientState,
-  externalProgressWindow,
-  mainWindow
-) {
+export async function requestGazeData(clientState, externalProgressWindow, mainWindow) {
   // console.log("requestGazeData function ",arguments);
 
   const gazeRequest = { action: 'PrepareGazeDataAndInitiateTransfer' }
@@ -206,7 +198,7 @@ export async function requestGazeData(
   mainWindow.webContents.send(
     'updateProcessingMessage',
     'Initiating data transfer and mapping',
-    externalProgressWindow
+    externalProgressWindow,
   )
 
   // get gazeDataSize (coming as response from py eye-tracking server)
@@ -228,30 +220,25 @@ export async function requestGazeData(
   setState(clientState)
 
   // get snapshots in fragements
-  var start = 0
+  let start = 0
   while (start != snapshotsSize) {
     start = await fetchSnapshotsInFragement(
       start,
       snapshotsSize,
       externalProgressWindow,
-      mainWindow
+      mainWindow,
     )
   }
 
   // process gazeData in fragements
-  await processDataFragement(
-    0,
-    gazeDataSize,
-    externalProgressWindow,
-    mainWindow
-  )
+  await processDataFragement(0, gazeDataSize, externalProgressWindow, mainWindow)
 }
 
 export async function fetchSnapshotsInFragement(
   start,
   snapshotsSize,
   externalProgressWindow,
-  mainWindow
+  mainWindow,
 ) {
   //console.log("fetchSnapshotsInFragement",arguments);
 
@@ -268,7 +255,7 @@ export async function fetchSnapshotsInFragement(
     'SNAPSHOTS_FRAGMENT_SIZE',
     globalParameters.SNAPSHOTS_FRAGMENT_SIZE,
     'snapshotsSize',
-    snapshotsSize
+    snapshotsSize,
   )
 
   const req = { action: 'getSnapshotFragment', start: start, end: end }
@@ -294,7 +281,7 @@ export async function fetchSnapshotsInFragement(
     'Transferring snapshots data: ' +
     calculateProgress(end, snapshotsSize) +
     '% complete',
-    externalProgressWindow
+    externalProgressWindow,
   )
 
   return end
@@ -304,7 +291,7 @@ export async function processDataFragement(
   start,
   gazeDataSize,
   externalProgressWindow,
-  mainWindow
+  mainWindow,
 ) {
   // console.log("processDataFragement",arguments);
 
@@ -321,7 +308,7 @@ export async function processDataFragement(
     'DATA_FRAGMENT_SIZE',
     globalParameters.DATA_FRAGMENT_SIZE,
     'gazeDataSize',
-    gazeDataSize
+    gazeDataSize,
   )
 
   const req = { action: 'getDataFragment', start: start, end: end }
@@ -336,24 +323,22 @@ export async function processDataFragement(
   await request(com).then(function (res) {
     const state = getState()
     /// send to UI to the mapping
-    var snapshots = start == 0 ? state.snapshots : null
+    const snapshots = start == 0 ? state.snapshots : null
     mainWindow.webContents.send(
       'mapGazestoElementsFromPageSnapshot',
       res,
       start,
       gazeDataSize,
       externalProgressWindow,
-      snapshots
+      snapshots,
     )
   })
 
   // report progress through updateProcessingMessage
   mainWindow.webContents.send(
     'updateProcessingMessage',
-    'Data transfer and mapping: ' +
-    calculateProgress(end, gazeDataSize) +
-    '% complete',
-    externalProgressWindow
+    'Data transfer and mapping: ' + calculateProgress(end, gazeDataSize) + '% complete',
+    externalProgressWindow,
   )
 }
 
@@ -362,7 +347,7 @@ export async function dataMapped(
   start,
   gazeDataSize,
   externalProgressWindow,
-  mainWindow
+  mainWindow,
 ) {
   //console.log("dataMapped",arguments);
 
@@ -370,7 +355,7 @@ export async function dataMapped(
   const state = getState()
   state.processedGazeData.gazeData.push.apply(
     state.processedGazeData.gazeData,
-    dataMapped
+    dataMapped,
   ) // check if the use of a global variable here is ok
   setState(state) // implementation: to be kept so afterwards stateDownload would not need a parameter state.
 
@@ -378,12 +363,7 @@ export async function dataMapped(
   start = start + globalParameters.DATA_FRAGMENT_SIZE
   // move to next iteration
   if (start < gazeDataSize) {
-    await processDataFragement(
-      start,
-      gazeDataSize,
-      externalProgressWindow,
-      mainWindow
-    )
+    await processDataFragement(start, gazeDataSize, externalProgressWindow, mainWindow)
   } else {
     // report progress through updateProcessingMessage
 
@@ -392,18 +372,14 @@ export async function dataMapped(
     mainWindow.webContents.send(
       'updateProcessingMessage',
       'Exporting the file. This operation can take serveral minutes for long recordings',
-      externalProgressWindow
+      externalProgressWindow,
     )
-    const downloadOutput = await stateDownload(
-      'EyeMind',
-      true,
-      'collected-data'
-    )
+    const downloadOutput = await stateDownload('EyeMind', true, 'collected-data')
     mainWindow.webContents.send(
       'completeProcessingListener',
       externalProgressWindow,
       downloadOutput.msg,
-      downloadOutput.success
+      downloadOutput.success,
     )
   }
 }

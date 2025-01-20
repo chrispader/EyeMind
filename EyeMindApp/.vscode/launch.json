@@ -12,7 +12,6 @@
       // runtimeArgs will be passed directly to your Electron application
       "runtimeArgs": [
         "--remote-debugging-port=9223",
-        "."
       ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal"

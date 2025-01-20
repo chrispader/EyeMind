@@ -43,7 +43,12 @@ import { hideElement } from '@utils/dom'
 
 import { addModel } from '@root/src/app/client/modules/dataModels/generalModelsRegistry'
 import { setState, getState } from '@root/src/app/client/modules/dataModels/state'
-import { setFiles, shiftFile, nFiles } from '@root/src/app/client/modules/dataModels/filesBuffer'
+import {
+  setFiles,
+  shiftFile,
+  nFiles,
+} from '@root/src/app/client/modules/dataModels/filesBuffer'
+import { PngModeler, PngNavigatedViewer } from '@root/src/app/client/modules/ui/PngModeler'
 
 // types of modeler objects supported by the tool
 const modelers = {
@@ -51,6 +56,8 @@ const modelers = {
   BpmnNavigatedViewer: BpmnNavigatedViewer,
   OdmModeler: OdmModeler,
   OdmNavigatedViewer: OdmNavigatedViewer,
+  PngModeler: PngModeler,
+  PngNavigatedViewer: PngNavigatedViewer,
 }
 
 /**
@@ -71,7 +78,7 @@ const modelers = {
 function registerFileUpload() {
   console.log('registerFileUpload', arguments)
 
-  var container = document.getElementById('upload-zone')
+  const container = document.getElementById('upload-zone')
 
   /// drag and drop event listeners
   container.addEventListener('dragover', handleDragOver, false)
@@ -80,7 +87,7 @@ function registerFileUpload() {
     function (e) {
       handleDroppedFiles(e)
     },
-    false
+    false,
   )
 }
 
@@ -133,7 +140,7 @@ async function handleDroppedFiles(event) {
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  var state = getState()
+  const state = getState()
 
   cancelDefault(event)
 
@@ -186,7 +193,7 @@ async function handleDroppedFiles(event) {
 async function traverseItem(file) {
   console.log('traverseItem', arguments)
 
-  var state = getState()
+  const state = getState()
 
   // apply a different processing to the file depending on whether it is a model for data collection or a json file for the analysis
   // data-collection mode
@@ -245,12 +252,12 @@ async function traverseMoreItems() {
 async function traverseAnalysisFile(file) {
   console.log('traverseAnalysisFile', arguments)
 
-  var state = getState()
+  const state = getState()
 
   const fileName = file.name
   const fileExtension = fileName.split('.').pop()
 
-  var filePath = file.path
+  let filePath = file.path
 
   // move to next file if the file state already exists
   if (await window.state.doesStateExist(filePath)) {
@@ -278,10 +285,10 @@ async function traverseAnalysisFile(file) {
       fileName +
       '... <br><br> This step can take several minutes depending on the size of the file',
       'wait',
-      'all-content'
+      'all-content',
     )
 
-    window.utils.readState(fileName, filePath, state)
+    window.utils.readState(file, fileName, filePath, state)
 
     stateReadListener()
   } else {
@@ -308,18 +315,14 @@ async function traverseAnalysisFile(file) {
 async function traverseDataCollectionFile(file, content) {
   console.log('traverseDataCollectionFile function', arguments)
 
-  var state = getState()
+  const state = getState()
 
   const fileName = file.name
   const fileExtension = fileName.split('.').pop()
 
   console.log('fileExtension', fileExtension)
 
-  await showGeneralWaitingScreen(
-    'Loading ' + fileName + '...',
-    'wait',
-    'all-content'
-  )
+  await showGeneralWaitingScreen('Loading ' + fileName + '...', 'wait', 'all-content')
 
   /// apply different processing depending on the file extension and expected artifact
   if (
@@ -365,9 +368,9 @@ async function traverseDataCollectionFile(file, content) {
 async function traverseSessionFile(file, callback) {
   console.log('traverseSessionFile', arguments)
 
-  var state = getState()
+  const state = getState()
 
-  var filePath = file.path
+  let filePath = file.path
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
   // a hack to support the testing of a single file upload using the drag/drop feature
   if (file.isForTestingPurpose) {
@@ -375,7 +378,7 @@ async function traverseSessionFile(file, callback) {
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  await window.utils.readState(file.name, filePath, state, callback)
+  await window.utils.readState(file, file.name, filePath, state, callback)
   sessionReadListener()
 }
 
@@ -424,35 +427,23 @@ async function traverseQuestionsFile(file) {
 async function traverseModelsFile(fileName, content, path = '') {
   console.log('traverseModelsFile', arguments)
 
-  var state = getState()
+  const state = getState()
 
   const fileId = fileName.replace(
     new RegExp(window.globalParameters.MODELS_ID_REGEX, 'g'),
-    ''
+    '',
   )
 
   // if the file has not been already added to the processing buffer
   if (!state.models.hasOwnProperty(fileId)) {
     // create file object
-    const file = { id: fileId, fileName: fileName, path: path, xml: content }
+    const file = { id: fileId, fileName, path, content }
 
     /// add a new model to the state object
     state.models[fileId] = file
 
     try {
-      if (file.fileName.endsWith('bpmn')) {
-        // process model
-        await processBpmnModel(file.xml, file.id, file.fileName, file.path)
-        // create file info menu
-        createModelFileInfoBlock(file)
-      } else if (file.fileName.endsWith('svg')) {
-        // process model
-        await processSvgModel(file.xml, file.id, file.fileName, file.path)
-        // create file info menu
-        createModelFileInfoBlock(file)
-      } else {
-        throw 'unknown file format'
-      }
+      processModel(file)
     } catch (error) {
       // something wrong happened with the opening of the diagram
       removeModelFile(file)
@@ -486,7 +477,7 @@ async function traverseModelsFile(fileName, content, path = '') {
 function createModelFileInfoBlock(file) {
   console.log('createModelFileInfoBlock', arguments)
 
-  var state = getState()
+  const state = getState()
 
   /// create fileInfo block about the imported model
   const fileInfo = document.createElement('div')
@@ -555,7 +546,7 @@ function createModelFileInfoBlock(file) {
 function createAnalysisFileInfoBlock(file) {
   console.log('createAnalysisFileInfoBlock', arguments)
 
-  var state = getState()
+  const state = getState()
 
   /// create fileInfo block about the imported model
   const fileInfo = document.createElement('div')
@@ -597,7 +588,7 @@ function createAnalysisFileInfoBlock(file) {
 function removeModelFile(file) {
   console.log('removeModelFile', arguments)
 
-  var state = getState()
+  const state = getState()
   delete state.models[file.id]
   if (document.getElementById('fileinfo-' + file.id) != null)
     document.getElementById('fileinfo-' + file.id).remove()
@@ -675,7 +666,7 @@ async function stateRead(res) {
   console.log('stateRead', arguments)
 
   // get client state
-  var state = getState()
+  const state = getState()
 
   // if the server res.success coming from the server is true
   if (res.success) {
@@ -689,7 +680,7 @@ async function stateRead(res) {
           state.models[key].xml,
           state.models[key].id,
           state.models[key].fileName,
-          state.models[key].path
+          state.models[key].path,
         )
       }
     }
@@ -702,9 +693,8 @@ async function stateRead(res) {
     res.data.questions.forEach(function (question) {
       // add the new questions to (client) state.quetions
       if (
-        state.questions.find(
-          (existingQuestion) => existingQuestion.id == question.id
-        ) == null
+        state.questions.find((existingQuestion) => existingQuestion.id == question.id) ==
+        null
       ) {
         console.log('new question ', question)
         state.questions.push(question)
@@ -771,17 +761,19 @@ async function sessionRead(res) {
   if (success) {
     setState(data)
 
-    var state = getState()
+    const state = getState()
     console.log('state', state)
 
     //process the open the models within the loaded state
     for (const [key, value] of Object.entries(state.models)) {
-      await processBpmnModel(
-        state.models[key].xml,
-        state.models[key].id,
-        state.models[key].fileName,
-        state.models[key].path
-      )
+      if ()
+
+        await processBpmnModel(
+          state.models[key].xml,
+          state.models[key].id,
+          state.models[key].fileName,
+          state.models[key].path,
+        )
     }
 
     // last step of file import
@@ -792,6 +784,27 @@ async function sessionRead(res) {
   } else {
     console.error(res.msg)
     errorAlert(msg)
+  }
+}
+
+function processModel(file) {
+  if (file.fileName.endsWith('bpmn')) {
+    // process model
+    await processBpmnModel(file.content, file.id, file.fileName, file.path)
+    // create file info menu
+    createModelFileInfoBlock(file)
+  } else if (file.fileName.endsWith('svg')) {
+    // process model
+    await processSvgModel(file.content, file.id, file.fileName, file.path)
+    // create file info menu
+    createModelFileInfoBlock(file)
+  } else if (file.fileName.endsWith('png')) {
+    // process model
+    await processPngModel(file.content, file.id, file.fileName, file.path)
+    // create file info menu
+    createModelFileInfoBlock(file)
+  } else {
+    throw 'unknown file format'
   }
 }
 
@@ -817,7 +830,7 @@ async function processBpmnModel(xml, id, fileName, filePath) {
   console.log('processBpmnModel', arguments)
 
   // get state
-  var state = getState()
+  const state = getState()
 
   /// construct/update the directory explorer
   constructDirectoryExplorer(filePath, fileName, id)
@@ -827,7 +840,7 @@ async function processBpmnModel(xml, id, fileName, filePath) {
 
   // create model
   console.log('creating model')
-  var modeler = await createModel(fileName, id, xml)
+  const modeler = await createModel(fileName, id, xml)
   console.log('model created')
 
   // differ the execution depending on the state.mode
@@ -837,7 +850,7 @@ async function processBpmnModel(xml, id, fileName, filePath) {
   }
   if (state.mode == 'analysis') {
     // add attributes needed to show the heatmaps
-    var generalModelRegistry = {}
+    const generalModelRegistry = {}
     generalModelRegistry.elementRegistry = modeler.get('elementRegistry')
     if (modeler.language == 'Bpmn')
       generalModelRegistry.commandStack = modeler.get('commandStack') /// odm do not have a commandStack
@@ -854,7 +867,7 @@ async function processSvgModel(xml, id, fileName, filePath) {
   console.log('processSvgModel', arguments)
 
   // get state
-  var state = getState()
+  const state = getState()
 
   /// construct/update the directory explorer
   constructDirectoryExplorer(filePath, fileName, id)
@@ -874,7 +887,44 @@ async function processSvgModel(xml, id, fileName, filePath) {
   // }
   if (state.mode == 'analysis') {
     // add attributes needed to show the heatmaps
-    var generalModelRegistry = {}
+    const generalModelRegistry = {}
+    generalModelRegistry.elementRegistry = modeler.get('elementRegistry')
+    if (modeler.language == 'Bpmn')
+      generalModelRegistry.commandStack = modeler.get('commandStack') /// odm do not have a commandStack
+    generalModelRegistry.overlays = modeler.get('overlays')
+    generalModelRegistry.language = modeler.language
+    // add model to the generalModelsRegistry
+    addModel(id, generalModelRegistry)
+  }
+
+  console.log(fileName, 'is valid')
+}
+
+async function processPngModel(content, id, fileName, filePath) {
+  console.log('processPngModel', arguments)
+
+  // get state
+  const state = getState()
+
+  /// construct/update the directory explorer
+  constructDirectoryExplorer(filePath, fileName, id)
+
+  // create tab container
+  createTabContainer(id, fileName)
+
+  // create model
+  console.log('creating model')
+  var modeler = await createModel(fileName, id, xml)
+  console.log('model created')
+
+  // differ the execution depending on the state.mode
+  // if (state.mode == 'data-collection') {
+  //   // state.models[id].isMain if the model is the main model of the process (cf. isMain())
+  //   state.models[id].isMain = isMain(modeler)
+  // }
+  if (state.mode == 'analysis') {
+    // add attributes needed to show the heatmaps
+    const generalModelRegistry = {}
     generalModelRegistry.elementRegistry = modeler.get('elementRegistry')
     if (modeler.language == 'Bpmn')
       generalModelRegistry.commandStack = modeler.get('commandStack') /// odm do not have a commandStack
@@ -909,8 +959,7 @@ function isMain(modeler) {
   console.log('processId', processId)
 
   /// we consider only BPMN files for now and we assume that the main process id should be "main"
-  if (modeler.language == 'Bpmn' && processId.toLowerCase() == 'main')
-    return true
+  if (modeler.language == 'Bpmn' && processId.toLowerCase() == 'main') return true
 
   return false
 }
@@ -936,14 +985,14 @@ function constructDirectoryExplorer(filePath, fileName, id) {
   console.log('constructDirectoryExplorer', arguments)
 
   // get state
-  var state = getState()
+  const state = getState()
 
   /// remove last "/" from the filePath
   filePath = filePath.slice(0, -1)
 
   /// create/extend the explorer hierarchy
-  var dirs = filePath.split('/')
-  var path = []
+  const dirs = filePath.split('/')
+  const path = []
 
   // iterate over the folders within the path
   for (let i = 0; i < dirs.length; i++) {
@@ -956,12 +1005,12 @@ function constructDirectoryExplorer(filePath, fileName, id) {
     if (document.getElementById('explorer-group-' + path.join('/')) == null) {
       if (dirs[i] != '') {
         // create li and underlying ul with new the sub-path
-        var li = document.createElement('li')
+        const li = document.createElement('li')
         li.setAttribute('class', 'folder gaze-element')
         li.setAttribute('data-element-id', 'file-explorer-folder_' + dirs[i])
 
         li.innerHTML = dirs[i]
-        var ul = document.createElement('ul')
+        const ul = document.createElement('ul')
         ul.setAttribute('id', 'explorer-group-' + path.join('/'))
         li.appendChild(ul)
 
@@ -969,17 +1018,15 @@ function constructDirectoryExplorer(filePath, fileName, id) {
         if (path.length == 1) {
           document.getElementById('explorer-groups').appendChild(li)
         } else {
-          var parent = path.slice(0, -1)
-          document
-            .getElementById('explorer-group-' + parent.join('/'))
-            .appendChild(li)
+          const parent = path.slice(0, -1)
+          document.getElementById('explorer-group-' + parent.join('/')).appendChild(li)
         }
       }
     }
   }
 
   // populate the explorer
-  var explorerItem = document.createElement('li')
+  const explorerItem = document.createElement('li')
   explorerItem.setAttribute('id', 'model' + id + '-explorerItem')
   explorerItem.setAttribute('class', 'file gaze-element')
   explorerItem.setAttribute('data-element-id', 'file-explorer-file_' + fileName)
@@ -994,9 +1041,7 @@ function constructDirectoryExplorer(filePath, fileName, id) {
 
   // if filePath!="" then append the explorerItem to the corresponding "explorer-group-"+filePath ul otherwise append directly to explorer-groups (root)
   if (filePath != '') {
-    document
-      .getElementById('explorer-group-' + filePath)
-      .appendChild(explorerItem)
+    document.getElementById('explorer-group-' + filePath).appendChild(explorerItem)
   } else {
     document.getElementById('explorer-groups').appendChild(explorerItem)
   }
@@ -1050,7 +1095,7 @@ function createTabContainer(id, fileName) {
  *
  * @param {string} filename  the name of the file
  * @param {string} id  the id of the file
- * @param {string} xml  xml refering the content of the model
+ * @param {string} content  xml refering the content of the model
  * @param {string} currentTabContainerId  the container of the model
  *
  * Returns {object} modeler modeler object
@@ -1059,57 +1104,53 @@ function createTabContainer(id, fileName) {
  * Additional notes: none
  *
  */
-async function createModel(fileName, id, xml, currentTabContainerId) {
+async function createModel(fileName, id, content, currentTabContainerId) {
   console.log('createModel function', arguments)
 
-  var state = getState()
+  const state = getState()
 
   // depending of the argument, either set as a process, or a nested sub-process
   currentTabContainerId = currentTabContainerId || 'model' + id + '-content'
 
   // create a model container
-  var modelContainer = document.createElement('div')
-  modelContainer.setAttribute(
-    'id',
-    currentTabContainerId + '-model' + id + '-object'
-  )
+  const modelContainer = document.createElement('div')
+  modelContainer.setAttribute('id', currentTabContainerId + '-model' + id + '-object')
   modelContainer.setAttribute('hierarchy', 'main-model')
   modelContainer.setAttribute('class', 'canvas main-model')
   modelContainer.setAttribute('FileName', fileName)
 
   // append the model container to its parent (i.e., dom element with id=currentTabContainerId)
   document.getElementById(currentTabContainerId).append(modelContainer)
-
   /// choice based on type of file (bpmn or odm) and whether it is for data-collection (NavigatedViewer) or for anaylsis (Modeler) (i.e., Modeler is used to allow coloring the activities, which is required for the heatmaps)
-  var view = null
-  var language = null
+  let language = null
   // support for bpmn and odm file
   if (fileName.endsWith('bpmn')) language = 'Bpmn'
   else if (fileName.endsWith('odm')) language = 'Odm'
+  else if (fileName.endsWith('svg')) language = 'Svg'
+  else if (fileName.endsWith('png')) language = 'Png'
   else throw 'Unknown file format'
+
+  if (fileName.endsWith('bpmn') || fileName.endsWith('odm')) {
+    return createActualModel(id, content, currentTabContainerId, state, language)
+  }
+
+  return createImageModel(id, content, currentTabContainerId, state, language)
+}
+
+async function createActualModel(id, content, currentTabContainerId, state, language) {
+  let view = null
   if (state.mode == 'data-collection') view = 'NavigatedViewer'
   else if (state.mode == 'analysis') view = 'Modeler'
   else throw 'Unknown state'
 
   // create modeler, set language and import xml file
-  var modeler = await setUpModelerObject(
-    language,
-    view,
-    currentTabContainerId,
-    id,
-    xml
-  )
+  const modeler = await setUpModelerObject(language, view, currentTabContainerId, id, content)
 
   // listen to changes in the canvas.viewbox i.e., scrolling, zooming and take a snapshot
   modeler.on('canvas.viewbox.changed', (context) => {
     // console.log("canvas.viewbox.changed on tab ", state.activeTab);
     // take snapshot on canvas.viewbox.changed
-    takesnapshot(
-      Date.now(),
-      document.body.innerHTML,
-      window.screenX,
-      window.screenY
-    )
+    takesnapshot(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
   })
 
   /// remove BPMN.io logo, to avoid unwanted interactions during the data collection
@@ -1118,6 +1159,32 @@ async function createModel(fileName, id, xml, currentTabContainerId) {
   /// make hierarchy links between the loaded BPMN models
   const processId = modeler.get('canvas').getRootElement().id
   linkSubProcesses(modeler, id, processId, currentTabContainerId)
+
+  return modeler
+}
+
+async function createImageModel(id, content, currentTabContainerId, state, language) {
+  let view = null
+  if (state.mode == 'data-collection') view = 'NavigatedViewer'
+  else if (state.mode == 'analysis') view = 'Modeler'
+  else throw 'Unknown state'
+
+  // create modeler, set language and import xml file
+  const modeler = await setUpModelerObject(language, view, currentTabContainerId, id, content)
+
+  // // listen to changes in the canvas.viewbox i.e., scrolling, zooming and take a snapshot
+  // modeler.on('canvas.viewbox.changed', (context) => {
+  //   // console.log("canvas.viewbox.changed on tab ", state.activeTab);
+  //   // take snapshot on canvas.viewbox.changed
+  //   takesnapshot(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
+  // })
+
+  /// remove BPMN.io logo, to avoid unwanted interactions during the data collection
+  // removeBPMNioLogo(currentTabContainerId + '-model' + id + '-object')
+
+  // /// make hierarchy links between the loaded BPMN models
+  // const processId = modeler.get('canvas').getRootElement().id
+  // linkSubProcesses(modeler, id, processId, currentTabContainerId)
 
   return modeler
 }
@@ -1133,7 +1200,7 @@ async function createModel(fileName, id, xml, currentTabContainerId) {
  * @param {string} view  NavigatedViewer or Modeler
  * @param {string} currentTabContainerId  the container of the model
  * @param {string} id  the id of the file
- * @param {string} xml  xml refering the content of the model
+ * @param {string} content  xml refering the content of the model
 
  *
  * Returns {object} modeler modeler object
@@ -1142,19 +1209,17 @@ async function createModel(fileName, id, xml, currentTabContainerId) {
  * Additional notes: none
  *
  */
-async function setUpModelerObject(
-  language,
-  view,
-  currentTabContainerId,
-  id,
-  xml
-) {
+async function setUpModelerObject(language, view, currentTabContainerId, id, content) {
   const modeler = new modelers[language + view]({
     container: '#' + currentTabContainerId + '-model' + id + '-object',
   })
   modeler.language = language
 
-  await modeler.importXML(xml)
+  if (language === 'Bpmn' || language === 'Odm') {
+    await modeler.importXML(content)
+  } else if (language === 'Png') {
+    await modeler.importPng(content)
+  }
 
   return modeler
 }
@@ -1202,14 +1267,14 @@ function linkSubProcesses(
   mainModel,
   mainModelId,
   mainModelprocessId,
-  currentTabContainerId
+  currentTabContainerId,
 ) {
   console.log('linkSubProcesses', arguments)
 
   // get state
-  var state = getState()
+  const state = getState()
 
-  var mainModelElements = mainModel.get('elementRegistry')._elements
+  const mainModelElements = mainModel.get('elementRegistry')._elements
 
   /// iterate the elements of mainModel
   Object.keys(mainModelElements).forEach((key) => {
@@ -1226,7 +1291,7 @@ function linkSubProcesses(
       const subProcessFileName = mainModelElements[key].element.id
       const subProcessId = subProcessFileName.replace(
         new RegExp(window.globalParameters.MODELS_ID_REGEX, 'g'),
-        ''
+        '',
       )
       const subProcessActivityLabelInMainModel =
         mainModelElements[key].element.businessObject.name
@@ -1237,64 +1302,51 @@ function linkSubProcesses(
         .querySelector('[data-element-id="' + subProcessFileName + '"]')
 
       if (state.linkingSubProcessesMode == 'newTab') {
-        subProcessActivitySVGObjectInMainModel.addEventListener(
-          'click',
-          function (e) {
-            // prevent the implemented bpmn-io interaction assosciated with sub-processes
-            cancelDefault(e)
-            // send click event
-            sendClickEvent(
-              Date.now(),
-              subProcessActivitySVGObjectInMainModel.getAttribute(
-                'data-element-id'
-              )
-            )
-            // open the sub-process in tab if isFileLoaded
-            if (isFileLoaded(subProcessFileName, subProcessId)) {
-              openInTab(subProcessId)
-            }
+        subProcessActivitySVGObjectInMainModel.addEventListener('click', function (e) {
+          // prevent the implemented bpmn-io interaction assosciated with sub-processes
+          cancelDefault(e)
+          // send click event
+          sendClickEvent(
+            Date.now(),
+            subProcessActivitySVGObjectInMainModel.getAttribute('data-element-id'),
+          )
+          // open the sub-process in tab if isFileLoaded
+          if (isFileLoaded(subProcessFileName, subProcessId)) {
+            openInTab(subProcessId)
           }
-        )
+        })
         // change the cursor
         subProcessActivitySVGObjectInMainModel.style.cursor = 'pointer'
       } else if (state.linkingSubProcessesMode == 'withinTab') {
         //subProcessActivitySVGObjectInMainModel.classList.add("click-record");
 
-        subProcessActivitySVGObjectInMainModel.addEventListener(
-          'click',
-          function (e) {
-            // prevent the implemented bpmn-io interaction assosciated with sub-processes
-            cancelDefault(e)
-            // send click event
-            sendClickEvent(
-              Date.now(),
-              subProcessActivitySVGObjectInMainModel.getAttribute(
-                'data-element-id'
-              )
-            )
+        subProcessActivitySVGObjectInMainModel.addEventListener('click', function (e) {
+          // prevent the implemented bpmn-io interaction assosciated with sub-processes
+          cancelDefault(e)
+          // send click event
+          sendClickEvent(
+            Date.now(),
+            subProcessActivitySVGObjectInMainModel.getAttribute('data-element-id'),
+          )
 
-            // open the sub-process within tab if isFileLoaded
-            if (isFileLoaded(subProcessFileName, subProcessId)) {
-              openWithinTab(
-                mainModelId,
-                mainModelprocessId,
-                subProcessId,
-                subProcessActivityLabelInMainModel
-              )
-            }
+          // open the sub-process within tab if isFileLoaded
+          if (isFileLoaded(subProcessFileName, subProcessId)) {
+            openWithinTab(
+              mainModelId,
+              mainModelprocessId,
+              subProcessId,
+              subProcessActivityLabelInMainModel,
+            )
           }
-        )
+        })
         // change the cursor
         subProcessActivitySVGObjectInMainModel.style.cursor = 'pointer'
       } else {
-        subProcessActivitySVGObjectInMainModel.addEventListener(
-          'click',
-          function (e) {
-            // prevent the implemented bpmn-io interaction assosciated with sub-processes
-            cancelDefault(e)
-            // do nothing more!
-          }
-        )
+        subProcessActivitySVGObjectInMainModel.addEventListener('click', function (e) {
+          // prevent the implemented bpmn-io interaction assosciated with sub-processes
+          cancelDefault(e)
+          // do nothing more!
+        })
       }
     }
   })
@@ -1319,7 +1371,7 @@ function linkSubProcesses(
 function isFileLoaded(fileName, fileId) {
   console.log('isFileLoaded', arguments)
 
-  var state = getState()
+  const state = getState()
 
   /// return null if subProcessFileName was not loaded
   if (!state.models.hasOwnProperty(fileId)) {
@@ -1347,10 +1399,9 @@ function isFileLoaded(fileName, fileId) {
 function assignModelsToGroups() {
   console.log('assignModelsToGroups', arguments)
 
-  var state = getState()
+  const state = getState()
 
-  const groupAssignementList =
-    document.getElementsByClassName('group-assignement')
+  const groupAssignementList = document.getElementsByClassName('group-assignement')
 
   for (let i = 0; i < groupAssignementList.length; i++) {
     state.models[groupAssignementList[i].getAttribute('modelId')].groupId =
@@ -1375,7 +1426,7 @@ function assignModelsToGroups() {
 function areModelsCorrectlyGrouped() {
   console.log('areModelsCorrectlyGrouped', arguments)
 
-  var res = { msg: '', success: true }
+  const res = { msg: '', success: true }
 
   // check that all models have a group id
   if (!areAllModelsAssignedToGroupId()) {
@@ -1411,8 +1462,7 @@ function areModelsCorrectlyGrouped() {
 function areAllModelsAssignedToGroupId() {
   console.log('areAllModelsAssignedToGroupId', arguments)
 
-  const groupAssignementList =
-    document.getElementsByClassName('group-assignement')
+  const groupAssignementList = document.getElementsByClassName('group-assignement')
 
   for (let i = 0; i < groupAssignementList.length; i++) {
     if (groupAssignementList[i].value == '') {
@@ -1441,10 +1491,9 @@ function doEachGroupHasOnlyOneMainModel() {
   console.log('doEachGroupHasOnlyOneMainModel', arguments)
 
   // will contain group ids and number of main models
-  var groupsAndMains = {}
+  const groupsAndMains = {}
 
-  const groupAssignementList =
-    document.getElementsByClassName('group-assignement')
+  const groupAssignementList = document.getElementsByClassName('group-assignement')
 
   for (let i = 0; i < groupAssignementList.length; i++) {
     // model id
@@ -1457,9 +1506,7 @@ function doEachGroupHasOnlyOneMainModel() {
     }
 
     // is model checked as main
-    const idModelCheckedAsMain = document.getElementById(
-      'set-as-main-' + modelId
-    ).checked
+    const idModelCheckedAsMain = document.getElementById('set-as-main-' + modelId).checked
 
     // if model is checked as main then increment the count of main models in groupsAndMains
     if (idModelCheckedAsMain) {

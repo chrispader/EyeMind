@@ -5,7 +5,7 @@
   "description": "Eye tracking in conceptual models",
   "main": ".webpack/main",
   "scripts": {
-    "start": "electron-forge start  --inspect-electron",
+    "start": "electron-forge start --inspect-electron --remote-debugging-port=9223",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",

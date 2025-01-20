@@ -28,19 +28,13 @@ import { setUnclosableTabs, setMainTab } from './tabs'
 import { generateQuestionsSequence } from './questions'
 import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
 import { infoAlert, errorAlert } from '@utils/utils'
-import {
-  updateTextAndDisplayDomElement,
-  moveFromTo,
-  hideChildElements,
-} from '@utils/dom'
+import { updateTextAndDisplayDomElement, moveFromTo, hideChildElements } from '@utils/dom'
 import { getState } from '@root/src/app/client/modules/dataModels/state'
 import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
 import { updateProcessMessageListener } from './progress'
 import { startQuestions } from './questions'
 import { areModelsCorrectlyGrouped } from './files-setup'
 //import {clicksListener} from './click-stream'
-
-
 
 /**
  * Title: eye tracking mode interactions
@@ -61,7 +55,7 @@ function eyeTrackingModeInteraction() {
   console.log('eyeTrackingModeInteraction', arguments)
 
   // get client state
-  var state = getState()
+  const state = getState()
 
   // set state mode to data-collection
   state.mode = 'data-collection'
@@ -70,8 +64,7 @@ function eyeTrackingModeInteraction() {
   moveFromTo('main-view', 'data-collection-session-options-view', 'flex')
 
   // load session interaction
-  document.getElementById('load-session').onclick = () =>
-    loadSessionInteraction()
+  document.getElementById('load-session').onclick = () => loadSessionInteraction()
 
   // new session interaction
   document.getElementById('new-session').onclick = () => newSessionInteraction()
@@ -104,7 +97,7 @@ function loadSessionInteraction() {
   updateTextAndDisplayDomElement('upload-label', 'Drop a session file', 'block')
 
   // get client state
-  var state = getState()
+  const state = getState()
 
   // settings for importing session file
   state.importMode = 'single'
@@ -131,26 +124,22 @@ function newSessionInteraction() {
   console.log('newSessionInteraction', arguments)
 
   // get state
-  var state = getState()
+  const state = getState()
 
   // move to data-collection-settings-view which allows choosing the way models are linked to each other
   moveFromTo(
     'data-collection-session-options-view',
     'data-collection-settings-view',
-    'flex'
+    'flex',
   )
 
   /// data collection settings view interactions
   // models import interactions
   document.getElementById('proceed-data-collection-settings').onclick = () => {
     // set linkingSubProcessesMode
-    const linkingSubProcessesSelect = document.getElementById(
-      'linking-sub-processes'
-    )
+    const linkingSubProcessesSelect = document.getElementById('linking-sub-processes')
     state.linkingSubProcessesMode =
-      linkingSubProcessesSelect.options[
-        linkingSubProcessesSelect.selectedIndex
-      ].value
+      linkingSubProcessesSelect.options[linkingSubProcessesSelect.selectedIndex].value
 
     console.log('state.linkingSubProcessesMode', state.linkingSubProcessesMode)
 
@@ -168,7 +157,7 @@ function newSessionInteraction() {
     }
 
     // check if at least one model was imported
-    if (!Object.keys(state.models).length == 0) {
+    if ((Object.keys(state.models).length === 0) == 0) {
       importQuestionsInteraction()
     } else {
       const msg = 'No models to load'
@@ -203,12 +192,12 @@ function importModelsInteraction() {
   updateTextAndDisplayDomElement('upload-label', 'Drop models files', 'block')
 
   // get client state
-  var state = getState()
+  const state = getState()
 
   // settings for importing models files
   state.importMode = 'multiple'
   state.temp.expectedArtifact = 'models'
-  state.temp.expectedExtensions = ['bpmn', 'odm', 'svg', 'pdf']
+  state.temp.expectedExtensions = ['bpmn', 'odm', 'svg', 'pdf', 'png']
 }
 
 /**
@@ -234,14 +223,10 @@ function importQuestionsInteraction() {
   // clear upload-zone. This is because importQuestionsInteraction comes after importModelsInteraction
   hideChildElements('upload-zone')
   // upload-label in import view
-  updateTextAndDisplayDomElement(
-    'upload-label',
-    'Drop questions csv files',
-    'block'
-  )
+  updateTextAndDisplayDomElement('upload-label', 'Drop questions csv files', 'block')
 
   // get client state
-  var state = getState()
+  const state = getState()
 
   /// settings for importing questions
   state.importMode = 'single'
@@ -265,7 +250,7 @@ function importQuestionsInteraction() {
 async function saveSessionInteraction() {
   console.log('saveSessionInteraction', arguments)
 
-  var state = getState()
+  const state = getState()
 
   if (areRequiredFieldsEntered()) {
     state.processedGazeData = {
@@ -306,7 +291,7 @@ function prepareDataCollectionContent(filePropertiesDefined) {
 
   console.log('prepareDataCollectionContent', arguments)
 
-  var state = getState()
+  const state = getState()
 
   // show or hide file explorer
   if (
@@ -344,12 +329,9 @@ function prepareDataCollectionContent(filePropertiesDefined) {
   document.getElementById('record-btn').onclick = () => recordETInteraction()
 
   /// start ET modal view interaction
-  document.getElementById('close-startET-modal').onclick =
-    closeStartETModalInteraction
-  document.getElementById('submit-recording-form').onclick = () =>
-    startETInteraction()
-  document.getElementById('save-session').onclick = () =>
-    saveSessionInteraction()
+  document.getElementById('close-startET-modal').onclick = closeStartETModalInteraction
+  document.getElementById('submit-recording-form').onclick = () => startETInteraction()
+  document.getElementById('save-session').onclick = () => saveSessionInteraction()
 
   // put in fullscreen
   if (areModelsLoaded && window.hasOwnProperty('electron')) {
@@ -412,20 +394,17 @@ function recordETInteraction() {
 function loadRecordingFormData() {
   console.log('loadRecordingFormData', arguments)
 
-  var state = getState()
+  const state = getState()
 
   if (state.processedGazeData.hasOwnProperty('xScreenDim'))
-    document.getElementById('x-dim').value =
-      state.processedGazeData['xScreenDim']
+    document.getElementById('x-dim').value = state.processedGazeData['xScreenDim']
   if (state.processedGazeData.hasOwnProperty('yScreenDim'))
-    document.getElementById('y-dim').value =
-      state.processedGazeData['yScreenDim']
+    document.getElementById('y-dim').value = state.processedGazeData['yScreenDim']
   if (state.processedGazeData.hasOwnProperty('screenDistance'))
     document.getElementById('screen-distance').value =
       state.processedGazeData['screenDistance']
   if (state.processedGazeData.hasOwnProperty('monitorSize'))
-    document.getElementById('monitor-size').value =
-      state.processedGazeData['monitorSize']
+    document.getElementById('monitor-size').value = state.processedGazeData['monitorSize']
   if (state.processedGazeData.hasOwnProperty('experimentID'))
     document.getElementById('experiment-id').value =
       state.processedGazeData['experimentID']
@@ -473,15 +452,15 @@ function closeStartETModalInteraction() {
 async function startETInteraction() {
   console.log('startETInteraction', arguments)
 
-  var state = getState()
+  const state = getState()
 
   if (areRequiredFieldsEntered()) {
-    var setup = false
+    let setup = false
 
     try {
       await setupTracking(
         document.getElementById('x-dim').value,
-        document.getElementById('y-dim').value
+        document.getElementById('y-dim').value,
       )
       setup = true
     } catch (error) {
@@ -517,12 +496,7 @@ async function startETInteraction() {
 
       try {
         // start tracking
-        startTracking(
-          Date.now(),
-          document.body.innerHTML,
-          window.screenX,
-          window.screenY
-        )
+        startTracking(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
 
         /*          // show main tab
           console.log("state.linkingSubProcessesMode",state.linkingSubProcessesMode)
@@ -594,7 +568,7 @@ function areRequiredFieldsEntered() {
 async function initiateETsession() {
   console.log('initiateETsession', arguments)
 
-  var state = getState()
+  const state = getState()
 
   state.processedGazeData = {
     xScreenDim: document.getElementById('x-dim').value,
@@ -629,10 +603,10 @@ async function initiateETsession() {
 async function saveStyleParameters() {
   console.log('getStyleParameters', arguments)
 
-  var stylesContent = ''
+  let stylesContent = ''
 
   const styles = document.querySelectorAll('link')
-  for (var i = 0; i < styles.length; i++) {
+  for (let i = 0; i < styles.length; i++) {
     const url = styles[i].getAttribute('href')
     // console.log("url",url);
     const data = await fetch(url)
@@ -688,7 +662,7 @@ async function setupTracking(xScreenDim, yScreenDim) {
 function startTracking(timestamp, code, screenX, screenY) {
   // console.log("startTracking function ",arguments);
 
-  var state = getState()
+  const state = getState()
 
   state.isEtOn = true
 }
@@ -714,7 +688,7 @@ function startTracking(timestamp, code, screenX, screenY) {
 function takesnapshot(timestamp, code, screenX, screenY) {
   console.log('takesnapshot', arguments)
 
-  var state = getState()
+  const state = getState()
   console.log('state to be used in snapshot', state)
 
   // check that eye-tracking is still on recording
@@ -724,7 +698,7 @@ function takesnapshot(timestamp, code, screenX, screenY) {
   }
 
   // create snapshot
-  var snapshot = {}
+  const snapshot = {}
   snapshot.timestamp = timestamp
   snapshot.code = code
   /// *Due to a bug in electron/Window10 (https://stackoverflow.com/questions/53241601/window-screenx-inconsistencies-in-windows-10-with-electron-chrome) the recording should always be in full screen and screenY and screenY are by default set to 0
@@ -737,10 +711,8 @@ function takesnapshot(timestamp, code, screenX, screenY) {
   // dm
   if (snapshot.tabName != null && snapshot.tabName != '') {
     // find shownTab i.e., a tab with .tab-container and display==flex. There should be always one tab satisfying this condition
-    const shownTabs = Array.from(
-      document.querySelectorAll('.tab-container')
-    ).filter(
-      (s) => window.getComputedStyle(s).getPropertyValue('display') == 'flex' // 'block'
+    const shownTabs = Array.from(document.querySelectorAll('.tab-container')).filter(
+      (s) => window.getComputedStyle(s).getPropertyValue('display') == 'flex', // 'block'
     )
 
     // find svg object with svg[data-element-id]
@@ -836,7 +808,7 @@ async function sendFullSnapshot(snapshot) {
 async function stopETInteraction() {
   console.log('stopETInteraction', arguments)
 
-  var state = getState()
+  const state = getState()
 
   // set stop-btn interaction to null
   document.getElementById('stop-btn').onclick = null
@@ -849,11 +821,11 @@ async function stopETInteraction() {
   await showGeneralWaitingScreen(
     'Please wait while the gaze data is being processed<br>Do not resize this window',
     'wait',
-    'all-content'
+    'all-content',
   )
 
   // intiate progress report
-  var progressWindow = initiateProgressWindow(state.styleParameters)
+  const progressWindow = initiateProgressWindow(state.styleParameters)
 
   // save to window
   if (!window.hasOwnProperty('externalProgressWindows'))
@@ -887,7 +859,7 @@ async function stopETInteraction() {
 function endTracking(externalProgressWindow) {
   console.log('endTracking function ', arguments)
 
-  var state = getState()
+  const state = getState()
 
   state.isEtOn = false
 
@@ -911,7 +883,7 @@ function endTracking(externalProgressWindow) {
 function processGazeData(externalProgressWindow) {
   console.log('processGazeData function ', arguments)
 
-  var state = getState()
+  const state = getState()
 
   mapGazestoElementsFromPageSnapshotListener()
 
@@ -939,10 +911,10 @@ function processGazeData(externalProgressWindow) {
 function initiateProgressWindow(styleParameters) {
   console.log('initiateProgressWindow', arguments)
 
-  var progressWindow = window.open(
+  const progressWindow = window.open(
     'about:blank',
     '',
-    '_blank, width=500, height=200, directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no'
+    '_blank, width=500, height=200, directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no',
   )
 
   // clone document.getElementById("wait-processing-gaze-data")
@@ -955,8 +927,7 @@ function initiateProgressWindow(styleParameters) {
   progressWindow.document.getElementById('wait-icon').remove()
 
   // add style
-  progressWindow.document.head.innerHTML =
-    '<style>' + styleParameters + '</style>'
+  progressWindow.document.head.innerHTML = '<style>' + styleParameters + '</style>'
 
   return progressWindow
 }

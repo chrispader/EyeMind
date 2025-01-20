@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
-
+# DEBUG_MODE = True
 
 import numpy as np
 import tobii_research as tr
@@ -39,9 +38,12 @@ import threading
 import copy
 import pickle
 from waitress import serve
+import itertools
+
+from .utils import generateGazePoints
 
 # test mode settings if applicable
-testMode = False
+testMode = True
 if len(sys.argv)>1 and sys.argv[1]=="testMode":
     testMode= True
     print("Test mode activiated")
@@ -55,7 +57,7 @@ fileWrittingSnapshotLock = threading.Lock()
 
 # constants
 GAZE_BUFFER_SIZE = 10000
-COMMUNICATION_PORT_WITH_EYE_MIND = 5000
+COMMUNICATION_PORT_WITH_EYE_MIND = 5100
 N_CONNECTION_TRIALS = 10
 #############
 
@@ -644,7 +646,16 @@ def processMockGazeData(gazes):
         print(gazePoint)
         gaze_data_callback(gazePoint)
 
+def mockGazePoints(interval):
+    for index in itertools.count():
+        if isETstarted:
+            print("Sending mock gaze...")
+            gazes = generateGazePoints(10, index)
+            processMockGazeData(gazes)
+            time.sleep(interval)
 
+gaze_mock_interval = 0.5
+gaze_mock_thread = threading.Thread(target=mockGazePoints, args=(gaze_mock_interval,))
 
 ########################################################################
 
@@ -718,6 +729,8 @@ def process():
             start_gaze_tracking()
         else:
             isETstarted = True
+            gaze_mock_thread.start()
+
 
         responseMsg = {
             "gazeData": gazeData,
@@ -864,7 +877,16 @@ if __name__ == "__main__":
     #app.run(port=5000)
     serve(app, host="0.0.0.0", port=COMMUNICATION_PORT_WITH_EYE_MIND)
 
+import signal
+import sys
+
+def handle_signal(signal_number, frame):
+    print(f"Received signal {signal_number}. Cleaning up...")
+    gaze_mock_thread.join()
+    sys.exit(0)
+
+# Register signal handlers
+signal.signal(signal.SIGINT, handle_signal)
+signal.signal(signal.SIGTERM, handle_signal)
 
 ############################################################
-
-

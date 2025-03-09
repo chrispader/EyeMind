@@ -19,25 +19,24 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
 /*  data-collection with the support of eye-tracking   */
-
-import { registerFileUpload, assignModelsToGroups } from './files-setup'
-import { loadModels } from './shared-interactions'
-import { setUnclosableTabs, setMainTab } from './tabs'
-import { generateQuestionsSequence } from './questions'
-import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
-import { infoAlert, errorAlert } from '@/app/client/modules/utils/utils'
-import {
-  updateTextAndDisplayDomElement,
-  moveFromTo,
-  hideChildElements,
-} from '@/app/client/modules/utils/dom'
 import { getState } from '@/app/client/modules/dataModels/state'
-import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
-import { updateProcessMessageListener } from './progress'
-import { startQuestions } from './questions'
+import {
+  hideChildElements,
+  moveFromTo,
+  updateTextAndDisplayDomElement,
+} from '@/app/client/modules/utils/dom'
+import { errorAlert, infoAlert } from '@/app/client/modules/utils/utils'
+import { assignModelsToGroups, registerFileUpload } from './files-setup'
 import { areModelsCorrectlyGrouped } from './files-setup'
+import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
+import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'
+import { updateProcessMessageListener } from './progress'
+import { generateQuestionsSequence } from './questions'
+import { startQuestions } from './questions'
+import { loadModels } from './shared-interactions'
+import { setMainTab, setUnclosableTabs } from './tabs'
+
 //import {clicksListener} from './click-stream'
 
 /**

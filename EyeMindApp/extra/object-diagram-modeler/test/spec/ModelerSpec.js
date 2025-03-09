@@ -1,16 +1,10 @@
 import Modeler from 'lib/Modeler'
-
 import Viewer from 'lib/Viewer'
-
 import TestContainer from 'mocha-test-container-support'
-
-import { setPostitJS, clearPostitJS, insertCSS } from 'test/TestHelper'
-
-import simpleXML from 'test/fixtures/simple.xml'
-
+import { clearPostitJS, insertCSS, setPostitJS } from 'test/TestHelper'
 import complexXML from 'test/fixtures/complex.xml'
-
 import emptyXML from 'test/fixtures/empty.xml'
+import simpleXML from 'test/fixtures/simple.xml'
 
 var singleStart = window.__env__ && window.__env__.SINGLE_START === 'modeler'
 

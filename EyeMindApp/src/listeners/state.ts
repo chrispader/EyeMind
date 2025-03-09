@@ -1,16 +1,16 @@
 import { ipcMain } from 'electron'
 import {
-  getState,
-  clearState,
-  getSnapshotsOfState,
-  getStyleParametersOfState,
-  setAreGazesCorrectedOfState,
-  getQuestions,
-  getStates,
-  clearStates,
-  removeState,
-  doesStateExist,
   areAreGazesCorrectedOfState,
+  clearState,
+  clearStates,
+  doesStateExist,
+  getQuestions,
+  getSnapshotsOfState,
+  getState,
+  getStates,
+  getStyleParametersOfState,
+  removeState,
+  setAreGazesCorrectedOfState,
 } from '@/app/server/node/dataModels/state'
 
 // check the return

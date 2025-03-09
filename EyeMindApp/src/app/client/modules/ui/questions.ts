@@ -19,16 +19,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
 /* Questions */
-
 import DataFrame from 'dataframe-js'
-import { stopETInteraction } from './data-collection'
-import { errorAlert } from '@/app/client/modules/utils/utils'
 import { getState } from '@/app/client/modules/dataModels/state'
+import { errorAlert } from '@/app/client/modules/utils/utils'
 import { resetNavTabsAndTabs } from './canvas'
-import { sendClickEvent } from './click-stream'
 import { showModelsGroup } from './canvas'
+import { sendClickEvent } from './click-stream'
+import { stopETInteraction } from './data-collection'
 
 /**
  * Title: load questions

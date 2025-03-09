@@ -19,19 +19,18 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
-import {
-  handleWindowRefresh,
-  takeSnapshotOnWindowResize,
-  takeSnapshotOnWindowMovement,
-  testListeners,
-  DisableCriticalKeys,
-} from '@/app/client/modules/ui/window-events'
-import {
-  modeSelectionListeners,
-  closeModalOutsideClickInteraction,
-} from '@/app/client/modules/ui/shared-interactions'
 import { loadServerStateIntoClient } from '@/app/client/modules/dataModels/state'
+import {
+  closeModalOutsideClickInteraction,
+  modeSelectionListeners,
+} from '@/app/client/modules/ui/shared-interactions'
+import {
+  DisableCriticalKeys,
+  handleWindowRefresh,
+  takeSnapshotOnWindowMovement,
+  takeSnapshotOnWindowResize,
+  testListeners,
+} from '@/app/client/modules/ui/window-events'
 
 /// load the server state ás a client state then
 loadServerStateIntoClient().then(() => {

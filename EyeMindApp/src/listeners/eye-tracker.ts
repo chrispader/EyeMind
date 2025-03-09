@@ -1,12 +1,12 @@
 import { ipcMain } from 'electron'
 import {
-  setupTracking,
-  sendSnapshotID,
+  dataMapped,
+  processGazeData,
+  sendClickEvent,
   sendFullSnapshot,
   sendQuestionEvent,
-  processGazeData,
-  dataMapped,
-  sendClickEvent,
+  sendSnapshotID,
+  setupTracking,
 } from '@/app/server/node/connectors/eye-tracker'
 
 export function eyeTrackerListeners(mainWindow) {

@@ -1,7 +1,7 @@
+import request from 'request-promise'
 import { setState } from '@/app/server/node/dataModels/state'
 import { stateDownload } from '@/app/server/node/utils/download'
 import { globalParameters } from '@/globals'
-import request from 'request-promise'
 
 export async function saveSession(state) {
   setState(state)

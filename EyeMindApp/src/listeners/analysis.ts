@@ -1,12 +1,12 @@
 import { ipcMain } from 'electron'
 import {
-  summerizedFixationLog,
-  generateHeatMap,
-  shouldEnableHeatmap,
-  getRandomGazeSet,
   applyCorrectionOffset,
   gazeDataFragmentMapped,
+  generateHeatMap,
+  getRandomGazeSet,
   getStatesInfo,
+  shouldEnableHeatmap,
+  summerizedFixationLog,
 } from '@/app/server/node/analysis/analysis'
 
 // check the return

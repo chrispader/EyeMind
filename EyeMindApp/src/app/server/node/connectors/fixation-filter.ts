@@ -19,12 +19,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
 import request from 'request-promise'
-import { globalParameters } from '@/globals'
-import { calculateProgress } from '@/app/server/node/utils/utils'
-import { summerizedFixationLog } from '../analysis/analysis'
 import { getStates } from '@/app/server/node/dataModels/state'
+import { calculateProgress } from '@/app/server/node/utils/utils'
+import { globalParameters } from '@/globals'
+import { summerizedFixationLog } from '../analysis/analysis'
 
 export async function fixationFilter(fixationFilterSettings, mainWindow) {
   // note: the fixation filter uses the corrected data if state.processedGazeData.areGazesCorrected = true; (see R code)

@@ -19,22 +19,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
-import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
-import { errorAlert } from '../utils/utils'
-import { getGeneralModelsRegistry } from '@/app/client/modules/dataModels/generalModelsRegistry'
 import {
-  setheatmapActive,
   isHeatmapActive,
+  setheatmapActive,
 } from '@/app/client/modules/dataModels/activeFeatures'
+import { getGeneralModelsRegistry } from '@/app/client/modules/dataModels/generalModelsRegistry'
 import { getState } from '@/app/client/modules/dataModels/state'
 import {
-  hideElement,
   displayElement,
-  populateParticipantFileSelect,
   getSelectValues,
+  hideElement,
+  populateParticipantFileSelect,
   updateShownUserConfig,
 } from '../utils/dom'
+import { errorAlert } from '../utils/utils'
+import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'
 
 async function enableHeatmapOption() {
   console.log('enableHeatmapOption function', arguments)

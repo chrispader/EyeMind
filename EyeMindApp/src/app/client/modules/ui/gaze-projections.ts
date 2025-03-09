@@ -19,30 +19,29 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
-import { enableHeatmapOption, disableHeatmapOption } from './heatmap'
-import { mapGazetoElementsFromSvgSnapshot } from './mapping'
-import {
-  showGeneralWaitingScreen,
-  hideGeneralWaitingScreen,
-  updateProcessingMessage,
-} from './progress'
-import {
-  infoAlert,
-  errorAlert,
-  calculateProgress,
-} from '@/app/client/modules/utils/utils'
 import {
   SetProjectionAndMappingActive,
   areProjectionAndMappingActive,
 } from '@/app/client/modules/dataModels/activeFeatures'
-import { setSnapshots, getSnapshots } from '@/app/client/modules/dataModels/snapshots'
+import { getSnapshots, setSnapshots } from '@/app/client/modules/dataModels/snapshots'
 import {
-  hideElement,
   displayElement,
+  hideElement,
   populateParticipantFileSelect,
   updateShownUserConfig,
 } from '@/app/client/modules/utils/dom'
+import {
+  calculateProgress,
+  errorAlert,
+  infoAlert,
+} from '@/app/client/modules/utils/utils'
+import { disableHeatmapOption, enableHeatmapOption } from './heatmap'
+import { mapGazetoElementsFromSvgSnapshot } from './mapping'
+import {
+  hideGeneralWaitingScreen,
+  showGeneralWaitingScreen,
+  updateProcessingMessage,
+} from './progress'
 
 async function projectionInteraction() {
   // console.log("projectionInteraction function",arguments);

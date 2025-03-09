@@ -19,21 +19,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
-import { registerFileUpload } from './files-setup'
-import { enableHeatmapOption } from './heatmap'
-import {
-  loadETSettingsView,
-  FixationFilterCompletedProcessingListener,
-} from './fixation-filter'
-import { downloadInteraction } from './download'
 import { getState } from '@/app/client/modules/dataModels/state'
-import { updateProcessMessageListener } from './progress'
+import { downloadInteraction } from './download'
+import { registerFileUpload } from './files-setup'
+import {
+  FixationFilterCompletedProcessingListener,
+  loadETSettingsView,
+} from './fixation-filter'
 import {
   applyCorrectionOnGazeFragmentListener,
   applyingCorrectionsCompletedListener,
   projectionInteraction,
 } from './gaze-projections'
+import { enableHeatmapOption } from './heatmap'
+import { updateProcessMessageListener } from './progress'
 import { loadModels } from './shared-interactions'
 
 const REPORT_FREQUENCY = 1000

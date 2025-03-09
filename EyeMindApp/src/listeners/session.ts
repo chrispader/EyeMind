@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { saveSession, recoverSession } from '@/app/server/node/utils/session'
+import { recoverSession, saveSession } from '@/app/server/node/utils/session'
 
 // check the return
 export function sessionListeners() {

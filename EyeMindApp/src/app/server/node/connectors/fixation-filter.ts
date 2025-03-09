@@ -21,10 +21,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 import request from 'request-promise'
-import { globalParameters } from '@src/globals'
-import { calculateProgress } from '@server/utils/utils'
+import { globalParameters } from '@/globals'
+import { calculateProgress } from '@/app/server/node/utils/utils'
 import { summerizedFixationLog } from '../analysis/analysis'
-import { getStates } from '@root/src/app/server/node/dataModels/state'
+import { getStates } from '@/app/server/node/dataModels/state'
 
 export async function fixationFilter(fixationFilterSettings, mainWindow) {
   // note: the fixation filter uses the corrected data if state.processedGazeData.areGazesCorrected = true; (see R code)

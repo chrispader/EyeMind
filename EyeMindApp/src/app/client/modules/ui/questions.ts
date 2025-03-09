@@ -24,8 +24,8 @@ SOFTWARE.*/
 
 import DataFrame from 'dataframe-js'
 import { stopETInteraction } from './data-collection'
-import { errorAlert } from '@utils/utils'
-import { getState } from '@root/src/app/client/modules/dataModels/state'
+import { errorAlert } from '@/app/client/modules/utils/utils'
+import { getState } from '@/app/client/modules/dataModels/state'
 import { resetNavTabsAndTabs } from './canvas'
 import { sendClickEvent } from './click-stream'
 import { showModelsGroup } from './canvas'

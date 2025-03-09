@@ -1,8 +1,8 @@
 import request from 'request-promise'
-import { globalParameters } from '@src/globals'
-import { stateDownload } from '@server/utils/download'
-import { calculateProgress } from '@server/utils/utils'
-import { getState, setState } from '@root/src/app/server/node/dataModels/state'
+import { globalParameters } from '@/globals'
+import { stateDownload } from '@/app/server/node/utils/download'
+import { calculateProgress } from '@/app/server/node/utils/utils'
+import { getState, setState } from '@/app/server/node/dataModels/state'
 
 export async function setupTracking(xScreenDim, yScreenDim) {
   // console.log("setupTracking function");

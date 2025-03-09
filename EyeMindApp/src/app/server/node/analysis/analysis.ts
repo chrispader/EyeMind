@@ -22,14 +22,14 @@ SOFTWARE.*/
 
 import { DataFrame } from 'dataframe-js'
 import _ from 'lodash'
-import { getStates } from '@root/src/app/server/node/dataModels/state'
-import { globalParameters } from '@src/globals'
+import { getStates } from '@/app/server/node/dataModels/state'
+import { globalParameters } from '@/globals'
 import {
   calculateProgress,
   getMostCommon,
   hasOneElement,
   randomNumberInRange,
-} from '@server/utils/utils'
+} from '@/app/server/node/utils/utils'
 
 /*
 

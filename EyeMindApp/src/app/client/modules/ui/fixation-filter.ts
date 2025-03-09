@@ -22,8 +22,8 @@ SOFTWARE.*/
 
 import { clearHeatmap, enableHeatmapOption } from './heatmap'
 import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
-import { errorAlert } from '@utils/utils'
-import { hideElement, displayElement } from '@utils/dom'
+import { errorAlert } from '@/app/client/modules/utils/utils'
+import { hideElement, displayElement } from '@/app/client/modules/utils/dom'
 
 async function applyFixationSettingsInteraction() {
   // console.log("applyFixationSettingsInteraction function",arguments);

@@ -29,7 +29,11 @@ import OdmModeler from '@root/extra/object-diagram-modeler/lib/Modeler'
 import OdmNavigatedViewer from '@root/extra/object-diagram-modeler/lib/NavigatedViewer'
 
 import { takesnapshot } from './data-collection'
-import { cancelDefault, readFileContent, errorAlert } from '@utils/utils'
+import {
+  cancelDefault,
+  readFileContent,
+  errorAlert,
+} from '@/app/client/modules/utils/utils'
 
 import { prepareDataCollectionContent } from './data-collection'
 import { addToTabHeader, changeTab, openInTab, openWithinTab } from './tabs'
@@ -39,15 +43,11 @@ import { sendClickEvent } from './click-stream'
 
 import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
 
-import { hideElement } from '@utils/dom'
+import { hideElement } from '@/app/client/modules/utils/dom'
 
-import { addModel } from '@root/src/app/client/modules/dataModels/generalModelsRegistry'
-import { setState, getState } from '@root/src/app/client/modules/dataModels/state'
-import {
-  setFiles,
-  shiftFile,
-  nFiles,
-} from '@root/src/app/client/modules/dataModels/filesBuffer'
+import { addModel } from '@/app/client/modules/dataModels/generalModelsRegistry'
+import { setState, getState } from '@/app/client/modules/dataModels/state'
+import { setFiles, shiftFile, nFiles } from '@/app/client/modules/dataModels/filesBuffer'
 
 // types of modeler objects supported by the tool
 const modelers = {

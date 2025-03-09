@@ -7,7 +7,7 @@ import {
   processGazeData,
   dataMapped,
   sendClickEvent,
-} from '@server/connectors/eye-tracker'
+} from '@/app/server/node/connectors/eye-tracker'
 
 export function eyeTrackerListeners(mainWindow) {
   ipcMain.handle('setupTracking', function (e, args) {

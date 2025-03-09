@@ -27,21 +27,22 @@ import {
   hideGeneralWaitingScreen,
   updateProcessingMessage,
 } from './progress'
-import { infoAlert, errorAlert, calculateProgress } from '@utils/utils'
+import {
+  infoAlert,
+  errorAlert,
+  calculateProgress,
+} from '@/app/client/modules/utils/utils'
 import {
   SetProjectionAndMappingActive,
   areProjectionAndMappingActive,
-} from '@root/src/app/client/modules/dataModels/activeFeatures'
-import {
-  setSnapshots,
-  getSnapshots,
-} from '@root/src/app/client/modules/dataModels/snapshots'
+} from '@/app/client/modules/dataModels/activeFeatures'
+import { setSnapshots, getSnapshots } from '@/app/client/modules/dataModels/snapshots'
 import {
   hideElement,
   displayElement,
   populateParticipantFileSelect,
   updateShownUserConfig,
-} from '@utils/dom'
+} from '@/app/client/modules/utils/dom'
 
 async function projectionInteraction() {
   // console.log("projectionInteraction function",arguments);

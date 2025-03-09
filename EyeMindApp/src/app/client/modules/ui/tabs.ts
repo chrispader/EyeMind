@@ -20,13 +20,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-import { cancelDefault } from '@utils/utils'
+import { cancelDefault } from '@/app/client/modules/utils/utils'
 import { takesnapshot } from './data-collection'
 import {
   createUpdateProcessHierarchyExplorer,
   renderProcessHierarchyExplorer,
 } from './process-hierarchy-explorer'
-import { getState } from '@root/src/app/client/modules/dataModels/state'
+import { getState } from '@/app/client/modules/dataModels/state'
 import { sendClickEvent } from './click-stream'
 //import {registerClickEventForLogging} from './click-stream'
 import { resetModel } from './canvas'

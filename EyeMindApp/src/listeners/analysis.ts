@@ -7,7 +7,7 @@ import {
   applyCorrectionOffset,
   gazeDataFragmentMapped,
   getStatesInfo,
-} from '@server/analysis/analysis'
+} from '@/app/server/node/analysis/analysis'
 
 // check the return
 export function analysisListeners(mainWindow) {

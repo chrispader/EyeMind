@@ -2,15 +2,21 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 import 'bpmn-js/dist/assets/bpmn-js.css'
 import 'bpmn-js/dist/assets/diagram-js.css'
 import { useEffect } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router'
+import { BrowserRouter, HashRouter, Route, Routes } from 'react-router'
+import { ROUTES } from '@/app/client/ROUTES'
 import '@/app/client/css/app.css'
-import { Home } from '@/app/client/pages/Home'
+import '@/app/client/css/main.css'
+import '@/app/client/css/new.css'
+import { AnalysisPage } from '@/app/client/pages/AnalysisPage'
+import { HomePage } from '@/app/client/pages/HomePage'
+import { ConfigPagesWrapper } from '@/app/client/pages/config/ConfigPagesWrapper'
+import { EyeTrackingPage } from '@/app/client/pages/config/EyeTrackingPage'
+import { EyeTrackingLoadSessionPage } from '@/app/client/pages/config/eye-tracking/EyeTrackingLoadSessionPage'
+import { EyeTrackingNewSessionImportPage } from '@/app/client/pages/config/eye-tracking/EyeTrackingNewSessionImportPage'
+import { EyeTrackingNewSessionPage } from '@/app/client/pages/config/eye-tracking/EyeTrackingNewSessionPage'
 import '@extra/object-diagram-modeler/starter/app/css/app.css'
 import { loadServerStateIntoClient } from './modules/dataModels/state'
-import {
-  closeModalOutsideClickInteraction,
-  modeSelectionListeners,
-} from './modules/ui/shared-interactions'
+import { closeModalOutsideClickInteraction } from './modules/ui/shared-interactions'
 import {
   DisableCriticalKeys,
   handleWindowRefresh,
@@ -18,6 +24,10 @@ import {
   takeSnapshotOnWindowResize,
   testListeners,
 } from './modules/ui/window-events'
+
+const __DEV__ = true
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+const RouterComponent = __DEV__ ? HashRouter : BrowserRouter
 
 async function initializeApp(): Promise<void> {
   try {
@@ -29,9 +39,6 @@ async function initializeApp(): Promise<void> {
     handleWindowRefresh()
     takeSnapshotOnWindowResize()
     takeSnapshotOnWindowMovement()
-
-    // Mode selection listeners
-    modeSelectionListeners()
 
     // Test listener
     testListeners()
@@ -49,82 +56,29 @@ export function App(): React.ReactElement {
   }, [])
 
   return (
-    <div className="all-content" id="all-content">
-      <BrowserRouter>
+    <>
+      <RouterComponent>
         <Routes>
-          <Route index path="/" element={<Home />} />
+          <Route path={ROUTES.HOME} element={<ConfigPagesWrapper />}>
+            <Route index element={<HomePage />} />
+            <Route path={ROUTES.EYE_TRACKING} element={<EyeTrackingPage />} />
+            <Route
+              path={ROUTES.EYE_TRACKING_NEW_SESSION}
+              element={<EyeTrackingNewSessionPage />}
+            />
+            <Route
+              path={ROUTES.EYE_TRACKING_NEW_SESSION_IMPORT}
+              element={<EyeTrackingNewSessionImportPage />}
+            />
+            <Route
+              path={ROUTES.EYE_TRACKING_LOAD_SESSION}
+              element={<EyeTrackingLoadSessionPage />}
+            />
+
+            <Route path={ROUTES.ANALYSIS} element={<AnalysisPage />} />
+          </Route>
         </Routes>
-      </BrowserRouter>
-
-      <div
-        className="data-collection-session-options-view"
-        id="data-collection-session-options-view">
-        <div className="row">
-          <button id="new-session" className="btn new-session">
-            New session
-          </button>
-          <button id="load-session" className="btn load-session">
-            Load session
-          </button>
-        </div>
-      </div>
-
-      <div className="data-collection-settings-view" id="data-collection-settings-view">
-        <div className="data-collection-settings-box" id="data-collection-settings-box">
-          <div id="settings" className="settings">
-            <h2>Advanced settings</h2>
-            <div className="row">
-              <div className="column">
-                <span className="text-container">Linking of sub-processes*:</span>
-              </div>
-              <div className="column">
-                <select id="linking-sub-processes" className="form-select">
-                  <option value="no">No support</option>
-                  <option value="newTab">Symbol links</option>
-                  <option value="withinTab">Breadcrumb navigation</option>
-                </select>
-              </div>
-            </div>
-            <div id="info-linking" className="info-link">
-              *If linking is supported, then ids of the activities refering to collapsed
-              sub-processes should be the same as the names of the corresponding BPMN
-              files.
-            </div>
-          </div>
-          <div className="proceed-data-collection-settings-btn-container">
-            <button
-              className="proceed-data-collection-settings-btn"
-              id="proceed-data-collection-settings">
-              Proceed
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="import-view" id="import-view">
-        <div className="import-box" id="import-box">
-          <div
-            className="upload-zone"
-            id="upload-zone"
-            onDragOver={() =>
-              document.getElementById('upload-zone')?.setAttribute('drop-active', 'true')
-            }
-            onDragLeave={() =>
-              document.getElementById('upload-zone')?.setAttribute('drop-active', 'false')
-            }
-            onDrop={() =>
-              document.getElementById('upload-zone')?.setAttribute('drop-active', 'false')
-            }>
-            <span id="upload-label" className="upload-label"></span>
-            <div className="file-list" id="file-list"></div>
-          </div>
-          <div className="process-files-btn-container">
-            <button className="process-files-btn" id="process-files">
-              Load files
-            </button>
-          </div>
-        </div>
-      </div>
+      </RouterComponent>
 
       <div className="fixation-settings-view" id="fixation-settings-view">
         <div className="fixation-settings-box" id="fixation-settings-box">
@@ -981,6 +935,6 @@ export function App(): React.ReactElement {
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

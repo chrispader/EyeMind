@@ -1,0 +1,24 @@
+.flex-container-vertical {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.flex-container-horizontal {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+}
+
+.flex1 {
+  flex: 1;
+}
+
+.center-content {
+  align-items: center;
+  justify-content: center;
+}
+
+.button-gaps {
+  gap: 50px;
+}

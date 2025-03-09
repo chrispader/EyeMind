@@ -21,33 +21,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /*  Shared interactions between data collection and anaylsis  */
 import { getState } from '@/app/client/modules/dataModels/state'
-import { analysisModeInteraction } from './analysis'
-import { eyeTrackingModeInteraction } from './data-collection'
-
-/**
- * Title: Mode selection listeners.
- *
- * Description: Definition of event listeners to guide the app control-flow depending on whether the user chooses the eye-tracking mode or the analysis mode
- *
- * Control-flow summary: event listeners associated to different buttons
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- *
- * Additional notes: none
- *
- */
-function modeSelectionListeners() {
-  console.log('modeSelectionListeners', arguments)
-
-  document.getElementById('eye-tracking').onclick = () => {
-    eyeTrackingModeInteraction()
-  }
-  document.getElementById('analysis').onclick = () => analysisModeInteraction()
-}
 
 /**
  * Title: load models
@@ -116,4 +89,4 @@ function closeModalOutsideClickInteraction(event) {
   }
 }
 
-export { modeSelectionListeners, loadModels, closeModalOutsideClickInteraction }
+export { loadModels, closeModalOutsideClickInteraction }

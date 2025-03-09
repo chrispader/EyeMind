@@ -32,7 +32,7 @@ body, html, #root {
 
   display: flex;
   flex-direction: column;
-
+  background-color: #E7EAED;
 }
 
 a:link {
@@ -61,17 +61,6 @@ a:link {
 
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(255, 255, 255, 0.3);
-}
-
-
-
-
-.all-content {
-  width:100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  display: inline-block;
 }
 
 .wait-processing-gaze-data, .finished-processing-gaze-data, .wait {
@@ -557,64 +546,21 @@ process hierarchy within the tab container
 
 /* main view */
 
-.main-view{
-  background-color: #E7EAED;
-  width: 100%;
-  height:100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.main-view .btn {
-  width: 250px;
-  height: 250px;
-  margin-right: 50px;
-  vertical-align: middle;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 25px;
-}
-
-
-.main-view .eye-tracking {
+#home .eye-tracking {
   background-color: #1e6daf ;
 }
 
-.main-view .analysis {
+#home .analysis {
   background-color: #269511 ;
 }
 
-/* data-collection-session-options-view */
+/* data collection */
 
-.data-collection-session-options-view{
-  background-color: #E7EAED;
-  width: 100%;
-  height:100%;
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.data-collection-session-options-view .btn {
-  width: 250px;
-  height: 250px;
-  margin-right: 50px;
-  vertical-align: middle;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 25px;
-}
-
-.data-collection-session-options-view .new-session {
+#data-collection-session-options-view .new-session {
  background-color: #257897 ;
 }
 
-.data-collection-session-options-view .load-session {
+#data-collection-session-options-view .load-session {
   background-color: #f8b014;
 }
 
@@ -1301,18 +1247,6 @@ process hierarchy within the tab container
 
 
 /* data collection settings view */
-
-
-.data-collection-settings-view {
-  width: 100%;
-  height:100%;
-  background-color: #E7EAED;
-  display: none;
-  align-items: center;
-  justify-content: center;
-
-}
-
 
 .data-collection-settings-box {
   background: #fff;

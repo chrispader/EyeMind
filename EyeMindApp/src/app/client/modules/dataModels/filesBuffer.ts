@@ -1,15 +1,13 @@
 const files = []
 
-function setFiles(vals) {
+export function setFiles(vals) {
   Array.from(vals).forEach((val) => files.push(val))
 }
 
-function shiftFile() {
+export function shiftFile() {
   return files.shift()
 }
 
-function nFiles() {
+export function nFiles() {
   return files.length
 }
-
-export { setFiles, shiftFile, nFiles }

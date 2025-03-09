@@ -27,8 +27,7 @@ import {
   updateTextAndDisplayDomElement,
 } from '@/app/client/modules/utils/dom'
 import { errorAlert, infoAlert } from '@/app/client/modules/utils/utils'
-import { assignModelsToGroups, registerFileUpload } from './files-setup'
-import { areModelsCorrectlyGrouped } from './files-setup'
+import { assignModelsToGroups } from './files-setup'
 import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
 import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'
 import { updateProcessMessageListener } from './progress'
@@ -36,172 +35,6 @@ import { generateQuestionsSequence } from './questions'
 import { startQuestions } from './questions'
 import { loadModels } from './shared-interactions'
 import { setMainTab, setUnclosableTabs } from './tabs'
-
-//import {clicksListener} from './click-stream'
-
-/**
- * Title: eye tracking mode interactions
- *
- * Description: guide the control-flow depending on whether the use chooses to load a session, or create a new session
- *
- * Control-flow summary: getting the client state, setting state.mode to "data-collection", than declare event listeners associated to different buttons
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: the call to the file upload listerners in registerFileUpload(), allows importing files in loadSessionInteraction(), importModelsInteraction() and importQuestionsInteraction()
- *
- */
-function eyeTrackingModeInteraction() {
-  console.log('eyeTrackingModeInteraction', arguments)
-
-  // get client state
-  const state = getState()
-
-  // set state mode to data-collection
-  state.mode = 'data-collection'
-
-  /// move to data-collection-session-options-view
-  moveFromTo('main-view', 'data-collection-session-options-view', 'flex')
-
-  // load session interaction
-  document.getElementById('load-session').onclick = () => loadSessionInteraction()
-
-  // new session interaction
-  document.getElementById('new-session').onclick = () => newSessionInteraction()
-
-  // call file upload listeners
-  registerFileUpload()
-}
-
-/**
- * Title: load session interactions
- *
- * Description: provide settings allowing to import session files
- *
- * Control-flow summary: moving to import view, setting "upload-label", getting the client state, providing settings allowing to import session files
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: the settings allowing to import session files are used by file-setup methods
- *
- */
-function loadSessionInteraction() {
-  console.log('loadSessionInteraction', arguments)
-
-  // move to import view
-  moveFromTo('data-collection-session-options-view', 'import-view', 'flex')
-  // update upload-label in import view
-  updateTextAndDisplayDomElement('upload-label', 'Drop a session file', 'block')
-
-  // get client state
-  const state = getState()
-
-  // settings for importing session file
-  state.importMode = 'single'
-  state.temp.expectedArtifact = 'session'
-  state.temp.expectedExtensions = ['json']
-}
-
-/**
- * Title: new session interactions
- *
- * Description: moving to data-collection-settings-view and declare event listeners allowing to upload models and questions
- *
- * Control-flow summary: moving to data-collection-settings-view and declare event listeners allowing to upload models and questions
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-function newSessionInteraction() {
-  console.log('newSessionInteraction', arguments)
-
-  // get state
-  const state = getState()
-
-  // move to data-collection-settings-view which allows choosing the way models are linked to each other
-  moveFromTo(
-    'data-collection-session-options-view',
-    'data-collection-settings-view',
-    'flex',
-  )
-
-  /// data collection settings view interactions
-  // models import interactions
-  document.getElementById('proceed-data-collection-settings').onclick = () => {
-    // set linkingSubProcessesMode
-    const linkingSubProcessesSelect = document.getElementById('linking-sub-processes')
-    state.linkingSubProcessesMode =
-      linkingSubProcessesSelect.options[linkingSubProcessesSelect.selectedIndex].value
-
-    console.log('state.linkingSubProcessesMode', state.linkingSubProcessesMode)
-
-    importModelsInteraction()
-  }
-  // questions import interactions
-  document.getElementById('process-files').onclick = () => {
-    // check models grouping
-    const modelsCorrectlyGrouped = areModelsCorrectlyGrouped()
-    if (!modelsCorrectlyGrouped['success']) {
-      const msg = modelsCorrectlyGrouped['msg']
-      errorAlert(msg)
-      console.error(msg)
-      return false
-    }
-
-    // check if at least one model was imported
-    if ((Object.keys(state.models).length === 0) == 0) {
-      importQuestionsInteraction()
-    } else {
-      const msg = 'No models to load'
-      errorAlert(msg)
-      console.error(msg)
-      return false
-    }
-  }
-}
-
-/**
- * Title: import models interactions
- *
- * Description: provide settings allowing to import models
- *
- * Control-flow summary: moving to import-view, setting "upload-label", getting client state and providing settings allowing to import models
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-function importModelsInteraction() {
-  console.log('importModelsInteraction', arguments)
-
-  // move to import-view
-  moveFromTo('data-collection-settings-view', 'import-view', 'flex')
-  // update upload-label in import view
-  updateTextAndDisplayDomElement('upload-label', 'Drop models files', 'block')
-
-  // get client state
-  const state = getState()
-
-  // settings for importing models files
-  state.importMode = 'multiple'
-  state.temp.expectedArtifact = 'models'
-  state.temp.expectedExtensions = ['bpmn', 'odm']
-}
 
 /**
  * Title: import questions interactions
@@ -996,8 +829,8 @@ async function completeProcessing(externalProgressWindow, msg, success) {
 }
 
 export {
-  eyeTrackingModeInteraction,
   prepareDataCollectionContent,
   takesnapshot,
   stopETInteraction,
+  importQuestionsInteraction,
 }

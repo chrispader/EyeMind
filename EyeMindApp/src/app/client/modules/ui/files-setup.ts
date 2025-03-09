@@ -178,7 +178,7 @@ async function handleDroppedFiles(event) {
  * Additional notes: none
  *
  */
-async function traverseItem(file) {
+export async function traverseItem(file) {
   console.log('traverseItem', arguments)
 
   const state = getState()

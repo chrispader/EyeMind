@@ -19,8 +19,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
+import { create } from 'zustand'
 
-let state = null
+interface State {
+  mode: string
+  importMode: string
+  linkingSubProcessesMode: string
+  temp: {
+    expectedArtifact: string
+    expectedExtensions: string[]
+  }
+}
+
+interface StateStore {
+  state: State | null
+  setState: (newState: State | null) => void
+}
+
+const useStateStore = create<StateStore>((set) => ({
+  state: null,
+  setState: (newState) => set({ state: newState }),
+}))
 
 /**
  * Title: getState.
@@ -38,9 +57,7 @@ let state = null
  * Additional notes: none
  *
  */
-function getState() {
-  return state
-}
+const getState = () => useStateStore.getState()
 
 /**
  * Title: SetState.
@@ -58,9 +75,7 @@ function getState() {
  * Additional notes: none
  *
  */
-function setState(newState) {
-  state = newState
-}
+const setState = (newState: Record<string, unknown>) => useStateStore.setState(newState)
 
 /**
  * Title: Load server state into client.
@@ -82,4 +97,4 @@ async function loadServerStateIntoClient(): Promise<void> {
   setState(await window.state.getState())
 }
 
-export { getState, setState, loadServerStateIntoClient }
+export { useStateStore, getState, setState, loadServerStateIntoClient }

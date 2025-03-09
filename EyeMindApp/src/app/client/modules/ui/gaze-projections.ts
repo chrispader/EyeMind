@@ -32,7 +32,10 @@ import {
   SetProjectionAndMappingActive,
   areProjectionAndMappingActive,
 } from '@root/src/app/client/modules/dataModels/activeFeatures'
-import { setSnapshots, getSnapshots } from '@root/src/app/client/modules/dataModels/snapshots'
+import {
+  setSnapshots,
+  getSnapshots,
+} from '@root/src/app/client/modules/dataModels/snapshots'
 import {
   hideElement,
   displayElement,
@@ -49,11 +52,7 @@ async function projectionInteraction() {
   // toggling mechanism of projectionAndMapping
   if (areProjectionAndMappingActive()) {
     // clear projections
-    await showGeneralWaitingScreen(
-      'Clearing the gaze projections',
-      'wait',
-      'all-content'
-    )
+    await showGeneralWaitingScreen('Clearing the gaze projections', 'wait', 'all-content')
 
     await clearProjections()
 
@@ -67,7 +66,7 @@ async function projectionInteraction() {
       applyProjectionSettings()
     displayElement('gaze-projection-modal', 'block')
     infoAlert(
-      'For correct gaze corrections, make sure to set the same screen dimension as the one used for the data collection'
+      'For correct gaze corrections, make sure to set the same screen dimension as the one used for the data collection',
     )
   }
 }
@@ -81,18 +80,12 @@ function closeProjectionSettingsInteraction() {
 async function applyProjectionSettings() {
   console.log('applyProjectionSettings', arguments)
 
-  var samplingRatio = document.getElementById(
-    'gaze-sample-size-in-percentage'
-  ).value
-  const stateFile = document.getElementById(
-    'participant-file-gaze-projection'
-  ).value
+  let samplingRatio = document.getElementById('gaze-sample-size-in-percentage').value
+  const stateFile = document.getElementById('participant-file-gaze-projection').value
   console.log('stateFile', stateFile)
-  const stateFileLabel = document.getElementById(
-    'participant-file-gaze-projection'
-  ).options[
-    document.getElementById('participant-file-gaze-projection').selectedIndex
-  ].text
+  const stateFileLabel = document.getElementById('participant-file-gaze-projection')
+    .options[document.getElementById('participant-file-gaze-projection').selectedIndex]
+    .text
 
   if (isNaN(samplingRatio) || stateFile == '') {
     errorAlert('missing/incorrect input fields')
@@ -101,7 +94,7 @@ async function applyProjectionSettings() {
 
   if (await window.state.areAreGazesCorrectedOfState(stateFile)) {
     infoAlert(
-      'A gaze-correction for this participant/file already exist.\nIMPORTANT NOTE: The gaze projections and corrections will be applied on the raw data and not the corrected one'
+      'A gaze-correction for this participant/file already exist.\nIMPORTANT NOTE: The gaze projections and corrections will be applied on the raw data and not the corrected one',
     )
   }
 
@@ -117,10 +110,7 @@ async function applyProjectionSettings() {
   updateShownUserConfig(userConfig)
 
   // select random gaze sequence to consider for the projections
-  const randomGazeSet = await window.analysis.getRandomGazeSet(
-    samplingRatio,
-    stateFile
-  )
+  const randomGazeSet = await window.analysis.getRandomGazeSet(samplingRatio, stateFile)
 
   console.log('randomGazeSet', randomGazeSet)
 
@@ -128,17 +118,12 @@ async function applyProjectionSettings() {
   const snapshots = await window.state.getSnapshotsOfState(stateFile)
 
   // generate projections
-  await showGeneralWaitingScreen(
-    'Generating gaze projections',
-    'wait',
-    'all-content'
-  )
+  await showGeneralWaitingScreen('Generating gaze projections', 'wait', 'all-content')
 
   // set state.projectionAndMappingActive to true
   SetProjectionAndMappingActive(true)
 
-  document.getElementById('feature-text').innerText =
-    'Gaze Projections and Mapping'
+  document.getElementById('feature-text').innerText = 'Gaze Projections and Mapping'
   disableHeatmapOption()
   hideModels()
 
@@ -148,17 +133,11 @@ async function applyProjectionSettings() {
     snapshots,
     0,
     0,
-    samplingRatio
+    samplingRatio,
   )
 
   // corrections interactions
-  correctionsInteractions(
-    randomGazeSet,
-    snapshots,
-    samplingRatio,
-    stateFile,
-    userConfig
-  )
+  correctionsInteractions(randomGazeSet, snapshots, samplingRatio, stateFile, userConfig)
 
   generateProjectionsContainers(gazeProjections, null, null)
 
@@ -183,17 +162,12 @@ function correctionsInteractions(
   snapshots,
   samplingRatio,
   stateFile,
-  userConfig
+  userConfig,
 ) {
   // correction
   document.getElementById('apply-correction-offset').disabled = true
   document.getElementById('update-correction-offset').onclick = () => {
-    updateCorrectionOffsetInteraction(
-      randomGazeSet,
-      snapshots,
-      samplingRatio,
-      userConfig
-    )
+    updateCorrectionOffsetInteraction(randomGazeSet, snapshots, samplingRatio, userConfig)
   }
   document.getElementById('apply-correction-offset').onclick = () => {
     applyCorrectionOffsetInteraction(snapshots, stateFile)
@@ -209,16 +183,16 @@ async function updateCorrectionOffsetInteraction(
   randomGazeSet,
   snapshots,
   samplingRatio,
-  userConfig
+  userConfig,
 ) {
   // console.log("updateCorrectionOffsetInteraction function",arguments);
 
   // parse input fields to float
   const xOffset = parseFloat(
-    document.getElementById('gaze-correction-x-offset-model').value
+    document.getElementById('gaze-correction-x-offset-model').value,
   )
   const yOffset = parseFloat(
-    document.getElementById('gaze-correction-y-offset-model').value
+    document.getElementById('gaze-correction-y-offset-model').value,
   )
   // console.log("xOffset ",xOffset, "yOffset ", yOffset);
 
@@ -236,7 +210,7 @@ async function updateCorrectionOffsetInteraction(
     await showGeneralWaitingScreen(
       'Updating gaze projections using the given offset.',
       'wait',
-      'all-content'
+      'all-content',
     )
 
     // generate new gaze projection
@@ -246,7 +220,7 @@ async function updateCorrectionOffsetInteraction(
       snapshots,
       xOffset,
       yOffset,
-      samplingRatio
+      samplingRatio,
     )
 
     // remove old projections from the UI
@@ -269,10 +243,10 @@ async function applyCorrectionOffsetInteraction(snapshots, stateFile) {
   console.log('applyCorrectionOffsetInteraction', arguments)
 
   const xOffset = parseFloat(
-    document.getElementById('gaze-correction-x-offset-model').value
+    document.getElementById('gaze-correction-x-offset-model').value,
   )
   const yOffset = parseFloat(
-    document.getElementById('gaze-correction-y-offset-model').value
+    document.getElementById('gaze-correction-y-offset-model').value,
   )
 
   if (Number.isInteger(xOffset) && Number.isInteger(yOffset)) {
@@ -313,20 +287,17 @@ function generateProjectionsContainers(gazeProjections, xOffset, yOffset) {
     const fileName = tabContent.getAttribute('filename')
     const fileId = fileName.replace(
       new RegExp(window.globalParameters.MODELS_ID_REGEX, 'g'),
-      ''
+      '',
     )
 
     // create projectionsContainer
     var projectionsContainer = document.createElement('div')
-    projectionsContainer.setAttribute(
-      'id',
-      'model' + fileId + '-projections-container'
-    )
+    projectionsContainer.setAttribute('id', 'model' + fileId + '-projections-container')
     projectionsContainer.setAttribute('class', 'projections-container')
 
     // find the tabContentHolder and append the projectionsContainer to it
     const tabContentHolder = tabContainer.querySelector(
-      "[id='model" + fileId + "-content-holder']"
+      "[id='model" + fileId + "-content-holder']",
     )
     tabContentHolder.appendChild(projectionsContainer)
 
@@ -337,16 +308,10 @@ function generateProjectionsContainers(gazeProjections, xOffset, yOffset) {
         -1,
         gazeProjections[fileId],
         fileId,
-        projectionsContainer
+        projectionsContainer,
       ) // preview view
       gazeProjections[fileId].forEach((svg, i, svgs) =>
-        populateProjectionsContainers(
-          svg,
-          i,
-          svgs,
-          fileId,
-          projectionsContainer
-        )
+        populateProjectionsContainers(svg, i, svgs, fileId, projectionsContainer),
       ) // views with remaining snapshots
     }
   }
@@ -355,9 +320,7 @@ function generateProjectionsContainers(gazeProjections, xOffset, yOffset) {
 function removeOldProjections() {
   // console.log("removeOldProjections", arguments);
 
-  const projectionContainers = document.querySelectorAll(
-    '.projections-container'
-  )
+  const projectionContainers = document.querySelectorAll('.projections-container')
 
   // console.log("projectionContainers", projectionContainers);
 
@@ -367,21 +330,12 @@ function removeOldProjections() {
   }
 }
 
-function populateProjectionsContainers(
-  svg,
-  i,
-  svgs,
-  fileId,
-  projectionsContainer
-) {
+function populateProjectionsContainers(svg, i, svgs, fileId, projectionsContainer) {
   // console.log("populateProjectionsContainers function",arguments);
 
   // create projectedSnapshot and append it to projectionsContainer
-  var projectedSnapshot = document.createElement('div')
-  projectedSnapshot.setAttribute(
-    'id',
-    'model' + fileId + '-projected-model-snapshot' + i
-  )
+  const projectedSnapshot = document.createElement('div')
+  projectedSnapshot.setAttribute('id', 'model' + fileId + '-projected-model-snapshot' + i)
   projectedSnapshot.setAttribute('class', 'projected-snapshot')
   projectionsContainer.appendChild(projectedSnapshot)
 
@@ -389,17 +343,14 @@ function populateProjectionsContainers(
   if (i == -1) projectedSnapshot.style.display = 'block'
 
   // create snapshotsNagivation
-  var snapshotsNagivation = document.createElement('div')
-  snapshotsNagivation.setAttribute(
-    'id',
-    'model' + fileId + '-snapshots-navigation'
-  )
+  const snapshotsNagivation = document.createElement('div')
+  snapshotsNagivation.setAttribute('id', 'model' + fileId + '-snapshots-navigation')
   snapshotsNagivation.setAttribute('class', 'snapshots-navigation')
   projectedSnapshot.appendChild(snapshotsNagivation)
 
   if (svg != null) {
     // create snapshot
-    var snapshot = document.createElement('div')
+    const snapshot = document.createElement('div')
     snapshot.setAttribute('id', 'model' + fileId + '-snapshot' + i)
     snapshot.setAttribute('class', 'snapshot')
 
@@ -432,19 +383,19 @@ function populateProjectionsContainers(
 
     // disaling and enabling of previous and next buttons
     document.getElementById(
-      'model' + fileId + '-snapshots-navigation-prev-btn-snapshot' + i
+      'model' + fileId + '-snapshots-navigation-prev-btn-snapshot' + i,
     ).disabled = i > 0 ? false : true
     document.getElementById(
-      'model' + fileId + '-snapshots-navigation-next-btn-snapshot' + i
+      'model' + fileId + '-snapshots-navigation-next-btn-snapshot' + i,
     ).disabled = i < svgs.length - 1 ? false : true
 
     document.getElementById(
-      'model' + fileId + '-snapshots-navigation-prev-btn-snapshot' + i
+      'model' + fileId + '-snapshots-navigation-prev-btn-snapshot' + i,
     ).onclick = () => {
       moveToSnapshot(i, i - 1, fileId)
     }
     document.getElementById(
-      'model' + fileId + '-snapshots-navigation-next-btn-snapshot' + i
+      'model' + fileId + '-snapshots-navigation-next-btn-snapshot' + i,
     ).onclick = () => {
       moveToSnapshot(i, i + 1, fileId)
     }
@@ -454,7 +405,7 @@ function populateProjectionsContainers(
       fileId +
       "-snapshots-navigation-preview-btn-snapshot' class='btn'>Preview snapshots</button>"
     document.getElementById(
-      'model' + fileId + '-snapshots-navigation-preview-btn-snapshot'
+      'model' + fileId + '-snapshots-navigation-preview-btn-snapshot',
     ).onclick = () => {
       moveToSnapshot(i, i + 1, fileId)
     }
@@ -465,10 +416,7 @@ function moveToSnapshot(curentSnapshotId, nextSnapshotId, fileId) {
   // console.log("moveToSnapshot function", arguments);
 
   hideElement('model' + fileId + '-projected-model-snapshot' + curentSnapshotId)
-  displayElement(
-    'model' + fileId + '-projected-model-snapshot' + nextSnapshotId,
-    'block'
-  )
+  displayElement('model' + fileId + '-projected-model-snapshot' + nextSnapshotId, 'block')
 }
 
 async function generateGazeProjection(
@@ -476,16 +424,16 @@ async function generateGazeProjection(
   snapshots,
   xOffset,
   yOffset,
-  samplingRatio
+  samplingRatio,
 ) {
   console.log('generateGazeProjection', arguments)
 
-  var snapshotCode = ''
-  var snapshotId = -1
-  var tabName = ''
-  var tabId = ''
-  var snapshotCodes = {}
-  var svgModel = {}
+  let snapshotCode = ''
+  let snapshotId = -1
+  let tabName = ''
+  let tabId = ''
+  const snapshotCodes = {}
+  let svgModel = {}
 
   const startSequence = 0
   const endSequence = gazeData.length
@@ -515,7 +463,7 @@ async function generateGazeProjection(
           tabName = snapshot.tabName
           tabId = tabName.replace(
             new RegExp(window.globalParameters.MODELS_ID_REGEX, 'g'),
-            ''
+            '',
           )
 
           // console.log("tabName",tabName);
@@ -526,7 +474,7 @@ async function generateGazeProjection(
           // derive svgModel data
           svgModel = {}
           svgModel.code = snapshotCode.querySelector(
-            "[filename='" + tabName + "'].main-model svg[data-element-id]"
+            "[filename='" + tabName + "'].main-model svg[data-element-id]",
           )
           svgModel.area = boundingClientRect
 
@@ -547,8 +495,8 @@ async function generateGazeProjection(
 
         // show only the gazes that landed on the model
         if (relativeX > 0 && relativeY > 0) {
-          var svgns = 'http://www.w3.org/2000/svg'
-          var circle = document.createElementNS(svgns, 'circle')
+          const svgns = 'http://www.w3.org/2000/svg'
+          const circle = document.createElementNS(svgns, 'circle')
           circle.setAttributeNS(null, 'cx', relativeX)
           circle.setAttributeNS(null, 'cy', relativeY)
           circle.setAttributeNS(null, 'r', 1)
@@ -562,11 +510,11 @@ async function generateGazeProjection(
     if (k % window.globalParameters.REPORT_FREQUENCY == 0) {
       await updateProcessingMessage(
         'Projections on ' +
-        tabName +
-        ': ' +
-        calculateProgress(k - startSequence, endSequence - startSequence) +
-        '% complete',
-        document
+          tabName +
+          ': ' +
+          calculateProgress(k - startSequence, endSequence - startSequence) +
+          '% complete',
+        document,
       )
     }
   }
@@ -575,16 +523,10 @@ async function generateGazeProjection(
   return snapshotCodes
 }
 
-async function initiateOffsetCorrection(
-  snapshots,
-  xOffset,
-  yOffset,
-  stateFile
-) {
+async function initiateOffsetCorrection(snapshots, xOffset, yOffset, stateFile) {
   console.log('initiateOffsetCorrection', arguments)
 
-  const styleParameters =
-    await window.state.getStyleParametersOfState(stateFile)
+  const styleParameters = await window.state.getStyleParametersOfState(stateFile)
   console.log('styleParameters', styleParameters)
 
   // find max dimension of svgs in the snapshots
@@ -592,14 +534,14 @@ async function initiateOffsetCorrection(
   // console.log("maxArea",maxArea);
 
   // open new window when the redering of svg will occur to enable the application of offset correction
-  var wnd = window.open(
+  const wnd = window.open(
     'about:blank',
     '',
     '_blank, width=' +
-    (maxArea.width + window.globalParameters.AREA_OFFSET) +
-    ', height=' +
-    (maxArea.height + window.globalParameters.AREA_OFFSET) +
-    ', directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no'
+      (maxArea.width + window.globalParameters.AREA_OFFSET) +
+      ', height=' +
+      (maxArea.height + window.globalParameters.AREA_OFFSET) +
+      ', directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no',
   )
 
   // set initial body
@@ -614,13 +556,12 @@ async function initiateOffsetCorrection(
   wnd.document.body.style.padding = 0
 
   // save to window
-  if (!window.hasOwnProperty('externalMappingWindows'))
-    window.externalMappingWindows = {}
+  if (!window.hasOwnProperty('externalMappingWindows')) window.externalMappingWindows = {}
   const externalMappingWindow = 'Window' + Date.now()
   window.externalMappingWindows[externalMappingWindow] = wnd
 
   // intiate snapshotId
-  var snapshotId = -1
+  const snapshotId = -1
 
   // startCorrection onclick
   wnd.document.getElementById('startCorrection').onclick = async () => {
@@ -628,7 +569,7 @@ async function initiateOffsetCorrection(
     await showGeneralWaitingScreen(
       'Applying the correction offset to the whole gaze data',
       'wait',
-      'all-content'
+      'all-content',
     )
     // hide button
     wnd.document.getElementById('startCorrection').style.display = 'none'
@@ -638,7 +579,7 @@ async function initiateOffsetCorrection(
       stateFile,
       snapshotId,
       xOffset,
-      yOffset
+      yOffset,
     )
   }
 }
@@ -646,12 +587,12 @@ async function initiateOffsetCorrection(
 function applyCorrectionOnGazeFragmentListener() {
   window.analysis.onApplyCorrectionOnGazeFragment(function (args) {
     console.log('onApplyCorrectionOnGazeFragment', arguments)
-    var stateFile = args[0]
-    var gazeDataFragment = args[1]
+    const stateFile = args[0]
+    let gazeDataFragment = args[1]
     const start = args[2]
     const gazeDataSize = args[3]
     const externalMappingWindow = args[4]
-    var snapshotId = args[5]
+    let snapshotId = args[5]
     const snapshots = args[6]
     const xOffset = args[7]
     const yOffset = args[8]
@@ -668,7 +609,7 @@ function applyCorrectionOnGazeFragmentListener() {
       externalMappingWindow,
       snapshotId,
       xOffset,
-      yOffset
+      yOffset,
     )
 
     gazeDataFragment = correctionOutput['gazeDataFragment']
@@ -682,7 +623,7 @@ function applyCorrectionOnGazeFragmentListener() {
       externalMappingWindow,
       snapshotId,
       xOffset,
-      yOffset
+      yOffset,
     )
   })
 }
@@ -694,7 +635,7 @@ function applyCorrectionOnGazeFragment(
   externalMappingWindow,
   snapshotId,
   xOffset,
-  yOffset
+  yOffset,
 ) {
   // console.log("applyCorrectionOnGazeFragment",arguments);
 
@@ -723,24 +664,22 @@ function applyCorrectionOnGazeFragment(
           // update snapshotId
           snapshotId = snapshot.id
           // snapshotSvg object
-          var snapshotSvg =
+          let snapshotSvg =
             snapshot.code != null
               ? createDocument(snapshot.code, '').querySelector(
-                "[filename='" +
-                snapshot.tabName +
-                "'].main-model svg[data-element-id]"
-              )
+                  "[filename='" + snapshot.tabName + "'].main-model svg[data-element-id]",
+                )
               : null
           /// display
           snapshotSvg =
             snapshotSvg != null
               ? "<div style='padding:0px;margin:0px;width:" +
-              boundingClientRect.width +
-              'px;height:' +
-              boundingClientRect.height +
-              "px'>" +
-              snapshotSvg.outerHTML +
-              '</div>'
+                boundingClientRect.width +
+                'px;height:' +
+                boundingClientRect.height +
+                "px'>" +
+                snapshotSvg.outerHTML +
+                '</div>'
               : ''
           wnd.document.body.innerHTML = snapshotSvg
         }
@@ -751,8 +690,7 @@ function applyCorrectionOnGazeFragment(
         gazePoint['leftX-corrected'] =
           gazePoint.leftX != null ? gazePoint.leftX + xOffset : null
 
-        gazePoint['rightX-correction'] =
-          gazePoint.rightX != null ? xOffset : null
+        gazePoint['rightX-correction'] = gazePoint.rightX != null ? xOffset : null
         gazePoint['rightX-corrected'] =
           gazePoint.rightX != null ? gazePoint.rightX + xOffset : null
 
@@ -760,18 +698,15 @@ function applyCorrectionOnGazeFragment(
         gazePoint['leftY-corrected'] =
           gazePoint.leftY != null ? gazePoint.leftY + yOffset : null
 
-        gazePoint['rightY-correction'] =
-          gazePoint.rightY != null ? yOffset : null
+        gazePoint['rightY-correction'] = gazePoint.rightY != null ? yOffset : null
         gazePoint['rightY-corrected'] =
           gazePoint.rightY != null ? gazePoint.rightY + yOffset : null
 
         gazePoint['x-correction'] = gazePoint.x != null ? xOffset : null
-        gazePoint['x-corrected'] =
-          gazePoint.x != null ? gazePoint.x + xOffset : null
+        gazePoint['x-corrected'] = gazePoint.x != null ? gazePoint.x + xOffset : null
 
         gazePoint['y-correction'] = gazePoint.y != null ? yOffset : null
-        gazePoint['y-corrected'] =
-          gazePoint.y != null ? gazePoint.y + yOffset : null
+        gazePoint['y-corrected'] = gazePoint.y != null ? gazePoint.y + yOffset : null
 
         // if there is a correction and the snapshot is valid
         if (
@@ -783,14 +718,13 @@ function applyCorrectionOnGazeFragment(
           const rY = gazePoint['y-corrected'] - boundingClientRect.top
 
           // do mapping
-          gazePoint['element-with-correction'] =
-            mapGazetoElementsFromSvgSnapshot(
-              rX,
-              rY,
-              wnd.document,
-              snapshot.screenX,
-              snapshot.screenY
-            )
+          gazePoint['element-with-correction'] = mapGazetoElementsFromSvgSnapshot(
+            rX,
+            rY,
+            wnd.document,
+            snapshot.screenX,
+            snapshot.screenY,
+          )
         } else {
           // set gazePoint["element-with-correction"] to ""
           gazePoint['element-with-correction'] = ''
@@ -836,7 +770,7 @@ async function applyingCorrectionsCompleted(externalMappingWindow, stateFile) {
   await hideGeneralWaitingScreen('all-content', 'wait')
 
   infoAlert(
-    'correction offset applied to data. \nRemember to run the fixation filter again to consider the corrected data in your analysis (e.g., for fixation heatmaps and overlays).'
+    'correction offset applied to data. \nRemember to run the fixation filter again to consider the corrected data in your analysis (e.g., for fixation heatmaps and overlays).',
   )
 }
 
@@ -866,7 +800,7 @@ function deriveMaxSnapshotDimension(snapshots) {
 function createDocument(html, title) {
   // console.log("createDocument function", arguments);
 
-  var doc = document.implementation.createHTMLDocument(title)
+  const doc = document.implementation.createHTMLDocument(title)
 
   doc.body.innerHTML = html
 

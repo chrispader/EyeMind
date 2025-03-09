@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 function readFileContent(file, callback) {
-  var reader = new FileReader()
+  const reader = new FileReader()
   reader.onload = async function (e) {
     // get file content
     const content = e.target.result
@@ -52,14 +52,12 @@ function assign(obj, prop, value) {
   if (typeof prop === 'string') prop = prop.split('.')
 
   if (prop.length > 1) {
-    var e = prop.shift()
+    const e = prop.shift()
     assign(
       (obj[e] =
-        Object.prototype.toString.call(obj[e]) === '[object Object]'
-          ? obj[e]
-          : {}),
+        Object.prototype.toString.call(obj[e]) === '[object Object]' ? obj[e] : {}),
       prop,
-      value
+      value,
     )
   } else obj[prop[0]] = value
 }
@@ -76,10 +74,4 @@ function calculateProgress(i, max) {
   return Math.round(progress * 100) / 100
 }
 
-export {
-  cancelDefault,
-  calculateProgress,
-  infoAlert,
-  errorAlert,
-  readFileContent,
-}
+export { cancelDefault, calculateProgress, infoAlert, errorAlert, readFileContent }

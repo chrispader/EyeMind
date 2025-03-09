@@ -46,23 +46,21 @@ import { showModelsGroup } from './canvas'
 async function loadQuestions(file) {
   console.log('loadQuestions', arguments)
 
-  var state = getState()
+  const state = getState()
 
   try {
     const contentAsDataFrame = await DataFrame.fromCSV(file) // this statement should not fail if the file is a valid csv
     contentAsDataFrame.show()
     state.questions = contentAsDataFrame.toCollection() //should be stored as Collection to faciliate the transfer to the server and the export
 
-    const requiredColumns =
-      window.globalParameters.RQUIRED_COLUMNS_IN_QUESTION_FILE
-    const questionsTypeSupported =
-      window.globalParameters.QUESTION_TYPES_SUPPORTED
+    const requiredColumns = window.globalParameters.RQUIRED_COLUMNS_IN_QUESTION_FILE
+    const questionsTypeSupported = window.globalParameters.QUESTION_TYPES_SUPPORTED
 
     if (
       !checkNeccesaryColumnsInQuestionsFile(
         contentAsDataFrame,
         requiredColumns,
-        questionsTypeSupported
+        questionsTypeSupported,
       )
     )
       throw 'required columns or question types not suported'
@@ -94,16 +92,16 @@ async function loadQuestions(file) {
 function checkNeccesaryColumnsInQuestionsFile(
   df,
   requiredColumns,
-  questionsTypeSupported
+  questionsTypeSupported,
 ) {
   console.log('checkNeccesaryColumnsInQuestionsFile', arguments)
 
-  let checker = (arr, target) => target.every((v) => arr.includes(v))
+  const checker = (arr, target) => target.every((v) => arr.includes(v))
 
   const allRequiredColumnsThere = checker(df.listColumns(), requiredColumns)
   const containsOnlySupportedQuestionTypes = checker(
     questionsTypeSupported,
-    df.unique('type').toArray().flat()
+    df.unique('type').toArray().flat(),
   )
 
   return allRequiredColumnsThere && containsOnlySupportedQuestionTypes
@@ -125,11 +123,10 @@ function checkNeccesaryColumnsInQuestionsFile(
 function generateQuestionsSequence() {
   console.log('generateQuestionsSequence', arguments)
 
-  var state = getState()
+  const state = getState()
   const questions = new DataFrame(state.questions)
 
-  document.getElementById('start-questions-btn').onclick = () =>
-    startQuestions()
+  document.getElementById('start-questions-btn').onclick = () => startQuestions()
 
   document.getElementById('questions-ready').style.display = 'block'
 
@@ -139,16 +136,13 @@ function generateQuestionsSequence() {
     question.setAttribute('class', 'question gaze-element')
     question.setAttribute(
       'data-element-id',
-      'question-area-for-questionID_' + row.get('id')
+      'question-area-for-questionID_' + row.get('id'),
     )
     document.getElementById('questions').append(question)
 
     const title = document.createElement('div')
     title.setAttribute('class', 'title gaze-element')
-    title.setAttribute(
-      'data-element-id',
-      'title-for-questionID_' + row.get('id')
-    )
+    title.setAttribute('data-element-id', 'title-for-questionID_' + row.get('id'))
     title.innerHTML = row.get('question')
     question.append(title)
 
@@ -158,10 +152,7 @@ function generateQuestionsSequence() {
 
     const answer = document.createElement('div')
     answer.setAttribute('class', 'answer gaze-element')
-    answer.setAttribute(
-      'data-element-id',
-      'answer_area_for_questionID_' + row.get('id')
-    )
+    answer.setAttribute('data-element-id', 'answer_area_for_questionID_' + row.get('id'))
     answerAndNext.append(answer)
 
     if (row.get('type') == 'open-question') {
@@ -179,13 +170,10 @@ function generateQuestionsSequence() {
 
       // record click
       const elementOfInterest = document.getElementById(
-        'long-answer-question' + rowNum + '-answer'
+        'long-answer-question' + rowNum + '-answer',
       )
       elementOfInterest.addEventListener('click', () =>
-        sendClickEvent(
-          Date.now(),
-          elementOfInterest.getAttribute('data-element-id')
-        )
+        sendClickEvent(Date.now(), elementOfInterest.getAttribute('data-element-id')),
       )
     } else if (row.get('type') == 'multiple-choice') {
       console.log('multiple-choice')
@@ -198,7 +186,7 @@ function generateQuestionsSequence() {
       options.setAttribute('class', 'choices')
       multipleChoice.append(options)
 
-      var optionsText = row.get('options').split(';')
+      const optionsText = row.get('options').split(';')
 
       for (let i = 0; i < optionsText.length; i++) {
         const option = document.createElement('div')
@@ -227,13 +215,10 @@ function generateQuestionsSequence() {
 
         // record click
         const elementOfInterest = document.getElementById(
-          'option-answer-for-questionID_' + row.get('id') + '_option_' + i
+          'option-answer-for-questionID_' + row.get('id') + '_option_' + i,
         )
         elementOfInterest.addEventListener('click', () =>
-          sendClickEvent(
-            Date.now(),
-            elementOfInterest.getAttribute('data-element-id')
-          )
+          sendClickEvent(Date.now(), elementOfInterest.getAttribute('data-element-id')),
         )
       }
     } else {
@@ -244,7 +229,7 @@ function generateQuestionsSequence() {
     next.setAttribute('class', 'next gaze-element')
     next.setAttribute(
       'data-element-id',
-      'next-button-area-in-questionID_' + row.get('id')
+      'next-button-area-in-questionID_' + row.get('id'),
     )
 
     next.innerHTML =
@@ -255,47 +240,27 @@ function generateQuestionsSequence() {
       '-btn">Next</button>'
     answerAndNext.append(next)
 
-    document.getElementById('next-question' + rowNum + '-btn').onclick =
-      async () => {
-        // record click
-        const elementOfInterest = document.getElementById(
-          'next-question' + rowNum + '-btn'
-        )
-        sendClickEvent(
-          Date.now(),
-          elementOfInterest.getAttribute('data-element-id')
-        )
+    document.getElementById('next-question' + rowNum + '-btn').onclick = async () => {
+      // record click
+      const elementOfInterest = document.getElementById('next-question' + rowNum + '-btn')
+      sendClickEvent(Date.now(), elementOfInterest.getAttribute('data-element-id'))
 
-        const answerText =
-          row.get('type') == 'open-question'
-            ? document.getElementById(
-              'long-answer-question' + rowNum + '-answer'
-            ).value
-            : row.get('type') == 'multiple-choice' &&
+      const answerText =
+        row.get('type') == 'open-question'
+          ? document.getElementById('long-answer-question' + rowNum + '-answer').value
+          : row.get('type') == 'multiple-choice' &&
               document.querySelector(
-                'input[name="multiple-choice-question' +
-                rowNum +
-                '-answer"]:checked'
+                'input[name="multiple-choice-question' + rowNum + '-answer"]:checked',
               ) != null
-              ? document.querySelector(
-                'input[name="multiple-choice-question' +
-                rowNum +
-                '-answer"]:checked'
+            ? document.querySelector(
+                'input[name="multiple-choice-question' + rowNum + '-answer"]:checked',
               ).value
-              : ''
+            : ''
 
-        const nextRow =
-          rowNum + 1 < questions.count() ? questions.getRow(rowNum + 1) : null
-        await nextQuestion(
-          rowNum,
-          rowNum + 1,
-          questions.count(),
-          row,
-          answerText,
-          nextRow
-        )
-        /// nextQuestion(currentQuestionId, nextQuestionId, questionsArrSize , currentQuestion, givenAnswer, nextQuestion)
-      }
+      const nextRow = rowNum + 1 < questions.count() ? questions.getRow(rowNum + 1) : null
+      await nextQuestion(rowNum, rowNum + 1, questions.count(), row, answerText, nextRow)
+      /// nextQuestion(currentQuestionId, nextQuestionId, questionsArrSize , currentQuestion, givenAnswer, nextQuestion)
+    }
   })
 }
 
@@ -315,7 +280,7 @@ function generateQuestionsSequence() {
 function startQuestions() {
   console.log('startQuestions', arguments)
 
-  var state = getState()
+  const state = getState()
   const questions = new DataFrame(state.questions)
 
   nextQuestion(null, 0, questions.count(), null, null, questions.getRow(0))
@@ -345,11 +310,11 @@ async function nextQuestion(
   questionsArrSize,
   currentQuestion,
   givenAnswer,
-  nextQuestion
+  nextQuestion,
 ) {
   console.log('nextQuestion', arguments)
 
-  var state = getState()
+  const state = getState()
 
   if (!state.isEtOn) {
     const msg = 'Eye-tracking has not started yet'
@@ -369,8 +334,7 @@ async function nextQuestion(
     // reset nav tabs and tabs
     resetNavTabsAndTabs(nextQuestion.get('model-group'))
   } else if (nextQuestionId < questionsArrSize) {
-    document.getElementById('question' + currentQuestionId).style.display =
-      'none'
+    document.getElementById('question' + currentQuestionId).style.display = 'none'
     await questionOffset(currentQuestion, currentQuestionId, givenAnswer)
     await questionOnset(nextQuestion, nextQuestionId)
     document.getElementById('question' + nextQuestionId).style.display = 'block'
@@ -381,8 +345,7 @@ async function nextQuestion(
     // reset nav tabs and tabs
     resetNavTabsAndTabs(nextQuestion.get('model-group'))
   } else if (nextQuestionId >= questionsArrSize) {
-    document.getElementById('question' + currentQuestionId).style.display =
-      'none'
+    document.getElementById('question' + currentQuestionId).style.display = 'none'
     await questionOffset(currentQuestion, currentQuestionId, givenAnswer)
     document.getElementById('questions-over').style.display = 'block'
 
@@ -431,7 +394,7 @@ async function questionOnset(question, questionPosition) {
     questionPosition,
     questionText,
     '',
-    questionLogId
+    questionLogId,
   )
 }
 
@@ -471,7 +434,7 @@ async function questionOffset(question, questionPosition, questionAnswer) {
     questionPosition,
     questionText,
     questionAnswer,
-    questionLogId
+    questionLogId,
   )
 }
 
@@ -499,15 +462,12 @@ async function sendQuestionEvent(
   questionPosition,
   questionText,
   questionAnswer,
-  questionID
+  questionID,
 ) {
   console.log('sendQuestionEvent', arguments)
 
   // for testing purpose
-  if (
-    window.hasOwnProperty('clientTests') &&
-    questionEventType == 'questionOnset'
-  ) {
+  if (window.hasOwnProperty('clientTests') && questionEventType == 'questionOnset') {
     window.clientTests.lastOnSetQuestionEvent = {
       questionTimestamp: questionTimestamp,
       questionEventType: questionEventType,
@@ -517,10 +477,7 @@ async function sendQuestionEvent(
       questionID: questionID,
     }
   }
-  if (
-    window.hasOwnProperty('clientTests') &&
-    questionEventType == 'questionOffset'
-  ) {
+  if (window.hasOwnProperty('clientTests') && questionEventType == 'questionOffset') {
     window.clientTests.lastOffSetQuestionEvent = {
       questionTimestamp: questionTimestamp,
       questionEventType: questionEventType,
@@ -537,7 +494,7 @@ async function sendQuestionEvent(
     questionPosition,
     questionText,
     questionAnswer,
-    questionID
+    questionID,
   )
   if (!res.success) {
     console.error(res.msg)
@@ -565,7 +522,7 @@ function areModelGroupsValid(questions) {
   const df = new DataFrame(questions)
 
   // get model groups
-  var modelGroups = []
+  const modelGroups = []
   for (const model of Object.values(state.models)) {
     console.log('model', model)
     if (!modelGroups.includes(model.groupId)) {
@@ -577,17 +534,12 @@ function areModelGroupsValid(questions) {
   console.log('modelGroups', modelGroups)
 
   // check
-  let checker = (arr, target) => target.every((v) => arr.includes(v))
+  const checker = (arr, target) => target.every((v) => arr.includes(v))
   console.log(
     "df.unique('model-group').toArray().flat()",
-    df.unique('model-group').toArray().flat()
+    df.unique('model-group').toArray().flat(),
   )
   return checker(modelGroups, df.unique('model-group').toArray().flat())
 }
 
-export {
-  loadQuestions,
-  generateQuestionsSequence,
-  startQuestions,
-  areModelGroupsValid,
-}
+export { loadQuestions, generateQuestionsSequence, startQuestions, areModelGroupsValid }

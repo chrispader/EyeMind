@@ -23,7 +23,10 @@ SOFTWARE.*/
 import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
 import { errorAlert } from '../utils/utils'
 import { getGeneralModelsRegistry } from '@root/src/app/client/modules/dataModels/generalModelsRegistry'
-import { setheatmapActive, isHeatmapActive } from '@root/src/app/client/modules/dataModels/activeFeatures'
+import {
+  setheatmapActive,
+  isHeatmapActive,
+} from '@root/src/app/client/modules/dataModels/activeFeatures'
 import { getState } from '@root/src/app/client/modules/dataModels/state'
 import {
   hideElement,
@@ -61,7 +64,7 @@ async function heatmapInteraction() {
     await showGeneralWaitingScreen(
       'Clearing the heatmap and overlays',
       'wait',
-      'all-content'
+      'all-content',
     )
 
     await clearHeatmap()
@@ -89,14 +92,13 @@ async function populateQuestionIDSelect() {
 
   const questionIDSelect = document.getElementById('question')
 
-  const questionTextLength =
-    await window.globalParameters.QUESTION_TEXT_PREVIEW_LENGTH
+  const questionTextLength = await window.globalParameters.QUESTION_TEXT_PREVIEW_LENGTH
 
   if (questionIDSelect.options.length <= 1) {
     const questions = getState().questions
 
     for (let i = 0; i < questions.length; i++) {
-      var opt = document.createElement('option')
+      const opt = document.createElement('option')
       opt.value = questions[i].id
       opt.innerHTML =
         questions[i].id +
@@ -123,30 +125,22 @@ async function applyHeatmapSettingsInteraction() {
   const measure =
     measureSelect.options[measureSelect.selectedIndex].getAttribute('measure')
   const measureType =
-    measureSelect.options[measureSelect.selectedIndex].getAttribute(
-      'measureType'
-    )
+    measureSelect.options[measureSelect.selectedIndex].getAttribute('measureType')
 
   const aggregationSelect = document.getElementById('aggregation')
   const aggregation = aggregationSelect.value
   const aggregationType =
     aggregationSelect.options[aggregationSelect.selectedIndex].getAttribute(
-      'aggregationType'
+      'aggregationType',
     )
 
   const questionIDSelect = document.getElementById('question')
   const questionID = questionIDSelect.value
-  const questionText =
-    questionIDSelect.options[questionIDSelect.selectedIndex].innerText
+  const questionText = questionIDSelect.options[questionIDSelect.selectedIndex].innerText
 
   console.log('questionID', questionID)
 
-  if (
-    measure == '' ||
-    aggregation == '' ||
-    questionID == '' ||
-    stateFiles.length == 0
-  ) {
+  if (measure == '' || aggregation == '' || questionID == '' || stateFiles.length == 0) {
     errorAlert('Please select a participants/measure/aggregation/questionID ')
     return false
   }
@@ -154,15 +148,14 @@ async function applyHeatmapSettingsInteraction() {
   await showGeneralWaitingScreen(
     'Preparing the heatmap and the overlays',
     'wait',
-    'all-content'
+    'all-content',
   )
 
   /// extract additionalElementsToIclude from the heatmapSettingModal
   const additionalElementsToIclude = {
     poolsLanes: document.getElementById('inc-pools-lanes').checked,
     groups: document.getElementById('inc-groups').checked,
-    expendedSubProcesses: document.getElementById('inc-expended-sub-processes')
-      .checked,
+    expendedSubProcesses: document.getElementById('inc-expended-sub-processes').checked,
     processes: document.getElementById('inc-processes').checked,
     edges: document.getElementById('inc-edges').checked,
   }
@@ -187,19 +180,17 @@ async function applyHeatmapSettingsInteraction() {
   const elementRegistryTypes = {}
   Object.keys(generalModelsRegistry).forEach((fileId) => {
     elementRegistryTypes[fileId] = {}
-    Object.keys(
-      generalModelsRegistry[fileId].elementRegistry._elements
-    ).forEach((element) => {
-      elementRegistryTypes[fileId][element] = {}
-      elementRegistryTypes[fileId][element].type =
-        generalModelsRegistry[fileId].elementRegistry._elements[
-          element
-        ].element.type
-      elementRegistryTypes[fileId][element].collapsed =
-        generalModelsRegistry[fileId].elementRegistry._elements[
-          element
-        ].element.collapsed
-    })
+    Object.keys(generalModelsRegistry[fileId].elementRegistry._elements).forEach(
+      (element) => {
+        elementRegistryTypes[fileId][element] = {}
+        elementRegistryTypes[fileId][element].type =
+          generalModelsRegistry[fileId].elementRegistry._elements[element].element.type
+        elementRegistryTypes[fileId][element].collapsed =
+          generalModelsRegistry[fileId].elementRegistry._elements[
+            element
+          ].element.collapsed
+      },
+    )
   })
 
   console.log('elementRegistryTypes', elementRegistryTypes)
@@ -211,7 +202,7 @@ async function applyHeatmapSettingsInteraction() {
     measureType,
     aggregation,
     additionalElementsToIclude,
-    questionID
+    questionID,
   )
 
   visitsHeatMap(
@@ -220,7 +211,7 @@ async function applyHeatmapSettingsInteraction() {
     measure,
     aggregation,
     aggregationType,
-    timestampUnit
+    timestampUnit,
   )
 
   document.getElementById('feature-text').innerText = 'Heatmap and Overlays'
@@ -234,13 +225,11 @@ async function applyHeatmapSettingsInteraction() {
 function clearHeatmapContent(generalModelsRegistry) {
   console.log('clearHeatmapContent function', arguments)
 
-  for (const [fileID, generalModelRegistry] of Object.entries(
-    generalModelsRegistry
-  )) {
+  for (const [fileID, generalModelRegistry] of Object.entries(generalModelsRegistry)) {
     const language = generalModelRegistry.language
 
     for (const [key, el] of Object.entries(
-      generalModelRegistry.elementRegistry._elements
+      generalModelRegistry.elementRegistry._elements,
     )) {
       if (language == 'Bpmn' && el.element.type == 'bpmn:Collaboration') {
         el.secondaryGfx.style.backgroundColor = ''
@@ -282,7 +271,7 @@ function visitsHeatMap(
   measure,
   aggregation,
   aggregationType,
-  timestampUnit
+  timestampUnit,
 ) {
   console.log('visitsHeatMap function ', arguments)
 
@@ -297,9 +286,9 @@ function visitsHeatMap(
       const fileId =
         row.tabName != null
           ? row.tabName.replace(
-            new RegExp(window.globalParameters.MODELS_ID_REGEX, 'g'),
-            ''
-          )
+              new RegExp(window.globalParameters.MODELS_ID_REGEX, 'g'),
+              '',
+            )
           : ''
       const value = row[measure + '_' + aggregation]
       const color = row['heatMapColor_' + measure + '_' + aggregation]
@@ -312,8 +301,7 @@ function visitsHeatMap(
         console.log('found')
         //map to element in generalModelsRegistry
         const elementInGeneralModelsRegistry =
-          generalModelsRegistry[fileId].elementRegistry._elements[element]
-            .element
+          generalModelsRegistry[fileId].elementRegistry._elements[element].element
 
         const language = generalModelsRegistry[fileId].language
 
@@ -333,8 +321,7 @@ function visitsHeatMap(
           language == 'Bpmn' &&
           (elementInGeneralModelsRegistry.type == 'bpmn:SequenceFlow' ||
             elementInGeneralModelsRegistry.type == 'bpmn:MessageFlow' ||
-            elementInGeneralModelsRegistry.type ==
-            'bpmn:DataInputAssociation' ||
+            elementInGeneralModelsRegistry.type == 'bpmn:DataInputAssociation' ||
             elementInGeneralModelsRegistry.type == 'bpmn:DataOutputAssociation')
         ) {
           generalModelsRegistry[fileId].elementRegistry._elements[
@@ -352,13 +339,10 @@ function visitsHeatMap(
           ].gfx.children[0].children[0].style.strokeWidth = '4px'
         } else if (language == 'Bpmn') {
           /// use a method already impelented in bpmn-js
-          generalModelsRegistry[fileId].commandStack.execute(
-            'element.setColor',
-            {
-              elements: [elementInGeneralModelsRegistry],
-              colors: { fill: color },
-            }
-          )
+          generalModelsRegistry[fileId].commandStack.execute('element.setColor', {
+            elements: [elementInGeneralModelsRegistry],
+            colors: { fill: color },
+          })
         } else if (
           language == 'Odm' &&
           elementInGeneralModelsRegistry.type == 'od:OdBoard'
@@ -385,12 +369,10 @@ function visitsHeatMap(
           ].gfx.children[0].children[0].style.fillOpacity = '0.95' // same fill opacitiy as the default one for BPMN models
         }
         /// construct heatMapElementMetrics
-        var heatMapElementMeasures = {
+        const heatMapElementMeasures = {
           measure: measure + ' (' + aggregation + ')',
           value:
-            value.toFixed(2) +
-            ' ' +
-            (aggregationType == 'time' ? timestampUnit : ''),
+            value.toFixed(2) + ' ' + (aggregationType == 'time' ? timestampUnit : ''),
         }
 
         // generate heatmap overlay for that element
@@ -402,16 +384,16 @@ function visitsHeatMap(
               fileId,
               elementInGeneralModelsRegistry,
               elementInGeneralModelsRegistry.id,
-              heatMapElementMeasures
-            )
-          )
+              heatMapElementMeasures,
+            ),
+          ),
         )
 
         // add listner to show and hide the overlay
         addOverlayListener(
           fileId,
           elementInGeneralModelsRegistry,
-          elementInGeneralModelsRegistry.id
+          elementInGeneralModelsRegistry.id,
         )
       }
     }
@@ -447,15 +429,13 @@ function heatmapAggregationsInteraction() {
   const measureSelect = document.getElementById('measure')
   const aggregationSelect = document.getElementById('aggregation')
   const aggegationsType =
-    measureSelect.options[measureSelect.selectedIndex].getAttribute(
-      'aggregations'
-    )
+    measureSelect.options[measureSelect.selectedIndex].getAttribute('aggregations')
 
   Array.prototype.forEach.call(
     document.getElementsByClassName('aggr'),
     function (element) {
       element.style.display = 'none'
-    }
+    },
   )
 
   if (aggegationsType != '')
@@ -482,12 +462,12 @@ Code to generate overlays adapted from https://github.com/viadee/camunda-modeler
  */
 function addOverlayListener(fileId, element, tooltipId) {
   const el = document.querySelector(
-    '[id=model' + fileId + '-container] [data-element-id="' + element.id + '"]'
+    '[id=model' + fileId + '-container] [data-element-id="' + element.id + '"]',
   )
 
   el.addEventListener('mouseenter', function () {
     const tooltip = document.getElementById(
-      'model' + fileId + '_' + tooltipId + '_tooptip_overlay'
+      'model' + fileId + '_' + tooltipId + '_tooptip_overlay',
     )
     if (tooltip != null) {
       tooltip.style.display = 'block'
@@ -495,7 +475,7 @@ function addOverlayListener(fileId, element, tooltipId) {
   })
   el.addEventListener('mouseleave', function () {
     const tooltip = document.getElementById(
-      'model' + fileId + '_' + tooltipId + '_tooptip_overlay'
+      'model' + fileId + '_' + tooltipId + '_tooptip_overlay',
     )
     if (tooltip != null) {
       tooltip.style.display = 'none'
@@ -511,12 +491,7 @@ function addOverlayListener(fileId, element, tooltipId) {
  * to show in tooltip, or can be visualized by other plugins already.
  */
 
-function buildTooltipOverlay(
-  fileId,
-  element,
-  tooltipId,
-  heatMapElementMeasures
-) {
+function buildTooltipOverlay(fileId, element, tooltipId, heatMapElementMeasures) {
   return (
     '<div id="model' +
     fileId +
@@ -552,7 +527,7 @@ function tooltipHeader(element) {
  * otherwise join all lines that include some information
  */
 function emptyPropertiesIfNoLines(lines) {
-  var final = _.without(lines, '')
+  const final = _.without(lines, '')
   if (final.length == 0) {
     return `<div class="tooltip-no-properties ">No properties found</div>`
   }
@@ -583,10 +558,7 @@ function tooltipHeatMap(heatMapElementMeasures) {
   return (
     '<div class="tooltip-container"> \
               <div class="tooltip-subheader">Heatmap</div>' +
-    tooltipLineText(
-      heatMapElementMeasures.measure,
-      heatMapElementMeasures.value
-    ) +
+    tooltipLineText(heatMapElementMeasures.measure, heatMapElementMeasures.value) +
     '</div>'
   )
 }

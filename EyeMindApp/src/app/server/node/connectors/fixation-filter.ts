@@ -32,7 +32,7 @@ export async function fixationFilter(fixationFilterSettings, mainWindow) {
   // console.log("fixationFilter function",arguments);
 
   // get states
-  var states = getStates()
+  const states = getStates()
 
   // apply fixation filter to the states
   for (const [id, state] of Object.entries(states)) {
@@ -45,20 +45,13 @@ export async function fixationFilter(fixationFilterSettings, mainWindow) {
   mainWindow.webContents.send('completeFixationFilterListener', msg, success)
 }
 
-export async function applyFixationFilter(
-  fixationFilterSettings,
-  id,
-  state,
-  mainWindow
-) {
+export async function applyFixationFilter(fixationFilterSettings, id, state, mainWindow) {
   /// add the fixationFilterSettings to state
   state.processedGazeData.fixationFilterData = fixationFilterSettings
 
   const partialCommunicationUriToRerver =
-    globalParameters.COMMUNICATION_HOST_TO_R_SERVER +
-    ':' +
-    globalParameters.R_PORT
-  var params = {}
+    globalParameters.COMMUNICATION_HOST_TO_R_SERVER + ':' + globalParameters.R_PORT
+  const params = {}
 
   params.xScreenDim = state.processedGazeData.xScreenDim
   params.yScreenDim = state.processedGazeData.yScreenDim
@@ -71,11 +64,11 @@ export async function applyFixationFilter(
   mainWindow.webContents.send(
     'updateProcessingMessage',
     'Processing ' + id + '... <br><br> Sending fixation filter parameters.',
-    ''
+    '',
   )
 
-  var message = { params: params }
-  var communication = {
+  let message = { params: params }
+  let communication = {
     method: globalParameters.COMMUNICATION_METHOD_TO_R_SERVER,
     uri: partialCommunicationUriToRerver + '/SetParamData',
     body: message,
@@ -87,9 +80,9 @@ export async function applyFixationFilter(
   mainWindow.webContents.send(
     'updateProcessingMessage',
     'Processing ' +
-    id +
-    '... <br><br> Initiating the transfer of the data to the server.',
-    ''
+      id +
+      '... <br><br> Initiating the transfer of the data to the server.',
+    '',
   )
 
   communication = {
@@ -104,7 +97,7 @@ export async function applyFixationFilter(
   mainWindow.webContents.send(
     'updateProcessingMessage',
     'Processing ' + id + '... <br><br> Sending the data to the server',
-    ''
+    '',
   )
 
   for (
@@ -114,7 +107,7 @@ export async function applyFixationFilter(
   ) {
     const dataFragment = state.processedGazeData.gazeData.slice(
       i,
-      i + globalParameters.DATA_FRAGMENT_SIZE
+      i + globalParameters.DATA_FRAGMENT_SIZE,
     )
     message = { dataFragment: dataFragment }
     communication = {
@@ -127,11 +120,11 @@ export async function applyFixationFilter(
     mainWindow.webContents.send(
       'updateProcessingMessage',
       'Processing ' +
-      id +
-      '... <br><br> Sending the data to the server: ' +
-      calculateProgress(i, state.processedGazeData.gazeData.length - 1) +
-      '% complete.',
-      ''
+        id +
+        '... <br><br> Sending the data to the server: ' +
+        calculateProgress(i, state.processedGazeData.gazeData.length - 1) +
+        '% complete.',
+      '',
     )
   }
 
@@ -139,9 +132,9 @@ export async function applyFixationFilter(
   mainWindow.webContents.send(
     'updateProcessingMessage',
     'Processing ' +
-    id +
-    '... <br><br> Applying the fixation filter. This operation can take several minutes.',
-    ''
+      id +
+      '... <br><br> Applying the fixation filter. This operation can take several minutes.',
+    '',
   )
   communication = {
     method: globalParameters.COMMUNICATION_METHOD_TO_R_SERVER,
@@ -155,7 +148,7 @@ export async function applyFixationFilter(
   mainWindow.webContents.send(
     'updateProcessingMessage',
     'Processing ' + id + '... <br><br> Transfering data to the client.',
-    ''
+    '',
   )
 
   communication = {
@@ -194,11 +187,11 @@ export async function applyFixationFilter(
     mainWindow.webContents.send(
       'updateProcessingMessage',
       'Processing ' +
-      id +
-      '... <br><br> Transfering data to the client: ' +
-      calculateProgress(i, dataSize - 1) +
-      '% complete.',
-      ''
+        id +
+        '... <br><br> Transfering data to the client: ' +
+        calculateProgress(i, dataSize - 1) +
+        '% complete.',
+      '',
     )
   }
 
@@ -212,7 +205,7 @@ export async function applyFixationFilter(
   state.processedGazeData.fixationData = summerizedFixationLog(
     fullFixationFilterOutput,
     state.processedGazeData.fixationFilterData.fixationMappingHandling,
-    state.processedGazeData.areGazesCorrected
+    state.processedGazeData.areGazesCorrected,
   )
   state.processedGazeData.fixationFilterData.status = 'complete'
 }

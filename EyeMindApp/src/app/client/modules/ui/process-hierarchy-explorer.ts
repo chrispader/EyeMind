@@ -50,24 +50,19 @@ function createUpdateProcessHierarchyExplorer(
   mainModelprocessId,
   SubProcessId,
   subProcessActivityLabelInMainModel,
-  position
+  position,
 ) {
   console.log('createUpdateProcessHierarchyExplorer', arguments)
 
-  var state = getState()
+  const state = getState()
 
   /// condition/mechanism to initiate state.processHierarchyExplorer
   if (state.processHierarchyExplorer == null) {
-    state.processHierarchyExplorer = [
-      { id: mainModelId, label: mainModelprocessId },
-    ]
+    state.processHierarchyExplorer = [{ id: mainModelId, label: mainModelprocessId }]
   }
   // condition/mechanism to move backward
   else if (position < state.processHierarchyExplorer.length) {
-    state.processHierarchyExplorer = state.processHierarchyExplorer.splice(
-      0,
-      position
-    )
+    state.processHierarchyExplorer = state.processHierarchyExplorer.splice(0, position)
   }
 
   // add subprocess info to state.processHierarchyExplorer
@@ -94,9 +89,9 @@ function createUpdateProcessHierarchyExplorer(
 function renderProcessHierarchyExplorer(mainModelName, mainModelprocessId) {
   console.log('renderProcessHierarchyExplorer', arguments)
 
-  var state = getState()
+  const state = getState()
 
-  var container = document.getElementById('process-hierarchy-content')
+  const container = document.getElementById('process-hierarchy-content')
 
   container.innerHTML = ''
 
@@ -113,17 +108,14 @@ function renderProcessHierarchyExplorer(mainModelName, mainModelprocessId) {
 
       // create a step
       const step = document.createElement('span')
-      step.setAttribute(
-        'id',
-        'process-hierarchy-sub-process-link-to_' + el.label
-      )
+      step.setAttribute('id', 'process-hierarchy-sub-process-link-to_' + el.label)
       step.setAttribute(
         'class',
-        (position == array.length - 1 ? 'laststep' : 'step') + ' gaze-element'
+        (position == array.length - 1 ? 'laststep' : 'step') + ' gaze-element',
       )
       step.setAttribute(
         'data-element-id',
-        'process-hierarchy-sub-process-link-to_' + el.label
+        'process-hierarchy-sub-process-link-to_' + el.label,
       )
 
       step.innerHTML = el.label
@@ -131,13 +123,7 @@ function renderProcessHierarchyExplorer(mainModelName, mainModelprocessId) {
       // record click and add onlick event to the step to allow changing the tab
       step.onclick = () => {
         sendClickEvent(Date.now(), step.getAttribute('data-element-id'))
-        openWithinTab(
-          mainModelName,
-          mainModelprocessId,
-          el.id,
-          el.label,
-          position
-        )
+        openWithinTab(mainModelName, mainModelprocessId, el.id, el.label, position)
       }
 
       // since a step DOM is created every time renderProcessHierarchyExplorer() is called, registerClickEventForLogging is used to log clicks on this element
@@ -163,9 +149,9 @@ function renderProcessHierarchyExplorer(mainModelName, mainModelprocessId) {
  *
  */
 function resetProcessHierarchy() {
-  var state = getState()
+  const state = getState()
 
-  var container = document.getElementById('process-hierarchy-content')
+  const container = document.getElementById('process-hierarchy-content')
 
   // reset destination
   container.innerHTML = ''

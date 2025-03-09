@@ -31,9 +31,7 @@ export async function stateDownload(fileName, includeTimeStampInFileName, type) 
   //console.log("stateDownload function",arguments);
 
   const fileExtension =
-    type == 'analysis-data' ||
-      type == 'collected-data' ||
-      type == 'session-data'
+    type == 'analysis-data' || type == 'collected-data' || type == 'session-data'
       ? 'json'
       : 'csv'
   const timestamp = Date.now()
@@ -43,7 +41,7 @@ export async function stateDownload(fileName, includeTimeStampInFileName, type) 
     type,
     fileExtension,
     includeTimeStampInFileName,
-    timestamp
+    timestamp,
   )
 }
 
@@ -52,7 +50,7 @@ async function downloadFile(
   type,
   fileExtension,
   includeTimeStampInFileName,
-  timestamp
+  timestamp,
 ) {
   //console.log("downloadFile function",arguments);
 
@@ -97,8 +95,7 @@ async function downloadFile(
 
     for (const [key, state] of Object.entries(states)) {
       const originalFilename = parseOriginalFileName(key)
-      const savingPath =
-        savingDir + '/' + originalFilename + '.' + fileExtension
+      const savingPath = savingDir + '/' + originalFilename + '.' + fileExtension
 
       // create file
       fs.closeSync(fs.openSync(savingPath, 'w'))
@@ -137,15 +134,14 @@ async function downloadFile(
 
     for (const [key, state] of Object.entries(states)) {
       const originalFilename = parseOriginalFileName(key)
-      const savingPath =
-        savingDir + '/gazeData_' + originalFilename + '.' + fileExtension
+      const savingPath = savingDir + '/gazeData_' + originalFilename + '.' + fileExtension
 
       const participantID = state.processedGazeData.participantID
 
       var dataframeForState = new DataFrame(state.processedGazeData.gazeData)
       dataframeForState = dataframeForState.withColumn(
         'participantID',
-        () => participantID
+        () => participantID,
       )
       dataframeForState = dataframeForState.withColumn('file', () => key)
 
@@ -182,7 +178,7 @@ async function downloadFile(
 
     const states = getStates()
 
-    var dataframe = null
+    let dataframe = null
 
     var error = false
     var errorDetails = {}
@@ -191,19 +187,15 @@ async function downloadFile(
       const participantID = state.processedGazeData.participantID
 
       if (state.processedGazeData.fixationData != null) {
-        var dataframeForState = new DataFrame(
-          state.processedGazeData.fixationData
-        )
+        var dataframeForState = new DataFrame(state.processedGazeData.fixationData)
         dataframeForState = dataframeForState.withColumn(
           'participantID',
-          () => participantID
+          () => participantID,
         )
         dataframeForState = dataframeForState.withColumn('file', () => key)
 
         dataframe =
-          dataframe != null
-            ? dataframe.union(dataframeForState)
-            : dataframeForState
+          dataframe != null ? dataframe.union(dataframeForState) : dataframeForState
       } else {
         error = true
         errorDetails[key] = error

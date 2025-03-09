@@ -36,14 +36,14 @@ import {
 } from './gaze-projections'
 import { loadModels } from './shared-interactions'
 
-var REPORT_FREQUENCY = 1000
+const REPORT_FREQUENCY = 1000
 
 /* Analysis */
 
 async function analysisModeInteraction() {
   // console.log("analysisModeInteraction function",arguments);
 
-  var state = getState()
+  const state = getState()
 
   // set state mode
   state.mode = 'analysis'
@@ -72,8 +72,7 @@ async function analysisModeInteraction() {
   /// import
   document.getElementById('main-view').style.display = 'none'
   document.getElementById('import-view').style.display = 'flex'
-  document.getElementById('upload-label').innerText =
-    'Drop BPM Eye Mind gaze files'
+  document.getElementById('upload-label').innerText = 'Drop BPM Eye Mind gaze files'
   registerFileUpload()
 
   // fixation settings

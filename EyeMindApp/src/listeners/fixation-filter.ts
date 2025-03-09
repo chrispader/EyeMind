@@ -3,7 +3,10 @@ import path from 'path'
 import child from 'child_process'
 import { globalParameters } from '@src/globals'
 import { fixationFilter } from '@server/connectors/fixation-filter'
-import { setLocalRpid, getLocalRpid } from '@root/src/app/server/node/dataModels/processes'
+import {
+  setLocalRpid,
+  getLocalRpid,
+} from '@root/src/app/server/node/dataModels/processes'
 
 import fs from 'fs'
 import detect from 'detect-port'
@@ -43,10 +46,10 @@ export function fixationFilterListeners(mainWindow) {
     const childRProcess = child.spawn(execPath, [
       '-e',
       "library(plumber); pr('" +
-      mainRPath +
-      "') %>% pr_run(port=" +
-      globalParameters.R_PORT +
-      ');',
+        mainRPath +
+        "') %>% pr_run(port=" +
+        globalParameters.R_PORT +
+        ');',
     ])
     childRProcess.stdout.on('data', (data) => {
       console.log(`stdout -:${data}`)

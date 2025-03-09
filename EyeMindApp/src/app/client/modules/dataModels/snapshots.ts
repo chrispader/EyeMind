@@ -1,4 +1,4 @@
-var snapshots = null
+let snapshots = null
 
 function setSnapshots(val) {
   snapshots = val

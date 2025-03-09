@@ -43,8 +43,7 @@ function moveFromTo(fromDomElementId, toDomElementId, toDomElementDisplayMode) {
   console.log('moveFromTo', arguments)
 
   hideElement(fromDomElementId)
-  document.getElementById(toDomElementId).style.display =
-    toDomElementDisplayMode
+  document.getElementById(toDomElementId).style.display = toDomElementDisplayMode
 }
 
 /**
@@ -66,11 +65,7 @@ function moveFromTo(fromDomElementId, toDomElementId, toDomElementDisplayMode) {
  *
  */
 
-function updateTextAndDisplayDomElement(
-  domElementId,
-  text,
-  domElementDisplayMode
-) {
+function updateTextAndDisplayDomElement(domElementId, text, domElementDisplayMode) {
   console.log('updateTextAndDisplayDomElement', arguments)
 
   document.getElementById(domElementId).innerText = text
@@ -169,7 +164,7 @@ function hideChildElements(domElementId) {
 async function populateParticipantFileSelect(targetDomId) {
   console.log('populateParticipantFileSelect', arguments)
 
-  var pariticipantFileSelect = document.getElementById(targetDomId)
+  const pariticipantFileSelect = document.getElementById(targetDomId)
 
   if (
     pariticipantFileSelect.options.length == 0 ||
@@ -179,7 +174,7 @@ async function populateParticipantFileSelect(targetDomId) {
     const statesInfo = await window.analysis.getStatesInfo()
 
     for (const [key, participantID] of Object.entries(statesInfo)) {
-      var opt = document.createElement('option')
+      const opt = document.createElement('option')
       opt.value = key
       opt.innerHTML = participantID + ' (' + key + ')'
       pariticipantFileSelect.appendChild(opt)
@@ -204,16 +199,16 @@ async function populateParticipantFileSelect(targetDomId) {
  */
 function getSelectValues(selectId, outType) {
   const select = document.getElementById(selectId)
-  var result = []
-  var options = select && select.options
-  var opt
+  const result = []
+  const options = select != null && select.options
+  let opt
 
   if (outType != 'value' && outType != 'text') {
     console.error('unsuported outType', outType)
     return null
   }
 
-  for (var i = 0, iLen = options.length; i < iLen; i++) {
+  for (let i = 0, iLen = options.length; i < iLen; i++) {
     opt = options[i]
 
     if (opt.selected) {
@@ -244,11 +239,7 @@ function updateShownUserConfig(userConfig) {
 
   for (const [key, value] of Object.entries(userConfig)) {
     document.getElementById('user-config-content').innerHTML +=
-      '<span class=key>' +
-      key +
-      '</span>: <span class=value>' +
-      value +
-      '</span><br>'
+      '<span class=key>' + key + '</span>: <span class=value>' + value + '</span><br>'
   }
 }
 

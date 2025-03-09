@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { globalParameters } from './globals'
 
 // contextBridge.exposeInMainWorld listeners/window.js
@@ -116,8 +116,13 @@ contextBridge.exposeInMainWorld('utils', {
       includeTimeStampInFileName,
       customDownload,
     ]),
-  readState: (fileName, filePath, state) =>
-    ipcRenderer.invoke('readState', [fileName, filePath, state]),
+  readState: (file, fileName, filePath, state) => {
+    if (filePath == null || filePath == '') {
+      filePath = webUtils.getPathForFile(file)
+    }
+
+    ipcRenderer.invoke('readState', [fileName, filePath, state])
+  },
   onStateRead: (func) => ipcRenderer.once('stateRead', (event, ...args) => func(args)),
   saveSession: (state) => ipcRenderer.invoke('saveSession', [state]),
   recoverSession: (gazeDataFilename, snapshotsContentDataFilename) =>

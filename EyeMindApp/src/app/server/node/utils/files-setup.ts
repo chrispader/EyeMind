@@ -50,7 +50,7 @@ export function readState(fileName, filePath, state, mainWindow) {
 }
 
 export function readSession(loadedState) {
-  var res = {}
+  const res = {}
 
   if (!loadedState.processedGazeData.hasOwnProperty('gazeData')) {
     res.data = loadedState
@@ -58,8 +58,7 @@ export function readSession(loadedState) {
     res.success = true
   } else {
     res.data = null
-    res.msg =
-      'Could not load the session file because it contains gaze data already'
+    res.msg = 'Could not load the session file because it contains gaze data already'
     res.success = false
   }
 
@@ -89,8 +88,7 @@ export function populateState(state, loadedState) {
     if (loadedState.processedGazeData.fixationData != null) {
       // parse fixation data (which enable heatmap options)
       //state.processedGazeData.fixationData = new DataFrame(JSON.parse(loadedState.processedGazeData.fixationData));
-      state.processedGazeData.fixationData =
-        loadedState.processedGazeData.fixationData
+      state.processedGazeData.fixationData = loadedState.processedGazeData.fixationData
     }
   }
 

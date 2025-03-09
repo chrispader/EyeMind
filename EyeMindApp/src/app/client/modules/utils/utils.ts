@@ -20,31 +20,68 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-function readFileContent(file, callback) {
-  var reader = new FileReader()
+function readFileContent(
+  file: File,
+  callback: (content: string | ArrayBuffer | null) => Promise<void>,
+) {
+  const reader = new FileReader()
   reader.onload = async function (e) {
     // get file content
-    const content = e.target.result
+    const content = e.target?.result || null
     // call back function
     await callback(content)
   }
 
-  reader.readAsText(file)
-}
-
-function infoAlert(message) {
-  if (window.hasOwnProperty('electron')) {
-    window.electron.message('info', message)
+  // Check if the file is an image type
+  if (file.type.startsWith('image/')) {
+    // For images, we want to read as a data URL (base64)
+    // This creates a portable format that works in both src attributes and for processing
+    reader.readAsDataURL(file)
   } else {
-    alert(msg)
+    // Use readAsText for text files
+    reader.readAsText(file)
   }
 }
 
-function errorAlert(message) {
+// Helper function to convert a file path to a file:// URI
+function filePathToFileUri(filePath: string, fileName: string): string {
+  // Create proper file path
+  let fullPath = filePath
+  if (!fullPath.endsWith('/') && !fullPath.endsWith('\\')) {
+    fullPath += '/'
+  }
+  fullPath += fileName
+
+  // Convert backslashes to forward slashes for URI format
+  fullPath = fullPath.replace(/\\/g, '/')
+
+  // Ensure it has the file:// prefix
+  if (!fullPath.startsWith('file://')) {
+    // On macOS, we need three slashes after file:
+    if (fullPath.startsWith('/')) {
+      fullPath = 'file://' + fullPath
+    } else {
+      fullPath = 'file:///' + fullPath
+    }
+  }
+
+  // Encode special characters like spaces
+  return encodeURI(fullPath)
+}
+
+function infoAlert(message: string) {
+  if (window.hasOwnProperty('electron')) {
+    window.electron.message('info', message)
+  } else {
+    alert(message)
+  }
+}
+
+function errorAlert(message: string) {
   if (window.hasOwnProperty('electron')) {
     window.electron.message('error', message)
   } else {
-    alert(msg)
+    alert(message)
   }
 }
 
@@ -52,14 +89,12 @@ function assign(obj, prop, value) {
   if (typeof prop === 'string') prop = prop.split('.')
 
   if (prop.length > 1) {
-    var e = prop.shift()
+    const e = prop.shift()
     assign(
       (obj[e] =
-        Object.prototype.toString.call(obj[e]) === '[object Object]'
-          ? obj[e]
-          : {}),
+        Object.prototype.toString.call(obj[e]) === '[object Object]' ? obj[e] : {}),
       prop,
-      value
+      value,
     )
   } else obj[prop[0]] = value
 }
@@ -82,4 +117,5 @@ export {
   infoAlert,
   errorAlert,
   readFileContent,
+  filePathToFileUri,
 }

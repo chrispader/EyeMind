@@ -25,8 +25,8 @@ SOFTWARE.*/
 import BpmnModeler from 'bpmn-js/lib/Modeler'
 import BpmnNavigatedViewer from 'bpmn-js/lib/NavigatedViewer'
 
-import OdmModeler from '@root/extra/object-diagram-modeler/lib/Modeler'
-import OdmNavigatedViewer from '@root/extra/object-diagram-modeler/lib/NavigatedViewer'
+import OdmModeler from '@extra/object-diagram-modeler/lib/Modeler'
+import OdmNavigatedViewer from '@extra/object-diagram-modeler/lib/NavigatedViewer'
 
 import { takesnapshot } from './data-collection'
 import {

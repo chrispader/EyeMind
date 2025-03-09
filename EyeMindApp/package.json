@@ -14,8 +14,8 @@
     "typescript": "tsc --noEmit",
     "typescript:build": "tsc --noEmit false",
     "install-dependencies": "(cd extra/object-diagram-modeler && npm install && cd .. && npm install webpack)",
-    "test": "npx playwright test test/tests/playwright/",
-    "test-temp": "npx playwright test test/tests/playwright/import.test.ts"
+    "test": "bunx playwright test test/tests/playwright/",
+    "test-temp": "bunx playwright test test/tests/playwright/import.test.ts"
   },
   "repository": {
     "type": "git",
@@ -55,6 +55,7 @@
     "babel-loader": "^9.1.0",
     "css-loader": "^6.0.0",
     "electron": "34.0.0",
+    "electron-devtools-installer": "^4.0.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-import": "^2.25.0",

@@ -20,20 +20,7 @@ export const rendererConfig: Configuration = merge(commonConfig, {
       },
     ],
   },
-  plugins: [
-    ...plugins,
-    new NodePolyfillPlugin(),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: 'assets/**',
-          to: 'vendor/bpmn-js',
-          context: 'node_modules/bpmn-js/dist/',
-        },
-        { from: '**/*.{html,css,svg,jpg}', context: './src/app/client/' },
-      ],
-    }),
-  ],
+  plugins: [...plugins, new NodePolyfillPlugin()],
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
     fallback: {

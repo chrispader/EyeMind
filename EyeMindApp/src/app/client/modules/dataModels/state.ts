@@ -78,7 +78,7 @@ function setState(newState) {
  * Additional notes: async function
  *
  */
-async function loadServerStateIntoClient() {
+async function loadServerStateIntoClient(): Promise<void> {
   setState(await window.state.getState())
 }
 

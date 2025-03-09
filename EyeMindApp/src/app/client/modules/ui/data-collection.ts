@@ -27,9 +27,13 @@ import { loadModels } from './shared-interactions'
 import { setUnclosableTabs, setMainTab } from './tabs'
 import { generateQuestionsSequence } from './questions'
 import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
-import { infoAlert, errorAlert } from '@utils/utils'
-import { updateTextAndDisplayDomElement, moveFromTo, hideChildElements } from '@utils/dom'
-import { getState } from '@root/src/app/client/modules/dataModels/state'
+import { infoAlert, errorAlert } from '@/app/client/modules/utils/utils'
+import {
+  updateTextAndDisplayDomElement,
+  moveFromTo,
+  hideChildElements,
+} from '@/app/client/modules/utils/dom'
+import { getState } from '@/app/client/modules/dataModels/state'
 import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
 import { updateProcessMessageListener } from './progress'
 import { startQuestions } from './questions'

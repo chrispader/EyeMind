@@ -1,4 +1,4 @@
-var files = []
+const files = []
 
 function setFiles(vals) {
   Array.from(vals).forEach((val) => files.push(val))

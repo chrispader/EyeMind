@@ -37,22 +37,17 @@ function mapGazestoElementsFromPageSnapshotListener() {
     }
 
     const dataMapped = mapGazestoElementsFromPageSnapshot(gazeData)
-    window.eyeTracker.dataMapped(
-      dataMapped,
-      start,
-      gazeDataSize,
-      externalProgressWindow
-    )
+    window.eyeTracker.dataMapped(dataMapped, start, gazeDataSize, externalProgressWindow)
   })
 }
 
 function mapGazestoElementsFromPageSnapshot(gazeData) {
   console.log('mapGazestoElementsFromPageSnapshot function ', arguments)
 
-  var snapshots = getSnapshots()
+  const snapshots = getSnapshots()
 
-  var currentSnapshotID = -1
-  var dataMapped = []
+  let currentSnapshotID = -1
+  const dataMapped = []
 
   const gazeDataLength = gazeData.length
 
@@ -80,7 +75,7 @@ function mapGazestoElementsFromPageSnapshot(gazeData) {
         gazepoint.x,
         gazepoint.y,
         snapshots[currentSnapshotID].screenX,
-        snapshots[currentSnapshotID].screenY
+        snapshots[currentSnapshotID].screenY,
       )
     } else {
       gazepoint.tabName = ''
@@ -96,13 +91,7 @@ function mapGazestoElementsFromPageSnapshot(gazeData) {
   return dataMapped
 }
 
-function mapGazetoElementsFromSvgSnapshot(
-  rX,
-  rY,
-  snapshotSvg,
-  screenX,
-  screenY
-) {
+function mapGazetoElementsFromSvgSnapshot(rX, rY, snapshotSvg, screenX, screenY) {
   // console.log("mapGazestoElementsFromSvgSnapshot function,",arguments);
 
   return doMapping(rX, rY, screenX, screenY, snapshotSvg)
@@ -127,8 +116,7 @@ function doMapping(x, y, screenX, screenY, container) {
 
   const delegateTarget = closest(target, selector, true)
 
-  const out =
-    delegateTarget != null ? delegateTarget.getAttribute('data-element-id') : ''
+  const out = delegateTarget != null ? delegateTarget.getAttribute('data-element-id') : ''
 
   // console.log("x: ",x,", y: ",y, ", mapped to: ",out);
 
@@ -138,7 +126,7 @@ function doMapping(x, y, screenX, screenY, container) {
 function closest(element, selector, checkYourSelf) {
   // console.log("closest function ",arguments);
 
-  var currentElem = checkYourSelf ? element : element.parentNode
+  let currentElem = checkYourSelf ? element : element.parentNode
 
   while (
     currentElem &&
@@ -159,8 +147,8 @@ function matchesSelector(el, selector) {
   // console.log("matchesSelector function ",arguments);
 
   if (!el || el.nodeType !== 1) return false
-  var nodes = el.parentNode.querySelectorAll(selector)
-  for (var i = 0; i < nodes.length; i++) {
+  const nodes = el.parentNode.querySelectorAll(selector)
+  for (let i = 0; i < nodes.length; i++) {
     if (nodes[i] == el) return true
   }
   return false

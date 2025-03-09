@@ -23,7 +23,7 @@ SOFTWARE.*/
 function readFileContent(
   file: File,
   callback: (content: string | ArrayBuffer | null) => Promise<void>,
-) {
+): void {
   const reader = new FileReader()
   reader.onload = async function (e) {
     // get file content
@@ -111,11 +111,4 @@ function calculateProgress(i, max) {
   return Math.round(progress * 100) / 100
 }
 
-export {
-  cancelDefault,
-  calculateProgress,
-  infoAlert,
-  errorAlert,
-  readFileContent,
-  filePathToFileUri,
-}
+export { cancelDefault, calculateProgress, infoAlert, errorAlert, readFileContent }

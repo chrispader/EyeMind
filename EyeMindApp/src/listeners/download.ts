@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { stateDownload } from '@server/utils/download'
+import { stateDownload } from '@/app/server/node/utils/download'
 
 // check the return
 export function downloadListener() {

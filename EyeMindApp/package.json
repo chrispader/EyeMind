@@ -9,13 +9,12 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint \"**/*.js\" --fix",
+    "lint": "eslint \"**/*.{js,ts,jsx,tsx}\" --fix",
     "typescript": "tsc --noEmit",
     "typescript:build": "tsc --noEmit false",
     "install-dependencies": "(cd extra/object-diagram-modeler && npm install && cd .. && npm install webpack)",
     "test": "npx playwright test test/tests/playwright/",
-    "test-temp": "npx playwright test test/tests/playwright/import.test.ts",
-    "lint": "eslint \"**/*.js\" --fix"
+    "test-temp": "npx playwright test test/tests/playwright/import.test.ts"
   },
   "repository": {
     "type": "git",

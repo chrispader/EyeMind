@@ -20,13 +20,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-import { cancelDefault } from '@utils/utils'
+import { cancelDefault } from '@/app/client/modules/utils/utils'
 import { takesnapshot } from './data-collection'
 import {
   createUpdateProcessHierarchyExplorer,
   renderProcessHierarchyExplorer,
 } from './process-hierarchy-explorer'
-import { getState } from '@root/src/app/client/modules/dataModels/state'
+import { getState } from '@/app/client/modules/dataModels/state'
 import { sendClickEvent } from './click-stream'
 //import {registerClickEventForLogging} from './click-stream'
 import { resetModel } from './canvas'
@@ -49,7 +49,7 @@ function addToTabHeader(id) {
   console.log('addToTabHeader', arguments)
 
   // get state
-  var state = getState()
+  const state = getState()
 
   // get file name
   const fileName = document
@@ -61,10 +61,7 @@ function addToTabHeader(id) {
     const tabHeader = document.createElement('div')
     tabHeader.setAttribute('id', 'model' + id)
     tabHeader.setAttribute('class', 'tab-link gaze-element')
-    tabHeader.setAttribute(
-      'data-element-id',
-      'tab-header-tab-link-to_' + fileName
-    )
+    tabHeader.setAttribute('data-element-id', 'tab-header-tab-link-to_' + fileName)
     tabHeader.setAttribute('file', fileName)
 
     // support for dragging and dropping tabs
@@ -78,16 +75,10 @@ function addToTabHeader(id) {
     const tabHeader_fileName = document.createElement('span')
     tabHeader_fileName.innerHTML = fileName
     tabHeader_fileName.setAttribute('class', 'fileName gaze-element')
-    tabHeader_fileName.setAttribute(
-      'data-element-id',
-      'tab-link-to_' + fileName
-    )
+    tabHeader_fileName.setAttribute('data-element-id', 'tab-link-to_' + fileName)
     tabHeader_fileName.setAttribute('file', fileName)
     tabHeader_fileName.addEventListener('click', function (e) {
-      sendClickEvent(
-        Date.now(),
-        tabHeader_fileName.getAttribute('data-element-id')
-      ) // send click event
+      sendClickEvent(Date.now(), tabHeader_fileName.getAttribute('data-element-id')) // send click event
       changeTab(id, false, true)
     })
     // since a tabHeader_fileName DOM is created every time addToTabHeader() is called and document.getElementById("model"+id)==null, registerClickEventForLogging is used to log clicks on this element
@@ -99,7 +90,7 @@ function addToTabHeader(id) {
     tabHeader_close.setAttribute('class', 'close gaze-element')
     tabHeader_close.setAttribute(
       'data-element-id',
-      'close-button-tab-link-to_' + fileName
+      'close-button-tab-link-to_' + fileName,
     )
     tabHeader_close.setAttribute('file', fileName)
     tabHeader_close.setAttribute('src', 'icons/close-tab.svg')
@@ -107,10 +98,7 @@ function addToTabHeader(id) {
     //registerClickEventForLogging(tabHeader_close);
 
     tabHeader_close.onclick = () => {
-      sendClickEvent(
-        Date.now(),
-        tabHeader_close.getAttribute('data-element-id')
-      ) // send click event
+      sendClickEvent(Date.now(), tabHeader_close.getAttribute('data-element-id')) // send click event
       closeTabInteraction(id, tabHeader, true) //close tab and take snapshot
     }
 
@@ -122,11 +110,7 @@ function addToTabHeader(id) {
     document.getElementById('nav-tabs').appendChild(tabHeader)
 
     // set scroll position
-    setScrollPosition(
-      document.getElementById('nav-tabs'),
-      'openning',
-      tabHeader
-    )
+    setScrollPosition(document.getElementById('nav-tabs'), 'openning', tabHeader)
   }
 }
 
@@ -170,10 +154,7 @@ function setScrollPosition(container, context, tabHeader) {
   } else if (context == 'changingTab') {
     /// tabheader is not within [containerViewStart,containerViewEnd]
     if (
-      !(
-        tabHeaderStartPos >= containerViewStart &&
-        tabHeaderStartPos < containerViewEnd
-      )
+      !(tabHeaderStartPos >= containerViewStart && tabHeaderStartPos < containerViewEnd)
     ) {
       container.scrollLeft = tabHeaderStartPos
     }
@@ -202,9 +183,7 @@ function tabDragStart(e) {
   const selectedFile = selected.getAttribute('file')
 
   // locate the corresponding tab header
-  const target = document.querySelector(
-    '.tab-link[file="' + selectedFile + '"]'
-  )
+  const target = document.querySelector('.tab-link[file="' + selectedFile + '"]')
   // console.log("tabDragStart target",target);
 
   // find its index
@@ -242,9 +221,7 @@ function tabDropped(e) {
   const selected = e.target
   const selectedFile = selected.getAttribute('file')
   // locate the corresponding tab header
-  const target = document.querySelector(
-    '.tab-link[file="' + selectedFile + '"]'
-  )
+  const target = document.querySelector('.tab-link[file="' + selectedFile + '"]')
   // console.log("dropped target",target);
   // find its index which will be the new index
   const newIndex = Array.prototype.slice
@@ -287,7 +264,7 @@ function tabDropped(e) {
 function closeTabInteraction(id, tabHeader, takeSnapshot) {
   console.log('closeTabInteraction', arguments)
 
-  var state = getState()
+  const state = getState()
 
   // reset the model of the closed tab
   resetModel(id)
@@ -296,9 +273,7 @@ function closeTabInteraction(id, tabHeader, takeSnapshot) {
   tabHeader.remove()
 
   /// if the tab to be closed is the one which is actually shown, hide it and set state.activeTab to ""
-  if (
-    document.getElementById('model' + id + '-container').style.display == 'flex'
-  ) {
+  if (document.getElementById('model' + id + '-container').style.display == 'flex') {
     document.getElementById('model' + id + '-container').style.display = 'none'
     state.activeTab = ''
     // console.log("active tab changed ",state.activeTab);
@@ -306,12 +281,7 @@ function closeTabInteraction(id, tabHeader, takeSnapshot) {
 
   // take snapshot if takeSnapshot==true
   if (takeSnapshot) {
-    takesnapshot(
-      Date.now(),
-      document.body.innerHTML,
-      window.screenX,
-      window.screenY
-    )
+    takesnapshot(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
   }
 }
 
@@ -333,11 +303,9 @@ function closeTabInteraction(id, tabHeader, takeSnapshot) {
 function changeTab(destinationId, ignoreTabLinks, takeSnapshot) {
   console.log('changeTab', arguments)
 
-  var state = getState()
+  const state = getState()
 
-  const destinationIdModel = document.getElementById(
-    'model' + destinationId + '-content'
-  )
+  const destinationIdModel = document.getElementById('model' + destinationId + '-content')
   const fileName = destinationIdModel.getAttribute('fileName')
 
   /// hide index-tab once tabs are changed. The goal of this tab is to prevent users from seeing the models before the data collection
@@ -346,7 +314,7 @@ function changeTab(destinationId, ignoreTabLinks, takeSnapshot) {
   }
 
   // hide the currently opened/active tab container
-  var i, tabContainers, tabLinks
+  let i, tabContainers, tabLinks
   tabContainers = document.getElementsByClassName('tab-container')
   for (i = 0; i < tabContainers.length; i++) {
     tabContainers[i].style.display = 'none'
@@ -354,7 +322,7 @@ function changeTab(destinationId, ignoreTabLinks, takeSnapshot) {
 
   // show the destination tab container
   const destinationIdTabContainer = document.getElementById(
-    'model' + destinationId + '-container'
+    'model' + destinationId + '-container',
   )
   destinationIdTabContainer.style.display = 'flex' //"block";
 
@@ -367,16 +335,14 @@ function changeTab(destinationId, ignoreTabLinks, takeSnapshot) {
     }
 
     // ´activate the destination tab link
-    const destinationIdTabLink = document.getElementById(
-      'model' + destinationId
-    )
+    const destinationIdTabLink = document.getElementById('model' + destinationId)
     destinationIdTabLink.className += ' active'
 
     // set scroll position
     setScrollPosition(
       document.getElementById('nav-tabs'),
       'changingTab',
-      destinationIdTabLink
+      destinationIdTabLink,
     )
   }
 
@@ -387,12 +353,7 @@ function changeTab(destinationId, ignoreTabLinks, takeSnapshot) {
 
   // take snapshot on change tab
   if (takeSnapshot) {
-    takesnapshot(
-      Date.now(),
-      document.body.innerHTML,
-      window.screenX,
-      window.screenY
-    )
+    takesnapshot(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
   }
 }
 
@@ -438,7 +399,7 @@ async function openWithinTab(
   mainModelprocessId,
   subProcessId,
   subProcessActivityLabelInMainModel,
-  position
+  position,
 ) {
   console.log('openWithinTab', arguments)
 
@@ -447,7 +408,7 @@ async function openWithinTab(
     mainModelprocessId,
     subProcessId,
     subProcessActivityLabelInMainModel,
-    position
+    position,
   )
   renderProcessHierarchyExplorer(mainModelId, mainModelprocessId)
   changeTab(subProcessId, true, true)
@@ -471,7 +432,7 @@ async function openWithinTab(
 function openMainTab(ignoreTabLinks, takeSnapshot, modelsGroupId) {
   console.log('openMainTab function', arguments)
 
-  var state = getState()
+  const state = getState()
 
   for (const [key, model] of Object.entries(state.models)) {
     if (model.mainTab && model.groupId == modelsGroupId) {
@@ -498,7 +459,7 @@ function openMainTab(ignoreTabLinks, takeSnapshot, modelsGroupId) {
 function setMainTab() {
   console.log('setMainTab function', arguments)
 
-  var state = getState()
+  const state = getState()
 
   const setAsMainRadioBoxList = document.getElementsByClassName('set-as-main')
 
@@ -526,16 +487,14 @@ function setMainTab() {
 function setUnclosableTabs() {
   console.log('setUnclosableTabs', arguments)
 
-  var state = getState()
+  const state = getState()
 
-  const setUnclosableTabCheckBoxList =
-    document.getElementsByClassName('unclosable-tab')
+  const setUnclosableTabCheckBoxList = document.getElementsByClassName('unclosable-tab')
   // console.log("setUnclosableTabCheckBoxList", setUnclosableTabCheckBoxList);
 
   for (let i = 0; i < setUnclosableTabCheckBoxList.length; i++) {
-    state.models[
-      setUnclosableTabCheckBoxList[i].getAttribute('modelId')
-    ].unclosable = setUnclosableTabCheckBoxList[i].checked
+    state.models[setUnclosableTabCheckBoxList[i].getAttribute('modelId')].unclosable =
+      setUnclosableTabCheckBoxList[i].checked
   }
 }
 

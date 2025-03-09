@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { readState } from '@server/utils/files-setup'
+import { readState } from '@/app/server/node/utils/files-setup'
 
 // check the return
 export function fileSetupListener(mainWindow) {

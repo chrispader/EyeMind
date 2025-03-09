@@ -7,14 +7,14 @@ import { commonConfig } from './webpack.common.config.ts'
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin'
 
 export const rendererConfig: Configuration = merge(commonConfig, {
-  target: "web",
+  target: 'web',
   module: {
     rules: [
       ...rules,
       {
         test: /\.css$/,
         use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
-      }
+      },
     ],
   },
   plugins: [
@@ -34,22 +34,22 @@ export const rendererConfig: Configuration = merge(commonConfig, {
   resolve: {
     extensions: ['.js', '.ts', '.css'],
     fallback: {
-      "fs": false,
-      "tls": false,
-      "net": false,
-      "path": false,
-      "zlib": false,
-      "http": false,
-      "https": false,
-      "stream": false,
-      "crypto": false,
-      "request": false,
-      "assert": false,
-      "child_process": false,
-      "util": false,
-      "url": false,
-      "os": false,
-    }
+      fs: false,
+      tls: false,
+      net: false,
+      path: false,
+      zlib: false,
+      http: false,
+      https: false,
+      stream: false,
+      crypto: false,
+      request: false,
+      assert: false,
+      child_process: false,
+      util: false,
+      url: false,
+      os: false,
+    },
   },
   optimization: {
     minimize: false,

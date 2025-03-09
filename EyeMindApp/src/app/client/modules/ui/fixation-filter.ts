@@ -22,8 +22,8 @@ SOFTWARE.*/
 
 import { clearHeatmap, enableHeatmapOption } from './heatmap'
 import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
-import { errorAlert } from '@utils/utils'
-import { hideElement, displayElement } from '@utils/dom'
+import { errorAlert } from '@/app/client/modules/utils/utils'
+import { hideElement, displayElement } from '@/app/client/modules/utils/dom'
 
 async function applyFixationSettingsInteraction() {
   // console.log("applyFixationSettingsInteraction function",arguments);
@@ -32,7 +32,7 @@ async function applyFixationSettingsInteraction() {
   await showGeneralWaitingScreen(
     'Please wait while the fixation filter is being applied...',
     'wait',
-    'all-content'
+    'all-content',
   )
 
   // set params
@@ -42,29 +42,21 @@ async function applyFixationSettingsInteraction() {
     isInterpolation: document.getElementById('is-interpolation').checked,
     maxGapLength: document.getElementById('max-gap-length').value,
     isNoiceReduction: document.getElementById('is-noice-reduction').checked,
-    noiseReductionMethod: document.getElementById('noise-reduction-method')
-      .value,
+    noiseReductionMethod: document.getElementById('noise-reduction-method').value,
     windowSize: document.getElementById('window-size').value,
     windowLength: document.getElementById('window-length').value,
     velocityThreshold: document.getElementById('Velocity-threshold').value,
-    isDiscardShortFixations: document.getElementById(
-      'is-discard-short-fixations'
-    ).checked,
-    minimumFixationDuration: document.getElementById(
-      'minimum-fixation-duration'
-    ).value,
-    isMergeAdjacentFixations: document.getElementById(
-      'is-merge-adjacent-fixations'
-    ).checked,
-    maximumTimeBetweenFixations: document.getElementById(
-      'maximum-time-between-fixations'
-    ).value,
+    isDiscardShortFixations: document.getElementById('is-discard-short-fixations')
+      .checked,
+    minimumFixationDuration: document.getElementById('minimum-fixation-duration').value,
+    isMergeAdjacentFixations: document.getElementById('is-merge-adjacent-fixations')
+      .checked,
+    maximumTimeBetweenFixations: document.getElementById('maximum-time-between-fixations')
+      .value,
     maximumAngleBetweenFixations: document.getElementById(
-      'maximum-angle-between-fixations'
+      'maximum-angle-between-fixations',
     ).value,
-    fixationMappingHandling: document.getElementById(
-      'fixation-mapping-handling'
-    ).value,
+    fixationMappingHandling: document.getElementById('fixation-mapping-handling').value,
   }
 
   window.Rserver.fixationFilter(fixationFilterSettings)
@@ -111,18 +103,16 @@ async function loadETSettingsView() {
 
   // console.log("state by the end of loadETSettingsView function",state);
 
-  document.getElementById('submit-apply-fixation-settings-form').onclick =
-    () => {
-      applyFixationSettingsInteraction()
-    }
+  document.getElementById('submit-apply-fixation-settings-form').onclick = () => {
+    applyFixationSettingsInteraction()
+  }
 
   // handle the activation/deactivation of the different sections within fixation-settings-view
   handleFixationSettingSections()
 
-  document.getElementById('close-fixation-settings-projection').onclick =
-    () => {
-      closeFixationSettings()
-    }
+  document.getElementById('close-fixation-settings-projection').onclick = () => {
+    closeFixationSettings()
+  }
 }
 
 async function closeFixationSettings() {
@@ -143,7 +133,7 @@ function handleFixationSettingSections() {
 
   sections.forEach((section) => {
     document.getElementById(section).onclick = () => {
-      var fields = document.getElementsByClassName(section)
+      const fields = document.getElementsByClassName(section)
 
       Array.prototype.forEach.call(fields, function (field) {
         field.disabled = !field.disabled

@@ -1,17 +1,12 @@
 export function getMostCommon(table) {
-  var occurances = new Map()
+  const occurances = new Map()
 
   table.forEach((row) => {
-    occurances.set(
-      JSON.stringify(row),
-      (occurances.get(JSON.stringify(row)) || 0) + 1
-    )
+    occurances.set(JSON.stringify(row), (occurances.get(JSON.stringify(row)) || 0) + 1)
   })
 
   return table.reduce((a, b) =>
-    occurances.get(JSON.stringify(a)) > occurances.get(JSON.stringify(b))
-      ? a
-      : b
+    occurances.get(JSON.stringify(a)) > occurances.get(JSON.stringify(b)) ? a : b,
   )
 }
 
@@ -36,7 +31,7 @@ export function calculateProgress(i, max) {
 }
 
 export function randomNumberInRange(min, max) {
-  let diff = max - min
+  const diff = max - min
   let rand = Math.random()
   rand = Math.floor(rand * diff)
   rand = rand + min

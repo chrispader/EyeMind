@@ -1,9 +1,9 @@
 import type { Configuration } from 'webpack'
 import { merge } from 'webpack-merge'
-import { plugins } from './webpack.plugins.ts'
-import { rules } from './webpack.rules.ts'
+import { plugins } from './webpack.plugins'
+import { rules } from './webpack.rules'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
-import { commonConfig } from './webpack.common.config.ts'
+import { commonConfig } from './webpack.common.config'
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin'
 
 export const rendererConfig: Configuration = merge(commonConfig, {

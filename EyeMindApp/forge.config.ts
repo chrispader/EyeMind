@@ -6,10 +6,8 @@ import { MakerSquirrel } from '@electron-forge/maker-squirrel'
 import { MakerZIP } from '@electron-forge/maker-zip'
 import type { ForgeConfig } from '@electron-forge/shared-types'
 import { WebpackPlugin } from '@electron-forge/plugin-webpack'
-// @ts-expect-error
-import { mainConfig } from './webpack.main.config.ts'
-// @ts-expect-error
-import { rendererConfig } from './webpack.renderer.config.ts'
+import { mainConfig } from './webpack.main.config'
+import { rendererConfig } from './webpack.renderer.config'
 import type { WebpackConfiguration } from '@electron-forge/plugin-webpack/dist/Config'
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives'
 

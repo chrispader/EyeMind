@@ -2,7 +2,6 @@
   "compilerOptions": {
     "allowJs": true,
     "allowUnreachableCode": false,
-    "allowImportingTsExtensions": true,
     "allowUnusedLabels": false,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
@@ -10,7 +9,7 @@
     "verbatimModuleSyntax": false,
     "forceConsistentCasingInFileNames": true,
     "lib": ["esnext", "dom"],
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,

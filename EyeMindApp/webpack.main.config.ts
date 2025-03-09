@@ -1,7 +1,7 @@
 import type { Configuration } from 'webpack'
 import { merge } from 'webpack-merge'
-import { rules } from './webpack.rules.ts'
-import { commonConfig } from './webpack.common.config.ts'
+import { rules } from './webpack.rules'
+import { commonConfig } from './webpack.common.config'
 
 export const mainConfig: Configuration = merge(commonConfig, {
   /**

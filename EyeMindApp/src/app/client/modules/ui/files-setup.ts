@@ -33,6 +33,7 @@ import {
   cancelDefault,
   readFileContent,
   errorAlert,
+  filePathToFileUri,
 } from '@/app/client/modules/utils/utils'
 
 import { prepareDataCollectionContent } from './data-collection'
@@ -51,10 +52,11 @@ import { setFiles, shiftFile, nFiles } from '@/app/client/modules/dataModels/fil
 
 // types of modeler objects supported by the tool
 const modelers = {
-  BpmnModeler: BpmnModeler,
-  BpmnNavigatedViewer: BpmnNavigatedViewer,
-  OdmModeler: OdmModeler,
-  OdmNavigatedViewer: OdmNavigatedViewer,
+  BpmnModeler,
+  BpmnNavigatedViewer,
+  OdmModeler,
+  OdmNavigatedViewer,
+  // We're now handling PNGs directly without modelers
 }
 
 /**
@@ -285,7 +287,7 @@ async function traverseAnalysisFile(file) {
       'all-content',
     )
 
-    window.utils.readState(fileName, filePath, state)
+    window.utils.readState(file, fileName, filePath, state)
 
     stateReadListener()
   } else {
@@ -375,7 +377,7 @@ async function traverseSessionFile(file, callback) {
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  await window.utils.readState(file.name, filePath, state, callback)
+  await window.utils.readState(file, file.name, filePath, state, callback)
   sessionReadListener()
 }
 
@@ -426,24 +428,40 @@ async function traverseModelsFile(fileName, content, path = '') {
 
   const state = getState()
 
-  const fileId = fileName.replace(
-    new RegExp(window.globalParameters.MODELS_ID_REGEX, 'g'),
-    '',
-  )
+  // Special handling for PNG files to ensure DOM-safe IDs
+  let fileId = ''
+  if (fileName.endsWith('png')) {
+    // For PNG files, create a safe ID by removing invalid characters
+    // Keep only alphanumeric chars, underscores, and hyphens
+    fileId = `img_${fileName.replace(/[^a-zA-Z0-9_-]/g, '_')}`
+
+    // If path is provided, use it to make the ID more specific but still safe
+    if (path) {
+      // Extract last directory from path as a prefix
+      const pathParts = path.split('/').filter(Boolean)
+      if (pathParts.length > 0) {
+        const lastDir = pathParts[pathParts.length - 1].replace(/[^a-zA-Z0-9_-]/g, '_')
+        fileId = lastDir + '_' + fileId
+      }
+    }
+  } else {
+    // Standard handling for non-PNG files
+    fileId = fileName.replace(
+      new RegExp(window.globalParameters.MODELS_ID_REGEX, 'g'),
+      '',
+    )
+  }
 
   // if the file has not been already added to the processing buffer
   if (!state.models.hasOwnProperty(fileId)) {
     // create file object
-    const file = { id: fileId, fileName: fileName, path: path, xml: content }
+    const file = { id: fileId, fileName, path, content }
 
     /// add a new model to the state object
     state.models[fileId] = file
 
     try {
-      // process model
-      await processModel(file.xml, file.id, file.fileName, file.path)
-      // create file info menu
-      createModelFileInfoBlock(file)
+      processModel(file)
     } catch (error) {
       // something wrong happened with the opening of the diagram
       removeModelFile(file)
@@ -676,12 +694,23 @@ async function stateRead(res) {
       if (!state.models.hasOwnProperty(key)) {
         console.log('new model ', res.data.models[key])
         state.models[key] = res.data.models[key]
-        await processModel(
-          state.models[key].xml,
-          state.models[key].id,
-          state.models[key].fileName,
-          state.models[key].path,
-        )
+
+        // Check if the file is a PNG
+        if (value.fileName && value.fileName.endsWith('png')) {
+          await processPngModel(
+            state.models[key].content,
+            state.models[key].id,
+            state.models[key].fileName,
+            state.models[key].path,
+          )
+        } else {
+          await processBpmnModel(
+            state.models[key].content,
+            state.models[key].id,
+            state.models[key].fileName,
+            state.models[key].path,
+          )
+        }
       }
     }
 
@@ -766,12 +795,22 @@ async function sessionRead(res) {
 
     //process the open the models within the loaded state
     for (const [key, value] of Object.entries(state.models)) {
-      await processModel(
-        state.models[key].xml,
-        state.models[key].id,
-        state.models[key].fileName,
-        state.models[key].path,
-      )
+      // Check if it's a PNG file
+      if (value && value.fileName && value.fileName.endsWith('png')) {
+        await processPngModel(
+          state.models[key].content,
+          state.models[key].id,
+          state.models[key].fileName,
+          state.models[key].path,
+        )
+      } else {
+        await processBpmnModel(
+          state.models[key].content,
+          state.models[key].id,
+          state.models[key].fileName,
+          state.models[key].path,
+        )
+      }
     }
 
     // last step of file import
@@ -782,6 +821,27 @@ async function sessionRead(res) {
   } else {
     console.error(res.msg)
     errorAlert(msg)
+  }
+}
+
+async function processModel(file) {
+  if (file.fileName.endsWith('bpmn')) {
+    // process model
+    await processBpmnModel(file.content, file.id, file.fileName, file.path)
+    // create file info menu
+    createModelFileInfoBlock(file)
+  } else if (file.fileName.endsWith('svg')) {
+    // process model
+    await processSvgModel(file.content, file.id, file.fileName, file.path)
+    // create file info menu
+    createModelFileInfoBlock(file)
+  } else if (file.fileName.endsWith('png')) {
+    // Process PNG model
+    await processPngModel(file.content, file.id, file.fileName, file.path)
+    // Create file info menu
+    createModelFileInfoBlock(file)
+  } else {
+    console.error('Unknown file format:', file.fileName)
   }
 }
 
@@ -803,8 +863,8 @@ async function sessionRead(res) {
  * Additional notes: none
  *
  */
-async function processModel(xml, id, fileName, filePath) {
-  console.log('processModel', arguments)
+async function processBpmnModel(content, id, fileName, filePath) {
+  console.log('processBpmnModel', arguments)
 
   // get state
   const state = getState()
@@ -817,7 +877,7 @@ async function processModel(xml, id, fileName, filePath) {
 
   // create model
   console.log('creating model')
-  const modeler = await createModel(fileName, id, xml)
+  const modeler = await createModel(fileName, id, content)
   console.log('model created')
 
   // differ the execution depending on the state.mode
@@ -840,6 +900,330 @@ async function processModel(xml, id, fileName, filePath) {
   console.log(fileName, 'is valid')
 }
 
+async function processSvgModel(xml, id, fileName, filePath) {
+  console.log('processSvgModel', arguments)
+
+  // get state
+  const state = getState()
+
+  /// construct/update the directory explorer
+  constructDirectoryExplorer(filePath, fileName, id)
+
+  // create tab container
+  createTabContainer(id, fileName)
+
+  // create model
+  console.log('creating model')
+  // var modeler = await createModel(fileName, id, content)
+  console.log('model created')
+
+  // differ the execution depending on the state.mode
+  // if (state.mode == 'data-collection') {
+  //   // state.models[id].isMain if the model is the main model of the process (cf. isMain())
+  //   state.models[id].isMain = isMain(modeler)
+  // }
+  if (state.mode == 'analysis') {
+    // add attributes needed to show the heatmaps
+    const generalModelRegistry = {}
+    generalModelRegistry.elementRegistry = modeler.get('elementRegistry')
+    if (modeler.language == 'Bpmn')
+      generalModelRegistry.commandStack = modeler.get('commandStack') /// odm do not have a commandStack
+    generalModelRegistry.overlays = modeler.get('overlays')
+    generalModelRegistry.language = modeler.language
+    // add model to the generalModelsRegistry
+    addModel(id, generalModelRegistry)
+  }
+
+  console.log(fileName, 'is valid')
+}
+
+async function processPngModel(content, id, fileName, filePath) {
+  console.log('processPngModel', arguments)
+
+  // get state
+  const state = getState()
+
+  /// construct/update the directory explorer
+  constructDirectoryExplorer(filePath, fileName, id)
+
+  // create tab container
+  createTabContainer(id, fileName)
+
+  // Get the model container
+  const containerSelector = `#model${id}-content`
+  const container = document.querySelector(containerSelector)
+
+  if (container == null) {
+    console.error('Container not found:', containerSelector)
+    return null
+  }
+
+  // Create the PNG viewer container
+  const pngViewerContainer = document.createElement('div')
+  pngViewerContainer.setAttribute('id', `model${id}-content-model${id}-object`)
+  pngViewerContainer.setAttribute('hierarchy', 'main-model')
+  pngViewerContainer.setAttribute('class', 'canvas main-model png-viewer')
+  pngViewerContainer.setAttribute('FileName', fileName)
+
+  // Add the PNG image
+  const img = document.createElement('img')
+  img.className = 'image-viewer-content'
+  img.style.maxWidth = '100%'
+  img.style.maxHeight = '100%'
+  img.style.objectFit = 'contain'
+
+  // Add error event listener to debug loading issues
+  img.onerror = (error) => {
+    console.error('Image load error:', error)
+    console.log('Failed to load image with src:', img.src)
+    handleInvalidImage()
+  }
+
+  // Add load event listener to confirm successful loading
+  img.onload = () => {
+    console.log('Image loaded successfully:', img.src)
+    img.style.display = 'block' // Ensure the image is visible
+  }
+
+  // First try to use file URI if we have filePath information
+  let imageSrcSet = false
+
+  if (filePath) {
+    try {
+      // Use the utility function to create a file:// URI
+      const fileUri = filePathToFileUri(filePath, fileName)
+      img.src = fileUri
+      imageSrcSet = true
+      console.log('Using file URI:', fileUri)
+
+      // If we're in Electron environment, we can also try to read the file directly
+      if (window.hasOwnProperty('electron') && !img.complete) {
+        console.log(
+          'In Electron environment, trying direct file read for:',
+          filePath + '/' + fileName,
+        )
+        window.electron.readPngFile(filePath + '/' + fileName, (base64Data) => {
+          if (base64Data) {
+            img.src = 'data:image/png;base64,' + base64Data
+            imageSrcSet = true
+            console.log('Using electron direct file read')
+          } else {
+            console.error('Electron file read failed')
+          }
+        })
+      }
+    } catch (e) {
+      console.error('Error creating file URI:', e)
+      // We'll fall back to other methods
+    }
+  }
+
+  // If we couldn't set using file URI, try other methods
+  if (!imageSrcSet) {
+    if (typeof content === 'string') {
+      // If content is already a data URL (starts with data:image)
+      if (content.startsWith('data:image')) {
+        img.src = content
+        console.log('Using existing data URL')
+      } else {
+        // Try to convert content to a data URL
+        try {
+          img.src = 'data:image/png;base64,' + btoa(content)
+          console.log('Using base64 encoded content')
+        } catch (e) {
+          console.error('Error creating data URL:', e)
+
+          // Try a more direct approach as fallback
+          if (filePath) {
+            // Try a relative path approach without file:// protocol
+            // This might work in Electron environments
+            img.src = filePath + '/' + fileName
+            console.log('Trying relative path as fallback:', img.src)
+          } else {
+            handleInvalidImage()
+          }
+        }
+      }
+    } else if (content instanceof Blob || content instanceof File) {
+      // If we have a Blob or File object, create an object URL
+      try {
+        img.src = URL.createObjectURL(content)
+        console.log('Using object URL for Blob/File')
+      } catch (e) {
+        console.error('Error creating object URL:', e)
+        handleInvalidImage()
+      }
+    } else {
+      console.error('Image content is not valid:', typeof content)
+      handleInvalidImage()
+    }
+  }
+
+  // Helper function to handle invalid image content
+  function handleInvalidImage() {
+    img.alt = 'Error loading image'
+    img.style.display = 'none'
+
+    const errorMsg = document.createElement('div')
+    errorMsg.className = 'png-load-error'
+    errorMsg.textContent = 'Error loading image'
+    errorMsg.style.color = 'red'
+    errorMsg.style.padding = '20px'
+    errorMsg.style.fontSize = '16px'
+    errorMsg.style.textAlign = 'center'
+    errorMsg.style.border = '1px solid #ccc'
+    errorMsg.style.borderRadius = '5px'
+    errorMsg.style.margin = '20px'
+    errorMsg.style.backgroundColor = '#f8f8f8'
+    pngViewerContainer.appendChild(errorMsg)
+
+    console.warn('Image display failed - error message shown')
+  }
+
+  // Add the image to the container
+  pngViewerContainer.appendChild(img)
+
+  // Add the PNG viewer to the model container
+  container.appendChild(pngViewerContainer)
+
+  // Setup interactions like zooming and panning
+  setupPngInteractions(container)
+
+  // Return an object that matches the expected interface
+  const pngViewer = {
+    id,
+    language: 'Png',
+    container: containerSelector,
+    // Minimal element registry for compatibility
+    get: (name) => {
+      if (name === 'elementRegistry') return { getAll: () => [] }
+      if (name === 'overlays') return { add: () => {}, remove: () => {}, get: () => [] }
+      return {}
+    },
+  }
+
+  // differ the execution depending on the state.mode
+  if (state.mode == 'data-collection') {
+    // state.models[id].isMain if the model is the main model of the process (cf. isMain())
+    state.models[id].isMain = isMain(pngViewer)
+  }
+
+  if (state.mode == 'analysis') {
+    // add attributes needed to show the heatmaps
+    const generalModelRegistry = {
+      ...pngViewer,
+      fileName,
+      filePath,
+    }
+    // add model to the generalModelsRegistry
+    addModel(id, generalModelRegistry)
+  }
+
+  console.log(fileName, 'is valid')
+  return pngViewer
+}
+
+/**
+ * Setup zoom and pan interactions for PNG images
+ * @param {HTMLElement} container - The container element
+ */
+function setupPngInteractions(container) {
+  // Check if container is valid
+  if (!container) {
+    console.error('Container is null or undefined')
+    return
+  }
+
+  // Find the image element in the container
+  const img = container.querySelector('.image-viewer-content')
+  if (!img) {
+    console.error('Image element not found in container')
+    return
+  }
+
+  // Variables for zoom and pan
+  let zoom = 1
+  let offsetX = 0
+  let offsetY = 0
+  let isDragging = false
+  let lastX = 0
+  let lastY = 0
+
+  // Reset transform when double-clicked
+  img.addEventListener('dblclick', () => {
+    zoom = 1
+    offsetX = 0
+    offsetY = 0
+    updateTransform()
+  })
+
+  // Zoom with mouse wheel
+  container.addEventListener('wheel', (e) => {
+    e.preventDefault()
+
+    // Get mouse position relative to image
+    const rect = img.getBoundingClientRect()
+    const mouseX = e.clientX - rect.left
+    const mouseY = e.clientY - rect.top
+
+    // Calculate delta for smoother zoom
+    const delta = -e.deltaY * 0.01
+
+    // Calculate new zoom level with limits
+    const oldZoom = zoom
+    zoom = Math.max(0.1, Math.min(3, zoom + delta))
+
+    // Adjust offset to zoom toward mouse position
+    if (zoom !== oldZoom) {
+      const scaleChange = zoom / oldZoom
+      offsetX = (offsetX - mouseX / oldZoom) * scaleChange + mouseX / oldZoom
+      offsetY = (offsetY - mouseY / oldZoom) * scaleChange + mouseY / oldZoom
+    }
+
+    updateTransform()
+  })
+
+  // Pan with mouse drag
+  img.addEventListener('mousedown', (e) => {
+    isDragging = true
+    lastX = e.clientX
+    lastY = e.clientY
+    img.style.cursor = 'grabbing'
+  })
+
+  container.addEventListener('mousemove', (e) => {
+    if (!isDragging) return
+
+    const dx = e.clientX - lastX
+    const dy = e.clientY - lastY
+
+    lastX = e.clientX
+    lastY = e.clientY
+
+    offsetX += dx / zoom
+    offsetY += dy / zoom
+
+    updateTransform()
+  })
+
+  container.addEventListener('mouseup', () => {
+    isDragging = false
+    img.style.cursor = 'grab'
+  })
+
+  container.addEventListener('mouseleave', () => {
+    isDragging = false
+    img.style.cursor = 'grab'
+  })
+
+  function updateTransform() {
+    img.style.transform = `scale(${zoom}) translate(${offsetX}px, ${offsetY}px)`
+  }
+
+  // Initialize transform
+  updateTransform()
+}
+
 /**
  * Title: is main
  *
@@ -856,6 +1240,10 @@ async function processModel(xml, id, fileName, filePath) {
  *
  */
 function isMain(modeler) {
+  if (modeler.language === 'Png') {
+    return true
+  }
+
   console.log('isMain', arguments)
   // get the process id
   const processId = modeler.get('canvas').getRootElement().id
@@ -998,7 +1386,7 @@ function createTabContainer(id, fileName) {
  *
  * @param {string} filename  the name of the file
  * @param {string} id  the id of the file
- * @param {string} xml  xml refering the content of the model
+ * @param {string} content  xml refering the content of the model
  * @param {string} currentTabContainerId  the container of the model
  *
  * Returns {object} modeler modeler object
@@ -1007,7 +1395,7 @@ function createTabContainer(id, fileName) {
  * Additional notes: none
  *
  */
-async function createModel(fileName, id, xml, currentTabContainerId) {
+async function createModel(fileName, id, content, currentTabContainerId) {
   console.log('createModel function', arguments)
 
   const state = getState()
@@ -1024,20 +1412,36 @@ async function createModel(fileName, id, xml, currentTabContainerId) {
 
   // append the model container to its parent (i.e., dom element with id=currentTabContainerId)
   document.getElementById(currentTabContainerId).append(modelContainer)
-
   /// choice based on type of file (bpmn or odm) and whether it is for data-collection (NavigatedViewer) or for anaylsis (Modeler) (i.e., Modeler is used to allow coloring the activities, which is required for the heatmaps)
-  let view = null
   let language = null
   // support for bpmn and odm file
   if (fileName.endsWith('bpmn')) language = 'Bpmn'
   else if (fileName.endsWith('odm')) language = 'Odm'
+  else if (fileName.endsWith('svg')) language = 'Svg'
+  else if (fileName.endsWith('png')) language = 'Png'
   else throw 'Unknown file format'
+
+  if (fileName.endsWith('bpmn') || fileName.endsWith('odm')) {
+    return createActualModel(id, content, currentTabContainerId, state, language)
+  }
+
+  return createImageModel(id, content, currentTabContainerId, state, language)
+}
+
+async function createActualModel(id, content, currentTabContainerId, state, language) {
+  let view = null
   if (state.mode == 'data-collection') view = 'NavigatedViewer'
   else if (state.mode == 'analysis') view = 'Modeler'
   else throw 'Unknown state'
 
   // create modeler, set language and import xml file
-  const modeler = await setUpModelerObject(language, view, currentTabContainerId, id, xml)
+  const modeler = await setUpModelerObject(
+    language,
+    view,
+    currentTabContainerId,
+    id,
+    content,
+  )
 
   // listen to changes in the canvas.viewbox i.e., scrolling, zooming and take a snapshot
   modeler.on('canvas.viewbox.changed', (context) => {
@@ -1056,6 +1460,29 @@ async function createModel(fileName, id, xml, currentTabContainerId) {
   return modeler
 }
 
+async function createImageModel(id, content, currentTabContainerId, state, language) {
+  // For PNG files, we now handle the rendering directly in processPngModel
+  if (language === 'Png') {
+    // Return a simple placeholder object for compatibility
+    return {
+      id,
+      content,
+      language,
+      container: '#' + currentTabContainerId + '-model' + id + '-object',
+    }
+  }
+
+  // Handle SVG or other image formats (existing code)
+  return {
+    id,
+    content,
+    language,
+    view: state.mode === 'data-collection' ? 'NavigatedViewer' : 'Modeler',
+    currentTabContainerId,
+    container: '#' + currentTabContainerId + '-model' + id + '-object',
+  }
+}
+
 /**
  * Title: setup modeler object
  *
@@ -1067,7 +1494,7 @@ async function createModel(fileName, id, xml, currentTabContainerId) {
  * @param {string} view  NavigatedViewer or Modeler
  * @param {string} currentTabContainerId  the container of the model
  * @param {string} id  the id of the file
- * @param {string} xml  xml refering the content of the model
+ * @param {string} content  xml refering the content of the model
 
  *
  * Returns {object} modeler modeler object
@@ -1076,14 +1503,17 @@ async function createModel(fileName, id, xml, currentTabContainerId) {
  * Additional notes: none
  *
  */
-async function setUpModelerObject(language, view, currentTabContainerId, id, xml) {
+async function setUpModelerObject(language, view, currentTabContainerId, id, content) {
   const modeler = new modelers[language + view]({
     container: '#' + currentTabContainerId + '-model' + id + '-object',
   })
   modeler.language = language
 
-  await modeler.importXML(xml)
-
+  if (language === 'Png') {
+    modeler.importImage(content)
+  } else {
+    await modeler.importXML(content)
+  }
   return modeler
 }
 

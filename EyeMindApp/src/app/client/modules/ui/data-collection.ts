@@ -201,7 +201,7 @@ function importModelsInteraction() {
   // settings for importing models files
   state.importMode = 'multiple'
   state.temp.expectedArtifact = 'models'
-  state.temp.expectedExtensions = ['bpmn', 'odm']
+  state.temp.expectedExtensions = ['bpmn', 'odm', 'svg', 'pdf', 'png']
 }
 
 /**
@@ -719,14 +719,44 @@ function takesnapshot(timestamp, code, screenX, screenY) {
       (s) => window.getComputedStyle(s).getPropertyValue('display') == 'flex', // 'block'
     )
 
-    // find svg object with svg[data-element-id]
-    const svg = shownTabs[0].querySelector('svg[data-element-id]')
+    if (shownTabs.length === 0) {
+      console.warn('No visible tab containers found')
+      snapshot.boundingClientRect = null
+      return
+    }
 
-    // console.log("shownTabs",shownTabs);
-    // console.log("selected svg",svg);
-
-    snapshot.boundingClientRect = JSON.stringify(svg.getBoundingClientRect())
-    // console.log("snapshot.boundingClientRect",snapshot.boundingClientRect)
+    // First check if we have a PNG image
+    const pngViewer = shownTabs[0]?.querySelector('.png-viewer')
+    if (pngViewer != null) {
+      // This is a PNG file, find the image element
+      const imgElement = pngViewer.querySelector('.image-viewer-content')
+      if (imgElement != null) {
+        snapshot.boundingClientRect = JSON.stringify(imgElement.getBoundingClientRect())
+        console.log('Captured PNG image dimensions')
+      } else {
+        // Fallback to the container if img element isn't found
+        snapshot.boundingClientRect = JSON.stringify(pngViewer.getBoundingClientRect())
+        console.log('Captured PNG container dimensions (fallback)')
+      }
+    } else {
+      // This is likely an SVG file, use the existing logic
+      const svg = shownTabs[0]?.querySelector('svg[data-element-id]')
+      if (svg != null) {
+        snapshot.boundingClientRect = JSON.stringify(svg.getBoundingClientRect())
+        console.log('Captured SVG dimensions')
+      } else {
+        // Try to find any other measurable element in the tab
+        const anyContent = shownTabs[0]?.querySelector('.canvas') != null || shownTabs[0]
+        if (anyContent != null) {
+          snapshot.boundingClientRect = JSON.stringify(anyContent.getBoundingClientRect())
+          console.log('Captured fallback element dimensions')
+        } else {
+          console.warn('No suitable element found for measurement in the visible tab')
+          snapshot.boundingClientRect = null
+        }
+      }
+    }
+    // console.log("snapshot.boundingClientRect", snapshot.boundingClientRect)
   } else {
     snapshot.boundingClientRect = null
   }

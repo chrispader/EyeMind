@@ -167,6 +167,9 @@ function showModelsGroup(groupId) {
     for (const model of Object.values(state.models)) {
       //console.log(model,model.id,document.getElementById("model"+model.id+"-explorerItem"))
 
+      if (model.png != null) {
+      }
+
       if (model.groupId == groupId) {
         document.getElementById('model' + model.id + '-explorerItem').style.display =
           'block'

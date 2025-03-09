@@ -1,11 +1,13 @@
 /* global parameters */
 const globalParameters = {
+  DEBUG_MODE: true,
+
   R_PORT: 5548,
   COMMUNICATION_HOST_TO_R_SERVER: 'http://127.0.0.1',
   COMMUNICATION_METHOD_TO_R_SERVER: 'POST',
 
   COMMUNICATION_METHOD_TO_ET_SERVER: 'POST',
-  COMMUNICATION_URI_TO_ET_SERVER: 'http://127.0.0.1:5000/BPMeyeMind',
+  COMMUNICATION_URI_TO_ET_SERVER: 'http://127.0.0.1:5100/BPMeyeMind',
 
   MODELS_ID_REGEX: '[\W_,.]',
   EXPORT_FILES_PREFIX: 'EyeMind_',

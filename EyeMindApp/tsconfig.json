@@ -26,6 +26,7 @@
     "target": "ESNext",
     "sourceMap": true,
     "outDir": "dist",
+    "jsx": "react-jsx",
     "paths": {
       "*": ["node_modules/*"],
       "@/*": ["src/*"],

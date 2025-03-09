@@ -8,6 +8,9 @@ import { rules } from './webpack.rules'
 
 export const rendererConfig: Configuration = merge(commonConfig, {
   target: 'web',
+  entry: {
+    app: './src/app/client/index.tsx',
+  },
   module: {
     rules: [
       ...rules,
@@ -32,7 +35,7 @@ export const rendererConfig: Configuration = merge(commonConfig, {
     }),
   ],
   resolve: {
-    extensions: ['.js', '.ts', '.css'],
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
     fallback: {
       fs: false,
       tls: false,

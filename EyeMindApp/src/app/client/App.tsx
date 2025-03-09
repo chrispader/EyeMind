@@ -1,22 +1,23 @@
-import { useEffect } from 'react'
-import {
-  handleWindowRefresh,
-  takeSnapshotOnWindowResize,
-  takeSnapshotOnWindowMovement,
-  testListeners,
-  DisableCriticalKeys,
-} from './modules/ui/window-events'
-import {
-  modeSelectionListeners,
-  closeModalOutsideClickInteraction,
-} from './modules/ui/shared-interactions'
-import { loadServerStateIntoClient } from './modules/dataModels/state'
-
-import '@/app/client/css/app.css'
-import '@extra/object-diagram-modeler/starter/app/css/app.css'
-import 'bpmn-js/dist/assets/diagram-js.css'
-import 'bpmn-js/dist/assets/bpmn-js.css'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
+import 'bpmn-js/dist/assets/bpmn-js.css'
+import 'bpmn-js/dist/assets/diagram-js.css'
+import { useEffect } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router'
+import '@/app/client/css/app.css'
+import { Home } from '@/app/client/pages/Home'
+import '@extra/object-diagram-modeler/starter/app/css/app.css'
+import { loadServerStateIntoClient } from './modules/dataModels/state'
+import {
+  closeModalOutsideClickInteraction,
+  modeSelectionListeners,
+} from './modules/ui/shared-interactions'
+import {
+  DisableCriticalKeys,
+  handleWindowRefresh,
+  takeSnapshotOnWindowMovement,
+  takeSnapshotOnWindowResize,
+  testListeners,
+} from './modules/ui/window-events'
 
 async function initializeApp(): Promise<void> {
   try {
@@ -49,16 +50,11 @@ export function App(): React.ReactElement {
 
   return (
     <div className="all-content" id="all-content">
-      <div className="main-view" id="main-view">
-        <div className="row">
-          <button id="eye-tracking" className="btn eye-tracking">
-            Eye-tracking
-          </button>
-          <button id="analysis" className="btn analysis">
-            Analysis
-          </button>
-        </div>
-      </div>
+      <BrowserRouter>
+        <Routes>
+          <Route index path="/" element={<Home />} />
+        </Routes>
+      </BrowserRouter>
 
       <div
         className="data-collection-session-options-view"
@@ -286,7 +282,8 @@ export function App(): React.ReactElement {
               <div className="column">
                 <span className="text">
                   {' '}
-                  Handling of fixation spanning over multiple elements, tabs or questions{' '}
+                  Handling of fixation spanning over multiple elements, tabs or
+                  questions{' '}
                 </span>
               </div>
               <div className="column">

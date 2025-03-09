@@ -12,27 +12,12 @@ module.exports = {
     createDefaultProgram: true,
   },
   ignorePatterns: ['**/node_modules', 'environments', '**/public', '**/lib', '**/dist'],
-  extends: ['plugin:@typescript-eslint/recommended'],
+  extends: ['plugin:@typescript-eslint/recommended', 'prettier'],
   plugins: ['@typescript-eslint', 'eslint-plugin-prettier', 'prettier'],
   rules: {
-    'prettier/prettier': [
-      'warn',
-      {
-        bracketSpacing: true,
-        bracketSameLine: true,
-        quoteProps: 'consistent',
-        singleQuote: true,
-        trailingComma: 'all',
-        semi: false,
-        tabWidth: 2,
-        useTabs: false,
-        printWidth: 90,
-        arrowParens: 'always',
-        importOrder: ['^@/(.*)$', '^@extra/(.*)$', '^[./]'],
-        importOrderSortSpecifiers: true,
-        endOfLine: 'auto',
-      },
-    ],
+    'prettier/prettier': ['warn'],
+    'arrow-body-style': 'off',
+    'prefer-arrow-callback': 'off',
 
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/no-unused-vars': [

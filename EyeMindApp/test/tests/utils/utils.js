@@ -2,13 +2,7 @@ const fs = require('fs')
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
 
-async function dragAndDropFile(
-  page,
-  selector,
-  filePath,
-  fileName,
-  fileType = ''
-) {
+async function dragAndDropFile(page, selector, filePath, fileName, fileType = '') {
   const buffer = fs.readFileSync(filePath).toString('base64')
 
   const dataTransfer = await page.evaluateHandle(
@@ -32,7 +26,7 @@ async function dragAndDropFile(
       localFileName: fileName,
       localFileType: fileType,
       localFilePath: filePath,
-    }
+    },
   )
 
   // Now dispatch
@@ -50,7 +44,7 @@ function delay(delayInms) {
 function removeElementAttributes(elementsToEdit, data) {
   const dom = new JSDOM(data)
   const elements = dom.window.document.querySelectorAll(
-    Object.keys(elementsToEdit).join(', ')
+    Object.keys(elementsToEdit).join(', '),
   )
   ;[].forEach.call(elements, function (element) {
     const tagName = element.tagName.toLowerCase()
@@ -80,7 +74,7 @@ function saveFile(path, content) {
 function removeClassAttrFromSpecificSVGs(code) {
   const dom = new JSDOM(code)
   var relevantElements = dom.window.document.querySelectorAll(
-    'svg[width="100%"][height="100%"]'
+    'svg[width="100%"][height="100%"]',
   )
 
   ;[].forEach.call(relevantElements, function (element) {

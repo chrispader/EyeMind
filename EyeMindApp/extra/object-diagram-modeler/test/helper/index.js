@@ -81,7 +81,7 @@ export function boostrapPostitJS(PostitJS, diagram, options, locals) {
         },
       },
       OPTIONS,
-      _options
+      _options,
     )
 
     if (_locals) {
@@ -124,7 +124,7 @@ export function inject(fn) {
     if (!POSTIT_JS) {
       throw new Error(
         'no bootstraped postit-js instance, ' +
-          'ensure you created it via #boostrap(Modeler|Viewer)'
+          'ensure you created it via #boostrap(Modeler|Viewer)',
       )
     }
 
@@ -150,7 +150,7 @@ export function setPostitJS(instance) {
 }
 
 export function insertCSS(name, css) {
-  if (document.querySelector('[data-css-file="' + name + '"]')) {
+  if (document.querySelector('[data-css-file="' + name + '"]') != null) {
     return
   }
 

@@ -10,6 +10,7 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint \"**/*.{js,ts,jsx,tsx}\" --fix",
+    "prettier": "prettier --write \"**/*.{js,ts,jsx,tsx}\"",
     "typescript": "tsc --noEmit",
     "typescript:build": "tsc --noEmit false",
     "install-dependencies": "(cd extra/object-diagram-modeler && npm install && cd .. && npm install webpack)",

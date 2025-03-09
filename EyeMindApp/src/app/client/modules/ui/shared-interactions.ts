@@ -19,12 +19,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
 /*  Shared interactions between data collection and anaylsis  */
-
-import { eyeTrackingModeInteraction } from './data-collection'
-import { analysisModeInteraction } from './analysis'
 import { getState } from '@/app/client/modules/dataModels/state'
+import { analysisModeInteraction } from './analysis'
+import { eyeTrackingModeInteraction } from './data-collection'
 
 /**
  * Title: Mode selection listeners.

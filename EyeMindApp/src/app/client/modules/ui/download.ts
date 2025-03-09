@@ -19,9 +19,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
-
-import { infoAlert, errorAlert } from '@/app/client/modules/utils/utils'
-import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
+import { errorAlert, infoAlert } from '@/app/client/modules/utils/utils'
+import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'
 
 // var REPORT_FREQUENCY = 10000
 

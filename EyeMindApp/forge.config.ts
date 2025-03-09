@@ -1,15 +1,15 @@
-import { FusesPlugin } from '@electron-forge/plugin-fuses'
-import { FuseV1Options, FuseVersion } from '@electron/fuses'
 import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerRpm } from '@electron-forge/maker-rpm'
 import { MakerSquirrel } from '@electron-forge/maker-squirrel'
 import { MakerZIP } from '@electron-forge/maker-zip'
-import type { ForgeConfig } from '@electron-forge/shared-types'
+import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives'
+import { FusesPlugin } from '@electron-forge/plugin-fuses'
 import { WebpackPlugin } from '@electron-forge/plugin-webpack'
+import type { WebpackConfiguration } from '@electron-forge/plugin-webpack/dist/Config'
+import type { ForgeConfig } from '@electron-forge/shared-types'
+import { FuseV1Options, FuseVersion } from '@electron/fuses'
 import { mainConfig } from './webpack.main.config'
 import { rendererConfig } from './webpack.renderer.config'
-import type { WebpackConfiguration } from '@electron-forge/plugin-webpack/dist/Config'
-import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives'
 
 const config: ForgeConfig = {
   packagerConfig: {

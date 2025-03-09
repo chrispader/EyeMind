@@ -1,15 +1,16 @@
+import { expect, test } from '@playwright/test'
 import { _electron as electron } from 'playwright'
-import { test, expect } from '@playwright/test'
-import {
-  dragAndDropFile,
-  delay,
-  removeElementAttributes,
-  loadFile,
-  saveFile,
-  removeClassAttrFromSpecificSVGs,
-  removeHoverClassOption,
-} from '../utils/utils'
 import { elementAttributesToRemove } from '../utils/globals'
+import {
+  delay,
+  dragAndDropFile,
+  loadFile,
+  removeClassAttrFromSpecificSVGs,
+  removeElementAttributes,
+  removeHoverClassOption,
+  saveFile,
+} from '../utils/utils'
+
 const fs = require('fs')
 
 test('reset-model', async () => {

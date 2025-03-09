@@ -1,14 +1,12 @@
-import { app, ipcMain } from 'electron'
-import path from 'path'
 import child from 'child_process'
-import { globalParameters } from '@/globals'
-import { fixationFilter } from '@/app/server/node/connectors/fixation-filter'
-import { setLocalRpid, getLocalRpid } from '@/app/server/node/dataModels/processes'
-
-import fs from 'fs'
 import detect from 'detect-port'
-
+import { app, ipcMain } from 'electron'
+import fs from 'fs'
+import path from 'path'
 import kill from 'tree-kill'
+import { fixationFilter } from '@/app/server/node/connectors/fixation-filter'
+import { getLocalRpid, setLocalRpid } from '@/app/server/node/dataModels/processes'
+import { globalParameters } from '@/globals'
 
 export function fixationFilterListeners(mainWindow) {
   //console.log("fixationFilterListener function",arguments);

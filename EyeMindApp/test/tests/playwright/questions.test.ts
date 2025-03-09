@@ -1,6 +1,7 @@
+import { expect, test } from '@playwright/test'
 import { _electron as electron } from 'playwright'
-import { test, expect } from '@playwright/test'
-import { dragAndDropFile, delay } from '../utils/utils'
+import { delay, dragAndDropFile } from '../utils/utils'
+
 const fs = require('fs')
 
 test('first-question-onset', async () => {

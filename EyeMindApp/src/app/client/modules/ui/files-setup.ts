@@ -19,35 +19,26 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
 /*  Files setup   */
-
 import BpmnModeler from 'bpmn-js/lib/Modeler'
 import BpmnNavigatedViewer from 'bpmn-js/lib/NavigatedViewer'
-
-import OdmModeler from '@extra/object-diagram-modeler/lib/Modeler'
-import OdmNavigatedViewer from '@extra/object-diagram-modeler/lib/NavigatedViewer'
-
-import { takesnapshot } from './data-collection'
+import { nFiles, setFiles, shiftFile } from '@/app/client/modules/dataModels/filesBuffer'
+import { addModel } from '@/app/client/modules/dataModels/generalModelsRegistry'
+import { getState, setState } from '@/app/client/modules/dataModels/state'
+import { hideElement } from '@/app/client/modules/utils/dom'
 import {
   cancelDefault,
-  readFileContent,
   errorAlert,
+  readFileContent,
 } from '@/app/client/modules/utils/utils'
-
-import { prepareDataCollectionContent } from './data-collection'
-import { addToTabHeader, changeTab, openInTab, openWithinTab } from './tabs'
-import { loadQuestions } from './questions'
-
+import OdmModeler from '@extra/object-diagram-modeler/lib/Modeler'
+import OdmNavigatedViewer from '@extra/object-diagram-modeler/lib/NavigatedViewer'
 import { sendClickEvent } from './click-stream'
-
-import { showGeneralWaitingScreen, hideGeneralWaitingScreen } from './progress'
-
-import { hideElement } from '@/app/client/modules/utils/dom'
-
-import { addModel } from '@/app/client/modules/dataModels/generalModelsRegistry'
-import { setState, getState } from '@/app/client/modules/dataModels/state'
-import { setFiles, shiftFile, nFiles } from '@/app/client/modules/dataModels/filesBuffer'
+import { takesnapshot } from './data-collection'
+import { prepareDataCollectionContent } from './data-collection'
+import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'
+import { loadQuestions } from './questions'
+import { addToTabHeader, changeTab, openInTab, openWithinTab } from './tabs'
 
 // types of modeler objects supported by the tool
 const modelers = {

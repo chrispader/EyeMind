@@ -1,13 +1,14 @@
+import { expect, test } from '@playwright/test'
 import { _electron as electron } from 'playwright'
-import { test, expect } from '@playwright/test'
+import { elementAttributesToRemove } from '../utils/globals'
 import {
-  dragAndDropFile,
   delay,
-  removeElementAttributes,
+  dragAndDropFile,
   loadFile,
+  removeElementAttributes,
   saveFile,
 } from '../utils/utils'
-import { elementAttributesToRemove } from '../utils/globals'
+
 const fs = require('fs')
 
 test('new-session-import-valid-models', async () => {

@@ -19,17 +19,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
+import { getState } from '@/app/client/modules/dataModels/state'
 import { cancelDefault } from '@/app/client/modules/utils/utils'
+//import {registerClickEventForLogging} from './click-stream'
+import { resetModel } from './canvas'
+import { sendClickEvent } from './click-stream'
 import { takesnapshot } from './data-collection'
 import {
   createUpdateProcessHierarchyExplorer,
   renderProcessHierarchyExplorer,
 } from './process-hierarchy-explorer'
-import { getState } from '@/app/client/modules/dataModels/state'
-import { sendClickEvent } from './click-stream'
-//import {registerClickEventForLogging} from './click-stream'
-import { resetModel } from './canvas'
 
 /**
  * Title: add tab to header

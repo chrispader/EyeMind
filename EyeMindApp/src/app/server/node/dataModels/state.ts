@@ -1,5 +1,5 @@
 /* inits */
-var state = {
+let state = {
   snapshotsCounter: 0,
   activeTab: null,
   processedGazeData: {},
@@ -11,7 +11,7 @@ var state = {
   questions: null,
 }
 
-var states = {}
+let states = {}
 
 /* data collection */
 

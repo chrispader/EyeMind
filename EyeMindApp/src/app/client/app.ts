@@ -26,12 +26,12 @@ import {
   takeSnapshotOnWindowMovement,
   testListeners,
   DisableCriticalKeys,
-} from '@modules/ui/window-events'
+} from '@/app/client/modules/ui/window-events'
 import {
   modeSelectionListeners,
   closeModalOutsideClickInteraction,
-} from '@modules/ui/shared-interactions'
-import { loadServerStateIntoClient } from '@root/src/app/client/modules/dataModels/state'
+} from '@/app/client/modules/ui/shared-interactions'
+import { loadServerStateIntoClient } from '@/app/client/modules/dataModels/state'
 
 /// load the server state ás a client state then
 loadServerStateIntoClient().then(() => {

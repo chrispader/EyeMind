@@ -1,4 +1,4 @@
-import { getServerState } from '@server/utils/test'
+import { getServerState } from '@/app/server/node/utils/test'
 import { ipcMain } from 'electron'
 
 export function testListeners() {

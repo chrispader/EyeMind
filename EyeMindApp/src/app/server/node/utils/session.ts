@@ -1,6 +1,6 @@
-import { setState } from '@root/src/app/server/node/dataModels/state'
-import { stateDownload } from '@server/utils/download'
-import { globalParameters } from '@src/globals'
+import { setState } from '@/app/server/node/dataModels/state'
+import { stateDownload } from '@/app/server/node/utils/download'
+import { globalParameters } from '@/globals'
 import request from 'request-promise'
 
 export async function saveSession(state) {

@@ -61,7 +61,7 @@ function updateProcessMessageListener() {
 async function updateProcessingMessage(msg, container) {
   console.log('updateProcessingMessage', arguments)
 
-  var documentContainer
+  let documentContainer
 
   if (typeof container == 'string' && container != '') {
     documentContainer = window.externalProgressWindows[container].document

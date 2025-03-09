@@ -1,4 +1,4 @@
-var activeFeatures = {
+const activeFeatures = {
   heatmapActive: false,
   projectionAndMappingActive: false,
 }

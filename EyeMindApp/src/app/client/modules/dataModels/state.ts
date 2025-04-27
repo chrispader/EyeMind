@@ -29,6 +29,7 @@ interface State {
     expectedArtifact: string
     expectedExtensions: string[]
   }
+  models: Record<string, unknown>
 }
 
 interface StateStore {

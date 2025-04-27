@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import {
   dataMapped,
   processGazeData,
@@ -8,35 +8,59 @@ import {
   sendSnapshotID,
   setupTracking,
 } from '@/app/server/node/connectors/eye-tracker'
+import { IpcListenerParameters } from '@/listeners/types'
+import { IpcNamespace } from '@/listeners/types'
 
-export function eyeTrackerListeners(mainWindow) {
-  ipcMain.handle('setupTracking', function (e, args) {
-    return setupTracking(...args)
-  })
+type EyeTrackerListenerParameters<FunctionName extends keyof IpcNamespace<'eyeTracker'>> =
+  IpcListenerParameters<'eyeTracker', FunctionName>
 
-  ipcMain.handle('sendSnapshotID', function (e, args) {
-    return sendSnapshotID(...args)
-  })
+export function eyeTrackerListeners(mainWindow: BrowserWindow) {
+  ipcMain.handle(
+    'setupTracking',
+    function (_e, args: EyeTrackerListenerParameters<'setupTracking'>) {
+      return setupTracking(...args)
+    },
+  )
 
-  ipcMain.handle('sendFullSnapshot', function (e, args) {
-    return sendFullSnapshot(...args)
-  })
+  ipcMain.handle(
+    'sendSnapshotID',
+    function (_e, args: EyeTrackerListenerParameters<'sendSnapshotID'>) {
+      return sendSnapshotID(...args)
+    },
+  )
 
-  ipcMain.handle('sendQuestionEvent', function (e, args) {
-    return sendQuestionEvent(...args)
-  })
+  ipcMain.handle(
+    'sendFullSnapshot',
+    function (_e, args: EyeTrackerListenerParameters<'sendFullSnapshot'>) {
+      return sendFullSnapshot(...args)
+    },
+  )
 
-  ipcMain.handle('processGazeData', function (e, args) {
-    args.push(mainWindow)
-    return processGazeData(...args)
-  })
+  ipcMain.handle(
+    'sendQuestionEvent',
+    function (_e, args: EyeTrackerListenerParameters<'sendQuestionEvent'>) {
+      return sendQuestionEvent(...args)
+    },
+  )
 
-  ipcMain.handle('dataMapped', function (e, args) {
-    args.push(mainWindow)
-    return dataMapped(...args)
-  })
+  ipcMain.handle(
+    'processGazeData',
+    function (_e, args: EyeTrackerListenerParameters<'processGazeData'>) {
+      return processGazeData(...args, mainWindow)
+    },
+  )
 
-  ipcMain.handle('sendClickEvent', function (e, args) {
-    return sendClickEvent(...args)
-  })
+  ipcMain.handle(
+    'dataMapped',
+    function (_e, args: EyeTrackerListenerParameters<'dataMapped'>) {
+      return dataMapped(...args, mainWindow)
+    },
+  )
+
+  ipcMain.handle(
+    'sendClickEvent',
+    function (_e, args: EyeTrackerListenerParameters<'sendClickEvent'>) {
+      return sendClickEvent(...args)
+    },
+  )
 }

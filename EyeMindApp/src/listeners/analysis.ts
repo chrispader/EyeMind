@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import {
   applyCorrectionOffset,
   gazeDataFragmentMapped,
@@ -8,36 +8,60 @@ import {
   shouldEnableHeatmap,
   summerizedFixationLog,
 } from '@/app/server/node/analysis/analysis'
+import { IpcNamespace } from '@/listeners/types'
+import { IpcListenerParameters } from '@/listeners/types'
+
+type AnalysisListenerParameters<FunctionName extends keyof IpcNamespace<'analysis'>> =
+  IpcListenerParameters<'analysis', FunctionName>
 
 // check the return
-export function analysisListeners(mainWindow) {
-  ipcMain.handle('summerizedFixationLog', function (e, args) {
-    return summerizedFixationLog(...args)
-  })
+export function analysisListeners(mainWindow: BrowserWindow) {
+  ipcMain.handle(
+    'summerizedFixationLog',
+    function (_e, args: AnalysisListenerParameters<'summerizedFixationLog'>) {
+      return summerizedFixationLog(...args)
+    },
+  )
 
-  ipcMain.handle('generateHeatMap', function (e, args) {
-    return generateHeatMap(...args)
-  })
+  ipcMain.handle(
+    'generateHeatMap',
+    function (_e, args: AnalysisListenerParameters<'generateHeatMap'>) {
+      return generateHeatMap(...args)
+    },
+  )
 
-  ipcMain.handle('shouldEnableHeatmap', function (e, args) {
-    return shouldEnableHeatmap(...args)
-  })
+  ipcMain.handle(
+    'shouldEnableHeatmap',
+    function (_e, args: AnalysisListenerParameters<'shouldEnableHeatmap'>) {
+      return shouldEnableHeatmap(...args)
+    },
+  )
 
-  ipcMain.handle('getRandomGazeSet', function (e, args) {
-    return getRandomGazeSet(...args)
-  })
+  ipcMain.handle(
+    'getRandomGazeSet',
+    function (_e, args: AnalysisListenerParameters<'getRandomGazeSet'>) {
+      return getRandomGazeSet(...args)
+    },
+  )
 
-  ipcMain.handle('applyCorrectionOffset', function (e, args) {
-    args.push(mainWindow)
-    return applyCorrectionOffset(...args)
-  })
+  ipcMain.handle(
+    'applyCorrectionOffset',
+    function (_e, args: AnalysisListenerParameters<'applyCorrectionOffset'>) {
+      return applyCorrectionOffset(...args, mainWindow)
+    },
+  )
 
-  ipcMain.handle('gazeDataFragmentMapped', function (e, args) {
-    args.push(mainWindow)
-    return gazeDataFragmentMapped(...args)
-  })
+  ipcMain.handle(
+    'gazeDataFragmentMapped',
+    function (_e, args: AnalysisListenerParameters<'gazeDataFragmentMapped'>) {
+      return gazeDataFragmentMapped(...args, mainWindow)
+    },
+  )
 
-  ipcMain.handle('getStatesInfo', function () {
-    return getStatesInfo()
-  })
+  ipcMain.handle(
+    'getStatesInfo',
+    function (_e, args: AnalysisListenerParameters<'getStatesInfo'>) {
+      return getStatesInfo(...args)
+    },
+  )
 }

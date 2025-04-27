@@ -30,9 +30,9 @@ import {
   fixationFilterListeners,
   shutdownFixationFilterServer,
 } from '@/listeners/fixation-filter'
+import { testListeners } from '@/listeners/serverTests'
 import { sessionListeners } from '@/listeners/session'
 import { stateListeners } from '@/listeners/state'
-import { testListeners } from '@/listeners/test'
 import { windowListeners } from '@/listeners/window'
 
 app.whenReady().then(() => {

@@ -1,14 +1,25 @@
 import child from 'child_process'
 import detect from 'detect-port'
 import { app, ipcMain } from 'electron'
+import { BrowserWindow } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import kill from 'tree-kill'
 import { fixationFilter } from '@/app/server/node/connectors/fixation-filter'
 import { getLocalRpid, setLocalRpid } from '@/app/server/node/dataModels/processes'
 import { globalParameters } from '@/globals'
+import { IpcListenerParameters } from '@/listeners/types'
+import { IpcNamespace } from '@/listeners/types'
 
-export function fixationFilterListeners(mainWindow) {
+type PastConfig = {
+  childRProcessID: number
+}
+
+type FixationFilterListenerParameters<
+  FunctionName extends keyof IpcNamespace<'Rserver'>,
+> = IpcListenerParameters<'Rserver', FunctionName>
+
+export function fixationFilterListeners(mainWindow: BrowserWindow) {
   //console.log("fixationFilterListener function",arguments);
 
   ipcMain.once('startRserver', async function () {
@@ -19,11 +30,13 @@ export function fixationFilterListeners(mainWindow) {
 
     if (suggestedPort != globalParameters.R_PORT) {
       console.log('killing old running R instance')
-      const childRProcessID = JSON.parse(
+      const config = JSON.parse(
         fs.readFileSync(
           path.join(app.getAppPath(), globalParameters.LAST_CONFIG_FILE_PATH),
+          { encoding: 'utf-8' },
         ),
-      )['childRProcessID']
+      ) as PastConfig
+      const childRProcessID = config['childRProcessID']
       kill(childRProcessID)
     }
 
@@ -46,13 +59,16 @@ export function fixationFilterListeners(mainWindow) {
         globalParameters.R_PORT +
         ');',
     ])
-    childRProcess.stdout.on('data', (data) => {
+    childRProcess.stdout.on('data', (data: string) => {
       console.log(`stdout -:${data}`)
 
       // log RserverPid
       if (globalParameters.R_SERVER_PID_PRINT_PATTERN.test(data)) {
         logRserverPid(
-          globalParameters.R_SERVER_PID_PRINT_PATTERN.exec(data.toString())[1],
+          parseInt(
+            globalParameters.R_SERVER_PID_PRINT_PATTERN.exec(data.toString())?.[1] ??
+              '-1',
+          ),
         )
       }
     })
@@ -61,14 +77,16 @@ export function fixationFilterListeners(mainWindow) {
     })
   })
 
-  ipcMain.handle('fixationFilter', function (e, args) {
-    args.push(mainWindow)
-    return fixationFilter(...args)
-  })
+  ipcMain.handle(
+    'fixationFilter',
+    function (_e, args: FixationFilterListenerParameters<'fixationFilter'>) {
+      return fixationFilter(...args, mainWindow)
+    },
+  )
 }
 
-export function logRserverPid(childRProcessID) {
-  console.log('logRserverPid', arguments)
+export function logRserverPid(childRProcessID: number | undefined) {
+  console.log('logRserverPid', childRProcessID)
   // setLocalRpid
   setLocalRpid(childRProcessID)
   // save the childRProcessID into a file to termine the process if found already running when re-starting the app
@@ -80,7 +98,7 @@ export function logRserverPid(childRProcessID) {
 }
 
 export async function shutdownFixationFilterServer() {
-  console.log('shutdownFixationFilterServer function', arguments)
+  console.log('shutdownFixationFilterServer function')
 
   const childRProcessID = getLocalRpid()
 

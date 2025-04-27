@@ -1,6 +1,11 @@
 import { dialog, ipcMain } from 'electron'
+import { BrowserWindow } from 'electron'
+import { IpcListenerParameters, IpcNamespace } from '@/listeners/types'
 
-export function windowListeners(mainWindow) {
+type ElectronListenerParameters<FunctionName extends keyof IpcNamespace<'electron'>> =
+  IpcListenerParameters<'electron', FunctionName>
+
+export function windowListeners(mainWindow: BrowserWindow) {
   mainWindow.on('moved', function () {
     mainWindow.webContents.send('browserMovement')
   })
@@ -17,19 +22,13 @@ export function windowListeners(mainWindow) {
     mainWindow.setFullScreen(false)
   })
 
-  ipcMain.on('message', function (e, args) {
-    let options = null
-    if (args[0] == 'info') {
-      options = {
-        type: 'info',
-        message: args[1],
-      }
-    } else if (args[0] == 'error') {
-      options = {
-        type: 'error',
-        message: args[1],
-      }
-    }
-    dialog.showMessageBox(mainWindow, options)
-  })
+  ipcMain.on(
+    'message',
+    function (_e, [type, text]: ElectronListenerParameters<'message'>) {
+      dialog.showMessageBox(mainWindow, {
+        type: type as Electron.MessageBoxOptions['type'],
+        message: text,
+      })
+    },
+  )
 }

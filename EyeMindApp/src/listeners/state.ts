@@ -12,6 +12,10 @@ import {
   removeState,
   setAreGazesCorrectedOfState,
 } from '@/app/server/node/dataModels/state'
+import { IpcListenerParameters, IpcNamespace } from './types'
+
+type StateListenerParameters<FunctionName extends keyof IpcNamespace<'state'>> =
+  IpcListenerParameters<'state', FunctionName>
 
 // check the return
 export function stateListeners() {
@@ -19,21 +23,30 @@ export function stateListeners() {
     return await getState()
   })
 
-  ipcMain.handle('clearState', async function (e, args) {
+  ipcMain.handle('clearState', async function () {
     return await clearState()
   })
 
-  ipcMain.handle('getSnapshotsOfState', async function (e, args) {
-    return await getSnapshotsOfState(...args)
-  })
+  ipcMain.handle(
+    'getSnapshotsOfState',
+    async function (_e, args: StateListenerParameters<'getSnapshotsOfState'>) {
+      return await getSnapshotsOfState(...args)
+    },
+  )
 
-  ipcMain.handle('getStyleParametersOfState', async function (e, args) {
-    return await getStyleParametersOfState(...args)
-  })
+  ipcMain.handle(
+    'getStyleParametersOfState',
+    async function (_e, args: StateListenerParameters<'getStyleParametersOfState'>) {
+      return await getStyleParametersOfState(...args)
+    },
+  )
 
-  ipcMain.handle('setAreGazesCorrectedOfState', async function (e, args) {
-    return await setAreGazesCorrectedOfState(...args)
-  })
+  ipcMain.handle(
+    'setAreGazesCorrectedOfState',
+    async function (_e, args: StateListenerParameters<'setAreGazesCorrectedOfState'>) {
+      return await setAreGazesCorrectedOfState(...args)
+    },
+  )
 
   ipcMain.handle('getQuestions', async function () {
     return await getQuestions()
@@ -47,15 +60,24 @@ export function stateListeners() {
     return await clearStates()
   })
 
-  ipcMain.handle('removeState', async function () {
-    return await removeState()
-  })
+  ipcMain.handle(
+    'removeState',
+    async function (_e, args: StateListenerParameters<'removeState'>) {
+      return await removeState(...args)
+    },
+  )
 
-  ipcMain.handle('doesStateExist', async function (e, args) {
-    return await doesStateExist(...args)
-  })
+  ipcMain.handle(
+    'doesStateExist',
+    async function (_e, args: StateListenerParameters<'doesStateExist'>) {
+      return await doesStateExist(...args)
+    },
+  )
 
-  ipcMain.handle('areAreGazesCorrectedOfState', async function (e, args) {
-    return await areAreGazesCorrectedOfState(...args)
-  })
+  ipcMain.handle(
+    'areAreGazesCorrectedOfState',
+    async function (_e, args: StateListenerParameters<'areAreGazesCorrectedOfState'>) {
+      return await areAreGazesCorrectedOfState(...args)
+    },
+  )
 }

@@ -15,6 +15,12 @@ import { EyeTrackingLoadSessionPage } from '@/app/client/pages/config/eye-tracki
 import { EyeTrackingNewSessionImportPage } from '@/app/client/pages/config/eye-tracking/EyeTrackingNewSessionImportPage'
 import { EyeTrackingNewSessionPage } from '@/app/client/pages/config/eye-tracking/EyeTrackingNewSessionPage'
 import '@extra/object-diagram-modeler/starter/app/css/app.css'
+import { DownloadModal } from './components/DownloadModal'
+import { FixationSettingsModal } from './components/FixationSettingsModal'
+import { GazeProjectionModal } from './components/GazeProjectionModal'
+import { HeatmapSettingsModal } from './components/HeatmapSettingsModal'
+import { LoadedContentView } from './components/LoadedContentView'
+import { ProcessingStates } from './components/ProcessingStates'
 import { loadServerStateIntoClient } from './modules/dataModels/state'
 import { closeModalOutsideClickInteraction } from './modules/ui/shared-interactions'
 import {
@@ -76,6 +82,10 @@ export function App(): React.ReactElement {
             />
 
             <Route path={ROUTES.ANALYSIS} element={<AnalysisPage />} />
+            <Route path={ROUTES.FIXATION_SETTINGS} element={<FixationSettingsModal />} />
+            <Route path={ROUTES.HEATMAP_SETTINGS} element={<HeatmapSettingsModal />} />
+            <Route path={ROUTES.DOWNLOAD} element={<DownloadModal />} />
+            <Route path={ROUTES.GAZE_PROJECTION} element={<GazeProjectionModal />} />
           </Route>
         </Routes>
       </RouterComponent>

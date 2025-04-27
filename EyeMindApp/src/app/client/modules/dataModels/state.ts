@@ -19,26 +19,35 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
+import DataFrame from '@types/dataframe-js'
 import { create } from 'zustand'
+import { ModelFile } from '@/app/client/model/Files'
 
 interface State {
-  mode: string
-  importMode: string
-  linkingSubProcessesMode: string
-  temp: {
+  mode?: 'data-collection' | 'analysis'
+  importMode?: string
+  linkingSubProcessesMode?: string
+  temp?: {
     expectedArtifact: string
     expectedExtensions: string[]
   }
-  models: Record<string, unknown>
+  models?: Record<string, ModelFile | undefined>
+  processedGazeData?: Record<string, unknown>
+  questions?: DataFrame | Record<string, string>[]
+  styleParameters?: string
+  isEtOn?: boolean
+  snapshotsCounter?: number
+  activeTab?: string
+  processHierarchyExplorer?: { id: string; label: string }[] | null
 }
 
 interface StateStore {
-  state: State | null
-  setState: (newState: State | null) => void
+  state: State
+  setState: (newState: State) => void
 }
 
 const useStateStore = create<StateStore>((set) => ({
-  state: null,
+  state: {},
   setState: (newState) => set({ state: newState }),
 }))
 

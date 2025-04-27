@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
+import { containerClasses } from '@/app/client/css/styles'
 import { nFiles, shiftFile } from '@/app/client/modules/dataModels/filesBuffer'
 import { setFiles } from '@/app/client/modules/dataModels/filesBuffer'
 import { useStateStore } from '@/app/client/modules/dataModels/state'
@@ -72,7 +73,7 @@ function FileImport({
   })
 
   return (
-    <div className="import-view" id="import-view">
+    <div className={`${containerClasses} import-view`} id="import-view">
       <div className="import-box" id="import-box">
         <div
           className="upload-zone"

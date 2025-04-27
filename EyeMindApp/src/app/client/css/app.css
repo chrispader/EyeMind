@@ -672,6 +672,11 @@ process hierarchy within the tab container
   cursor: pointer;
 }
 
+.process-files-btn:disabled {
+  background-color: rgba(69, 160, 73, 0.5);
+  cursor: not-allowed;
+}
+
 .upload-zone .upload-text {
 
   top: 200px;
@@ -684,7 +689,7 @@ process hierarchy within the tab container
 }
 
 
-.upload-zone[drop-active=true] {
+.upload-zone-active {
   border: 4px dashed #5081bf;
   border-radius: 10px;
 }

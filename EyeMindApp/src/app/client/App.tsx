@@ -2,7 +2,7 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 import 'bpmn-js/dist/assets/bpmn-js.css'
 import 'bpmn-js/dist/assets/diagram-js.css'
 import { useEffect } from 'react'
-import { BrowserRouter, HashRouter, Route, Routes } from 'react-router'
+import { BrowserRouter, HashRouter, MemoryRouter, Route, Routes } from 'react-router'
 import { ROUTES } from '@/app/client/ROUTES'
 import '@/app/client/css/app.css'
 import '@/app/client/css/main.css'
@@ -27,7 +27,7 @@ import {
 
 const __DEV__ = true
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-const RouterComponent = __DEV__ ? HashRouter : BrowserRouter
+const RouterComponent = __DEV__ ? MemoryRouter : BrowserRouter
 
 async function initializeApp(): Promise<void> {
   try {

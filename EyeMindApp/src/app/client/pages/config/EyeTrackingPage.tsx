@@ -5,11 +5,10 @@ import { containerClasses } from '@/app/client/css/styles'
 import { useStateStore } from '@/app/client/modules/dataModels/state'
 
 export function EyeTrackingPage(): React.ReactElement {
-  const { state, setState } = useStateStore((state) => state)
+  const { setState } = useStateStore((state) => state)
 
   useEffect(() => {
-    // set state mode to data-collection
-    setState({ ...state, mode: 'data-collection' })
+    setState({ mode: 'data-collection' })
   }, [])
 
   return (

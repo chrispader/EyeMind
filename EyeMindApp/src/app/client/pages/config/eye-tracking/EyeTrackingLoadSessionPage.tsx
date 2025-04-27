@@ -5,13 +5,14 @@ import { useProcessFiles } from '@/app/client/hooks/useProcessFiles'
 import { useStateStore } from '@/app/client/modules/dataModels/state'
 
 export function EyeTrackingLoadSessionPage(): React.ReactElement {
-  const { state, setState } = useStateStore((state) => state)
+  const { setState } = useStateStore((state) => state)
   const processFiles = useProcessFiles()
 
   useEffect(() => {
-    setState({ ...state, importMode: 'single' })
-    setState({ ...state, temp: { ...state.temp, expectedArtifact: 'session' } })
-    setState({ ...state, temp: { ...state.temp, expectedExtensions: ['json'] } })
+    setState({
+      importMode: 'single',
+      temp: { expectedArtifact: 'session', expectedExtensions: ['json'] },
+    })
   }, [])
 
   return (

@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 import FileImport from '@/app/client/components/FileImport'
-import { useProcessFiles } from '@/app/client/hooks/useProcessFiles'
-import { useStateStore } from '@/app/client/modules/dataModels/state'
+import { containerClasses } from '@/app/client/css/styles'
+import { useStateStore } from '@/app/client/state/state'
 
 export function EyeTrackingNewSessionImportPage(): React.ReactElement {
   const { setState } = useStateStore((state) => state)
-  const processFiles = useProcessFiles()
 
+  // TODO: Remove once state is split up
   useEffect(() => {
     setState({
       importMode: 'multiple',
@@ -17,5 +17,14 @@ export function EyeTrackingNewSessionImportPage(): React.ReactElement {
     })
   }, [])
 
-  return <FileImport uploadLabel="Drop models files" onProcessFiles={processFiles} />
+  return (
+    <div className={containerClasses}>
+      <FileImport
+        importMode="multiple"
+        expectedArtifact="models"
+        expectedExtensions={['bpmn', 'odm']}
+        uploadLabel="Drop models files"
+      />
+    </div>
+  )
 }

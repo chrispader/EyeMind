@@ -1,10 +1,14 @@
 import { useCallback, useState } from 'react'
-import { traverseItem } from '@/app/client/components/FileImport/traverseItem'
-import { containerClasses } from '@/app/client/css/styles'
-import { nFiles, shiftFile } from '@/app/client/modules/dataModels/filesBuffer'
-import { setFiles } from '@/app/client/modules/dataModels/filesBuffer'
-import { useStateStore } from '@/app/client/modules/dataModels/state'
+import {
+  areModelsCorrectlyGrouped,
+  loadFile,
+} from '@/app/client/components/FileImport/loadFile'
+import { LoadFileConfig } from '@/app/client/components/FileImport/types'
+import { importQuestionsInteraction } from '@/app/client/modules/ui/data-collection'
 import { cancelDefault, errorAlert } from '@/app/client/modules/utils/utils'
+import { nFiles, shiftFile } from '@/app/client/state/filesBuffer'
+import { setFiles } from '@/app/client/state/filesBuffer'
+import { useStateStore } from '@/app/client/state/state'
 
 declare global {
   interface DataTransfer {
@@ -12,19 +16,19 @@ declare global {
   }
 }
 
-type FileImportProps = {
+type FileImportProps = LoadFileConfig & {
   uploadLabel: string
-  onProcessFiles?: () => void
 }
 
 function FileImport({
   uploadLabel,
-  onProcessFiles,
+  importMode = 'multiple',
+  expectedArtifact,
+  expectedExtensions,
 }: FileImportProps): React.ReactElement {
-  const { state } = useStateStore((state) => state)
-
   const [isActive, setIsActive] = useState(false)
   const [filesInternal, setFilesInternal] = useState<FileList | undefined>(undefined)
+  const { state } = useStateStore((state) => state)
 
   console.log({ filesInternal })
 
@@ -33,45 +37,68 @@ function FileImport({
 
     setIsActive(false)
 
+    const config: LoadFileConfig = {
+      importMode,
+      expectedArtifact,
+      expectedExtensions,
+    }
+
     // a hack to support the testing of a single file upload using the drag/drop feature as the testing library playwright have an issue with webkitGetAsEntry returning always null
     if (e.dataTransfer.isForTestingPurpose) {
-      traverseItem(e.dataTransfer.files[0])
+      loadFile(e.dataTransfer.files[0], config)
       return
     }
 
     cancelDefault(e)
 
-    // get dropped files
     const files = e.dataTransfer.files
-
     setFilesInternal(files)
     setFiles(files)
 
-    if (state.importMode == 'multiple') {
+    if (importMode == 'multiple') {
       console.log('multiple files import mode')
       console.log('files', files)
 
       // traverse first file item
-      await traverseItem(shiftFile())
-    } else if (state.importMode == 'single') {
-      console.log('single file import mode')
+      await loadFile(shiftFile(), config)
+      return
+    }
 
-      // ensure that you have only one single item
-      if (nFiles() == 1) {
-        // traverse the file item
-        await traverseItem(shiftFile())
-      }
-      // not a single item
-      else {
-        const msg = 'only a single file can be imported' // check third argument
-        console.error(msg)
-        errorAlert(msg)
-      }
+    console.log('single file import mode')
+
+    if (nFiles() == 1) {
+      await loadFile(shiftFile(), config)
+    } else {
+      const msg = 'only a single file can be imported' // check third argument
+      console.error(msg)
+      errorAlert(msg)
+    }
+  }, [])
+
+  const processFiles = useCallback(() => {
+    // check models grouping
+    const modelsCorrectlyGrouped = areModelsCorrectlyGrouped()
+    if (!modelsCorrectlyGrouped['success']) {
+      const msg = modelsCorrectlyGrouped['msg']
+      errorAlert(msg)
+      console.error(msg)
+      return false
+    }
+
+    // check if at least one model was imported
+    if (Object.keys(state.models ?? {}).length > 0) {
+      importQuestionsInteraction()
+      return true
+    } else {
+      const msg = 'No models to load'
+      errorAlert(msg)
+      console.error(msg)
+      return false
     }
   }, [])
 
   return (
-    <div className={`${containerClasses} import-view`} id="import-view">
+    <div className="import-view" id="import-view">
       <div className="import-box" id="import-box">
         <div
           className={`upload-zone ${isActive ? 'upload-zone-active' : ''}`}
@@ -95,7 +122,7 @@ function FileImport({
             className="process-files-btn"
             id="process-files"
             disabled={(filesInternal?.length ?? 0) == 0}
-            onClick={onProcessFiles}>
+            onClick={processFiles}>
             Load files
           </button>
         </div>

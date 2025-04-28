@@ -1,13 +1,12 @@
 import { useEffect } from 'react'
 import FileImport from '@/app/client/components/FileImport'
 import { containerClasses } from '@/app/client/css/styles'
-import { useProcessFiles } from '@/app/client/hooks/useProcessFiles'
-import { useStateStore } from '@/app/client/modules/dataModels/state'
+import { useStateStore } from '@/app/client/state/state'
 
 export function EyeTrackingLoadSessionPage(): React.ReactElement {
   const { setState } = useStateStore((state) => state)
-  const processFiles = useProcessFiles()
 
+  // TODO: Remove once state is split up
   useEffect(() => {
     setState({
       importMode: 'single',
@@ -17,7 +16,12 @@ export function EyeTrackingLoadSessionPage(): React.ReactElement {
 
   return (
     <div className={containerClasses}>
-      <FileImport uploadLabel="Drop a session file" onProcessFiles={processFiles} />
+      <FileImport
+        importMode="single"
+        expectedArtifact="session"
+        expectedExtensions={['json']}
+        uploadLabel="Drop a session file"
+      />
     </div>
   )
 }

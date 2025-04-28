@@ -1,14 +1,8 @@
-import { useCallback, useState } from 'react'
-import {
-  areModelsCorrectlyGrouped,
-  loadFile,
-} from '@/app/client/components/FileImport/loadFile'
+import { useCallback, useMemo, useState } from 'react'
+import { loadFiles } from '@/app/client/components/FileImport/loadFile'
 import { LoadFileConfig } from '@/app/client/components/FileImport/types'
 import { containerClasses } from '@/app/client/css/styles'
-import { cancelDefault, errorAlert } from '@/app/client/modules/utils/utils'
-import { nFiles, shiftFile } from '@/app/client/state/filesBuffer'
-import { setFiles } from '@/app/client/state/filesBuffer'
-import { useStateStore } from '@/app/client/state/state'
+import { cancelDefault } from '@/app/client/modules/utils/utils'
 
 declare global {
   interface DataTransfer {
@@ -18,7 +12,10 @@ declare global {
 
 type FileImportProps = LoadFileConfig & {
   uploadLabel: string
-  onFilesLoaded?: () => void
+  onLoad: () => void
+  onDrop: (files: File[], config: LoadFileConfig) => void
+  onRemove?: (file: File) => void
+  renderItemContent?: (item: File) => React.ReactElement
 }
 
 function FileImport({
@@ -27,13 +24,25 @@ function FileImport({
   importMode = 'multiple',
   expectedArtifact,
   expectedExtensions,
-  onFilesLoaded,
+  onLoad,
+  renderItemContent,
+  onRemove,
+  onDrop,
 }: FileImportProps): React.ReactElement {
   const [isActive, setIsActive] = useState(false)
-  const [filesInternal, setFilesInternal] = useState<FileList | undefined>(undefined)
-  const { models } = useStateStore()
+  const [files, setFiles] = useState<File[]>([])
 
-  console.log({ filesInternal })
+  const config: LoadFileConfig = useMemo(
+    () => ({
+      mode,
+      importMode,
+      expectedArtifact,
+      expectedExtensions,
+    }),
+    [mode, importMode, expectedArtifact, expectedExtensions],
+  )
+
+  const shouldHoldItems = renderItemContent != null && onRemove != null
 
   const handleDroppedFiles = useCallback(
     async (e: React.DragEvent<HTMLDivElement>) => {
@@ -41,68 +50,22 @@ function FileImport({
 
       setIsActive(false)
 
-      const config: LoadFileConfig = {
-        mode,
-        importMode,
-        expectedArtifact,
-        expectedExtensions,
-      }
-
       // a hack to support the testing of a single file upload using the drag/drop feature as the testing library playwright have an issue with webkitGetAsEntry returning always null
       if (e.dataTransfer.isForTestingPurpose) {
-        loadFile(e.dataTransfer.files[0], config)
+        loadFiles([e.dataTransfer.files[0]!], config)
         return
       }
 
       cancelDefault(e)
 
       const files = e.dataTransfer.files
-      setFilesInternal(files)
-      setFiles(files)
+      const filesArray = Array.from(files)
+      setFiles(filesArray)
 
-      if (importMode == 'multiple') {
-        console.log('multiple files import mode')
-        console.log('files', files)
-
-        // traverse first file item
-        await loadFile(shiftFile(), config)
-        return
-      }
-
-      console.log('single file import mode')
-
-      if (nFiles() == 1) {
-        await loadFile(shiftFile(), config)
-      } else {
-        const msg = 'only a single file can be imported' // check third argument
-        console.error(msg)
-        errorAlert(msg)
-      }
+      onDrop(filesArray, config)
     },
-    [expectedArtifact, expectedExtensions, importMode, mode],
+    [config, onDrop],
   )
-
-  const processFiles = useCallback(() => {
-    // check models grouping
-    const modelsCorrectlyGrouped = areModelsCorrectlyGrouped()
-    if (!modelsCorrectlyGrouped['success']) {
-      const msg = modelsCorrectlyGrouped['msg']
-      errorAlert(msg)
-      console.error(msg)
-      return false
-    }
-
-    // check if at least one model was imported
-    if (Object.keys(models ?? {}).length > 0) {
-      onFilesLoaded?.()
-      return true
-    } else {
-      const msg = 'No models to load'
-      errorAlert(msg)
-      console.error(msg)
-      return false
-    }
-  }, [models, onFilesLoaded])
 
   return (
     <div className={`${containerClasses} import-view`} id="import-view">
@@ -122,14 +85,33 @@ function FileImport({
           <span id="upload-label" className="upload-label">
             {uploadLabel}
           </span>
-          <div className="file-list" id="file-list"></div>
+          {shouldHoldItems && (
+            <div className="file-list" id="file-list">
+              {files.map((file) => (
+                <div id={`fileinfo-${file.id}`} className="row" key={file.id}>
+                  {renderItemContent(file)}
+                  <div className="column">
+                    <button
+                      className="remove-btn"
+                      id={`remove-${file.id}`}
+                      onClick={() => {
+                        onRemove(file)
+                        setFiles(files.filter((f) => f.id !== file.id))
+                      }}>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div className="process-files-btn-container">
           <button
             className="process-files-btn"
             id="process-files"
-            disabled={(filesInternal?.length ?? 0) == 0}
-            onClick={processFiles}>
+            disabled={files.length == 0}
+            onClick={onLoad}>
             Load files
           </button>
         </div>

@@ -22,10 +22,8 @@ SOFTWARE.*/
 /*  Files setup   */
 import BpmnModeler from 'bpmn-js/lib/Modeler'
 import BpmnNavigatedViewer from 'bpmn-js/lib/NavigatedViewer'
-import { nFiles, shiftFile } from '@/app/client/state/filesBuffer'
 import { addModel } from '@/app/client/state/generalModelsRegistry'
 import { useStateStore } from '@/app/client/state/state'
-import { hideElement } from '@/app/client/modules/utils/dom'
 import {
   cancelDefault,
   errorAlert,
@@ -59,111 +57,78 @@ const modelers = {
   OdmNavigatedViewer: OdmNavigatedViewer,
 }
 
-export async function loadFile(file: File | undefined, config: LoadFileConfig) {
-  if (file == null) {
-    return
+export async function loadFiles(files: File[], config: LoadFileConfig) {
+  for (const file of files) {
+    await loadFile(file, config)
   }
+}
 
+function loadFile(file: File, config: LoadFileConfig): Promise<void> {
   // apply a different processing to the file depending on whether it is a model for data collection or a json file for the analysis
-  // data-collection mode
-  if (config.mode == 'data-collection') {
-    // readFileContent then traverseDataCollectionFile and traverseMoreItems
-    readFileContent(file, async (content: string) => {
-      await loadDataCollectionFile(file, content, config)
-      await loadMoreFiles(config)
-    })
+   // data-collection mode
+   if (config.mode == 'data-collection') {
+     return new Promise((resolve, reject) => {
+       try {
+         // readFileContent then traverseDataCollectionFile and traverseMoreItems
+         readFileContent(file, async (content: string) => {
+           await loadDataCollectionFile(file, content, config)
+           resolve()
+         })
+       } catch (error) {
+         reject(error)
+       }
+     })
+   }
 
-    return
-  }
+   // traverseAnalysisFile (traverseMoreItems is in the callback in window.utils.onStateRead (or in traverseAnalysisFile() if the file already exists))
+   return loadAnalysisFile(file, config)
+ }
 
-  // traverseAnalysisFile (traverseMoreItems is in the callback in window.utils.onStateRead (or in traverseAnalysisFile() if the file already exists))
-  await loadAnalysisFile(file, config)
-}
-
-async function loadMoreFiles(config: LoadFileConfig) {
-  if (nFiles() > 0) {
-    // traverse first file
-    await loadFile(shiftFile(), config)
-  } else {
-    await hideGeneralWaitingScreen()
-  }
-}
-
-/**
- * Title: traverse analysis file
- *
- * Description: differ the execution depending on whether the item refers to a data-collection file or an analysis file
- *
- * Control-flow summary: get state, get file extentsion, check if the file has the expected extension and artifact for the analysis mode, if so, call window.utils.readState(file.path,state) to read the state within the file in the server side,
-                      then call stateReadListener() to listen to an event incoming from the server side when the models are read
- *
- * @param {object} file file
- *
- * Returns {void}
- *
-*
- * Additional notes: none
- *
- */
 async function loadAnalysisFile(file: File, config: LoadFileConfig) {
-  const {setState: _setState, ...state} = useStateStore.getState()
+    const {setState: _setState, ...state} = useStateStore.getState()
 
-  const fileName = file.name
-  const fileExtension = fileName.split('.').pop() ?? ''
+    const fileName = file.name
+    const fileExtension = fileName.split('.').pop() ?? ''
 
-  let filePath = file.path
+    let filePath = file.path
 
-  // move to next file if the file state already exists
-  if (await window.state.doesStateExist(filePath)) {
-    const msg = 'analysis file already exists'
-    errorAlert(msg)
-    console.error(msg)
-    await loadMoreFiles(config)
-    return
-  }
+    // move to next file if the file state already exists
+    if (await window.state.doesStateExist(filePath)) {
+      const msg = 'analysis file already exists'
+      errorAlert(msg)
+      console.error(msg)
+      return
+    }
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////// might need updates
-  // a hack to support the testing of a single file upload using the drag/drop feature
-  if (file.isForTestingPurpose) {
-    filePath = file.localFilePath
-  }
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////// might need updates
+    // a hack to support the testing of a single file upload using the drag/drop feature
+    if (file.isForTestingPurpose) {
+      filePath = file.localFilePath
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // check if the file has the expected extension and artifact for the analysis mode
-  if (
-    config.expectedExtensions?.includes(fileExtension) &&
-    config.expectedArtifact == 'analysis'
-  ) {
-    await showGeneralWaitingScreen(
-      'Loading ' +
-        fileName +
-        '... <br><br> This step can take several minutes depending on the size of the file',
-    )
+    // check if the file has the expected extension and artifact for the analysis mode
+    if (
+      config.expectedExtensions?.includes(fileExtension) &&
+      config.expectedArtifact == 'analysis'
+    ) {
+      await showGeneralWaitingScreen(
+        'Loading ' +
+          fileName +
+          '... <br><br> This step can take several minutes depending on the size of the file',
+      )
 
-    window.utils.readState(file, fileName, filePath, state, config)
+      window.utils.readState(file, fileName, filePath, state, config)
 
-    stateReadListener()
-  } else {
+      await stateReadListener()
+      return
+    }
+
     const msg = 'unkown analysis file'
     errorAlert(msg)
-  }
 }
 
-/**
- * Title: traverse data collection file
- *
- * Description: differ the execution depending on whether the item refers to a data-collection file or an analysis file
- *
- * Control-flow summary: get state, get file extension, apply different processing depending on the file extension and expected artifact
- *
- * @param {object} file file
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
+
 async function loadDataCollectionFile(file: File, content: string, config: LoadFileConfig) {
   const fileName = file.name
   const fileExtension = fileName.split('.').pop() ?? ''
@@ -180,13 +145,12 @@ async function loadDataCollectionFile(file: File, content: string, config: LoadF
   }
 
   if (isModelsFile) {
-    await loadModelFile(fileName, content, config)
+    loadModelFile(fileName, content)
     return
   }
 
   if (isQuestionsFile) {
-    if (await loadQuestions(file) /* load questions file */) {
-      // last step of file import
+    if (await loadQuestions(file)) {
       const filePropertiesDefined = false
       prepareDataCollectionContent(filePropertiesDefined)
     }
@@ -227,130 +191,50 @@ async function loadSessionFile(file: File, config: LoadFileConfig) {
   sessionReadListener()
 }
 
-/**
- * Title: traverse models file
- *
- * Description:
- *
- * Control-flow summary:
-
- * @param {string} fileName  name of the file
- * @param {string} content file content
- * @param {string} path (optional) file path within a directory
- *
- * Returns {void}
- *
-*
- * Additional notes: none
- *
- */
-async function loadModelFile(fileName: string, content: string, config: LoadFileConfig, path = '') {
-  const {setState, ...state} = useStateStore.getState()
-
-  const fileId = fileName.replace(
+export function getModelIdFromFileName(fileName: string) {
+  return fileName.replace(
     new RegExp(CONST.MODELS_ID_REGEX, 'g'),
     '',
   )
+}
+
+function loadModelFile(fileName: string, content: string, path = '') {
+  const {models, setState} = useStateStore.getState()
+
+  const fileId = getModelIdFromFileName(fileName)
 
   // if the file has not been already added to the processing buffer
-  if (!state.models?.hasOwnProperty(fileId)) {
+  if (models?.[fileId] == null) {
     // create file object
     const file: ModelFile = { id: fileId, fileName: fileName, path: path, xml: content }
 
     setState({
       models: {
-        ...state.models,
+        ...models,
         [fileId]: file,
       },
     })
 
-    try {
-      // process model
-      await processModel(config, file.xml, file.id, file.fileName, file.path)
-      // create file info menu
-      createModelFileInfoBlock(file)
-    } catch (error) {
-      // something wrong happened with the opening of the diagram
-      removeModelFile(file)
-      console.error(file.fileName + ' is invalid')
-      errorAlert(file.fileName + ' is invalid')
-    }
+    hideGeneralWaitingScreen()
+
+    return
+
+    // try {
+    //   // process model
+    //   // await processModel(config, file.xml, file.id, file.fileName, file.path)
+    //   // create file info menu
+    //   // createModelFileInfoBlock(file)
+    // } catch (error) {
+    //   // something wrong happened with the opening of the diagram
+    //   removeModelFile(file)
+    //   console.error(file.fileName + ' is invalid')
+    //   errorAlert(file.fileName + ' is invalid')
+    // }
   }
-  // if not give an alert and log error
-  else {
-    const msg = fileName + ' (id: ' + fileId + ') is already added'
-    errorAlert(msg)
-    console.error(msg)
-  }
-}
 
-/**
- * Title: create model file info block
- *
- * Description: creating a file info block with information and setting options about the imported model file
- *
- * Control-flow summary: create fileInfo block about the imported model,  hide upload label, fill in the file info block with filename, a radio-box allowing to set the file as a main model and a checkbox allowing to set the tab refering to the model as unclosabled. Then, allow to remove the file
-
- * @param {object} file file with the following attributes {"id", "fileName" ,"path", "xml"}
- *
- * Returns {void}
- *
-*
- * Additional notes: none
- *
- */
-function createModelFileInfoBlock(file: ModelFile) {
-  const state = useStateStore.getState()
-
-  /// create fileInfo block about the imported model
-  const fileInfo = document.createElement('div')
-  fileInfo.setAttribute('id', 'fileinfo-' + file.id)
-  fileInfo.setAttribute('class', 'row')
-
-  // hide upload label
-  // hideElement('upload-label')
-
-  // fill in the file info block
-  const defaultChecked = state.models?.[file.id]?.isMain ? 'checked' : ''
-  fileInfo.innerHTML =
-    // file name
-    '<div class="column file-info">' +
-    file.fileName +
-    '</div>' +
-    // add a check (i.e., set-as-main-'+file.id+') and select it if the file refers to the main model
-    '<div class="column"><input type="checkbox" class="set-as-main" id="set-as-main-' +
-    file.id +
-    '" name="set-as-main" modelId="' +
-    file.id +
-    '" ' +
-    defaultChecked +
-    '/>Set as main</div>' +
-    // add a checkbox (i.e., unclosable-tab-'+file.id+') and check it if the file refers to the main model
-    '<div class="column"><input class="unclosable-tab" id="unclosable-tab-' +
-    file.id +
-    '" modelId="' +
-    file.id +
-    '" type="checkbox" ' +
-    defaultChecked +
-    '/>Unclosable Tab</div>' +
-    // add textfield to group models belonging to the same process
-    '<div class="column">Group: <input class="group-assignement" modelId="' +
-    file.id +
-    '" type="text" size="2" name="group-assignement-for-file-' +
-    file.id +
-    '" id="group-assignement-for-file-' +
-    file.id +
-    '" value="1"></div>' +
-    // add a button allowing to remove the file
-    '<div class="column"><button class="remove-btn" id="remove-' +
-    file.id +
-    '"">Remove</button></div>'
-  /// add a click event listener call the function to remove the file
-
-  /// add the file info block to the file-list
-  document.getElementById('file-list')?.appendChild(fileInfo)
-
-  document.getElementById('remove-' + file.id)?.addEventListener('click', () => removeModelFile(file))
+  const msg = fileName + ' (id: ' + fileId + ') is already added'
+  errorAlert(msg)
+  console.error(msg)
 }
 
 /**
@@ -454,20 +338,15 @@ async function removeAnalysisFile(file) {
  */
 
 function stateReadListener() {
-  console.log('stateReadListener', arguments)
+  return new Promise<void>(async (resolve) => {
+    window.utils.onStateRead(async function (args) {
+      const res = args[0]
+      const file = { name: args[1], path: args[2] }
+      createAnalysisFileInfoBlock(file)
 
-  window.utils.onStateRead(async function (args) {
-    console.log('onStateRead', arguments)
-
-    const res = args[0]
-
-    const file = { name: args[1], path: args[2] }
-
-    createAnalysisFileInfoBlock(file)
-
-    await stateRead(res)
-
-    await loadMoreFiles()
+      await stateRead(res)
+      resolve()
+    })
   })
 }
 
@@ -538,7 +417,7 @@ async function stateRead(res) {
     errorAlert(res.msg)
   }
 
-  await hideGeneralWaitingScreen('all-content', 'wait')
+  await hideGeneralWaitingScreen()
 }
 
 /**
@@ -1096,20 +975,18 @@ function isFileLoaded(fileName: string, fileId: string) {
  *
  */
 function assignModelsToGroups() {
-  console.log('assignModelsToGroups', arguments)
-
-  const { state ,setState } = useStateStore.getState()
+  const { models, setState } = useStateStore.getState()
 
   const groupAssignementList = document.getElementsByClassName('group-assignement') as HTMLCollectionOf<HTMLInputElement>
 
   for (let i = 0; i < groupAssignementList.length; i++) {
     const modelId = groupAssignementList[i]?.getAttribute('modelId') ?? ''
     const groupId = groupAssignementList[i]?.value
-    const model = state.models === undefined ? undefined : state.models[modelId]
+    const model = models === undefined ? undefined : models[modelId]
 
     setState({
       models: {
-        ...state.models,
+        ...models,
         [modelId]: {
           ...model,
           groupId,
@@ -1117,120 +994,6 @@ function assignModelsToGroups() {
       },
     })
   }
-}
-
-/**
- * Title: check if the models are correctly grouped
- *
- * Description: check if the imported models are correctly grouped
- *
- *
- * @param {void} .  .
- *
- * Returns {object} res object with boolean and string, refering to whether the models are correctly grouped and if no, the string contains the error message
- *
- *
- * Additional notes: none
- *
- */
-function areModelsCorrectlyGrouped() {
-  const res = { msg: '', success: true }
-
-  // check that all models have a group id
-  if (!areAllModelsAssignedToGroupId()) {
-    res.msg = 'Some models are missing a group Id.'
-    res.success = false
-    return res
-  }
-
-  // check that each group has only one main model
-  if (!doEachGroupHasOnlyOneMainModel()) {
-    res.msg += 'Each group should have one main model.'
-    res.success = false
-    return res
-  }
-
-  return res
-}
-
-/**
- * Title: are all models assigned to a group id
- *
- * Description: check that all models have a group id
- *
- *
- * @param {void} .  .
- *
- * Returns {boolean} whether or not all models have a group id
- *
- *
- * Additional notes: none
- *
- */
-function areAllModelsAssignedToGroupId() {
-  console.log('areAllModelsAssignedToGroupId', arguments)
-
-  const groupAssignementList = document.getElementsByClassName('group-assignement')
-
-  for (let i = 0; i < groupAssignementList.length; i++) {
-    if (groupAssignementList[i].value == '') {
-      return false
-    }
-  }
-
-  return true
-}
-
-/**
- * Title: check that each group has only one main model
- *
- * Description: check that each group has only one main model
- *
- *
- * @param {void} .  .
- *
- * Returns {boolean} whether or not check that each group has only one main model
- *
- *
- * Additional notes: none
- *
- */
-function doEachGroupHasOnlyOneMainModel() {
-  console.log('doEachGroupHasOnlyOneMainModel', arguments)
-
-  // will contain group ids and number of main models
-  const groupsAndMains = {}
-
-  const groupAssignementList = document.getElementsByClassName('group-assignement')
-
-  for (let i = 0; i < groupAssignementList.length; i++) {
-    // model id
-    const modelId = groupAssignementList[i].getAttribute('modelId')
-
-    // if groupId is not already in groupsAndMains then add it and set the number of main models to 0
-    const groupId = groupAssignementList[i].value
-    if (!groupsAndMains.hasOwnProperty(groupId)) {
-      groupsAndMains[groupId] = 0
-    }
-
-    // is model checked as main
-    const idModelCheckedAsMain = document.getElementById('set-as-main-' + modelId).checked
-
-    // if model is checked as main then increment the count of main models in groupsAndMains
-    if (idModelCheckedAsMain) {
-      groupsAndMains[groupId] = groupsAndMains[groupId] + 1
-    }
-  }
-
-  /// iterate over groupsAndMains values (i.e., nMainModels), if a value is larger is different then 1 return false
-  for (const nMainModels of Object.values(groupsAndMains)) {
-    if (nMainModels != 1) {
-      return false
-    }
-  }
-
-  // all is good return true
-  return true
 }
 
 /**
@@ -1285,5 +1048,4 @@ export {
   registerFileUpload,
   createModel,
   assignModelsToGroups,
-  areModelsCorrectlyGrouped,
 }

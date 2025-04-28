@@ -87,8 +87,8 @@ function FileImport({
           </span>
           {shouldHoldItems && (
             <div className="file-list" id="file-list">
-              {files.map((file) => (
-                <div id={`fileinfo-${file.id}`} className="row" key={file.id}>
+              {files.map((file, index) => (
+                <div id={`fileinfo-${file.id}`} className="row" key={index}>
                   {renderItemContent(file)}
                   <div className="column">
                     <button

@@ -63,8 +63,6 @@ export function App(): React.ReactElement {
     initializeApp()
   }, [])
 
-  console.log({ state })
-
   return (
     <>
       <RouterComponent>
@@ -79,6 +77,10 @@ export function App(): React.ReactElement {
             <Route
               path={ROUTES.EYE_TRACKING_NEW_SESSION_IMPORT}
               element={<EyeTrackingNewSessionImportPage />}
+            />
+            <Route
+              path={ROUTES.EYE_TRACKING_LOAD_QUESTIONS}
+              element={<EyeTrackingLoadQuestionsPage />}
             />
             <Route
               path={ROUTES.EYE_TRACKING_LOAD_SESSION}

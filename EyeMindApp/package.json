@@ -60,6 +60,7 @@
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-import": "^2.25.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^7.2.13",
     "node-loader": "^2.0.0",

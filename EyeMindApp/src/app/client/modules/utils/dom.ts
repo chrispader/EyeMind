@@ -73,28 +73,6 @@ function updateTextAndDisplayDomElement(domElementId, text, domElementDisplayMod
 }
 
 /**
- * Title: hide dom element
- *
- * Description: hide dom element
- *
- * Control-flow summary:  hide dom element
- *
- * @param {string} domElementId  the id of the dom element to hide
- *
- * Returns {void}
- *
- * Tests: none
- *
- * Additional notes: none
- *
- */
-function hideElement(domElementId) {
-  console.log('hideElement', arguments)
-
-  document.getElementById(domElementId).style.display = 'none'
-}
-
-/**
  * Title: display dom element
  *
  * Description: display dom element

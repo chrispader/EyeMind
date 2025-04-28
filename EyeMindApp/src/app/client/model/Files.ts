@@ -1,5 +1,5 @@
 export type ModelFile = {
-  id?: string
+  id: string
   fileName?: string
   path?: string
   xml?: string

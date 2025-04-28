@@ -25,7 +25,7 @@ import { ModelFile } from '@/app/client/model/Files'
 
 interface State {
   mode?: 'data-collection' | 'analysis'
-  importMode?: string
+  importMode?: 'single' | 'multiple'
   linkingSubProcessesMode?: string
   temp?: {
     expectedArtifact: string

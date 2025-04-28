@@ -21,8 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /* Questions */
 import DataFrame from 'dataframe-js'
-import { getState } from '@/app/client/modules/dataModels/state'
 import { errorAlert } from '@/app/client/modules/utils/utils'
+import { useStateStore } from '@/app/client/state/state'
 import { resetNavTabsAndTabs } from './canvas'
 import { showModelsGroup } from './canvas'
 import { sendClickEvent } from './click-stream'

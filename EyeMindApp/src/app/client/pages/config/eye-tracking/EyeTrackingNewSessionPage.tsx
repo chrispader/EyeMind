@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { useNavigate } from 'react-router'
 import { ROUTES } from '@/app/client/ROUTES'
 import { containerClasses } from '@/app/client/css/styles'
-import { useStateStore } from '@/app/client/modules/dataModels/state'
+import { useStateStore } from '@/app/client/state/state'
 
 export function EyeTrackingNewSessionPage(): React.ReactElement {
   const state = useStateStore((state) => state.state)

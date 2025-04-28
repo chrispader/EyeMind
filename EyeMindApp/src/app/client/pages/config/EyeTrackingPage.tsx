@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { ROUTES } from '@/app/client/ROUTES'
 import ConfigLinkButton from '@/app/client/components/ConfigLinkButton'
 import { containerClasses } from '@/app/client/css/styles'
-import { useStateStore } from '@/app/client/modules/dataModels/state'
+import { useStateStore } from '@/app/client/state/state'
 
 export function EyeTrackingPage(): React.ReactElement {
   const { setState } = useStateStore((state) => state)

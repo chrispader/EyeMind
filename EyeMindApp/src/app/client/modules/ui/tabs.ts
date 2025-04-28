@@ -19,8 +19,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-import { getState } from '@/app/client/modules/dataModels/state'
 import { cancelDefault } from '@/app/client/modules/utils/utils'
+import { getState, useStateStore } from '@/app/client/state/state'
 //import {registerClickEventForLogging} from './click-stream'
 import { resetModel } from './canvas'
 import { sendClickEvent } from './click-stream'

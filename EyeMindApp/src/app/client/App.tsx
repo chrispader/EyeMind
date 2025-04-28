@@ -21,7 +21,6 @@ import { GazeProjectionModal } from './components/GazeProjectionModal'
 import { HeatmapSettingsModal } from './components/HeatmapSettingsModal'
 import { LoadedContentView } from './components/LoadedContentView'
 import { ProcessingStates } from './components/ProcessingStates'
-import { loadServerStateIntoClient } from './modules/dataModels/state'
 import { closeModalOutsideClickInteraction } from './modules/ui/shared-interactions'
 import {
   DisableCriticalKeys,
@@ -30,6 +29,7 @@ import {
   takeSnapshotOnWindowResize,
   testListeners,
 } from './modules/ui/window-events'
+import { loadServerStateIntoClient } from './state/state'
 
 const __DEV__ = true
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

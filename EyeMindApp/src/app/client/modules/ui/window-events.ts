@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /* Window Events */
-import { getState } from '@/app/client/modules/dataModels/state'
+import { getState } from '@/app/client/state/state'
 import { resetModel, resetNavTabsAndTabs } from './canvas'
 import { takesnapshot } from './data-collection'
 import { openMainTab } from './tabs'

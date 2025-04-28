@@ -24,7 +24,7 @@ import {
   setheatmapActive,
 } from '@/app/client/modules/dataModels/activeFeatures'
 import { getGeneralModelsRegistry } from '@/app/client/modules/dataModels/generalModelsRegistry'
-import { getState } from '@/app/client/modules/dataModels/state'
+import { getState, useStateStore } from '@/app/client/state/state'
 import {
   displayElement,
   getSelectValues,

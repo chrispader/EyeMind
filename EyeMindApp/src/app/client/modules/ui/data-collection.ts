@@ -20,7 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /*  data-collection with the support of eye-tracking   */
-import { getState } from '@/app/client/modules/dataModels/state'
 import {
   hideChildElements,
   moveFromTo,
@@ -28,6 +27,7 @@ import {
 } from '@/app/client/modules/utils/dom'
 import { errorAlert, infoAlert } from '@/app/client/modules/utils/utils'
 import { assignModelsToGroups } from './files-setup'
+import { getState, useStateStore } from '@/app/client/state/state'
 import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
 import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'
 import { updateProcessMessageListener } from './progress'

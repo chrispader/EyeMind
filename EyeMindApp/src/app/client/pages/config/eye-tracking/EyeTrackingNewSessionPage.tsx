@@ -5,14 +5,17 @@ import { containerClasses } from '@/app/client/css/styles'
 import { useStateStore } from '@/app/client/state/state'
 
 export function EyeTrackingNewSessionPage(): React.ReactElement {
-  const state = useStateStore((state) => state.state)
+  const { setState } = useStateStore()
   const navigate = useNavigate()
 
   const handleProceedDataCollectionSettings = useCallback(() => {
     // set linkingSubProcessesMode
     const linkingSubProcessesSelect = document.getElementById('linking-sub-processes')
-    state.linkingSubProcessesMode =
-      linkingSubProcessesSelect.options[linkingSubProcessesSelect.selectedIndex].value
+
+    setState({
+      linkingSubProcessesMode:
+        linkingSubProcessesSelect.options[linkingSubProcessesSelect.selectedIndex].value,
+    })
 
     navigate(ROUTES.EYE_TRACKING_NEW_SESSION_IMPORT)
   }, [])

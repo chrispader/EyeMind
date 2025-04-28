@@ -19,8 +19,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-import { getState, useStateStore } from '@/app/client/state/state'
 import { globalParameters } from '@/globals'
+import { useStateStore } from '@/app/client/state/state'
 import { takesnapshot } from './data-collection'
 import { resetProcessHierarchy } from './process-hierarchy-explorer'
 import { closeTabInteraction, openMainTab } from './tabs'
@@ -90,10 +90,7 @@ function resetNavTabsAndTabs(modelsGroupId?: string) {
       for (let i = 0; i < navTabs.length; ++i) {
         const tabHeader = navTabs[i]
         const fileName = tabHeader?.getAttribute('file')
-        const fileId = fileName?.replace(
-          new RegExp(globalParameters.MODELS_ID_REGEX, 'g'),
-          '',
-        )
+        const fileId = fileName?.replace(new RegExp(CONST.MODELS_ID_REGEX, 'g'), '')
 
         // close tab
         closeTabInteraction(fileId, tabHeader, false)

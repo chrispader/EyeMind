@@ -1,17 +1,20 @@
+import { ClientState } from '@/app/client/state/state'
+
 /* inits */
-let state = {
+let state: ClientState = {
   snapshotsCounter: 0,
-  activeTab: null,
+  activeTab: undefined,
   processedGazeData: {},
   isEtOn: false,
   models: {},
-  mode: null,
-  temp: {},
-  linkingSubProcessesMode: null,
-  questions: null,
+  mode: undefined,
+  temp: undefined,
+  linkingSubProcessesMode: undefined,
+  questions: undefined,
+  snapshots: {},
 }
 
-let states = {}
+let states: Record<string, ClientState> = {}
 
 /* data collection */
 
@@ -19,21 +22,22 @@ export function getState() {
   return state
 }
 
-export function setState(newState) {
+export function setState(newState: ClientState) {
   state = newState
 }
 
 export function clearState() {
   state = {
     snapshotsCounter: 0,
-    activeTab: null,
+    activeTab: undefined,
     processedGazeData: {},
     isEtOn: false,
     models: {},
-    mode: null,
-    temp: {},
-    linkingSubProcessesMode: null,
-    questions: null,
+    mode: undefined,
+    temp: { expectedArtifact: '', expectedExtensions: [] },
+    linkingSubProcessesMode: undefined,
+    questions: undefined,
+    snapshots: {},
   }
 }
 
@@ -47,34 +51,34 @@ export function clearStates() {
   states = {}
 }
 
-export function addState(filepath, state) {
+export function addState(filepath: string, state: ClientState) {
   states[filepath] = state
 }
 
-export function removeState(filePath) {
+export function removeState(filePath: string) {
   delete states[filePath]
 }
 
-export function doesStateExist(filePath) {
+export function doesStateExist(filePath: string) {
   return states.hasOwnProperty(filePath)
 }
 
-export function getSnapshotsOfState(filePath) {
-  return states[filePath].snapshots
+export function getSnapshotsOfState(filePath: string) {
+  return states[filePath]?.snapshots
 }
 
-export function getStyleParametersOfState(filePath) {
+export function getStyleParametersOfState(filePath: string) {
   console.log(filePath)
-  console.log(states[filePath].styleParameters)
-  return states[filePath].styleParameters
+  console.log(states[filePath]?.styleParameters)
+  return states[filePath]?.styleParameters
 }
 
-export function setAreGazesCorrectedOfState(filePath, val) {
-  states[filePath]['processedGazeData']['areGazesCorrected'] = val
+export function setAreGazesCorrectedOfState(filePath: string, val: boolean) {
+  states[filePath].processedGazeData.areGazesCorrected = val
 }
 
-export function areAreGazesCorrectedOfState(filePath) {
-  return states[filePath]['processedGazeData']['areGazesCorrected']
+export function areAreGazesCorrectedOfState(filePath: string) {
+  return states[filePath]?.processedGazeData?.areGazesCorrected
 }
 
 export function getQuestions() {

@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import { isHeatmapActive, setheatmapActive } from '@/app/client/state/activeFeatures'
 import { getGeneralModelsRegistry } from '@/app/client/state/generalModelsRegistry'
-import { getState, useStateStore } from '@/app/client/state/state'
+import { useStateStore } from '@/app/client/state/state'
 import {
   displayElement,
   getSelectValues,

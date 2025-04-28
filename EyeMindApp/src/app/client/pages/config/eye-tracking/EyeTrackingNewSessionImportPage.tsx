@@ -4,16 +4,13 @@ import { containerClasses } from '@/app/client/css/styles'
 import { useStateStore } from '@/app/client/state/state'
 
 export function EyeTrackingNewSessionImportPage(): React.ReactElement {
-  const { setState } = useStateStore((state) => state)
+  const { setState } = useStateStore.getState()
 
   // TODO: Remove once state is split up
   useEffect(() => {
     setState({
       importMode: 'multiple',
-      temp: {
-        expectedArtifact: 'models',
-        expectedExtensions: ['bpmn', 'odm'],
-      },
+      temp: { expectedArtifact: 'models', expectedExtensions: ['bpmn', 'odm'] },
     })
   }, [])
 

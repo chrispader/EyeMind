@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /* Process hierarchy explorer */
 //import {registerClickEventForLogging} from './click-stream'
-import { getState, useStateStore } from '@/app/client/state/state'
+import { useStateStore } from '@/app/client/state/state'
 import { sendClickEvent } from './click-stream'
 import { openWithinTab } from './tabs'
 

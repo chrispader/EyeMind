@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /* Window Events */
-import { getState } from '@/app/client/state/state'
+import { useStateStore } from '@/app/client/state/state'
 import { resetModel, resetNavTabsAndTabs } from './canvas'
 import { takesnapshot } from './data-collection'
 import { openMainTab } from './tabs'
@@ -122,7 +122,7 @@ function testListeners() {
   console.log('testListeners', arguments)
 
   window.clientTests = {}
-  window.clientTests.getClientState = () => getState()
+  window.clientTests.getClientState = () => useStateStore.getState().state
   window.clientTests.openMainTabInWithinTabLinks = (modelsGroupId) =>
     openMainTab(true, false, modelsGroupId)
   window.clientTests.resetModel = (fileId) => resetModel(fileId)

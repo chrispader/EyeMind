@@ -4,7 +4,7 @@ import { containerClasses } from '@/app/client/css/styles'
 import { useStateStore } from '@/app/client/state/state'
 
 export function EyeTrackingLoadSessionPage(): React.ReactElement {
-  const { setState } = useStateStore((state) => state)
+  const { setState } = useStateStore.getState()
 
   // TODO: Remove once state is split up
   useEffect(() => {

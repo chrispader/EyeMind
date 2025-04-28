@@ -5,7 +5,7 @@ import { containerClasses } from '@/app/client/css/styles'
 import { useStateStore } from '@/app/client/state/state'
 
 export function EyeTrackingPage(): React.ReactElement {
-  const { setState } = useStateStore((state) => state)
+  const { setState } = useStateStore()
 
   useEffect(() => {
     setState({ mode: 'data-collection' })

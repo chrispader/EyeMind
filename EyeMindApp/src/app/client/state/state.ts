@@ -19,11 +19,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-import DataFrame from '@types/dataframe-js'
+import DataFrame from 'dataframe-js'
 import { create } from 'zustand'
 import { ModelFile } from '@/app/client/model/Files'
 
-interface State {
+export type ClientState = {
   mode?: 'data-collection' | 'analysis'
   importMode?: 'single' | 'multiple'
   linkingSubProcessesMode?: string
@@ -37,55 +37,22 @@ interface State {
   styleParameters?: string
   isEtOn?: boolean
   snapshotsCounter?: number
+  snapshots?: Record<string, unknown>
   activeTab?: string
   processHierarchyExplorer?: { id: string; label: string }[] | null
+  isLoading?: boolean
+  loadingMessage?: string
 }
 
-interface StateStore {
-  state: State
-  setState: (newState: State) => void
+export type ClientStateStore = {
+  state: ClientState
+  setState: (newState: ClientState) => void
 }
 
-const useStateStore = create<StateStore>((set) => ({
+const useStateStore = create<ClientStateStore>((set) => ({
   state: {},
   setState: (newState) => set({ state: newState }),
 }))
-
-/**
- * Title: getState.
- *
- * Description: getter
- *
- * Control-flow summary: return state
- *
- * @param {void} . .
- *
- * Returns state
- *
- * Tests: none
- *
- * Additional notes: none
- *
- */
-const getState = () => useStateStore.getState()
-
-/**
- * Title: SetState.
- *
- * Description: setter
- *
- * Control-flow summary: set state (i.e., client state) to newState
- *
- * @param {object} newState
- *
- * Returns {void}
- *
- * Tests: none
- *
- * Additional notes: none
- *
- */
-const setState = (newState: Record<string, unknown>) => useStateStore.setState(newState)
 
 /**
  * Title: Load server state into client.
@@ -104,7 +71,9 @@ const setState = (newState: Record<string, unknown>) => useStateStore.setState(n
  *
  */
 async function loadServerStateIntoClient(): Promise<void> {
+  const { setState } = useStateStore.getState()
+
   setState(await window.state.getState())
 }
 
-export { useStateStore, getState, setState, loadServerStateIntoClient }
+export { useStateStore, loadServerStateIntoClient }

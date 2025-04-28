@@ -26,7 +26,7 @@ import {
   updateTextAndDisplayDomElement,
 } from '@/app/client/modules/utils/dom'
 import { errorAlert, infoAlert } from '@/app/client/modules/utils/utils'
-import { getState, useStateStore } from '@/app/client/state/state'
+import { useStateStore } from '@/app/client/state/state'
 import { assignModelsToGroups } from '../../components/FileImport/loadFile'
 import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
 import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'

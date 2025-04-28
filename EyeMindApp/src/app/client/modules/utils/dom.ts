@@ -221,6 +221,10 @@ function updateShownUserConfig(userConfig) {
   }
 }
 
+function hideElement(domElementId: string) {
+  document.getElementById(domElementId).style.display = 'none'
+}
+
 export {
   moveFromTo,
   updateTextAndDisplayDomElement,

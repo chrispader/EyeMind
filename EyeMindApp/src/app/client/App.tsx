@@ -57,7 +57,7 @@ async function initializeApp(): Promise<void> {
 }
 
 export function App(): React.ReactElement {
-  const { state } = useStateStore()
+  const { isLoading, loadingMessage } = useStateStore()
 
   useEffect(() => {
     initializeApp()
@@ -927,10 +927,7 @@ export function App(): React.ReactElement {
 
       <ProcessingStates />
 
-      <LoadingScreen
-        message={state.loadingMessage ?? ''}
-        visible={state.isLoading ?? false}
-      />
+      <LoadingScreen message={loadingMessage ?? ''} visible={isLoading ?? false} />
     </>
   )
 }

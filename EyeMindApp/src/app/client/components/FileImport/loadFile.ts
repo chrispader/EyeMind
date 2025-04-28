@@ -180,19 +180,19 @@ async function loadDataCollectionFile(file: File, content: string, config: LoadF
     config.expectedArtifact == 'session'
   ) {
     // traverseSessionFile
-    await loadSessionFile(file)
+    await loadSessionFile(file, config)
   } else if (
     config.expectedExtensions?.includes(fileExtension) &&
     config.expectedArtifact == 'models'
   ) {
     // traverseModelsFile
-    await loadModelFile(fileName, content)
+    await loadModelFile(fileName, config, content)
   } else if (
     config.expectedExtensions?.includes(fileExtension) &&
     config.expectedArtifact == 'questions'
   ) {
     // traverseQuestionsFile
-    await loadQuestionFile(file)
+    await loadQuestionFile(file, config)
   } else {
     const msg = 'File type or content not expected'
     errorAlert(msg)
@@ -215,7 +215,7 @@ async function loadDataCollectionFile(file: File, content: string, config: LoadF
  * Additional notes: none
  *
  */
-async function loadSessionFile(file: File) {
+async function loadSessionFile(file: File, config: LoadFileConfig) {
   const {state} = useStateStore.getState()
 
   let filePath = file.path
@@ -225,7 +225,7 @@ async function loadSessionFile(file: File) {
     filePath = file.localFilePath
   }
 
-  await window.utils.readState(file, file.name, filePath, state)
+  await window.utils.readState(file, file.name, filePath, state, config)
   sessionReadListener()
 }
 
@@ -608,6 +608,8 @@ function sessionReadListener() {
  *
  */
 async function sessionRead(res) {
+  const { setState } = useStateStore.getState()
+
   console.log('sessionRead', arguments)
 
   const success = res.success

@@ -63,7 +63,8 @@ declare global {
         file: File,
         fileName: string,
         filePath: string | undefined,
-        state: unknown,
+        state: ClientState,
+        config: LoadFileConfig,
       ) => Promise<unknown>
       onStateRead: (callback: (args: unknown[]) => void) => void
       saveSession: (state: unknown) => Promise<unknown>
@@ -108,7 +109,7 @@ declare global {
     }
 
     state: {
-      getState: () => Promise<unknown>
+      getState: () => Promise<ClientState>
       clearState: () => Promise<unknown>
       getStyleParametersOfState: (filePath: string) => Promise<unknown>
       setAreGazesCorrectedOfState: (filePath: string, val: boolean) => Promise<unknown>

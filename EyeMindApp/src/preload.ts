@@ -115,12 +115,12 @@ contextBridge.exposeInMainWorld('utils', {
       includeTimeStampInFileName,
       customDownload,
     ]),
-  readState: (file, fileName, filePath, state) => {
+  readState: (file, fileName, filePath, state, config) => {
     if (filePath == null || filePath == '') {
       filePath = webUtils.getPathForFile(file)
     }
 
-    return ipcRenderer.invoke('readState', [fileName, filePath, state])
+    return ipcRenderer.invoke('readState', [fileName, filePath, state, config])
   },
   onStateRead: (func) => ipcRenderer.once('stateRead', (_event, ...args) => func(args)),
   saveSession: (state) => ipcRenderer.invoke('saveSession', [state]),

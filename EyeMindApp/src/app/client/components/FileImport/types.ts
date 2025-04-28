@@ -1,6 +1,6 @@
 export type LoadFileConfig = {
   mode?: 'analysis' | 'data-collection'
   importMode?: 'single' | 'multiple'
-  expectedArtifact?: string
+  expectedArtifact?: 'models' | 'questions' | 'session' | 'analysis'
   expectedExtensions?: string[]
 }

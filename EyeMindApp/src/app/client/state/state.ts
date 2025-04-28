@@ -40,7 +40,9 @@ export type ClientState = LoadFileConfig & {
 }
 
 export type ClientStateStore = ClientState & {
-  setState: (newState: Partial<ClientState>) => void
+  setState: (
+    newState: Partial<ClientState> | ((state: ClientState) => Partial<ClientState>),
+  ) => void
 }
 
 const useStateStore = create<ClientStateStore>((set) => ({

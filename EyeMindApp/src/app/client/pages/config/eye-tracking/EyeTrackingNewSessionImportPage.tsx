@@ -6,17 +6,20 @@ import { useStateStore } from '@/app/client/state/state'
 
 export function EyeTrackingNewSessionImportPage(): React.ReactElement {
   const { setState } = useStateStore.getState()
+  const navigate = useNavigate()
 
   // TODO: Remove once state is split up
   useEffect(() => {
     setState({
       importMode: 'multiple',
-      temp: { expectedArtifact: 'models', expectedExtensions: ['bpmn', 'odm'] },
+      expectedArtifact: 'models',
+      expectedExtensions: ['bpmn', 'odm'],
     })
-  }, [])
+  }, [setState])
 
   return (
     <FileImport
+      mode="data-collection"
       importMode="multiple"
       expectedArtifact="models"
       expectedExtensions={['bpmn', 'odm']}

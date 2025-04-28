@@ -9,12 +9,14 @@ export function EyeTrackingLoadSessionPage(): React.ReactElement {
   useEffect(() => {
     setState({
       importMode: 'single',
-      temp: { expectedArtifact: 'session', expectedExtensions: ['json'] },
+      expectedArtifact: 'session',
+      expectedExtensions: ['json'],
     })
-  }, [])
+  }, [setState])
 
   return (
     <FileImport
+      mode="data-collection"
       importMode="single"
       expectedArtifact="session"
       expectedExtensions={['json']}

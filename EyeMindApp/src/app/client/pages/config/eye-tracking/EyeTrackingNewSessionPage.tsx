@@ -18,7 +18,7 @@ export function EyeTrackingNewSessionPage(): React.ReactElement {
     })
 
     navigate(ROUTES.EYE_TRACKING_NEW_SESSION_IMPORT)
-  }, [])
+  }, [navigate, setState])
 
   return (
     <div className={containerClasses} id="data-collection-settings-view">

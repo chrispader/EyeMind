@@ -17,7 +17,7 @@ export function EyeTrackingNewSessionPage(): React.ReactElement {
         linkingSubProcessesSelect.options[linkingSubProcessesSelect.selectedIndex].value,
     })
 
-    navigate(ROUTES.EYE_TRACKING_NEW_SESSION_IMPORT)
+    navigate(ROUTES.EYE_TRACKING_NEW_LOAD_MODELS)
   }, [navigate, setState])
 
   return (

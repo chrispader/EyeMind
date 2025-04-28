@@ -13,9 +13,9 @@ import { AnalysisPage } from '@/app/client/pages/AnalysisPage'
 import { HomePage } from '@/app/client/pages/HomePage'
 import { ConfigPagesWrapper } from '@/app/client/pages/config/ConfigPagesWrapper'
 import { EyeTrackingPage } from '@/app/client/pages/config/EyeTrackingPage'
+import { EyeTrackingLoadModelsPage } from '@/app/client/pages/config/eye-tracking/config/EyeTrackingLoadModelsPage'
 import { EyeTrackingLoadQuestionsPage } from '@/app/client/pages/config/eye-tracking/config/EyeTrackingLoadQuestionsPage'
 import { EyeTrackingLoadSessionPage } from '@/app/client/pages/config/eye-tracking/config/EyeTrackingLoadSessionPage'
-import { EyeTrackingNewSessionImportPage } from '@/app/client/pages/config/eye-tracking/config/EyeTrackingNewSessionImportPage'
 import { EyeTrackingNewSessionPage } from '@/app/client/pages/config/eye-tracking/config/EyeTrackingNewSessionPage'
 import '@extra/object-diagram-modeler/starter/app/css/app.css'
 import { DownloadModal } from './components/DownloadModal'
@@ -76,8 +76,8 @@ export function App(): React.ReactElement {
               element={<EyeTrackingNewSessionPage />}
             />
             <Route
-              path={ROUTES.EYE_TRACKING_NEW_SESSION_IMPORT}
-              element={<EyeTrackingNewSessionImportPage />}
+              path={ROUTES.EYE_TRACKING_NEW_LOAD_MODELS}
+              element={<EyeTrackingLoadModelsPage />}
             />
             <Route
               path={ROUTES.EYE_TRACKING_LOAD_QUESTIONS}

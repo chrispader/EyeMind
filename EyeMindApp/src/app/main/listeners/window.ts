@@ -1,6 +1,6 @@
 import { dialog, ipcMain } from 'electron'
 import { BrowserWindow } from 'electron'
-import { IpcListenerParameters, IpcNamespace } from '@/listeners/types'
+import { IpcListenerParameters, IpcNamespace } from '@/app/main/listeners/types'
 
 type ElectronListenerParameters<FunctionName extends keyof IpcNamespace<'electron'>> =
   IpcListenerParameters<'electron', FunctionName>

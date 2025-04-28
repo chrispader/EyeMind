@@ -5,11 +5,11 @@ import { BrowserWindow } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import kill from 'tree-kill'
+import { CONST } from '@/CONST'
+import { IpcListenerParameters } from '@/app/main/listeners/types'
+import { IpcNamespace } from '@/app/main/listeners/types'
 import { fixationFilter } from '@/app/server/node/connectors/fixation-filter'
 import { getLocalRpid, setLocalRpid } from '@/app/server/node/dataModels/processes'
-import { globalParameters } from '@/globals'
-import { IpcListenerParameters } from '@/listeners/types'
-import { IpcNamespace } from '@/listeners/types'
 
 type PastConfig = {
   childRProcessID: number
@@ -26,15 +26,14 @@ export function fixationFilterListeners(mainWindow: BrowserWindow) {
     /* lunch R server */
     console.log('start R server')
 
-    const suggestedPort = await detect(globalParameters.R_PORT)
+    const suggestedPort = await detect(CONST.R_PORT)
 
-    if (suggestedPort != globalParameters.R_PORT) {
+    if (suggestedPort != CONST.R_PORT) {
       console.log('killing old running R instance')
       const config = JSON.parse(
-        fs.readFileSync(
-          path.join(app.getAppPath(), globalParameters.LAST_CONFIG_FILE_PATH),
-          { encoding: 'utf-8' },
-        ),
+        fs.readFileSync(path.join(app.getAppPath(), CONST.LAST_CONFIG_FILE_PATH), {
+          encoding: 'utf-8',
+        }),
       ) as PastConfig
       const childRProcessID = config['childRProcessID']
       kill(childRProcessID)
@@ -53,22 +52,15 @@ export function fixationFilterListeners(mainWindow: BrowserWindow) {
 
     const childRProcess = child.spawn(execPath, [
       '-e',
-      "library(plumber); pr('" +
-        mainRPath +
-        "') %>% pr_run(port=" +
-        globalParameters.R_PORT +
-        ');',
+      "library(plumber); pr('" + mainRPath + "') %>% pr_run(port=" + CONST.R_PORT + ');',
     ])
     childRProcess.stdout.on('data', (data: string) => {
       console.log(`stdout -:${data}`)
 
       // log RserverPid
-      if (globalParameters.R_SERVER_PID_PRINT_PATTERN.test(data)) {
+      if (CONST.R_SERVER_PID_PRINT_PATTERN.test(data)) {
         logRserverPid(
-          parseInt(
-            globalParameters.R_SERVER_PID_PRINT_PATTERN.exec(data.toString())?.[1] ??
-              '-1',
-          ),
+          parseInt(CONST.R_SERVER_PID_PRINT_PATTERN.exec(data.toString())?.[1] ?? '-1'),
         )
       }
     })
@@ -92,7 +84,7 @@ export function logRserverPid(childRProcessID: number | undefined) {
   // save the childRProcessID into a file to termine the process if found already running when re-starting the app
   const objectToSave = { childRProcessID: childRProcessID }
   fs.writeFileSync(
-    path.join(app.getAppPath(), globalParameters.LAST_CONFIG_FILE_PATH),
+    path.join(app.getAppPath(), CONST.LAST_CONFIG_FILE_PATH),
     JSON.stringify(objectToSave),
   )
 }

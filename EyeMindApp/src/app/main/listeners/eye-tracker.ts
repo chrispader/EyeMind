@@ -1,4 +1,6 @@
 import { BrowserWindow, ipcMain } from 'electron'
+import { IpcListenerParameters } from '@/app/main/listeners/types'
+import { IpcNamespace } from '@/app/main/listeners/types'
 import {
   dataMapped,
   processGazeData,
@@ -8,8 +10,6 @@ import {
   sendSnapshotID,
   setupTracking,
 } from '@/app/server/node/connectors/eye-tracker'
-import { IpcListenerParameters } from '@/listeners/types'
-import { IpcNamespace } from '@/listeners/types'
 
 type EyeTrackerListenerParameters<FunctionName extends keyof IpcNamespace<'eyeTracker'>> =
   IpcListenerParameters<'eyeTracker', FunctionName>

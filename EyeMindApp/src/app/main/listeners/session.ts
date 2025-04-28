@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
+import { IpcListenerParameters } from '@/app/main/listeners/types'
+import { IpcNamespace } from '@/app/main/listeners/types'
 import { recoverSession, saveSession } from '@/app/server/node/utils/session'
-import { IpcListenerParameters } from '@/listeners/types'
-import { IpcNamespace } from '@/listeners/types'
 
 type SessionListenerParameters<FunctionName extends keyof IpcNamespace<'utils'>> =
   IpcListenerParameters<'utils', FunctionName>

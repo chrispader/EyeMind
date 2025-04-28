@@ -1,7 +1,7 @@
 import request from 'request-promise'
+import { CONST } from '@/CONST'
 import { setState } from '@/app/server/node/dataModels/state'
 import { stateDownload } from '@/app/server/node/utils/download'
-import { globalParameters } from '@/globals'
 
 export async function saveSession(state) {
   setState(state)
@@ -28,8 +28,8 @@ export async function recoverSession(gazeDataFilename, snapshotsContentDataFilen
   // clear data (i.e., to clear events sent when the recording started i.e., questionOnSet)
   const clearAction = { action: 'clear' }
   await request({
-    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
-    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: CONST.COMMUNICATION_URI_TO_ET_SERVER,
     body: clearAction,
     json: true,
   })
@@ -41,8 +41,8 @@ export async function recoverSession(gazeDataFilename, snapshotsContentDataFilen
     snapshotsContentDataFilename: snapshotsContentDataFilename,
   }
   await request({
-    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
-    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: CONST.COMMUNICATION_URI_TO_ET_SERVER,
     body: mockRecordingData,
     json: true,
   })

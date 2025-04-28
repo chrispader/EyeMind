@@ -20,9 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import request from 'request-promise'
+import { CONST } from '@/CONST'
 import { getStates } from '@/app/server/node/dataModels/state'
 import { calculateProgress } from '@/app/server/node/utils/utils'
-import { globalParameters } from '@/globals'
 import { summerizedFixationLog } from '../analysis/analysis'
 
 export async function fixationFilter(fixationFilterSettings, mainWindow) {
@@ -49,7 +49,7 @@ export async function applyFixationFilter(fixationFilterSettings, id, state, mai
   state.processedGazeData.fixationFilterData = fixationFilterSettings
 
   const partialCommunicationUriToRerver =
-    globalParameters.COMMUNICATION_HOST_TO_R_SERVER + ':' + globalParameters.R_PORT
+    CONST.COMMUNICATION_HOST_TO_R_SERVER + ':' + CONST.R_PORT
   const params = {}
 
   params.xScreenDim = state.processedGazeData.xScreenDim
@@ -68,7 +68,7 @@ export async function applyFixationFilter(fixationFilterSettings, id, state, mai
 
   let message = { params: params }
   let communication = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_R_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_R_SERVER,
     uri: partialCommunicationUriToRerver + '/SetParamData',
     body: message,
     json: true,
@@ -85,7 +85,7 @@ export async function applyFixationFilter(fixationFilterSettings, id, state, mai
   )
 
   communication = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_R_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_R_SERVER,
     uri: partialCommunicationUriToRerver + '/OpenDataTransferETR',
     body: null,
     json: true,
@@ -102,15 +102,15 @@ export async function applyFixationFilter(fixationFilterSettings, id, state, mai
   for (
     let i = 0;
     i < state.processedGazeData.gazeData.length;
-    i = i + globalParameters.DATA_FRAGMENT_SIZE
+    i = i + CONST.DATA_FRAGMENT_SIZE
   ) {
     const dataFragment = state.processedGazeData.gazeData.slice(
       i,
-      i + globalParameters.DATA_FRAGMENT_SIZE,
+      i + CONST.DATA_FRAGMENT_SIZE,
     )
     message = { dataFragment: dataFragment }
     communication = {
-      method: globalParameters.COMMUNICATION_METHOD_TO_R_SERVER,
+      method: CONST.COMMUNICATION_METHOD_TO_R_SERVER,
       uri: partialCommunicationUriToRerver + '/TransferDataFragmentETR',
       body: message,
       json: true,
@@ -136,7 +136,7 @@ export async function applyFixationFilter(fixationFilterSettings, id, state, mai
     '',
   )
   communication = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_R_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_R_SERVER,
     uri: partialCommunicationUriToRerver + '/ApplyFilter',
     body: null,
   }
@@ -151,7 +151,7 @@ export async function applyFixationFilter(fixationFilterSettings, id, state, mai
   )
 
   communication = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_R_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_R_SERVER,
     uri: partialCommunicationUriToRerver + '/OpenDataTransferRTE',
     body: null,
     json: true,
@@ -163,16 +163,16 @@ export async function applyFixationFilter(fixationFilterSettings, id, state, mai
   const dataSize = response[0]
 
   /// receive data in folds
-  for (let i = 0; i < dataSize; i = i + globalParameters.DATA_FRAGMENT_SIZE) {
+  for (let i = 0; i < dataSize; i = i + CONST.DATA_FRAGMENT_SIZE) {
     const start = i
     const end =
-      start + globalParameters.DATA_FRAGMENT_SIZE <= dataSize
-        ? start + globalParameters.DATA_FRAGMENT_SIZE
+      start + CONST.DATA_FRAGMENT_SIZE <= dataSize
+        ? start + CONST.DATA_FRAGMENT_SIZE
         : dataSize
 
     const req = { start: start, end: end }
     const com = {
-      method: globalParameters.COMMUNICATION_METHOD_TO_R_SERVER,
+      method: CONST.COMMUNICATION_METHOD_TO_R_SERVER,
       uri: partialCommunicationUriToRerver + '/TransferDataFragmentRTE',
       body: req,
       json: true,

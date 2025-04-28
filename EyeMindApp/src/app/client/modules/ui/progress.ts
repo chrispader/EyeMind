@@ -19,6 +19,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
+import { CONST } from '@/CONST'
+import { useStateStore } from '@/app/client/state/state'
 
 /* progress */
 
@@ -37,7 +39,6 @@ SOFTWARE.*/
  */
 function updateProcessMessageListener() {
   window.progress.onUpdateProcessingMessage(async function (args) {
-    console.log('onUpdateProcessingMessage', arguments)
     const msg = args[0]
     const externalProgressWindow = args[1]
     await updateProcessingMessage(msg, externalProgressWindow)
@@ -58,9 +59,7 @@ function updateProcessMessageListener() {
  * Additional notes: none
  *
  */
-async function updateProcessingMessage(msg, container) {
-  console.log('updateProcessingMessage', arguments)
-
+async function updateProcessingMessage(msg: string, container: HTMLElement) {
   let documentContainer
 
   if (typeof container == 'string' && container != '') {
@@ -71,7 +70,7 @@ async function updateProcessingMessage(msg, container) {
 
   documentContainer.getElementById('wait-progress').innerHTML = msg
 
-  await delay(window.globalParameters.DELAY_FOR_RENDRING)
+  await delay(CONST.DELAY_FOR_RENDRING)
 }
 
 /**
@@ -79,7 +78,7 @@ async function updateProcessingMessage(msg, container) {
  *
  * Description: sleep for some milliseconds
  *
- * @param {int} delayInms sleep time in milliseconds
+ * @param {int} delayInMs sleep time in milliseconds
  *
  * Returns {void}
  *
@@ -87,13 +86,11 @@ async function updateProcessingMessage(msg, container) {
  * Additional notes: none
  *
  */
-function delay(delayInms) {
-  console.log('delay', arguments)
-
+function delay(delayInMs: number) {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(2)
-    }, delayInms)
+    }, delayInMs)
   })
 }
 
@@ -112,18 +109,11 @@ function delay(delayInms) {
  * Additional notes: none
  *
  */
-async function showGeneralWaitingScreen(text, show, hide) {
-  console.log('showGeneralWaitingScreen', arguments)
+async function showGeneralWaitingScreen(text: string) {
+  const { setState } = useStateStore.getState()
 
-  if (text != null) {
-    document.getElementById('wait-title').innerHTML = text
-  }
-
-  document.getElementById(hide).style.display = 'none'
-  document.getElementById(show).style.display =
-    show == 'all-content' ? 'inline-block' : 'block' // specific display types based on the element can be implemented here
-
-  await delay(window.globalParameters.DELAY_FOR_RENDRING)
+  setState({ isLoading: true, loadingMessage: text })
+  await delay(CONST.DELAY_FOR_RENDRING)
 }
 
 /**
@@ -140,17 +130,10 @@ async function showGeneralWaitingScreen(text, show, hide) {
  * Additional notes: none
  *
  */
-async function hideGeneralWaitingScreen(show, hide) {
-  console.log('hideGeneralWaitingScreen', arguments)
-
-  document.getElementById(show).style.display =
-    show == 'all-content' ? 'inline-block' : 'block' // specific display types based on the element can be implemented here
-  document.getElementById(hide).style.display = 'none'
-
-  document.getElementById('wait-title').innerHTML = ''
-  document.getElementById('wait-progress').innerHTML = ''
-
-  await delay(window.globalParameters.DELAY_FOR_RENDRING)
+async function hideGeneralWaitingScreen() {
+  const { setState } = useStateStore.getState()
+  setState({ isLoading: false, loadingMessage: undefined })
+  await delay(CONST.DELAY_FOR_RENDRING)
 }
 
 export {

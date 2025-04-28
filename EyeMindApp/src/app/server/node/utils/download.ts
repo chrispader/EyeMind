@@ -22,8 +22,8 @@ SOFTWARE.*/
 import bfj from 'bfj'
 import { DataFrame } from 'dataframe-js'
 import fs from 'fs'
+import { CONST } from '@/CONST'
 import { getState, getStates } from '@/app/server/node/dataModels/state'
-import { globalParameters } from '@/globals'
 import { parseOriginalFileName } from './utils'
 
 export async function stateDownload(
@@ -65,9 +65,9 @@ async function downloadFile(
 
   if (type == 'collected-data' || type == 'session-data') {
     const savingPath =
-      globalParameters.SAVING_PATH +
+      CONST.SAVING_PATH +
       '/' +
-      globalParameters.EXPORT_FILES_PREFIX +
+      CONST.EXPORT_FILES_PREFIX +
       (includeTimeStampInFileName ? fileName + '_' + timestamp : fileName) +
       '_' +
       type +
@@ -93,7 +93,7 @@ async function downloadFile(
   } else if (type == 'analysis-data') {
     const states = getStates()
 
-    const savingDir = globalParameters.SAVING_PATH + '/analysis_' + timestamp
+    const savingDir = CONST.SAVING_PATH + '/analysis_' + timestamp
     //create savingDir directory
     fs.mkdirSync(savingDir)
 
@@ -135,7 +135,7 @@ async function downloadFile(
 
     const states = getStates()
 
-    const savingDir = globalParameters.SAVING_PATH + '/gazeData_' + timestamp
+    const savingDir = CONST.SAVING_PATH + '/gazeData_' + timestamp
     //create savingDir directory
     fs.mkdirSync(savingDir)
 
@@ -174,9 +174,9 @@ async function downloadFile(
     }
   } else if (type == 'fixation-data') {
     const savingPath =
-      globalParameters.SAVING_PATH +
+      CONST.SAVING_PATH +
       '/' +
-      globalParameters.EXPORT_FILES_PREFIX +
+      CONST.EXPORT_FILES_PREFIX +
       (includeTimeStampInFileName ? fileName + '_' + timestamp : fileName) +
       '_' +
       type +

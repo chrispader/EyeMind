@@ -1,5 +1,4 @@
-/* global parameters */
-const globalParameters = {
+const CONST = {
   R_PORT: 5548,
   COMMUNICATION_HOST_TO_R_SERVER: 'http://127.0.0.1',
   COMMUNICATION_METHOD_TO_R_SERVER: 'POST',
@@ -45,4 +44,4 @@ const globalParameters = {
   ],
 }
 
-export { globalParameters }
+export { CONST }

@@ -1,8 +1,8 @@
 import request from 'request-promise'
+import { CONST } from '@/CONST'
 import { getState, setState } from '@/app/server/node/dataModels/state'
 import { stateDownload } from '@/app/server/node/utils/download'
 import { calculateProgress } from '@/app/server/node/utils/utils'
-import { globalParameters } from '@/globals'
 
 export async function setupTracking(xScreenDim, yScreenDim) {
   // console.log("setupTracking function");
@@ -15,8 +15,8 @@ export async function setupTracking(xScreenDim, yScreenDim) {
     yScreenDim: yScreenDim,
   }
   const communication = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
-    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: CONST.COMMUNICATION_URI_TO_ET_SERVER,
     body: setupData,
     json: true,
   }
@@ -49,8 +49,8 @@ export async function sendSnapshotID(snapshot) {
     id: snapshot.id,
   }
   const communication = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
-    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: CONST.COMMUNICATION_URI_TO_ET_SERVER,
     body: snapshotData,
     json: true,
   }
@@ -75,8 +75,8 @@ export async function sendFullSnapshot(snapshot) {
 
   const snapshotData = { action: 'logFullSnapshot', content: snapshot }
   const communication = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
-    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: CONST.COMMUNICATION_URI_TO_ET_SERVER,
     body: snapshotData,
     json: true,
   }
@@ -117,8 +117,8 @@ export async function sendQuestionEvent(
   }
 
   const communication = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
-    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: CONST.COMMUNICATION_URI_TO_ET_SERVER,
     body: data,
     json: true,
   }
@@ -146,8 +146,8 @@ export async function sendClickEvent(clickTimestamp, clickedElement) {
   }
 
   const communication = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
-    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: CONST.COMMUNICATION_URI_TO_ET_SERVER,
     body: data,
     json: true,
   }
@@ -184,8 +184,8 @@ export async function requestGazeData(clientState, externalProgressWindow, mainW
 
   const gazeRequest = { action: 'PrepareGazeDataAndInitiateTransfer' }
   const communication = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
-    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: CONST.COMMUNICATION_URI_TO_ET_SERVER,
     body: gazeRequest,
     json: true,
   }
@@ -243,8 +243,8 @@ export async function fetchSnapshotsInFragement(
   //console.log("fetchSnapshotsInFragement",arguments);
 
   const end =
-    start + globalParameters.SNAPSHOTS_FRAGMENT_SIZE <= snapshotsSize
-      ? start + globalParameters.SNAPSHOTS_FRAGMENT_SIZE
+    start + CONST.SNAPSHOTS_FRAGMENT_SIZE <= snapshotsSize
+      ? start + CONST.SNAPSHOTS_FRAGMENT_SIZE
       : snapshotsSize
 
   console.log(
@@ -253,15 +253,15 @@ export async function fetchSnapshotsInFragement(
     'end ',
     end,
     'SNAPSHOTS_FRAGMENT_SIZE',
-    globalParameters.SNAPSHOTS_FRAGMENT_SIZE,
+    CONST.SNAPSHOTS_FRAGMENT_SIZE,
     'snapshotsSize',
     snapshotsSize,
   )
 
   const req = { action: 'getSnapshotFragment', start: start, end: end }
   const com = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
-    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: CONST.COMMUNICATION_URI_TO_ET_SERVER,
     body: req,
     json: true,
   }
@@ -296,8 +296,8 @@ export async function processDataFragement(
   // console.log("processDataFragement",arguments);
 
   const end =
-    start + globalParameters.DATA_FRAGMENT_SIZE <= gazeDataSize
-      ? start + globalParameters.DATA_FRAGMENT_SIZE
+    start + CONST.DATA_FRAGMENT_SIZE <= gazeDataSize
+      ? start + CONST.DATA_FRAGMENT_SIZE
       : gazeDataSize
 
   console.log(
@@ -306,15 +306,15 @@ export async function processDataFragement(
     'end ',
     end,
     'DATA_FRAGMENT_SIZE',
-    globalParameters.DATA_FRAGMENT_SIZE,
+    CONST.DATA_FRAGMENT_SIZE,
     'gazeDataSize',
     gazeDataSize,
   )
 
   const req = { action: 'getDataFragment', start: start, end: end }
   const com = {
-    method: globalParameters.COMMUNICATION_METHOD_TO_ET_SERVER,
-    uri: globalParameters.COMMUNICATION_URI_TO_ET_SERVER,
+    method: CONST.COMMUNICATION_METHOD_TO_ET_SERVER,
+    uri: CONST.COMMUNICATION_URI_TO_ET_SERVER,
     body: req,
     json: true,
   }
@@ -360,7 +360,7 @@ export async function dataMapped(
   setState(state) // implementation: to be kept so afterwards stateDownload would not need a parameter state.
 
   // set next start
-  start = start + globalParameters.DATA_FRAGMENT_SIZE
+  start = start + CONST.DATA_FRAGMENT_SIZE
   // move to next iteration
   if (start < gazeDataSize) {
     await processDataFragement(start, gazeDataSize, externalProgressWindow, mainWindow)

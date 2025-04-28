@@ -19,8 +19,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-import { globalParameters } from './globals'
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
+import { CONST } from './CONST'
 
 // contextBridge.exposeInMainWorld listeners/window.js
 contextBridge.exposeInMainWorld('electron', {
@@ -39,7 +39,7 @@ contextBridge.exposeInMainWorld('serverTests', {
 } satisfies typeof window.serverTests)
 
 // contextBridge.exposeInMainWorld globals.js
-contextBridge.exposeInMainWorld('globalParameters', globalParameters)
+contextBridge.exposeInMainWorld('globalParameters', CONST)
 
 // contextBridge.exposeInMainWorld listeners/analysis.js
 contextBridge.exposeInMainWorld('analysis', {

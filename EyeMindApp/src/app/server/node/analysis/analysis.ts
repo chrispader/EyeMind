@@ -21,6 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import { DataFrame } from 'dataframe-js'
 import _ from 'lodash'
+import { CONST } from '@/CONST'
 import { getStates } from '@/app/server/node/dataModels/state'
 import {
   calculateProgress,
@@ -28,7 +29,6 @@ import {
   hasOneElement,
   randomNumberInRange,
 } from '@/app/server/node/utils/utils'
-import { globalParameters } from '@/globals'
 
 /*
 
@@ -521,7 +521,7 @@ export function customizedHeatMap(
   // excludes gazes on elements outside the model
   aggregatedDf = aggregatedDf.filter(
     (row) =>
-      !globalParameters.PATTERNS_FOR_ELEMENTS_OUTSIDE_MODEL_AREA.some((rx) =>
+      !CONST.PATTERNS_FOR_ELEMENTS_OUTSIDE_MODEL_AREA.some((rx) =>
         RegExp(rx).test(row.get('element')),
       ),
   )
@@ -600,9 +600,7 @@ export function shouldIncludeElement(
   // console.log("shouldIncludeElement function ",arguments);
 
   const fileId =
-    tabName != null
-      ? tabName.replace(new RegExp(globalParameters.MODELS_ID_REGEX, 'g'), '')
-      : ''
+    tabName != null ? tabName.replace(new RegExp(CONST.MODELS_ID_REGEX, 'g'), '') : ''
 
   if (
     elementRegistryTypes[fileId] != null &&
@@ -736,8 +734,8 @@ export function correctGazeDataFragment(
   //console.log("correctGazeDataFragment",arguments);
 
   const end =
-    start + globalParameters.DATA_FRAGMENT_SIZE <= gazeDataSize
-      ? start + globalParameters.DATA_FRAGMENT_SIZE
+    start + CONST.DATA_FRAGMENT_SIZE <= gazeDataSize
+      ? start + CONST.DATA_FRAGMENT_SIZE
       : gazeDataSize
 
   console.log(
@@ -746,7 +744,7 @@ export function correctGazeDataFragment(
     'end ',
     end,
     'DATA_FRAGMENT_SIZE',
-    globalParameters.DATA_FRAGMENT_SIZE,
+    CONST.DATA_FRAGMENT_SIZE,
     'gazeDataSize',
     gazeDataSize,
   )
@@ -801,7 +799,7 @@ export async function gazeDataFragmentMapped(
   ) // check if the use of a global variable here is ok
 
   // move to next iteration
-  start = start + globalParameters.DATA_FRAGMENT_SIZE
+  start = start + CONST.DATA_FRAGMENT_SIZE
   if (start < gazeDataSize) {
     // to check
     await correctGazeDataFragment(

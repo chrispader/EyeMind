@@ -39,7 +39,7 @@ import { prepareDataCollectionContent } from '../../modules/ui/data-collection'
 import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from '../../modules/ui/progress'
 import { loadQuestions } from '../../modules/ui/questions'
 import { addToTabHeader, changeTab, openInTab, openWithinTab } from '../../modules/ui/tabs'
-import { globalParameters } from '@/globals'
+import { CONST } from '@/CONST'
 import { ModelFile } from '@/app/client/model/Files'
 import { LoadFileConfig } from '@/app/client/components/FileImport/types'
 
@@ -275,7 +275,7 @@ async function loadModelFile(fileName: string, content: string, path = '') {
   const {state, setState} = useStateStore.getState()
 
   const fileId = fileName.replace(
-    new RegExp(globalParameters.MODELS_ID_REGEX, 'g'),
+    new RegExp(CONST.MODELS_ID_REGEX, 'g'),
     '',
   )
 

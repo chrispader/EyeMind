@@ -21,9 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /* Questions */
 import DataFrame from 'dataframe-js'
+import { CONST } from '@/CONST'
 import { errorAlert } from '@/app/client/modules/utils/utils'
 import { useStateStore } from '@/app/client/state/state'
-import { globalParameters } from '@/globals'
 import { resetNavTabsAndTabs } from './canvas'
 import { showModelsGroup } from './canvas'
 import { sendClickEvent } from './click-stream'
@@ -52,8 +52,8 @@ async function loadQuestions(file: File) {
       questions: contentAsDataFrame.toCollection() as Record<string, string>[], //should be stored as Collection to faciliate the transfer to the server and the export
     })
 
-    const requiredColumns = globalParameters.RQUIRED_COLUMNS_IN_QUESTION_FILE
-    const questionsTypeSupported = globalParameters.QUESTION_TYPES_SUPPORTED
+    const requiredColumns = CONST.RQUIRED_COLUMNS_IN_QUESTION_FILE
+    const questionsTypeSupported = CONST.QUESTION_TYPES_SUPPORTED
 
     if (
       !checkNeccesaryColumnsInQuestionsFile(

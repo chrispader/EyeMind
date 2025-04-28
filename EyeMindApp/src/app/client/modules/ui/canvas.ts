@@ -76,7 +76,7 @@ function resetModel(fileId) {
  *
  */
 function resetNavTabsAndTabs(modelsGroupId?: string) {
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   if (modelsGroupId != null) {
     // differ the execution depending on the linkingSubProcessesMode
@@ -156,7 +156,7 @@ function resetNavTabsAndTabs(modelsGroupId?: string) {
 function showModelsGroup(groupId) {
   console.log('showModelsGroup', arguments)
 
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   if (groupId != null) {
     for (const model of Object.values(state.models ?? {})) {

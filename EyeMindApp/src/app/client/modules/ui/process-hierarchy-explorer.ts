@@ -52,7 +52,7 @@ function createUpdateProcessHierarchyExplorer(
 ) {
   console.log('createUpdateProcessHierarchyExplorer', arguments)
 
-  const { state, setState } = useStateStore.getState()
+  const { setState, ...state } = useStateStore.getState()
 
   /// condition/mechanism to initiate state.processHierarchyExplorer
   if (state.processHierarchyExplorer == null) {
@@ -97,7 +97,7 @@ function renderProcessHierarchyExplorer(
 ) {
   console.log('renderProcessHierarchyExplorer', arguments)
 
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   const container = document.getElementById('process-hierarchy-content')
 

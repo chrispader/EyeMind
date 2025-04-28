@@ -48,7 +48,7 @@ function addToTabHeader(id: string) {
   console.log('addToTabHeader', arguments)
 
   // get state
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   // get file name
   const fileName = document
@@ -433,7 +433,7 @@ function openMainTab(
   takeSnapshot: boolean,
   modelsGroupId: string,
 ) {
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   for (const [key, model] of Object.entries(state.models ?? {})) {
     if (model?.mainTab && model.groupId == modelsGroupId) {
@@ -458,7 +458,7 @@ function openMainTab(
  *
  */
 function setMainTab() {
-  const { state, setState } = useStateStore.getState()
+  const { setState, ...state } = useStateStore.getState()
 
   const setAsMainRadioBoxList = document.getElementsByClassName(
     'set-as-main',
@@ -506,7 +506,7 @@ function setMainTab() {
 function setUnclosableTabs() {
   console.log('setUnclosableTabs', arguments)
 
-  const { state, setState } = useStateStore.getState()
+  const { setState, ...state } = useStateStore.getState()
 
   const setUnclosableTabCheckBoxList = document.getElementsByClassName(
     'unclosable-tab',

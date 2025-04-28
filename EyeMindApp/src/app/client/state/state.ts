@@ -21,16 +21,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import DataFrame from 'dataframe-js'
 import { create } from 'zustand'
+import { LoadFileConfig } from '@/app/client/components/FileImport/types'
 import { ModelFile } from '@/app/client/model/Files'
 
-export type ClientState = {
-  mode?: 'data-collection' | 'analysis'
-  importMode?: 'single' | 'multiple'
+export type ClientState = LoadFileConfig & {
   linkingSubProcessesMode?: string
-  temp?: {
-    expectedArtifact: string
-    expectedExtensions: string[]
-  }
   models?: Record<string, ModelFile | undefined>
   processedGazeData?: Record<string, unknown>
   questions?: DataFrame | Record<string, string>[]
@@ -44,14 +39,12 @@ export type ClientState = {
   loadingMessage?: string
 }
 
-export type ClientStateStore = {
-  state: ClientState
-  setState: (newState: ClientState) => void
+export type ClientStateStore = ClientState & {
+  setState: (newState: Partial<ClientState>) => void
 }
 
 const useStateStore = create<ClientStateStore>((set) => ({
-  state: {},
-  setState: (newState) => set({ state: newState }),
+  setState: set,
 }))
 
 /**

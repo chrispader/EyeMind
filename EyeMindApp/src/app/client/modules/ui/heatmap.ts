@@ -91,7 +91,7 @@ async function populateQuestionIDSelect() {
   const questionTextLength = await window.globalParameters.QUESTION_TEXT_PREVIEW_LENGTH
 
   if (questionIDSelect?.options.length <= 1) {
-    const { state } = useStateStore.getState()
+    const state = useStateStore.getState()
     const questions = state.questions
 
     for (let i = 0; i < questions.length; i++) {

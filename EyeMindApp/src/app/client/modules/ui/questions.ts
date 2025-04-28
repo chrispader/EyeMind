@@ -121,7 +121,7 @@ function checkNeccesaryColumnsInQuestionsFile(
 function generateQuestionsSequence() {
   console.log('generateQuestionsSequence', arguments)
 
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
   const questions = new DataFrame(state.questions ?? [])
 
   document.getElementById('start-questions-btn').onclick = () => startQuestions()
@@ -276,7 +276,7 @@ function generateQuestionsSequence() {
  *
  */
 function startQuestions() {
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
   const questions = new DataFrame(state.questions ?? [])
 
   nextQuestion(null, 0, questions.count(), null, null, questions.getRow(0))
@@ -308,7 +308,7 @@ async function nextQuestion(
   givenAnswer: string | null,
   nextQuestion: DataFrame,
 ) {
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   if (!state.isEtOn) {
     const msg = 'Eye-tracking has not started yet'
@@ -507,7 +507,7 @@ async function sendQuestionEvent(
  *
  */
 function areModelGroupsValid(questions: DataFrame) {
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   const df = new DataFrame(questions)
 

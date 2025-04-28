@@ -85,7 +85,7 @@ function importQuestionsInteraction() {
  *
  */
 async function saveSessionInteraction() {
-  const { state, setState } = useStateStore.getState()
+  const { setState, ...state } = useStateStore.getState()
 
   if (areRequiredFieldsEntered()) {
     setState({
@@ -130,7 +130,7 @@ async function saveSessionInteraction() {
 function prepareDataCollectionContent(filePropertiesDefined: boolean) {
   // showing file explorer, loading models, questions and configuring tables
 
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   // show or hide file explorer
   if (
@@ -192,7 +192,7 @@ function prepareDataCollectionContent(filePropertiesDefined: boolean) {
  *
  */
 function recordETInteraction() {
-  // const { state } = useStateStore.getState()
+  // const state = useStateStore.getState()
 
   // load recording form data (would work if a existing session is load)
   loadRecordingFormData()
@@ -229,7 +229,7 @@ function recordETInteraction() {
  *
  */
 function loadRecordingFormData() {
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   if (state.processedGazeData === undefined) {
     return
@@ -542,7 +542,7 @@ type Snapshot = {
  */
 
 function takesnapshot(timestamp: number, code: string, screenX: number, screenY: number) {
-  const { state, setState } = useStateStore.getState()
+  const { setState, ...state } = useStateStore.getState()
   console.log('state to be used in snapshot', state)
 
   // check that eye-tracking is still on recording
@@ -664,7 +664,7 @@ async function sendFullSnapshot(snapshot) {
 async function stopETInteraction() {
   console.log('stopETInteraction', arguments)
 
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   // set stop-btn interaction to null
   document.getElementById('stop-btn').onclick = null
@@ -741,7 +741,7 @@ function endTracking(externalProgressWindow) {
 function processGazeData(externalProgressWindow) {
   console.log('processGazeData function ', arguments)
 
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   mapGazestoElementsFromPageSnapshotListener()
 

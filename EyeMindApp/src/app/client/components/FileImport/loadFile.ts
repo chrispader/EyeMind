@@ -24,7 +24,7 @@ import BpmnModeler from 'bpmn-js/lib/Modeler'
 import BpmnNavigatedViewer from 'bpmn-js/lib/NavigatedViewer'
 import { nFiles, shiftFile } from '@/app/client/state/filesBuffer'
 import { addModel } from '@/app/client/state/generalModelsRegistry'
-import { setState, useStateStore } from '@/app/client/state/state'
+import { useStateStore } from '@/app/client/state/state'
 import { hideElement } from '@/app/client/modules/utils/dom'
 import {
   cancelDefault,
@@ -87,7 +87,7 @@ async function loadMoreFiles(config: LoadFileConfig) {
     // traverse first file
     await loadFile(shiftFile(), config)
   } else {
-    await hideGeneralWaitingScreen('all-content', 'wait')
+    await hideGeneralWaitingScreen()
   }
 }
 
@@ -140,8 +140,6 @@ async function loadAnalysisFile(file: File, config: LoadFileConfig) {
       'Loading ' +
         fileName +
         '... <br><br> This step can take several minutes depending on the size of the file',
-      'wait',
-      'all-content',
     )
 
     window.utils.readState(file, fileName, filePath, state)
@@ -174,7 +172,7 @@ async function loadDataCollectionFile(file: File, content: string, config: LoadF
 
   console.log('fileExtension', fileExtension)
 
-  await showGeneralWaitingScreen('Loading ' + fileName + '...', 'wait', 'all-content')
+  await showGeneralWaitingScreen('Loading ' + fileName + '...')
 
   /// apply different processing depending on the file extension and expected artifact
   if (

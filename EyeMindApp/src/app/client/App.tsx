@@ -2,8 +2,10 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 import 'bpmn-js/dist/assets/bpmn-js.css'
 import 'bpmn-js/dist/assets/diagram-js.css'
 import { useEffect } from 'react'
-import { BrowserRouter, HashRouter, MemoryRouter, Route, Routes } from 'react-router'
+import { BrowserRouter, MemoryRouter, Route, Routes } from 'react-router'
 import { ROUTES } from '@/app/client/ROUTES'
+import { LoadingScreen } from '@/app/client/components/LoadingScreen'
+import { ProcessingStates } from '@/app/client/components/ProcessingStates'
 import '@/app/client/css/app.css'
 import '@/app/client/css/main.css'
 import '@/app/client/css/new.css'
@@ -19,8 +21,6 @@ import { DownloadModal } from './components/DownloadModal'
 import { FixationSettingsModal } from './components/FixationSettingsModal'
 import { GazeProjectionModal } from './components/GazeProjectionModal'
 import { HeatmapSettingsModal } from './components/HeatmapSettingsModal'
-import { LoadedContentView } from './components/LoadedContentView'
-import { ProcessingStates } from './components/ProcessingStates'
 import { closeModalOutsideClickInteraction } from './modules/ui/shared-interactions'
 import {
   DisableCriticalKeys,
@@ -29,7 +29,7 @@ import {
   takeSnapshotOnWindowResize,
   testListeners,
 } from './modules/ui/window-events'
-import { loadServerStateIntoClient } from './state/state'
+import { loadServerStateIntoClient, useStateStore } from './state/state'
 
 const __DEV__ = true
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -57,9 +57,13 @@ async function initializeApp(): Promise<void> {
 }
 
 export function App(): React.ReactElement {
+  const { state } = useStateStore()
+
   useEffect(() => {
     initializeApp()
   }, [])
+
+  console.log({ state })
 
   return (
     <>
@@ -921,30 +925,12 @@ export function App(): React.ReactElement {
         </div>
       </div>
 
-      <div id="wait" className="wait">
-        <div className="centered-content">
-          <div id="wait-title"></div>
-          <br />
-          <div id="wait-progress"></div>
-          <br />
-          <img
-            className="wait-icon"
-            id="wait-icon"
-            src="icons/loading.jpg"
-            alt="Loading"
-          />
-        </div>
-      </div>
+      <ProcessingStates />
 
-      <div id="finished-processing-gaze-data" className="finished-processing-gaze-data">
-        <div className="centered-content">
-          <div className="centered-content">
-            Processing Finished. <br />
-            <br /> Close the app or use Crtl+R to reload it for further data collection or
-            analysis.
-          </div>
-        </div>
-      </div>
+      <LoadingScreen
+        message={state.loadingMessage ?? ''}
+        visible={state.isLoading ?? false}
+      />
     </>
   )
 }

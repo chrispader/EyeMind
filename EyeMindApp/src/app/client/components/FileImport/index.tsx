@@ -4,6 +4,8 @@ import {
   loadFile,
 } from '@/app/client/components/FileImport/loadFile'
 import { LoadFileConfig } from '@/app/client/components/FileImport/types'
+import { LoadingScreen } from '@/app/client/components/LoadingScreen'
+import { containerClasses } from '@/app/client/css/styles'
 import { importQuestionsInteraction } from '@/app/client/modules/ui/data-collection'
 import { cancelDefault, errorAlert } from '@/app/client/modules/utils/utils'
 import { nFiles, shiftFile } from '@/app/client/state/filesBuffer'
@@ -28,7 +30,8 @@ function FileImport({
 }: FileImportProps): React.ReactElement {
   const [isActive, setIsActive] = useState(false)
   const [filesInternal, setFilesInternal] = useState<FileList | undefined>(undefined)
-  const { state } = useStateStore((state) => state)
+  const [isLoading, setIsLoading] = useState(false)
+  const { state } = useStateStore()
 
   console.log({ filesInternal })
 
@@ -98,7 +101,7 @@ function FileImport({
   }, [])
 
   return (
-    <div className="import-view" id="import-view">
+    <div className={`${containerClasses} import-view`} id="import-view">
       <div className="import-box" id="import-box">
         <div
           className={`upload-zone ${isActive ? 'upload-zone-active' : ''}`}

@@ -5,6 +5,7 @@ export const ROUTES = {
   EYE_TRACKING_NEW_SESSION_IMPORT: '/eye-tracking/new-session/import',
   EYE_TRACKING_LOAD_SESSION: '/eye-tracking/load-session',
   EYE_TRACKING_LOAD_QUESTIONS: '/eye-tracking/load-questions',
+  EYE_TRACKING_EXPERIMENT: '/eye-tracking/experiment',
   ANALYSIS: '/analysis',
   FIXATION_SETTINGS: '/fixation-settings',
   HEATMAP_SETTINGS: '/heatmap-settings',

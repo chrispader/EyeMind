@@ -64,22 +64,20 @@ export async function loadFile(file: File | undefined, config: LoadFileConfig) {
     return
   }
 
-  const {state} = useStateStore.getState()
-
   // apply a different processing to the file depending on whether it is a model for data collection or a json file for the analysis
   // data-collection mode
-  if (state.mode == 'data-collection') {
+  if (config.mode == 'data-collection') {
     // readFileContent then traverseDataCollectionFile and traverseMoreItems
     readFileContent(file, async (content: string) => {
       await loadDataCollectionFile(file, content, config)
       await loadMoreFiles(config)
     })
+
+    return
   }
-  // analysis mode
-  else if (state.mode == 'analysis') {
-    // traverseAnalysisFile (traverseMoreItems is in the callback in window.utils.onStateRead (or in traverseAnalysisFile() if the file already exists))
-    await loadAnalysisFile(file, config)
-  }
+
+  // traverseAnalysisFile (traverseMoreItems is in the callback in window.utils.onStateRead (or in traverseAnalysisFile() if the file already exists))
+  await loadAnalysisFile(file, config)
 }
 
 async function loadMoreFiles(config: LoadFileConfig) {
@@ -108,7 +106,7 @@ async function loadMoreFiles(config: LoadFileConfig) {
  *
  */
 async function loadAnalysisFile(file: File, config: LoadFileConfig) {
-  const {state} = useStateStore.getState()
+  const {setState: _setState, ...state} = useStateStore.getState()
 
   const fileName = file.name
   const fileExtension = fileName.split('.').pop() ?? ''
@@ -142,7 +140,7 @@ async function loadAnalysisFile(file: File, config: LoadFileConfig) {
         '... <br><br> This step can take several minutes depending on the size of the file',
     )
 
-    window.utils.readState(file, fileName, filePath, state)
+    window.utils.readState(file, fileName, filePath, state, config)
 
     stateReadListener()
   } else {
@@ -170,8 +168,6 @@ async function loadDataCollectionFile(file: File, content: string, config: LoadF
   const fileName = file.name
   const fileExtension = fileName.split('.').pop() ?? ''
 
-  console.log('fileExtension', fileExtension)
-
   await showGeneralWaitingScreen('Loading ' + fileName + '...')
 
   /// apply different processing depending on the file extension and expected artifact
@@ -186,13 +182,13 @@ async function loadDataCollectionFile(file: File, content: string, config: LoadF
     config.expectedArtifact == 'models'
   ) {
     // traverseModelsFile
-    await loadModelFile(fileName, config, content)
+    await loadModelFile(fileName, content, config)
   } else if (
     config.expectedExtensions?.includes(fileExtension) &&
     config.expectedArtifact == 'questions'
   ) {
     // traverseQuestionsFile
-    await loadQuestionFile(file, config)
+    await loadQuestionFile(file)
   } else {
     const msg = 'File type or content not expected'
     errorAlert(msg)
@@ -216,7 +212,7 @@ async function loadDataCollectionFile(file: File, content: string, config: LoadF
  *
  */
 async function loadSessionFile(file: File, config: LoadFileConfig) {
-  const {state} = useStateStore.getState()
+  const { setState: _setState, ...state } = useStateStore.getState()
 
   let filePath = file.path
 
@@ -269,8 +265,8 @@ async function loadQuestionFile(file: File) {
  * Additional notes: none
  *
  */
-async function loadModelFile(fileName: string, content: string, path = '') {
-  const {state, setState} = useStateStore.getState()
+async function loadModelFile(fileName: string, content: string, config: LoadFileConfig, path = '') {
+  const {setState, ...state} = useStateStore.getState()
 
   const fileId = fileName.replace(
     new RegExp(CONST.MODELS_ID_REGEX, 'g'),
@@ -291,7 +287,7 @@ async function loadModelFile(fileName: string, content: string, path = '') {
 
     try {
       // process model
-      await processModel(file.xml, file.id, file.fileName, file.path)
+      await processModel(config, file.xml, file.id, file.fileName, file.path)
       // create file info menu
       createModelFileInfoBlock(file)
     } catch (error) {
@@ -325,7 +321,7 @@ async function loadModelFile(fileName: string, content: string, path = '') {
  *
  */
 function createModelFileInfoBlock(file: ModelFile) {
-  const {state} = useStateStore.getState()
+  const state = useStateStore.getState()
 
   /// create fileInfo block about the imported model
   const fileInfo = document.createElement('div')
@@ -333,7 +329,7 @@ function createModelFileInfoBlock(file: ModelFile) {
   fileInfo.setAttribute('class', 'row')
 
   // hide upload label
-  hideElement('upload-label')
+  // hideElement('upload-label')
 
   // fill in the file info block
   const defaultChecked = state.models?.[file.id]?.isMain ? 'checked' : ''
@@ -430,7 +426,7 @@ function createAnalysisFileInfoBlock(file: File) {
  *
  */
 function removeModelFile(file: ModelFile) {
-  const {state, setState} = useStateStore.getState()
+  const {setState, ...state} = useStateStore.getState()
 
   const newState = { ...state, models: { ...state.models, [file.id]: undefined } }
   setState(newState)
@@ -513,7 +509,7 @@ async function stateRead(res) {
   console.log('stateRead', arguments)
 
   // get client state
-  const {state, setState} = useStateStore.getState()
+  const {setState, ...state} = useStateStore.getState()
 
   // if the server res.success coming from the server is true
   if (res.success) {
@@ -610,8 +606,6 @@ function sessionReadListener() {
 async function sessionRead(res) {
   const { setState } = useStateStore.getState()
 
-  console.log('sessionRead', arguments)
-
   const success = res.success
   const msg = res.msg
   const data = res.data
@@ -619,7 +613,7 @@ async function sessionRead(res) {
   if (success) {
     setState(data)
 
-    const { state } = useStateStore.getState()
+    const state = useStateStore.getState()
     console.log('state', state)
 
     if (Object.keys(state.models ?? {}).length === 0) {
@@ -665,9 +659,9 @@ async function sessionRead(res) {
  * Additional notes: none
  *
  */
-async function processModel(xml: string, id: string, fileName: string, filePath: string) {
+async function processModel(config: LoadFileConfig, xml: string, id: string, fileName: string, filePath: string) {
   // get state
-  const { state, setState } = useStateStore.getState()
+  const { setState, ...state } = useStateStore.getState()
 
   /// construct/update the directory explorer
   constructDirectoryExplorer(filePath, fileName, id)
@@ -681,7 +675,7 @@ async function processModel(xml: string, id: string, fileName: string, filePath:
   console.log('model created')
 
   // differ the execution depending on the state.mode
-  if (state.mode == 'data-collection') {
+  if (config.mode == 'data-collection') {
     const previousModel = state.models === undefined ? undefined : state.models[id]
     const newModel = { ...previousModel, isMain: isMain(modeler) }
 
@@ -693,7 +687,7 @@ async function processModel(xml: string, id: string, fileName: string, filePath:
       },
     })
   }
-  if (state.mode == 'analysis') {
+  if (config.mode == 'analysis') {
     // add attributes needed to show the heatmaps
     const generalModelRegistry = {}
     generalModelRegistry.elementRegistry = modeler.get('elementRegistry')
@@ -753,7 +747,7 @@ function isMain(modeler) {
  *
  */
 function constructDirectoryExplorer(filePath: string, fileName: string, id: string) {
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   /// remove last "/" from the filePath
   filePath = filePath.slice(0, -1)
@@ -873,7 +867,7 @@ function createTabContainer(id, fileName) {
  *
  */
 async function createModel(fileName: string, id: string, xml: string, currentTabContainerId: string | undefined) {
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   // depending of the argument, either set as a process, or a nested sub-process
   currentTabContainerId = currentTabContainerId ?? 'model' + id + '-content'
@@ -998,7 +992,7 @@ function linkSubProcesses(
   console.log('linkSubProcesses', arguments)
 
   // get state
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   const mainModelElements = mainModel.get('elementRegistry')._elements
 
@@ -1097,7 +1091,7 @@ function linkSubProcesses(
 function isFileLoaded(fileName: string, fileId: string) {
   console.log('isFileLoaded', arguments)
 
-  const { state } = useStateStore.getState()
+  const state = useStateStore.getState()
 
   /// return null if subProcessFileName was not loaded
   if (!state.models?.hasOwnProperty(fileId)) {

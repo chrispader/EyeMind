@@ -4,9 +4,7 @@ import {
   loadFile,
 } from '@/app/client/components/FileImport/loadFile'
 import { LoadFileConfig } from '@/app/client/components/FileImport/types'
-import { LoadingScreen } from '@/app/client/components/LoadingScreen'
 import { containerClasses } from '@/app/client/css/styles'
-import { importQuestionsInteraction } from '@/app/client/modules/ui/data-collection'
 import { cancelDefault, errorAlert } from '@/app/client/modules/utils/utils'
 import { nFiles, shiftFile } from '@/app/client/state/filesBuffer'
 import { setFiles } from '@/app/client/state/filesBuffer'
@@ -20,63 +18,69 @@ declare global {
 
 type FileImportProps = LoadFileConfig & {
   uploadLabel: string
+  onFilesLoaded?: () => void
 }
 
 function FileImport({
   uploadLabel,
+  mode = 'data-collection',
   importMode = 'multiple',
   expectedArtifact,
   expectedExtensions,
+  onFilesLoaded,
 }: FileImportProps): React.ReactElement {
   const [isActive, setIsActive] = useState(false)
   const [filesInternal, setFilesInternal] = useState<FileList | undefined>(undefined)
-  const [isLoading, setIsLoading] = useState(false)
-  const { state } = useStateStore()
+  const { models } = useStateStore()
 
   console.log({ filesInternal })
 
-  const handleDroppedFiles = useCallback(async (e: React.DragEvent<HTMLDivElement>) => {
-    console.log('onDrop')
+  const handleDroppedFiles = useCallback(
+    async (e: React.DragEvent<HTMLDivElement>) => {
+      console.log('onDrop')
 
-    setIsActive(false)
+      setIsActive(false)
 
-    const config: LoadFileConfig = {
-      importMode,
-      expectedArtifact,
-      expectedExtensions,
-    }
+      const config: LoadFileConfig = {
+        mode,
+        importMode,
+        expectedArtifact,
+        expectedExtensions,
+      }
 
-    // a hack to support the testing of a single file upload using the drag/drop feature as the testing library playwright have an issue with webkitGetAsEntry returning always null
-    if (e.dataTransfer.isForTestingPurpose) {
-      loadFile(e.dataTransfer.files[0], config)
-      return
-    }
+      // a hack to support the testing of a single file upload using the drag/drop feature as the testing library playwright have an issue with webkitGetAsEntry returning always null
+      if (e.dataTransfer.isForTestingPurpose) {
+        loadFile(e.dataTransfer.files[0], config)
+        return
+      }
 
-    cancelDefault(e)
+      cancelDefault(e)
 
-    const files = e.dataTransfer.files
-    setFilesInternal(files)
-    setFiles(files)
+      const files = e.dataTransfer.files
+      setFilesInternal(files)
+      setFiles(files)
 
-    if (importMode == 'multiple') {
-      console.log('multiple files import mode')
-      console.log('files', files)
+      if (importMode == 'multiple') {
+        console.log('multiple files import mode')
+        console.log('files', files)
 
-      // traverse first file item
-      await loadFile(shiftFile(), config)
-      return
-    }
+        // traverse first file item
+        await loadFile(shiftFile(), config)
+        return
+      }
 
-    console.log('single file import mode')
+      console.log('single file import mode')
 
-    if (nFiles() == 1) {
-      await loadFile(shiftFile(), config)
-    } else {
-      const msg = 'only a single file can be imported' // check third argument
-      console.error(msg)
-      errorAlert(msg)
-    }
-  }, [])
+      if (nFiles() == 1) {
+        await loadFile(shiftFile(), config)
+      } else {
+        const msg = 'only a single file can be imported' // check third argument
+        console.error(msg)
+        errorAlert(msg)
+      }
+    },
+    [expectedArtifact, expectedExtensions, importMode, mode],
+  )
 
   const processFiles = useCallback(() => {
     // check models grouping
@@ -89,8 +93,8 @@ function FileImport({
     }
 
     // check if at least one model was imported
-    if (Object.keys(state.models ?? {}).length > 0) {
-      importQuestionsInteraction()
+    if (Object.keys(models ?? {}).length > 0) {
+      onFilesLoaded?.()
       return true
     } else {
       const msg = 'No models to load'
@@ -98,7 +102,7 @@ function FileImport({
       console.error(msg)
       return false
     }
-  }, [])
+  }, [models, onFilesLoaded])
 
   return (
     <div className={`${containerClasses} import-view`} id="import-view">

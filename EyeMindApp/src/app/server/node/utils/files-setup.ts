@@ -6,9 +6,8 @@ import { ClientState } from '@/app/client/state/state'
 import { addState } from '@/app/server/node/dataModels/state'
 
 export function readState(
-  _file: File,
   fileName: string,
-  filePath: string | undefined,
+  filePath: string,
   state: ClientState,
   config: LoadFileConfig,
   mainWindow: BrowserWindow,
@@ -27,24 +26,27 @@ export function readState(
       mainWindow.webContents.send('stateRead', res, fileName, filePath)
 
       // populate state for the server with the data obtained from the file
-      state = populateState(
-        {
-          ...state,
-          temp: {
-            expectedArtifact: config.expectedArtifact,
-            expectedExtensions: config.expectedExtensions ?? [],
-          },
-        },
-        data,
-      )
+      state = populateState(state, data)
 
       console.log(filePath)
 
       // add state to states
       addState(filePath, state)
     } else if (config.expectedArtifact == 'session') {
-      const res = readSession(data)
-      mainWindow.webContents.send('sessionRead', res)
+      if (data.processedGazeData?.hasOwnProperty('gazeData')) {
+        mainWindow.webContents.send('sessionRead', {
+          data: null,
+          msg: 'Could not load the session file because it contains gaze data already',
+          success: false,
+        })
+        return
+      }
+
+      mainWindow.webContents.send('sessionRead', {
+        data,
+        msg: 'State Loaded',
+        success: true,
+      })
     } else {
       const msg = 'Unknown expectedArtifact'
       console.error(msg)
@@ -64,22 +66,6 @@ export function readState(
   })
 
   readStream.pipe(parseStream)
-}
-
-export function readSession(loadedState: ClientState) {
-  if (loadedState.processedGazeData?.hasOwnProperty('gazeData')) {
-    return {
-      data: null,
-      msg: 'Could not load the session file because it contains gaze data already',
-      success: false,
-    }
-  }
-
-  return {
-    data: loadedState,
-    msg: 'State Loaded',
-    success: true,
-  }
 }
 
 export function populateState(state: ClientState, loadedState: ClientState) {

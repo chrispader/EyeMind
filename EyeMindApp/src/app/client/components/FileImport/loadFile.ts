@@ -170,30 +170,32 @@ async function loadDataCollectionFile(file: File, content: string, config: LoadF
 
   await showGeneralWaitingScreen('Loading ' + fileName + '...')
 
-  /// apply different processing depending on the file extension and expected artifact
-  if (
-    config.expectedExtensions?.includes(fileExtension) &&
-    config.expectedArtifact == 'session'
-  ) {
-    // traverseSessionFile
+  const isSessionFile = config.expectedExtensions?.includes(fileExtension) && config.expectedArtifact == 'session'
+  const isModelsFile = config.expectedExtensions?.includes(fileExtension) && config.expectedArtifact == 'models'
+  const isQuestionsFile = config.expectedExtensions?.includes(fileExtension) && config.expectedArtifact == 'questions'
+
+  if (isSessionFile) {
     await loadSessionFile(file, config)
-  } else if (
-    config.expectedExtensions?.includes(fileExtension) &&
-    config.expectedArtifact == 'models'
-  ) {
-    // traverseModelsFile
-    await loadModelFile(fileName, content, config)
-  } else if (
-    config.expectedExtensions?.includes(fileExtension) &&
-    config.expectedArtifact == 'questions'
-  ) {
-    // traverseQuestionsFile
-    await loadQuestionFile(file)
-  } else {
-    const msg = 'File type or content not expected'
-    errorAlert(msg)
-    console.error(msg)
+    return
   }
+
+  if (isModelsFile) {
+    await loadModelFile(fileName, content, config)
+    return
+  }
+
+  if (isQuestionsFile) {
+    if (await loadQuestions(file) /* load questions file */) {
+      // last step of file import
+      const filePropertiesDefined = false
+      prepareDataCollectionContent(filePropertiesDefined)
+    }
+    return
+  }
+
+  const msg = 'File type or content not expected'
+  errorAlert(msg)
+  console.error(msg)
 }
 
 /**
@@ -223,29 +225,6 @@ async function loadSessionFile(file: File, config: LoadFileConfig) {
 
   await window.utils.readState(file, file.name, filePath, state, config)
   sessionReadListener()
-}
-
-/**
- * Title: traverse questions file
- *
- * Description: load the questions from the file and call prepareDataCollectionContent()
- *
- * Control-flow summary: if questions are loaded, then call prepareDataCollectionContent()
-
- * @param {object} file file
- *
- * Returns {void}
- *
-*
- * Additional notes: prepareDataCollectionContent is called assuming that traversing the questions is the last step of the important process
- *
- */
-async function loadQuestionFile(file: File) {
-  if (await loadQuestions(file) /* load questions file */) {
-    // last step of file import
-    const filePropertiesDefined = false
-    prepareDataCollectionContent(filePropertiesDefined)
-  }
 }
 
 /**
@@ -394,7 +373,7 @@ function createAnalysisFileInfoBlock(file: File) {
   fileInfo.setAttribute('class', 'row')
 
   // hide upload label
-  hideElement('upload-label')
+  // hideElement('upload-label')
 
   // fill in the file info block
   fileInfo.innerHTML =

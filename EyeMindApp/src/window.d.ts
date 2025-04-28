@@ -59,7 +59,12 @@ declare global {
         includeTimeStampInFileName: boolean,
         customDownload: unknown,
       ) => Promise<unknown>
-      readState: (fileName: string, filePath: string, state: unknown) => Promise<unknown>
+      readState: (
+        file: File,
+        fileName: string,
+        filePath: string | undefined,
+        state: unknown,
+      ) => Promise<unknown>
       onStateRead: (callback: (args: unknown[]) => void) => void
       saveSession: (state: unknown) => Promise<unknown>
       recoverSession: (

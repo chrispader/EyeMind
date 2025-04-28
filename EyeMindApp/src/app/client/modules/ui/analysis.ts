@@ -20,8 +20,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import { getState, useStateStore } from '@/app/client/state/state'
+import { registerFileUpload } from '../../components/FileImport/loadFile'
 import { downloadInteraction } from './download'
-import { registerFileUpload } from './files-setup'
 import {
   FixationFilterCompletedProcessingListener,
   loadETSettingsView,
@@ -42,17 +42,17 @@ const REPORT_FREQUENCY = 1000
 async function analysisModeInteraction() {
   // console.log("analysisModeInteraction function",arguments);
 
-  const state = getState()
+  const { setState } = useStateStore.getState()
 
   // set state mode
-  state.mode = 'analysis'
-
-  // set state import mode
-  state.importMode = 'multiple'
-
-  // set expected  artifact and extensions
-  state.temp.expectedArtifact = 'analysis'
-  state.temp.expectedExtensions = ['json']
+  setState({
+    mode: 'analysis',
+    importMode: 'multiple',
+    temp: {
+      expectedArtifact: 'analysis',
+      expectedExtensions: ['json'],
+    },
+  })
 
   /// lunch R server
   if (window.hasOwnProperty('electron')) {

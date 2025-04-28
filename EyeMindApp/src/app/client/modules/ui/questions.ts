@@ -23,6 +23,7 @@ SOFTWARE.*/
 import DataFrame from 'dataframe-js'
 import { errorAlert } from '@/app/client/modules/utils/utils'
 import { useStateStore } from '@/app/client/state/state'
+import { globalParameters } from '@/globals'
 import { resetNavTabsAndTabs } from './canvas'
 import { showModelsGroup } from './canvas'
 import { sendClickEvent } from './click-stream'
@@ -41,18 +42,18 @@ import { stopETInteraction } from './data-collection'
  * Additional notes: none
  *
  */
-async function loadQuestions(file) {
-  console.log('loadQuestions', arguments)
-
-  const state = getState()
+async function loadQuestions(file: File) {
+  const { setState } = useStateStore.getState()
 
   try {
     const contentAsDataFrame = await DataFrame.fromCSV(file) // this statement should not fail if the file is a valid csv
     contentAsDataFrame.show()
-    state.questions = contentAsDataFrame.toCollection() //should be stored as Collection to faciliate the transfer to the server and the export
+    setState({
+      questions: contentAsDataFrame.toCollection() as Record<string, string>[], //should be stored as Collection to faciliate the transfer to the server and the export
+    })
 
-    const requiredColumns = window.globalParameters.RQUIRED_COLUMNS_IN_QUESTION_FILE
-    const questionsTypeSupported = window.globalParameters.QUESTION_TYPES_SUPPORTED
+    const requiredColumns = globalParameters.RQUIRED_COLUMNS_IN_QUESTION_FILE
+    const questionsTypeSupported = globalParameters.QUESTION_TYPES_SUPPORTED
 
     if (
       !checkNeccesaryColumnsInQuestionsFile(
@@ -88,13 +89,12 @@ async function loadQuestions(file) {
  *
  */
 function checkNeccesaryColumnsInQuestionsFile(
-  df,
-  requiredColumns,
-  questionsTypeSupported,
+  df: DataFrame,
+  requiredColumns: string[],
+  questionsTypeSupported: string[],
 ) {
-  console.log('checkNeccesaryColumnsInQuestionsFile', arguments)
-
-  const checker = (arr, target) => target.every((v) => arr.includes(v))
+  const checker = (arr: string[], target: string[]) =>
+    target.every((v) => arr.includes(v))
 
   const allRequiredColumnsThere = checker(df.listColumns(), requiredColumns)
   const containsOnlySupportedQuestionTypes = checker(
@@ -121,14 +121,14 @@ function checkNeccesaryColumnsInQuestionsFile(
 function generateQuestionsSequence() {
   console.log('generateQuestionsSequence', arguments)
 
-  const state = getState()
-  const questions = new DataFrame(state.questions)
+  const { state } = useStateStore.getState()
+  const questions = new DataFrame(state.questions ?? [])
 
   document.getElementById('start-questions-btn').onclick = () => startQuestions()
 
   document.getElementById('questions-ready').style.display = 'block'
 
-  questions.map((row, rowNum, rows) => {
+  questions.map((row: DataFrame, rowNum: number) => {
     const question = document.createElement('div')
     question.setAttribute('id', 'question' + rowNum)
     question.setAttribute('class', 'question gaze-element')
@@ -276,10 +276,8 @@ function generateQuestionsSequence() {
  *
  */
 function startQuestions() {
-  console.log('startQuestions', arguments)
-
-  const state = getState()
-  const questions = new DataFrame(state.questions)
+  const { state } = useStateStore.getState()
+  const questions = new DataFrame(state.questions ?? [])
 
   nextQuestion(null, 0, questions.count(), null, null, questions.getRow(0))
 }
@@ -303,16 +301,14 @@ function startQuestions() {
  *
  */
 async function nextQuestion(
-  currentQuestionId,
-  nextQuestionId,
-  questionsArrSize,
-  currentQuestion,
-  givenAnswer,
-  nextQuestion,
+  currentQuestionId: string | null,
+  nextQuestionId: number,
+  questionsArrSize: number,
+  currentQuestion: DataFrame | null,
+  givenAnswer: string | null,
+  nextQuestion: DataFrame,
 ) {
-  console.log('nextQuestion', arguments)
-
-  const state = getState()
+  const { state } = useStateStore.getState()
 
   if (!state.isEtOn) {
     const msg = 'Eye-tracking has not started yet'
@@ -373,8 +369,6 @@ async function nextQuestion(
  *
  */
 async function questionOnset(question, questionPosition) {
-  console.log('QuestionOnset', arguments)
-
   const questionText = question.get('question')
   const questionLogId = question.get('id')
   const questionTimestamp = Date.now()
@@ -512,20 +506,17 @@ async function sendQuestionEvent(
  * Additional notes: none
  *
  */
-function areModelGroupsValid(questions) {
-  console.log('areModelGroupsValid', arguments)
-
-  const state = getState()
+function areModelGroupsValid(questions: DataFrame) {
+  const { state } = useStateStore.getState()
 
   const df = new DataFrame(questions)
 
   // get model groups
-  const modelGroups = []
-  for (const model of Object.values(state.models)) {
-    console.log('model', model)
-    if (!modelGroups.includes(model.groupId)) {
+  const modelGroups: string[] = []
+  for (const model of Object.values(state.models ?? {})) {
+    if (!modelGroups.includes(model?.groupId ?? '')) {
       console.log('push')
-      modelGroups.push(model.groupId)
+      modelGroups.push(model?.groupId ?? '')
     }
   }
 

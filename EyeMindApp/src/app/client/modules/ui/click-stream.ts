@@ -34,10 +34,10 @@ import { getState, useStateStore } from '@/app/client/state/state'
  *
  *
  */
-async function sendClickEvent(clickTimestamp, clickedElement) {
+async function sendClickEvent(clickTimestamp: number, clickedElement: string) {
   console.log('sendClickEvent', arguments)
 
-  const state = getState()
+  const { state } = useStateStore.getState()
 
   if (state.isEtOn) {
     const res = await window.eyeTracker.sendClickEvent(clickTimestamp, clickedElement)
@@ -97,7 +97,7 @@ function registerClickEventForLogging(el) {
 
 	el.addEventListener("click", async() => {
 
-	var state = getState();
+	const { state } = useStateStore.getState()
 
 	console.log("state",state);
 

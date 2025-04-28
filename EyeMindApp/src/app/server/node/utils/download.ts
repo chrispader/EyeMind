@@ -26,9 +26,11 @@ import { getState, getStates } from '@/app/server/node/dataModels/state'
 import { globalParameters } from '@/globals'
 import { parseOriginalFileName } from './utils'
 
-export async function stateDownload(fileName, includeTimeStampInFileName, type) {
-  //console.log("stateDownload function",arguments);
-
+export async function stateDownload(
+  fileName: string,
+  includeTimeStampInFileName: boolean,
+  type: string,
+) {
   const fileExtension =
     type == 'analysis-data' || type == 'collected-data' || type == 'session-data'
       ? 'json'
@@ -44,16 +46,22 @@ export async function stateDownload(fileName, includeTimeStampInFileName, type) 
   )
 }
 
-async function downloadFile(
-  fileName,
-  type,
-  fileExtension,
-  includeTimeStampInFileName,
-  timestamp,
-) {
-  //console.log("downloadFile function",arguments);
+type DownloadFileResult = {
+  msg: string
+  success: boolean
+}
 
-  const res = {}
+async function downloadFile(
+  fileName: string,
+  type: string,
+  fileExtension: string,
+  includeTimeStampInFileName: boolean,
+  timestamp: number,
+) {
+  const res: DownloadFileResult = {
+    msg: '',
+    success: false,
+  }
 
   if (type == 'collected-data' || type == 'session-data') {
     const savingPath =

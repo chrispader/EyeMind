@@ -20,11 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import {
-  SetProjectionAndMappingActive,
-  areProjectionAndMappingActive,
-} from '@/app/client/modules/dataModels/activeFeatures'
-import { getSnapshots, setSnapshots } from '@/app/client/modules/dataModels/snapshots'
-import {
   displayElement,
   hideElement,
   populateParticipantFileSelect,
@@ -35,6 +30,11 @@ import {
   errorAlert,
   infoAlert,
 } from '@/app/client/modules/utils/utils'
+import {
+  SetProjectionAndMappingActive,
+  areProjectionAndMappingActive,
+} from '@/app/client/state/activeFeatures'
+import { getSnapshots, setSnapshots } from '@/app/client/state/snapshots'
 import { disableHeatmapOption, enableHeatmapOption } from './heatmap'
 import { mapGazetoElementsFromSvgSnapshot } from './mapping'
 import {

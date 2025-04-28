@@ -43,12 +43,12 @@ import {
  * Additional notes: none
  *
  */
-function addToTabHeader(id) {
+function addToTabHeader(id: string) {
   // create tab header if not already there
   console.log('addToTabHeader', arguments)
 
   // get state
-  const state = getState()
+  const { state } = useStateStore.getState()
 
   // get file name
   const fileName = document
@@ -61,10 +61,10 @@ function addToTabHeader(id) {
     tabHeader.setAttribute('id', 'model' + id)
     tabHeader.setAttribute('class', 'tab-link gaze-element')
     tabHeader.setAttribute('data-element-id', 'tab-header-tab-link-to_' + fileName)
-    tabHeader.setAttribute('file', fileName)
+    tabHeader.setAttribute('file', fileName ?? '')
 
     // support for dragging and dropping tabs
-    tabHeader.setAttribute('draggable', true)
+    tabHeader.setAttribute('draggable', 'true')
     tabHeader.addEventListener('dragstart', tabDragStart)
     tabHeader.addEventListener('drop', tabDropped)
     tabHeader.addEventListener('dragenter', cancelDefault)
@@ -72,10 +72,10 @@ function addToTabHeader(id) {
 
     /// a tab header has a filename span and a close img
     const tabHeader_fileName = document.createElement('span')
-    tabHeader_fileName.innerHTML = fileName
+    tabHeader_fileName.innerHTML = fileName ?? ''
     tabHeader_fileName.setAttribute('class', 'fileName gaze-element')
     tabHeader_fileName.setAttribute('data-element-id', 'tab-link-to_' + fileName)
-    tabHeader_fileName.setAttribute('file', fileName)
+    tabHeader_fileName.setAttribute('file', fileName ?? '')
     tabHeader_fileName.addEventListener('click', function (e) {
       sendClickEvent(Date.now(), tabHeader_fileName.getAttribute('data-element-id')) // send click event
       changeTab(id, false, true)
@@ -91,7 +91,7 @@ function addToTabHeader(id) {
       'data-element-id',
       'close-button-tab-link-to_' + fileName,
     )
-    tabHeader_close.setAttribute('file', fileName)
+    tabHeader_close.setAttribute('file', fileName ?? '')
     tabHeader_close.setAttribute('src', 'icons/close-tab.svg')
     // since a tabHeader_close DOM is created every time addToTabHeader() is called and document.getElementById("model"+id)==null, registerClickEventForLogging is used to log clicks on this element
     //registerClickEventForLogging(tabHeader_close);
@@ -102,7 +102,7 @@ function addToTabHeader(id) {
     }
 
     /// append only if the task is not unclosable
-    if (state.models[id].unclosable != null && !state.models[id].unclosable) {
+    if (state.models?.[id]?.unclosable != null && !state.models[id].unclosable) {
       tabHeader.appendChild(tabHeader_close)
     }
 
@@ -260,10 +260,10 @@ function tabDropped(e) {
  * Additional notes: none
  *
  */
-function closeTabInteraction(id, tabHeader, takeSnapshot) {
+function closeTabInteraction(id: string, tabHeader: HTMLElement, takeSnapshot: boolean) {
   console.log('closeTabInteraction', arguments)
 
-  const state = getState()
+  const { setState } = useStateStore.getState()
 
   // reset the model of the closed tab
   resetModel(id)
@@ -274,7 +274,7 @@ function closeTabInteraction(id, tabHeader, takeSnapshot) {
   /// if the tab to be closed is the one which is actually shown, hide it and set state.activeTab to ""
   if (document.getElementById('model' + id + '-container').style.display == 'flex') {
     document.getElementById('model' + id + '-container').style.display = 'none'
-    state.activeTab = ''
+    setState({ activeTab: '' })
     // console.log("active tab changed ",state.activeTab);
   }
 
@@ -299,10 +299,12 @@ function closeTabInteraction(id, tabHeader, takeSnapshot) {
  * Additional notes: none
  *
  */
-function changeTab(destinationId, ignoreTabLinks, takeSnapshot) {
-  console.log('changeTab', arguments)
-
-  const state = getState()
+function changeTab(
+  destinationId: string,
+  ignoreTabLinks: boolean,
+  takeSnapshot: boolean,
+) {
+  const { setState } = useStateStore.getState()
 
   const destinationIdModel = document.getElementById('model' + destinationId + '-content')
   const fileName = destinationIdModel.getAttribute('fileName')
@@ -346,9 +348,7 @@ function changeTab(destinationId, ignoreTabLinks, takeSnapshot) {
   }
 
   // update state.activeTab
-  state.activeTab = fileName
-
-  // console.log("active tab changed ",state.activeTab);
+  setState({ activeTab: fileName ?? '' })
 
   // take snapshot on change tab
   if (takeSnapshot) {
@@ -369,7 +369,7 @@ function changeTab(destinationId, ignoreTabLinks, takeSnapshot) {
  * Additional notes: none
  *
  */
-function openInTab(subProcessId) {
+function openInTab(subProcessId: string) {
   console.log('openInTab', arguments)
 
   addToTabHeader(subProcessId)
@@ -428,13 +428,15 @@ async function openWithinTab(
  * Additional notes: none
  *
  */
-function openMainTab(ignoreTabLinks, takeSnapshot, modelsGroupId) {
-  console.log('openMainTab function', arguments)
+function openMainTab(
+  ignoreTabLinks: boolean,
+  takeSnapshot: boolean,
+  modelsGroupId: string,
+) {
+  const { state } = useStateStore.getState()
 
-  const state = getState()
-
-  for (const [key, model] of Object.entries(state.models)) {
-    if (model.mainTab && model.groupId == modelsGroupId) {
+  for (const [key, model] of Object.entries(state.models ?? {})) {
+    if (model?.mainTab && model.groupId == modelsGroupId) {
       if (!ignoreTabLinks) addToTabHeader(key)
       changeTab(key, ignoreTabLinks, takeSnapshot)
       break
@@ -456,16 +458,34 @@ function openMainTab(ignoreTabLinks, takeSnapshot, modelsGroupId) {
  *
  */
 function setMainTab() {
-  console.log('setMainTab function', arguments)
+  const { state, setState } = useStateStore.getState()
 
-  const state = getState()
-
-  const setAsMainRadioBoxList = document.getElementsByClassName('set-as-main')
+  const setAsMainRadioBoxList = document.getElementsByClassName(
+    'set-as-main',
+  ) as HTMLCollectionOf<HTMLInputElement>
 
   for (let i = 0; i < setAsMainRadioBoxList.length; i++) {
-    if (setAsMainRadioBoxList[i].checked) {
-      state.models[setAsMainRadioBoxList[i].getAttribute('modelId')].mainTab =
-        setAsMainRadioBoxList[i].checked
+    const checked = setAsMainRadioBoxList[i]?.checked ?? false
+    if (checked) {
+      const modelId = setAsMainRadioBoxList[i]?.getAttribute('modelId')
+      if (modelId == null || state.models == null) {
+        continue
+      }
+
+      const model = state.models[modelId]
+      if (model == null) {
+        continue
+      }
+
+      setState({
+        models: {
+          ...state.models,
+          [modelId]: {
+            ...model,
+            mainTab: checked,
+          },
+        },
+      })
     }
   }
 }
@@ -486,14 +506,36 @@ function setMainTab() {
 function setUnclosableTabs() {
   console.log('setUnclosableTabs', arguments)
 
-  const state = getState()
+  const { state, setState } = useStateStore.getState()
 
-  const setUnclosableTabCheckBoxList = document.getElementsByClassName('unclosable-tab')
+  const setUnclosableTabCheckBoxList = document.getElementsByClassName(
+    'unclosable-tab',
+  ) as HTMLCollectionOf<HTMLInputElement>
   // console.log("setUnclosableTabCheckBoxList", setUnclosableTabCheckBoxList);
 
   for (let i = 0; i < setUnclosableTabCheckBoxList.length; i++) {
-    state.models[setUnclosableTabCheckBoxList[i].getAttribute('modelId')].unclosable =
-      setUnclosableTabCheckBoxList[i].checked
+    const checked = setUnclosableTabCheckBoxList[i]?.checked ?? false
+    if (checked) {
+      const modelId = setUnclosableTabCheckBoxList[i]?.getAttribute('modelId')
+      if (modelId == null || state.models == null) {
+        continue
+      }
+
+      const model = state.models[modelId]
+      if (model == null) {
+        continue
+      }
+
+      setState({
+        models: {
+          ...state.models,
+          [modelId]: {
+            ...model,
+            unclosable: checked,
+          },
+        },
+      })
+    }
   }
 }
 

@@ -38,7 +38,7 @@ import { getState, useStateStore } from '@/app/client/state/state'
 function loadModels() {
   console.log('loadModels', arguments)
 
-  const state = getState()
+  const { state } = useStateStore.getState()
 
   /// move to loaded-content-view
   document.getElementById('import-view').style.display = 'none'

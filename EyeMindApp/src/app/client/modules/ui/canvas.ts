@@ -20,6 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import { getState, useStateStore } from '@/app/client/state/state'
+import { globalParameters } from '@/globals'
 import { takesnapshot } from './data-collection'
 import { resetProcessHierarchy } from './process-hierarchy-explorer'
 import { closeTabInteraction, openMainTab } from './tabs'
@@ -74,10 +75,8 @@ function resetModel(fileId) {
  * Additional notes: none
  *
  */
-function resetNavTabsAndTabs(modelsGroupId) {
-  console.log('resetNavTabsAndTabs', arguments)
-
-  const state = getState()
+function resetNavTabsAndTabs(modelsGroupId?: string) {
+  const { state } = useStateStore.getState()
 
   if (modelsGroupId != null) {
     // differ the execution depending on the linkingSubProcessesMode
@@ -90,9 +89,9 @@ function resetNavTabsAndTabs(modelsGroupId) {
 
       for (let i = 0; i < navTabs.length; ++i) {
         const tabHeader = navTabs[i]
-        const fileName = tabHeader.getAttribute('file')
-        const fileId = fileName.replace(
-          new RegExp(window.globalParameters.MODELS_ID_REGEX, 'g'),
+        const fileName = tabHeader?.getAttribute('file')
+        const fileId = fileName?.replace(
+          new RegExp(globalParameters.MODELS_ID_REGEX, 'g'),
           '',
         )
 
@@ -121,7 +120,7 @@ function resetNavTabsAndTabs(modelsGroupId) {
       takesnapshot(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
     } else if (state.linkingSubProcessesMode == 'withinTab') {
       // reset all models
-      for (const [key, model] of Object.entries(state.models)) {
+      for (const key of Object.keys(state.models ?? {})) {
         resetModel(key)
       }
 
@@ -160,13 +159,13 @@ function resetNavTabsAndTabs(modelsGroupId) {
 function showModelsGroup(groupId) {
   console.log('showModelsGroup', arguments)
 
-  const state = getState()
+  const { state } = useStateStore.getState()
 
   if (groupId != null) {
-    for (const model of Object.values(state.models)) {
+    for (const model of Object.values(state.models ?? {})) {
       //console.log(model,model.id,document.getElementById("model"+model.id+"-explorerItem"))
 
-      if (model.groupId == groupId) {
+      if (model?.groupId == groupId) {
         document.getElementById('model' + model.id + '-explorerItem').style.display =
           'block'
       } else {
@@ -175,7 +174,7 @@ function showModelsGroup(groupId) {
       }
     }
   } else {
-    for (const model of Object.values(state.models)) {
+    for (const model of Object.values(state.models ?? {})) {
       document.getElementById('model' + model.id + '-explorerItem').style.display = 'none'
     }
   }

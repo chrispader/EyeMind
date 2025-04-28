@@ -26,8 +26,8 @@ import {
   updateTextAndDisplayDomElement,
 } from '@/app/client/modules/utils/dom'
 import { errorAlert, infoAlert } from '@/app/client/modules/utils/utils'
-import { assignModelsToGroups } from './files-setup'
 import { getState, useStateStore } from '@/app/client/state/state'
+import { assignModelsToGroups } from '../../components/FileImport/loadFile'
 import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
 import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'
 import { updateProcessMessageListener } from './progress'
@@ -52,9 +52,7 @@ import { setMainTab, setUnclosableTabs } from './tabs'
  *
  */
 function importQuestionsInteraction() {
-  console.log('importQuestionsInteraction', arguments)
-
-  // move to import-view
+  // move to iport-view
   moveFromTo('data-collection-session-options-view', 'import-view', 'flex')
   // clear upload-zone. This is because importQuestionsInteraction comes after importModelsInteraction
   hideChildElements('upload-zone')
@@ -62,12 +60,15 @@ function importQuestionsInteraction() {
   updateTextAndDisplayDomElement('upload-label', 'Drop questions csv files', 'block')
 
   // get client state
-  const state = getState()
+  const { setState } = useStateStore.getState()
 
-  /// settings for importing questions
-  state.importMode = 'single'
-  state.temp.expectedArtifact = 'questions'
-  state.temp.expectedExtensions = ['csv']
+  setState({
+    importMode: 'single',
+    temp: {
+      expectedArtifact: 'questions',
+      expectedExtensions: ['csv'],
+    },
+  })
 }
 
 /**
@@ -84,20 +85,24 @@ function importQuestionsInteraction() {
  *
  */
 async function saveSessionInteraction() {
-  console.log('saveSessionInteraction', arguments)
-
-  const state = getState()
+  const { state, setState } = useStateStore.getState()
 
   if (areRequiredFieldsEntered()) {
-    state.processedGazeData = {
-      xScreenDim: document.getElementById('x-dim').value,
-      yScreenDim: document.getElementById('y-dim').value,
-      screenDistance: document.getElementById('screen-distance').value,
-      monitorSize: document.getElementById('monitor-size').value,
-      experimentID: document.getElementById('experiment-id').value,
-      experimenterID: document.getElementById('experimenter-id').value,
-      additionalNotes: document.getElementById('additional-notes').value,
-    }
+    setState({
+      processedGazeData: {
+        xScreenDim: (document.getElementById('x-dim') as HTMLInputElement).value,
+        yScreenDim: (document.getElementById('y-dim') as HTMLInputElement).value,
+        screenDistance: (document.getElementById('screen-distance') as HTMLInputElement)
+          .value,
+        monitorSize: (document.getElementById('monitor-size') as HTMLInputElement).value,
+        experimentID: (document.getElementById('experiment-id') as HTMLInputElement)
+          .value,
+        experimenterID: (document.getElementById('experimenter-id') as HTMLInputElement)
+          .value,
+        additionalNotes: (document.getElementById('additional-notes') as HTMLInputElement)
+          .value,
+      },
+    })
 
     const res = await window.utils.saveSession(state)
 
@@ -122,12 +127,10 @@ async function saveSessionInteraction() {
  * Additional notes: none
  *
  */
-function prepareDataCollectionContent(filePropertiesDefined) {
+function prepareDataCollectionContent(filePropertiesDefined: boolean) {
   // showing file explorer, loading models, questions and configuring tables
 
-  console.log('prepareDataCollectionContent', arguments)
-
-  const state = getState()
+  const { state } = useStateStore.getState()
 
   // show or hide file explorer
   if (
@@ -189,9 +192,7 @@ function prepareDataCollectionContent(filePropertiesDefined) {
  *
  */
 function recordETInteraction() {
-  console.log('recordETInteraction', arguments)
-
-  //var state = getState();
+  // const { state } = useStateStore.getState()
 
   // load recording form data (would work if a existing session is load)
   loadRecordingFormData()
@@ -228,9 +229,11 @@ function recordETInteraction() {
  *
  */
 function loadRecordingFormData() {
-  console.log('loadRecordingFormData', arguments)
+  const { state } = useStateStore.getState()
 
-  const state = getState()
+  if (state.processedGazeData === undefined) {
+    return
+  }
 
   if (state.processedGazeData.hasOwnProperty('xScreenDim'))
     document.getElementById('x-dim').value = state.processedGazeData['xScreenDim']
@@ -287,8 +290,6 @@ function closeStartETModalInteraction() {
  */
 async function startETInteraction() {
   console.log('startETInteraction', arguments)
-
-  const state = getState()
 
   if (areRequiredFieldsEntered()) {
     let setup = false
@@ -402,25 +403,29 @@ function areRequiredFieldsEntered() {
  *
  */
 async function initiateETsession() {
-  console.log('initiateETsession', arguments)
+  const { setState } = useStateStore.getState()
 
-  const state = getState()
+  const styleParameters = await saveStyleParameters()
 
-  state.processedGazeData = {
-    xScreenDim: document.getElementById('x-dim').value,
-    yScreenDim: document.getElementById('y-dim').value,
-    screenDistance: document.getElementById('screen-distance').value,
-    monitorSize: document.getElementById('monitor-size').value,
-    recordingID: document.getElementById('recording-id').value,
-    participantID: document.getElementById('participant-id').value,
-    experimentID: document.getElementById('experiment-id').value,
-    experimenterID: document.getElementById('experimenter-id').value,
-    additionalNotes: document.getElementById('additional-notes').value,
-    gazeData: '',
-  }
-
-  state.styleParameters = await saveStyleParameters()
-  // console.log("new state", state);
+  setState({
+    styleParameters,
+    processedGazeData: {
+      xScreenDim: (document.getElementById('x-dim') as HTMLInputElement).value,
+      yScreenDim: (document.getElementById('y-dim') as HTMLInputElement).value,
+      screenDistance: (document.getElementById('screen-distance') as HTMLInputElement)
+        .value,
+      monitorSize: (document.getElementById('monitor-size') as HTMLInputElement).value,
+      recordingID: (document.getElementById('recording-id') as HTMLInputElement).value,
+      participantID: (document.getElementById('participant-id') as HTMLInputElement)
+        .value,
+      experimentID: (document.getElementById('experiment-id') as HTMLInputElement).value,
+      experimenterID: (document.getElementById('experimenter-id') as HTMLInputElement)
+        .value,
+      additionalNotes: (document.getElementById('additional-notes') as HTMLInputElement)
+        .value,
+      gazeData: '',
+    },
+  })
 }
 
 /**
@@ -437,8 +442,6 @@ async function initiateETsession() {
  *
  */
 async function saveStyleParameters() {
-  console.log('getStyleParameters', arguments)
-
   let stylesContent = ''
 
   const styles = document.querySelectorAll('link')
@@ -469,7 +472,7 @@ async function saveStyleParameters() {
  * Additional notes: none
  *
  */
-async function setupTracking(xScreenDim, yScreenDim) {
+async function setupTracking(xScreenDim: number, yScreenDim: number) {
   console.log('setupTracking function')
 
   const res = await window.eyeTracker.setupTracking(xScreenDim, yScreenDim)
@@ -495,12 +498,29 @@ async function setupTracking(xScreenDim, yScreenDim) {
  * Additional notes: none
  *
  */
-function startTracking(timestamp, code, screenX, screenY) {
+function startTracking(
+  timestamp: number,
+  code: string,
+  screenX: number,
+  screenY: number,
+) {
   // console.log("startTracking function ",arguments);
 
-  const state = getState()
+  const { setState } = useStateStore.getState()
 
-  state.isEtOn = true
+  setState({
+    isEtOn: true,
+  })
+}
+
+type Snapshot = {
+  id: number
+  tabName: string | undefined
+  timestamp: number
+  code: string
+  screenX: number
+  screenY: number
+  boundingClientRect: string | null
 }
 
 /**
@@ -521,10 +541,8 @@ function startTracking(timestamp, code, screenX, screenY) {
  *
  */
 
-function takesnapshot(timestamp, code, screenX, screenY) {
-  console.log('takesnapshot', arguments)
-
-  const state = getState()
+function takesnapshot(timestamp: number, code: string, screenX: number, screenY: number) {
+  const { state, setState } = useStateStore.getState()
   console.log('state to be used in snapshot', state)
 
   // check that eye-tracking is still on recording
@@ -534,15 +552,15 @@ function takesnapshot(timestamp, code, screenX, screenY) {
   }
 
   // create snapshot
-  const snapshot = {}
-  snapshot.timestamp = timestamp
-  snapshot.code = code
-  /// *Due to a bug in electron/Window10 (https://stackoverflow.com/questions/53241601/window-screenx-inconsistencies-in-windows-10-with-electron-chrome) the recording should always be in full screen and screenY and screenY are by default set to 0
-  snapshot.screenX = 0 //screenX;
-  snapshot.screenY = 0 //screenY;
-  /////
-  snapshot.id = state.snapshotsCounter
-  snapshot.tabName = state.activeTab
+  const snapshot: Snapshot = {
+    id: state.snapshotsCounter ?? 0,
+    tabName: state.activeTab,
+    timestamp,
+    code,
+    screenX: 0,
+    screenY: 0,
+    boundingClientRect: null,
+  }
 
   // dm
   if (snapshot.tabName != null && snapshot.tabName != '') {
@@ -573,13 +591,15 @@ function takesnapshot(timestamp, code, screenX, screenY) {
   sendFullSnapshot(snapshot)
 
   // update snapshots snapshotsCounter
-  state.snapshotsCounter++
+  setState({
+    snapshotsCounter: (state.snapshotsCounter ?? 0) + 1,
+  })
 
   // console.log("new snapshotCounter", state.snapshotsCounter);
   // console.log("new state ",state);
 
   // for testing purpose
-  if (window.hasOwnProperty('clientTests')) {
+  if ('clientTests' in window) {
     window.clientTests.lastSnapshot = snapshot
   }
 }
@@ -644,7 +664,7 @@ async function sendFullSnapshot(snapshot) {
 async function stopETInteraction() {
   console.log('stopETInteraction', arguments)
 
-  const state = getState()
+  const { state } = useStateStore.getState()
 
   // set stop-btn interaction to null
   document.getElementById('stop-btn').onclick = null
@@ -695,9 +715,11 @@ async function stopETInteraction() {
 function endTracking(externalProgressWindow) {
   console.log('endTracking function ', arguments)
 
-  const state = getState()
+  const { setState } = useStateStore.getState()
 
-  state.isEtOn = false
+  setState({
+    isEtOn: false,
+  })
 
   // processing gaze data
   processGazeData(externalProgressWindow)
@@ -719,7 +741,7 @@ function endTracking(externalProgressWindow) {
 function processGazeData(externalProgressWindow) {
   console.log('processGazeData function ', arguments)
 
-  const state = getState()
+  const { state } = useStateStore.getState()
 
   mapGazestoElementsFromPageSnapshotListener()
 

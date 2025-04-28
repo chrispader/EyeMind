@@ -44,19 +44,21 @@ import { openWithinTab } from './tabs'
  *
  */
 function createUpdateProcessHierarchyExplorer(
-  mainModelId,
-  mainModelprocessId,
-  SubProcessId,
-  subProcessActivityLabelInMainModel,
-  position,
+  mainModelId: string,
+  mainModelprocessId: string,
+  SubProcessId: string,
+  subProcessActivityLabelInMainModel: string,
+  position: number,
 ) {
   console.log('createUpdateProcessHierarchyExplorer', arguments)
 
-  const state = getState()
+  const { state, setState } = useStateStore.getState()
 
   /// condition/mechanism to initiate state.processHierarchyExplorer
   if (state.processHierarchyExplorer == null) {
-    state.processHierarchyExplorer = [{ id: mainModelId, label: mainModelprocessId }]
+    setState({
+      processHierarchyExplorer: [{ id: mainModelId, label: mainModelprocessId }],
+    })
   }
   // condition/mechanism to move backward
   else if (position < state.processHierarchyExplorer.length) {
@@ -64,9 +66,14 @@ function createUpdateProcessHierarchyExplorer(
   }
 
   // add subprocess info to state.processHierarchyExplorer
-  state.processHierarchyExplorer.push({
-    id: SubProcessId,
-    label: subProcessActivityLabelInMainModel,
+  setState({
+    processHierarchyExplorer: [
+      ...(state.processHierarchyExplorer ?? []),
+      {
+        id: SubProcessId,
+        label: subProcessActivityLabelInMainModel,
+      },
+    ],
   })
 }
 
@@ -84,20 +91,23 @@ function createUpdateProcessHierarchyExplorer(
  * Additional notes: none
  *
  */
-function renderProcessHierarchyExplorer(mainModelName, mainModelprocessId) {
+function renderProcessHierarchyExplorer(
+  mainModelName: string,
+  mainModelprocessId: string,
+) {
   console.log('renderProcessHierarchyExplorer', arguments)
 
-  const state = getState()
+  const { state } = useStateStore.getState()
 
   const container = document.getElementById('process-hierarchy-content')
 
   container.innerHTML = ''
 
   // show the ProcessHierarchyExplorer steps if there is more than one step in state.processHierarchyExplorer (i.e., more than the main process itself)
-  if (state.processHierarchyExplorer.length > 1) {
-    state.processHierarchyExplorer.forEach((el, position, array) => {
+  if ((state.processHierarchyExplorer?.length ?? 0) > 1) {
+    state.processHierarchyExplorer?.forEach((el, position, array) => {
       // create arrow head
-      if (container.innerHTML != '') {
+      if (container?.innerHTML != '') {
         const arrowhead = document.createElement('span')
         arrowhead.setAttribute('class', 'arrowhead')
         arrowhead.innerHTML = ' > '
@@ -147,7 +157,7 @@ function renderProcessHierarchyExplorer(mainModelName, mainModelprocessId) {
  *
  */
 function resetProcessHierarchy() {
-  const state = getState()
+  const { setState } = useStateStore.getState()
 
   const container = document.getElementById('process-hierarchy-content')
 
@@ -155,7 +165,9 @@ function resetProcessHierarchy() {
   container.innerHTML = ''
 
   // set state.processHierarchyExplorer to null
-  state.processHierarchyExplorer = null
+  setState({
+    processHierarchyExplorer: null,
+  })
 }
 
 export {

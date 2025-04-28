@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { ROUTES } from '@/app/client/ROUTES'
 import FileImport from '@/app/client/components/FileImport'
@@ -9,8 +9,8 @@ import {
 import { errorAlert } from '@/app/client/modules/utils/utils'
 import { useStateStore } from '@/app/client/state/state'
 
-export function EyeTrackingLoadModelsPage(): React.ReactElement {
-  const { models, setState } = useStateStore.getState()
+export function EyeTrackingLoadModelsPage() {
+  const { models, updateModel, setState } = useStateStore()
   const navigate = useNavigate()
 
   // TODO: Remove once state is split up
@@ -22,15 +22,40 @@ export function EyeTrackingLoadModelsPage(): React.ReactElement {
     })
   }, [setState])
 
-  const removeModelFile = useCallback(
-    (file: File) => {
-      setState((state) => {
-        delete state.models?.[getModelIdFromFileName(file.name)]
-        return state
-      })
-    },
-    [setState],
-  )
+  function removeModelFile(file: File) {
+    updateModel(getModelIdFromFileName(file.name), undefined)
+  }
+
+  function validateModels() {
+    const modelValues = Object.values(models ?? {})
+
+    const mainModels = modelValues.filter((model) => model?.isMain === true)
+
+    console.log({ mainModels })
+
+    if (mainModels.length !== 1) {
+      const msg = 'There must be exactly one model set as main'
+      errorAlert(msg)
+      console.error(msg)
+      return
+    }
+
+    if (modelValues.some((model) => (model?.groupId ?? '') === '')) {
+      const msg = 'All models must be assigned to a group'
+      errorAlert(msg)
+      console.error(msg)
+      return
+    }
+
+    if (modelValues.length > 0) {
+      navigate(ROUTES.EYE_TRACKING_LOAD_QUESTIONS)
+      return
+    }
+
+    const msg = 'No models to load'
+    errorAlert(msg)
+    console.error(msg)
+  }
 
   return (
     <FileImport
@@ -39,29 +64,8 @@ export function EyeTrackingLoadModelsPage(): React.ReactElement {
       expectedArtifact="models"
       expectedExtensions={['bpmn', 'odm']}
       uploadLabel="Drop models files"
-      onLoad={() => {
-        const modelValues = Object.values(models ?? {})
-
-        const mainModels = modelValues.filter((model) => model?.isMain === true)
-        if (mainModels.length > 1) {
-          const msg = 'Only one model can be set as main'
-          errorAlert(msg)
-          console.error(msg)
-          return
-        }
-
-        if (modelValues.length > 0) {
-          navigate(ROUTES.EYE_TRACKING_LOAD_QUESTIONS)
-          return
-        }
-
-        const msg = 'No models to load'
-        errorAlert(msg)
-        console.error(msg)
-      }}
-      onDrop={(files, config) => {
-        loadFiles(files, config)
-      }}
+      onLoad={validateModels}
+      onDrop={loadFiles}
       onRemove={removeModelFile}
       renderItemContent={(file) => <ModelFileItem file={file} />}
     />
@@ -69,13 +73,9 @@ export function EyeTrackingLoadModelsPage(): React.ReactElement {
 }
 
 function ModelFileItem({ file }: { file: File }) {
-  const { models } = useStateStore()
-  const modelFile = useMemo(
-    () => models?.[getModelIdFromFileName(file.name)],
-    [models, file.name],
-  )
+  const { models, updateModel } = useStateStore()
+  const modelFile = models?.[getModelIdFromFileName(file.name)]
 
-  console.log('modelFile', modelFile)
   if (modelFile == null) {
     return null
   }
@@ -90,17 +90,23 @@ function ModelFileItem({ file }: { file: File }) {
           id={`set-as-main-${file.id}`}
           name="set-as-main"
           modelId={modelFile.id}
-          checked={modelFile.isMain}
+          defaultChecked={modelFile.isMain}
+          onChange={(e) => {
+            updateModel(modelFile.id, { isMain: e.target.checked })
+          }}
         />
         Set as main
       </div>
       <div className="column">
         <input
+          type="checkbox"
           className="unclosable-tab"
           id={`unclosable-tab-${file.id}`}
           modelId={modelFile.id}
-          type="checkbox"
-          checked={modelFile.isMain}
+          onChange={(e) => {
+            updateModel(modelFile.id, { unclosable: e.target.checked })
+          }}
+          defaultChecked={modelFile.unclosable}
         />
         Unclosable Tab
       </div>
@@ -111,9 +117,12 @@ function ModelFileItem({ file }: { file: File }) {
           modelId={modelFile.id}
           type="text"
           size={2}
+          onChange={(e) => {
+            updateModel(modelFile.id, { groupId: e.target.value })
+          }}
+          placeholder={modelFile.groupId}
           name={`group-assignement-for-file-${file.id}`}
           id={`group-assignement-for-file-${file.id}`}
-          value={modelFile.groupId}
         />
       </div>
     </>

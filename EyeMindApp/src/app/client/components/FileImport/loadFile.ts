@@ -144,7 +144,7 @@ async function loadAnalysisFile(file: File, config: LoadFileConfig) {
       'all-content',
     )
 
-    window.utils.readState(fileName, filePath, state)
+    window.utils.readState(file, fileName, filePath, state)
 
     stateReadListener()
   } else {
@@ -227,7 +227,7 @@ async function loadSessionFile(file: File) {
     filePath = file.localFilePath
   }
 
-  await window.utils.readState(file.name, filePath, state)
+  await window.utils.readState(file, file.name, filePath, state)
   sessionReadListener()
 }
 

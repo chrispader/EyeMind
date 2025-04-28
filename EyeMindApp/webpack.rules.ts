@@ -1,3 +1,5 @@
+import { reactCompilerLoader } from 'react-compiler-webpack'
+
 export const rules = [
   // Add support for native node modules
   {
@@ -19,21 +21,31 @@ export const rules = [
   {
     test: /\.tsx?$/,
     exclude: /(node_modules|\.webpack)/,
-    use: {
-      loader: 'ts-loader',
-      options: {
-        transpileOnly: true,
+    use: [
+      {
+        loader: 'ts-loader',
+        options: {
+          transpileOnly: true,
+        },
       },
-    },
+      {
+        loader: reactCompilerLoader,
+      },
+    ],
   },
   {
     test: /\.js?$/,
-    use: {
-      loader: 'babel-loader',
-      options: {
-        exclude: /node_modules/,
+    use: [
+      {
+        loader: 'babel-loader',
+        options: {
+          exclude: /node_modules/,
+        },
       },
-    },
+      {
+        loader: reactCompilerLoader,
+      },
+    ],
   },
   {
     test: /\.(png|jpe?g|gif)$/i,

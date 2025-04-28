@@ -41,12 +41,33 @@ export type ClientState = LoadFileConfig & {
 
 export type ClientStateStore = ClientState & {
   setState: (
-    newState: Partial<ClientState> | ((state: ClientState) => Partial<ClientState>),
+    stateDelta: Partial<ClientState> | ((state: ClientState) => Partial<ClientState>),
   ) => void
+  updateModel: (modelId: string, modelDelta: Partial<ModelFile> | undefined) => void
 }
 
 const useStateStore = create<ClientStateStore>((set) => ({
   setState: set,
+  updateModel: (modelId, modelDelta) => {
+    set((state) => {
+      const newModel =
+        modelDelta === undefined
+          ? undefined
+          : {
+              ...state.models?.[modelId],
+              id: modelId,
+              ...modelDelta,
+            }
+
+      return {
+        ...state,
+        models: {
+          ...state.models,
+          [modelId]: newModel,
+        },
+      }
+    })
+  },
 }))
 
 /**

@@ -13,7 +13,7 @@
     "prettier": "prettier --write \"**/*.{js,ts,jsx,tsx}\"",
     "typescript": "tsc --noEmit",
     "typescript:build": "tsc --noEmit false",
-    "install-dependencies": "(cd extra/object-diagram-modeler && npm install && cd .. && npm install webpack)",
+    "install-dependencies": "(cd extra/object-diagram-modeler && bun install && cd .. && bun install webpack)",
     "test": "bunx playwright test test/tests/playwright/",
     "test-temp": "bunx playwright test test/tests/playwright/import.test.ts"
   },

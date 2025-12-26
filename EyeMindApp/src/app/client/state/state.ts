@@ -37,6 +37,8 @@ export type ClientState = LoadFileConfig & {
   processHierarchyExplorer?: { id: string; label: string }[] | null
   isLoading?: boolean
   loadingMessage?: string
+  activeModelGroupId?: string | null
+  showNavTabsAndTabs?: boolean
 }
 
 export type ClientStateStore = ClientState & {
@@ -63,7 +65,7 @@ const useStateStore = create<ClientStateStore>((set) => ({
         ...state,
         models: {
           ...state.models,
-          [modelId]: newModel,
+          ...(newModel ? { [modelId]: newModel } : {}),
         },
       }
     })

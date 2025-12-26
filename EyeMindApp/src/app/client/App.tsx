@@ -2,7 +2,7 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 import 'bpmn-js/dist/assets/bpmn-js.css'
 import 'bpmn-js/dist/assets/diagram-js.css'
 import { useEffect } from 'react'
-import { BrowserRouter, MemoryRouter, Route, Routes } from 'react-router'
+import { HashRouter, Route, Routes } from 'react-router'
 import { ROUTES } from '@/app/client/ROUTES'
 import { LoadingScreen } from '@/app/client/components/LoadingScreen'
 import { ProcessingStates } from '@/app/client/components/ProcessingStates'
@@ -32,10 +32,6 @@ import {
 } from './modules/ui/window-events'
 import { EyeTrackingExperimentPage } from './pages/config/eye-tracking/experiment/EyeTrackingExperimentPage'
 import { loadServerStateIntoClient, useStateStore } from './state/state'
-
-const __DEV__ = true
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-const RouterComponent = __DEV__ ? MemoryRouter : BrowserRouter
 
 async function initializeApp(): Promise<void> {
   try {
@@ -67,7 +63,7 @@ export function App(): React.ReactElement {
 
   return (
     <>
-      <RouterComponent>
+      <HashRouter>
         <Routes>
           <Route path={ROUTES.HOME} element={<ConfigPagesWrapper />}>
             <Route index element={<HomePage />} />
@@ -76,6 +72,7 @@ export function App(): React.ReactElement {
               path={ROUTES.EYE_TRACKING_NEW_SESSION}
               element={<EyeTrackingNewSessionPage />}
             />
+
             <Route
               path={ROUTES.EYE_TRACKING_NEW_LOAD_MODELS}
               element={<EyeTrackingLoadModelsPage />}
@@ -101,7 +98,7 @@ export function App(): React.ReactElement {
             <Route path={ROUTES.GAZE_PROJECTION} element={<GazeProjectionModal />} />
           </Route>
         </Routes>
-      </RouterComponent>
+      </HashRouter>
 
       <div className="fixation-settings-view" id="fixation-settings-view">
         <div className="fixation-settings-box" id="fixation-settings-box">

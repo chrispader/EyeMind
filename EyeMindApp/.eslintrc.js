@@ -12,7 +12,12 @@ module.exports = {
     createDefaultProgram: true,
   },
   ignorePatterns: ['**/node_modules', 'environments', '**/public', '**/lib', '**/dist'],
-  extends: ['react-app', 'plugin:@typescript-eslint/recommended', 'prettier'],
+  extends: [
+    'react-app',
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+    'plugin:react-hooks/recommended',
+  ],
   plugins: ['@typescript-eslint', 'eslint-plugin-prettier', 'prettier', 'react-compiler'],
   rules: {
     'prettier/prettier': ['warn'],
@@ -47,7 +52,6 @@ module.exports = {
     '@typescript-eslint/no-unnecessary-condition': 'error',
 
     'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
-    'react-compiler/react-compiler': 'error',
+    // 'react-hooks/exhaustive-deps': 'error',
   },
 }

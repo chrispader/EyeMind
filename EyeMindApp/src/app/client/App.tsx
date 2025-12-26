@@ -30,6 +30,7 @@ import {
   takeSnapshotOnWindowResize,
   testListeners,
 } from './modules/ui/window-events'
+import { EyeTrackingExperimentPage } from './pages/config/eye-tracking/experiment/EyeTrackingExperimentPage'
 import { loadServerStateIntoClient, useStateStore } from './state/state'
 
 const __DEV__ = true
@@ -86,6 +87,11 @@ export function App(): React.ReactElement {
             <Route
               path={ROUTES.EYE_TRACKING_LOAD_SESSION}
               element={<EyeTrackingLoadSessionPage />}
+            />
+
+            <Route
+              path={ROUTES.EYE_TRACKING_EXPERIMENT}
+              element={<EyeTrackingExperimentPage />}
             />
 
             <Route path={ROUTES.ANALYSIS} element={<AnalysisPage />} />

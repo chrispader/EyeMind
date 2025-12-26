@@ -1,4 +1,4 @@
-export function ExperimentScreen(): React.ReactElement {
+export function EyeTrackingExperimentPage(): React.ReactElement {
   return (
     <div className="loaded-content-view" id="loaded-content-view">
       <div className="top-menu">

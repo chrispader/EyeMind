@@ -15,7 +15,9 @@
     "typescript:build": "tsc --noEmit false",
     "install-dependencies": "(cd extra/object-diagram-modeler && bun install && cd .. && bun install webpack)",
     "test": "bunx playwright test test/tests/playwright/",
-    "test-temp": "bunx playwright test test/tests/playwright/import.test.ts"
+    "test-temp": "bunx playwright test test/tests/playwright/import.test.ts",
+    "server:setup": "cd ../EyeTrackingServer && python -m venv venv && source venv/bin/activate && pip install -r requirements.txt",
+    "server:start": "cd ../EyeTrackingServer && source venv/bin/activate && python -m server"
   },
   "repository": {
     "type": "git",

@@ -22,11 +22,9 @@ SOFTWARE.*/
 import DataFrame from 'dataframe-js'
 import { create } from 'zustand'
 import { LoadFileConfig } from '@/app/client/components/FileImport/types'
-import { ModelFile } from '@/app/client/model/Files'
 
-export type ClientState = LoadFileConfig & {
+export type GlobalState = LoadFileConfig & {
   linkingSubProcessesMode?: string
-  models?: Record<string, ModelFile | undefined>
   processedGazeData?: Record<string, unknown>
   questions?: DataFrame | Record<string, string>[]
   styleParameters?: string
@@ -41,35 +39,14 @@ export type ClientState = LoadFileConfig & {
   showNavTabsAndTabs?: boolean
 }
 
-export type ClientStateStore = ClientState & {
+export type GlobalStore = GlobalState & {
   setState: (
-    stateDelta: Partial<ClientState> | ((state: ClientState) => Partial<ClientState>),
+    stateDelta: Partial<GlobalState> | ((state: GlobalState) => Partial<GlobalState>),
   ) => void
-  updateModel: (modelId: string, modelDelta: Partial<ModelFile> | undefined) => void
 }
 
-const useStateStore = create<ClientStateStore>((set) => ({
+const useGlobalStore = create<GlobalStore>((set) => ({
   setState: set,
-  updateModel: (modelId, modelDelta) => {
-    set((state) => {
-      const newModel =
-        modelDelta === undefined
-          ? undefined
-          : {
-              ...state.models?.[modelId],
-              id: modelId,
-              ...modelDelta,
-            }
-
-      return {
-        ...state,
-        models: {
-          ...state.models,
-          ...(newModel ? { [modelId]: newModel } : {}),
-        },
-      }
-    })
-  },
 }))
 
 /**
@@ -89,9 +66,9 @@ const useStateStore = create<ClientStateStore>((set) => ({
  *
  */
 async function loadServerStateIntoClient(): Promise<void> {
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   setState(await window.state.getState())
 }
 
-export { useStateStore, loadServerStateIntoClient }
+export { useGlobalStore, loadServerStateIntoClient }

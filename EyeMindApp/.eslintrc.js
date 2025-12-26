@@ -21,8 +21,17 @@ module.exports = {
   plugins: ['@typescript-eslint', 'eslint-plugin-prettier', 'prettier', 'react-compiler'],
   rules: {
     'prettier/prettier': ['warn'],
+
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'ExportNamedDeclaration[declaration=null]',
+        message:
+          'Use inline exports instead of exporting identifiers at the end of the file.',
+      },
+    ],
 
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/no-unused-vars': [
@@ -50,6 +59,19 @@ module.exports = {
     ],
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-unnecessary-condition': 'error',
+    '@typescript-eslint/consistent-type-imports': [
+      'error',
+      {
+        prefer: 'type-imports',
+        fixStyle: 'separate-type-imports',
+      },
+    ],
+    '@typescript-eslint/consistent-type-exports': [
+      'error',
+      {
+        fixMixedExportsWithInlineTypeSpecifier: false,
+      },
+    ],
 
     'react-hooks/rules-of-hooks': 'error',
     // 'react-hooks/exhaustive-deps': 'error',

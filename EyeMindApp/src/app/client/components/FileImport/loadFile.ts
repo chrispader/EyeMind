@@ -1044,8 +1044,4 @@ function assignModelsToGroups() {
   }
 }*/
 
-export {
-  registerFileUpload,
-  createModel,
-  assignModelsToGroups,
-}
+export { createModel, assignModelsToGroups }

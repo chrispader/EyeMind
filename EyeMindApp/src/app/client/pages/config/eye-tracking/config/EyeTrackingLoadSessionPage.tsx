@@ -21,11 +21,11 @@ export function EyeTrackingLoadSessionPage(): React.ReactElement {
 
   return (
     <FileImport
-      mode="data-collection"
-      importMode="single"
-      expectedArtifact="session"
+      mode='data-collection'
+      importMode='single'
+      expectedArtifact='session'
       expectedExtensions={['json']}
-      uploadLabel="Drop a session file"
+      uploadLabel='Drop a session file'
       onDrop={(files, config) => {
         if (files.length > 1) {
           const msg = 'only a single file can be imported' // check third argument
@@ -36,7 +36,7 @@ export function EyeTrackingLoadSessionPage(): React.ReactElement {
 
         loadFiles(files, config)
       }}
-      onLoad={() => {
+      onSubmit={() => {
         navigate(ROUTES.EYE_TRACKING_EXPERIMENT)
       }}
     />

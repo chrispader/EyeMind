@@ -2,9 +2,8 @@ import { type StateCreator, create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { useShallow } from 'zustand/react/shallow'
 import { Model, createDefaultModel } from '@/app/client/model/models'
+import { type QuestionFile, createDefaultQuestionFile } from '../model/questions'
 import type { SessionSettings } from '../model/settings'
-
-type Models = Record<string, Model>
 
 type ModelActions = {
   addModel: (model: Model | File, isDraft?: boolean) => void
@@ -15,8 +14,24 @@ type ModelActions = {
 }
 
 type ModelsSlice = {
-  models: Models
+  models: Record<string, Model>
   modelActions: ModelActions
+}
+
+type QuestionFilesActions = {
+  addQuestionFile: (questionFile: QuestionFile | File) => void
+  addQuestionFiles: (questionFiles: (QuestionFile | File)[]) => void
+  removeQuestionFile: (questionFileId: string) => void
+  updateQuestionFile: (
+    questionFileId: string,
+    questionFileDelta: Partial<QuestionFile>,
+  ) => void
+  resetQuestionFiles: () => void
+}
+
+type QuestionFilesSlice = {
+  questionFiles: Record<string, QuestionFile>
+  questionFilesActions: QuestionFilesActions
 }
 
 type SessionSlice = {
@@ -29,7 +44,7 @@ type SessionSlice = {
   }
 }
 
-export type SessionStore = ModelsSlice & SessionSlice
+export type SessionStore = ModelsSlice & QuestionFilesSlice & SessionSlice
 
 const createModelsSlice: StateCreator<
   SessionStore,
@@ -88,72 +103,65 @@ const createModelsSlice: StateCreator<
       })
     },
   },
+})
 
-  // draftModelActions: {
-  //   addModel: (newModel) => {
-  //     set((state) => {
-  //       if (newModel instanceof File) {
-  //         newModel = createModel(newModel)
-  //       }
+const createQuestionFilesSlice: StateCreator<
+  SessionStore,
+  [['zustand/immer', never]],
+  [],
+  QuestionFilesSlice
+> = (set) => ({
+  questionFiles: {},
 
-  //       state.draftModels = {
-  //         ...state.draftModels,
-  //         [newModel.id]: newModel,
-  //       }
-  //     })
-  //   },
+  questionFilesActions: {
+    addQuestionFile: (newQuestionFile) => {
+      set((state) => {
+        if (newQuestionFile instanceof File) {
+          newQuestionFile = createDefaultQuestionFile(newQuestionFile)
+        }
 
-  //   addModels: (newModels) => {
-  //     set((state) => {
-  //       if (state.draftModels == null) {
-  //         state.draftModels = {}
-  //       }
+        state.questionFiles[newQuestionFile.id] = newQuestionFile
+      })
+    },
 
-  //       for (let model of newModels) {
-  //         if (model instanceof File) {
-  //           model = createModel(model)
-  //         }
+    addQuestionFiles: (newQuestionFiles) => {
+      set((state) => {
+        for (let questionFile of newQuestionFiles) {
+          if (questionFile instanceof File) {
+            questionFile = createDefaultQuestionFile(questionFile)
+          }
 
-  //         state.draftModels[model.id] = model
-  //       }
-  //     })
-  //   },
+          state.questionFiles[questionFile.id] = questionFile
+        }
+      })
+    },
 
-  //   removeModel: (modelId) => {
-  //     set((state) => {
-  //       delete state.draftModels?.[modelId]
-  //     })
-  //   },
+    removeQuestionFile: (questionFileId) => {
+      set((state) => {
+        delete state.questionFiles[questionFileId]
+      })
+    },
 
-  //   updateModel: (modelId, modelDelta) => {
-  //     set((state) => {
-  //       const existingModel = state.draftModels?.[modelId]
+    updateQuestionFile: (questionFileId, questionFileDelta) => {
+      set((state) => {
+        const existingQuestionFile = state.questionFiles?.[questionFileId]
 
-  //       const newModel = {
-  //         ...existingModel!,
-  //         ...modelDelta,
-  //         id: modelId,
-  //       }
+        const newQuestionFile = {
+          ...existingQuestionFile!,
+          ...questionFileDelta,
+          id: questionFileId,
+        }
 
-  //       if (state.draftModels == null) {
-  //         state.draftModels = {}
-  //       }
+        state.questionFiles[questionFileId] = newQuestionFile
+      })
+    },
 
-  //       state.draftModels[modelId] = newModel
-  //     })
-  //   },
-
-  //   resetModels: (isDraft = false) => {
-  //     set((state) => {
-  //       if (isDraft) {
-  //         state.draftModels = undefined
-  //         return
-  //       }
-
-  //       state.models = {}
-  //     })
-  //   },
-  // },
+    resetQuestionFiles: () => {
+      set((state) => {
+        state.questionFiles = {}
+      })
+    },
+  },
 })
 
 const createSessionSlice: StateCreator<
@@ -176,9 +184,9 @@ const createSessionSlice: StateCreator<
     },
 
     reset: () => {
-      const { actions, modelActions } = get()
+      const { actions, modelActions, questionFilesActions } = get()
       modelActions.resetModels()
-      // draftModelActions.resetModels()
+      questionFilesActions.resetQuestionFiles()
       actions.resetSessionSettings()
     },
   },
@@ -187,6 +195,7 @@ const createSessionSlice: StateCreator<
 export const useSessionStore = create<SessionStore>()(
   immer((...args) => ({
     ...createModelsSlice(...args),
+    ...createQuestionFilesSlice(...args),
     ...createSessionSlice(...args),
   })),
 )
@@ -208,10 +217,10 @@ export const useModelActions = () => useSessionStore((state) => state.modelActio
 export const useModel = (modelId: string) =>
   useSessionStore((state) => state.models?.[modelId])
 
-// export const useSessionDraftModels = () => useSessionStore((state) => state.draftModels)
-// export const useSessionDraftModel = (modelId: string) =>
-//   useSessionStore((state) => state.draftModels?.[modelId])
-// export const useSessionDraftModelActions = () =>
-//   useSessionStore((state) => state.draftModelActions)
-
 export const useDraftModels = () => useModels((model) => model.isDraft)
+
+export const useQuestionFiles = () => useSessionStore((state) => state.questionFiles)
+export const useQuestionFileActions = () =>
+  useSessionStore((state) => state.questionFilesActions)
+export const useQuestionFile = (questionFileId: string) =>
+  useSessionStore((state) => state.questionFiles?.[questionFileId])

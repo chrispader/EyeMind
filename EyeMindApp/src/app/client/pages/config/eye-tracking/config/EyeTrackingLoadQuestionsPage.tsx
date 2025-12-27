@@ -1,78 +1,88 @@
-import { useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { ROUTES } from '@/app/client/ROUTES'
+import { ErrorList } from '@/app/client/components/ErrorList'
 import FileImport from '@/app/client/components/FileImport'
-import { loadFiles } from '@/app/client/components/FileImport/loadFile'
+import { isQuestionsFile } from '@/app/client/components/FileImport/loadFile'
 import { FileImportConfig } from '@/app/client/components/FileImport/types'
-import { errorAlert } from '@/app/client/modules/utils/utils'
-import { useGlobalStore } from '@/app/client/state/state'
+import {
+  type QuestionFile,
+  createDefaultQuestionFile,
+  getQuestionFileIdFromFileName,
+} from '@/app/client/model/questions'
+import { useQuestionFileActions, useQuestionFiles } from '@/app/client/state/session'
+
+const fileImportConfig: FileImportConfig = {
+  mode: 'data-collection',
+  importMode: 'single',
+  expectedArtifact: 'questions',
+  expectedExtensions: ['csv'],
+}
 
 export function EyeTrackingLoadQuestionsPage(): React.ReactElement {
-  const { setState } = useGlobalStore()
   const navigate = useNavigate()
 
-  // TODO: Remove once state is split up
-  useEffect(() => {
-    setState({
-      importMode: 'single',
-      expectedArtifact: 'questions',
-      expectedExtensions: ['csv'],
-    })
-  }, [setState])
+  const questionFiles = useQuestionFiles()
+  const { addQuestionFiles, removeQuestionFile } = useQuestionFileActions()
 
-  function removeQuestionFile(_file: File) {
-    // Remove questions from state when file is removed
-    setState({ questions: undefined })
-  }
+  const [errors, setErrors] = useState<string[]>([])
 
-  async function handleLoad() {
-    // Check if there are files to load (FileImport component manages this)
-    // We need to load the questions file first, then navigate
-    const { questions: currentQuestions } = useGlobalStore.getState()
-
-    if (
-      !currentQuestions ||
-      (Array.isArray(currentQuestions) && currentQuestions.length === 0)
-    ) {
-      const msg = 'No questions file to load. Please drop a questions file first.'
-      errorAlert(msg)
-      console.error(msg)
+  async function validateQuestionFiles() {
+    if (Object.values(questionFiles).length === 0) {
+      setErrors(['No questions files to load. Please drop a questions file first.'])
       return
     }
 
-    // Questions are already loaded (from the drop), just navigate
     navigate(ROUTES.EYE_TRACKING_EXPERIMENT)
   }
 
-  function handleDrop(files: File[], config: FileImportConfig) {
-    if (files.length > 1) {
-      const msg = 'only a single file can be imported'
-      console.error(msg)
-      errorAlert(msg)
+  function addDroppedQuestions(files: File[]) {
+    let questionFilesToAdd: QuestionFile[] = []
+    let newErrors: string[] = []
+
+    for (const file of files) {
+      const questionFileId = getQuestionFileIdFromFileName(file.name)
+
+      if (!isQuestionsFile(file, fileImportConfig)) {
+        newErrors.push(
+          file.name + ' (id: ' + questionFileId + ') is not a valid questions file',
+        )
+        continue
+      }
+
+      if (questionFiles?.[questionFileId] !== undefined) {
+        newErrors.push(file.name + ' (id: ' + questionFileId + ') is already added')
+        continue
+      }
+
+      const questionFile = createDefaultQuestionFile(file, true)
+
+      questionFilesToAdd.push(questionFile)
+    }
+
+    if (newErrors.length > 0) {
+      setErrors(newErrors)
       return
     }
 
-    // Load the questions file immediately when dropped
-    // This will populate the questions in state, which allows the file item to be displayed
-    loadFiles(files, config)
+    addQuestionFiles(questionFilesToAdd)
   }
 
   return (
     <FileImport
-      mode='data-collection'
-      importMode='single'
-      expectedArtifact='questions'
-      expectedExtensions={['csv']}
+      items={Object.values(questionFiles)}
+      errors={errors}
+      onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
       uploadLabel='Drop a questions csv file'
-      onDrop={handleDrop}
-      onSubmit={handleLoad}
-      onRemove={removeQuestionFile}
-      renderItem={(file) => <QuestionFileItem file={file} />}
+      onDrop={addDroppedQuestions}
+      onSubmit={validateQuestionFiles}
+      onRemove={(questionFile) => removeQuestionFile(questionFile.id)}
+      renderItem={(questionFile) => <QuestionFileItem questionFile={questionFile} />}
     />
   )
 }
 
-function QuestionFileItem({ file }: { file: File }) {
+function QuestionFileItem({ questionFile }: { questionFile: QuestionFile }) {
   // Always show the file name - the file is in the FileImport component's local state
-  return <div className='column file-info'>{file.name}</div>
+  return <div className='column file-info'>{questionFile.fileName}</div>
 }

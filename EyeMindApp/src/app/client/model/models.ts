@@ -7,7 +7,18 @@ export type Model = {
   groupId?: string
   unclosable?: boolean
   mainTab?: boolean
+  isDraft?: boolean
   file: File
+}
+
+export function createDefaultModel(file: File, isDraft: boolean = false): Model {
+  return {
+    id: file.name,
+    fileName: file.name,
+    path: file.path,
+    file: file,
+    isDraft: isDraft,
+  }
 }
 
 export type ValidationResult = {

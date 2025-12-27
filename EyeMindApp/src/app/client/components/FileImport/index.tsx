@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { translate } from '@/app/LANG'
 import { containerClasses } from '@/app/client/css/styles'
 import { cancelDefault } from '@/app/client/modules/utils/utils'
+import { ErrorList } from '../ErrorList'
 
 declare global {
   interface DataTransfer {
@@ -12,6 +13,8 @@ declare global {
 type FileImportProps<FileType> = {
   items: FileType[]
   getItemId?: (item: FileType) => string
+  errors: string[]
+  onDismissError: (error: string) => void
   uploadLabel?: string
   submitLabel?: string
   onSubmit: () => void
@@ -23,6 +26,8 @@ type FileImportProps<FileType> = {
 function FileImport<FileType>({
   items,
   getItemId,
+  errors,
+  onDismissError,
   onSubmit,
   uploadLabel = translate('dropFiles'),
   submitLabel = translate('loadFiles'),
@@ -54,7 +59,7 @@ function FileImport<FileType>({
   )
 
   return (
-    <div className={`${containerClasses} import-view`} id='import-view'>
+    <div className={`${containerClasses} import-view overflow-y-auto`} id='import-view'>
       <div className='import-box' id='import-box'>
         <div
           className={`upload-zone ${isActive ? 'upload-zone-active' : ''}`}
@@ -104,6 +109,8 @@ function FileImport<FileType>({
             {submitLabel}
           </button>
         </div>
+
+        <ErrorList errors={errors} onRemove={onDismissError} />
       </div>
     </div>
   )

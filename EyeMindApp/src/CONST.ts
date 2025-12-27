@@ -42,6 +42,8 @@ const CONST = {
     '^option-answer-for-questionID_',
     '^next-button-area-in-questionID_',
   ],
+
+  DEFAULT_MODEL_GROUP_ID: 1,
 }
 
 export { CONST }

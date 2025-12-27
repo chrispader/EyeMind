@@ -1,12 +1,14 @@
 import { type StateCreator, create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { Model } from '@/app/client/model/models'
+import { useShallow } from 'zustand/react/shallow'
+import { Model, createDefaultModel } from '@/app/client/model/models'
 import type { SessionSettings } from '../model/settings'
 
 type Models = Record<string, Model>
 
 type ModelActions = {
-  addModel: (model: Model) => void
+  addModel: (model: Model | File, isDraft?: boolean) => void
+  addModels: (models: (Model | File)[], isDraft?: boolean) => void
   removeModel: (modelId: string) => void
   updateModel: (modelId: string, modelDelta: Partial<Model>) => void
   resetModels: () => void
@@ -14,11 +16,7 @@ type ModelActions = {
 
 type ModelsSlice = {
   models: Models
-  draftModels?: Models
-
   modelActions: ModelActions
-
-  draftModelActions: ModelActions
 }
 
 type SessionSlice = {
@@ -42,9 +40,25 @@ const createModelsSlice: StateCreator<
   models: {},
 
   modelActions: {
-    addModel: (newModel) => {
+    addModel: (newModel, isDraft?: boolean) => {
       set((state) => {
+        if (newModel instanceof File) {
+          newModel = createDefaultModel(newModel, isDraft)
+        }
+
         state.models[newModel.id] = newModel
+      })
+    },
+
+    addModels: (newModels, isDraft?: boolean) => {
+      set((state) => {
+        for (let model of newModels) {
+          if (model instanceof File) {
+            model = createDefaultModel(model, isDraft)
+          }
+
+          state.models[model.id] = model
+        }
       })
     },
 
@@ -75,51 +89,71 @@ const createModelsSlice: StateCreator<
     },
   },
 
-  draftModelActions: {
-    addModel: (newModel) => {
-      set((state) => {
-        state.draftModels = {
-          ...state.draftModels,
-          [newModel.id]: newModel,
-        }
-      })
-    },
+  // draftModelActions: {
+  //   addModel: (newModel) => {
+  //     set((state) => {
+  //       if (newModel instanceof File) {
+  //         newModel = createModel(newModel)
+  //       }
 
-    removeModel: (modelId) => {
-      set((state) => {
-        delete state.draftModels?.[modelId]
-      })
-    },
+  //       state.draftModels = {
+  //         ...state.draftModels,
+  //         [newModel.id]: newModel,
+  //       }
+  //     })
+  //   },
 
-    updateModel: (modelId, modelDelta) => {
-      set((state) => {
-        const existingModel = state.draftModels?.[modelId]
+  //   addModels: (newModels) => {
+  //     set((state) => {
+  //       if (state.draftModels == null) {
+  //         state.draftModels = {}
+  //       }
 
-        const newModel = {
-          ...existingModel!,
-          ...modelDelta,
-          id: modelId,
-        }
+  //       for (let model of newModels) {
+  //         if (model instanceof File) {
+  //           model = createModel(model)
+  //         }
 
-        if (state.draftModels == null) {
-          state.draftModels = {}
-        }
+  //         state.draftModels[model.id] = model
+  //       }
+  //     })
+  //   },
 
-        state.draftModels[modelId] = newModel
-      })
-    },
+  //   removeModel: (modelId) => {
+  //     set((state) => {
+  //       delete state.draftModels?.[modelId]
+  //     })
+  //   },
 
-    resetModels: (isDraft = false) => {
-      set((state) => {
-        if (isDraft) {
-          state.draftModels = undefined
-          return
-        }
+  //   updateModel: (modelId, modelDelta) => {
+  //     set((state) => {
+  //       const existingModel = state.draftModels?.[modelId]
 
-        state.models = {}
-      })
-    },
-  },
+  //       const newModel = {
+  //         ...existingModel!,
+  //         ...modelDelta,
+  //         id: modelId,
+  //       }
+
+  //       if (state.draftModels == null) {
+  //         state.draftModels = {}
+  //       }
+
+  //       state.draftModels[modelId] = newModel
+  //     })
+  //   },
+
+  //   resetModels: (isDraft = false) => {
+  //     set((state) => {
+  //       if (isDraft) {
+  //         state.draftModels = undefined
+  //         return
+  //       }
+
+  //       state.models = {}
+  //     })
+  //   },
+  // },
 })
 
 const createSessionSlice: StateCreator<
@@ -142,9 +176,9 @@ const createSessionSlice: StateCreator<
     },
 
     reset: () => {
-      const { actions, modelActions, draftModelActions } = get()
+      const { actions, modelActions } = get()
       modelActions.resetModels()
-      draftModelActions.resetModels()
+      // draftModelActions.resetModels()
       actions.resetSessionSettings()
     },
   },
@@ -160,13 +194,24 @@ export const useSessionStore = create<SessionStore>()(
 export const useSessionSettings = () => useSessionStore((state) => state.settings)
 export const useSessionActions = () => useSessionStore((state) => state.actions)
 
-export const useSessionModels = () => useSessionStore((state) => state.models)
-export const useSessionModelActions = () => useSessionStore((state) => state.modelActions)
-export const useSessionModel = (modelId: string) =>
+export const useModels = (predicate?: (model: Model) => boolean | undefined) =>
+  useSessionStore(
+    useShallow((state) =>
+      predicate
+        ? Object.fromEntries(
+            Object.entries(state.models).filter(([_, model]) => predicate(model)),
+          )
+        : state.models,
+    ),
+  )
+export const useModelActions = () => useSessionStore((state) => state.modelActions)
+export const useModel = (modelId: string) =>
   useSessionStore((state) => state.models?.[modelId])
 
-export const useSessionDraftModels = () => useSessionStore((state) => state.draftModels)
-export const useSessionDraftModel = (modelId: string) =>
-  useSessionStore((state) => state.draftModels?.[modelId])
-export const useSessionDraftModelActions = () =>
-  useSessionStore((state) => state.draftModelActions)
+// export const useSessionDraftModels = () => useSessionStore((state) => state.draftModels)
+// export const useSessionDraftModel = (modelId: string) =>
+//   useSessionStore((state) => state.draftModels?.[modelId])
+// export const useSessionDraftModelActions = () =>
+//   useSessionStore((state) => state.draftModelActions)
+
+export const useDraftModels = () => useModels((model) => model.isDraft)

@@ -3,7 +3,7 @@ import type { Configuration } from 'webpack'
 import { merge } from 'webpack-merge'
 import { commonConfig } from './webpack.common.config'
 import { plugins } from './webpack.plugins'
-import { rules } from './webpack.rules'
+import { commonRules } from './webpack.rules'
 
 export const rendererConfig: Configuration = merge(commonConfig, {
   target: 'web',
@@ -12,10 +12,10 @@ export const rendererConfig: Configuration = merge(commonConfig, {
   },
   module: {
     rules: [
-      ...rules,
+      ...commonRules,
       {
-        test: /\.css$/,
-        use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
     ],
   },

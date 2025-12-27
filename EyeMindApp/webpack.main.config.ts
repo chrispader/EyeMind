@@ -1,7 +1,7 @@
 import type { Configuration } from 'webpack'
 import { merge } from 'webpack-merge'
 import { commonConfig } from './webpack.common.config'
-import { rules } from './webpack.rules'
+import { commonRules } from './webpack.rules'
 
 export const mainConfig: Configuration = merge(commonConfig, {
   /**
@@ -11,7 +11,7 @@ export const mainConfig: Configuration = merge(commonConfig, {
   entry: './src/main.ts',
   // Put your normal webpack config below here
   module: {
-    rules: rules,
+    rules: commonRules,
   },
   resolve: {
     extensions: ['.js', '.ts', '.css', '.json'],

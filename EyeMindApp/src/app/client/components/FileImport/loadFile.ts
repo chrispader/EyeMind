@@ -22,24 +22,33 @@ SOFTWARE.*/
 /*  Files setup   */
 import BpmnModeler from 'bpmn-js/lib/Modeler'
 import BpmnNavigatedViewer from 'bpmn-js/lib/NavigatedViewer'
-import { addModel } from '@/app/client/state/generalModelsRegistry'
-import { useStateStore } from '@/app/client/state/state'
+import { CONST } from '@/CONST'
+import { FileImportConfig } from '@/app/client/components/FileImport/types'
+import { Model } from '@/app/client/model/models'
 import {
   cancelDefault,
   errorAlert,
   readFileContent,
 } from '@/app/client/modules/utils/utils'
+import { addModel } from '@/app/client/state/generalModelsRegistry'
+import { useGlobalStore } from '@/app/client/state/state'
 import OdmModeler from '@extra/object-diagram-modeler/lib/Modeler'
 import OdmNavigatedViewer from '@extra/object-diagram-modeler/lib/NavigatedViewer'
 import { sendClickEvent } from '../../modules/ui/click-stream'
 import { takesnapshot } from '../../modules/ui/data-collection'
 import { prepareDataCollectionContent } from '../../modules/ui/data-collection'
-import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from '../../modules/ui/progress'
+import {
+  hideGeneralWaitingScreen,
+  showGeneralWaitingScreen,
+} from '../../modules/ui/progress'
 import { loadQuestions } from '../../modules/ui/questions'
-import { addToTabHeader, changeTab, openInTab, openWithinTab } from '../../modules/ui/tabs'
-import { CONST } from '@/CONST'
-import { ModelFile } from '@/app/client/model/Files'
-import { LoadFileConfig } from '@/app/client/components/FileImport/types'
+import {
+  addToTabHeader,
+  changeTab,
+  openInTab,
+  openWithinTab,
+} from '../../modules/ui/tabs'
+import { useSessionStore } from '../../state/session'
 
 declare global {
   interface File {
@@ -57,99 +66,119 @@ const modelers = {
   OdmNavigatedViewer: OdmNavigatedViewer,
 }
 
-export async function loadFiles(files: File[], config: LoadFileConfig) {
+export async function loadFiles(files: File[], config: FileImportConfig) {
   for (const file of files) {
-    await loadFile(file, config)
+    // apply a different processing to the file depending on whether it is a model for data collection or a json file for the analysis
+    // data-collection mode
+    if (config.mode == 'data-collection') {
+      return await new Promise<void>((resolve, reject) => {
+        try {
+          // readFileContent then traverseDataCollectionFile and traverseMoreItems
+          readFileContent(file, async (content: string) => {
+            await loadDataCollectionFile(file, content, config)
+            resolve()
+          })
+        } catch (error) {
+          reject(error)
+        }
+      })
+    }
+
+    // traverseAnalysisFile (traverseMoreItems is in the callback in window.utils.onStateRead (or in traverseAnalysisFile() if the file already exists))
+    return await loadAnalysisFile(file, config)
   }
 }
 
-function loadFile(file: File, config: LoadFileConfig): Promise<void> {
-  // apply a different processing to the file depending on whether it is a model for data collection or a json file for the analysis
-   // data-collection mode
-   if (config.mode == 'data-collection') {
-     return new Promise((resolve, reject) => {
-       try {
-         // readFileContent then traverseDataCollectionFile and traverseMoreItems
-         readFileContent(file, async (content: string) => {
-           await loadDataCollectionFile(file, content, config)
-           resolve()
-         })
-       } catch (error) {
-         reject(error)
-       }
-     })
-   }
+async function loadAnalysisFile(file: File, config: FileImportConfig) {
+  const { setState: _setState, ...state } = useGlobalStore.getState()
 
-   // traverseAnalysisFile (traverseMoreItems is in the callback in window.utils.onStateRead (or in traverseAnalysisFile() if the file already exists))
-   return loadAnalysisFile(file, config)
- }
-
-async function loadAnalysisFile(file: File, config: LoadFileConfig) {
-    const {setState: _setState, ...state} = useStateStore.getState()
-
-    const fileName = file.name
-    const fileExtension = fileName.split('.').pop() ?? ''
-
-    let filePath = file.path
-
-    // move to next file if the file state already exists
-    if (await window.state.doesStateExist(filePath)) {
-      const msg = 'analysis file already exists'
-      errorAlert(msg)
-      console.error(msg)
-      return
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////// might need updates
-    // a hack to support the testing of a single file upload using the drag/drop feature
-    if (file.isForTestingPurpose) {
-      filePath = file.localFilePath
-    }
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // check if the file has the expected extension and artifact for the analysis mode
-    if (
-      config.expectedExtensions?.includes(fileExtension) &&
-      config.expectedArtifact == 'analysis'
-    ) {
-      await showGeneralWaitingScreen(
-        'Loading ' +
-          fileName +
-          '... <br><br> This step can take several minutes depending on the size of the file',
-      )
-
-      window.utils.readState(file, fileName, filePath, state, config)
-
-      await stateReadListener()
-      return
-    }
-
-    const msg = 'unkown analysis file'
-    errorAlert(msg)
-}
-
-
-async function loadDataCollectionFile(file: File, content: string, config: LoadFileConfig) {
   const fileName = file.name
   const fileExtension = fileName.split('.').pop() ?? ''
 
-  await showGeneralWaitingScreen('Loading ' + fileName + '...')
+  let filePath = file.path
 
-  const isSessionFile = config.expectedExtensions?.includes(fileExtension) && config.expectedArtifact == 'session'
-  const isModelsFile = config.expectedExtensions?.includes(fileExtension) && config.expectedArtifact == 'models'
-  const isQuestionsFile = config.expectedExtensions?.includes(fileExtension) && config.expectedArtifact == 'questions'
+  // move to next file if the file state already exists
+  if (await window.state.doesStateExist(filePath)) {
+    const msg = 'analysis file already exists'
+    errorAlert(msg)
+    console.error(msg)
+    return
+  }
 
-  if (isSessionFile) {
+  //////////////////////////////////////////////////////////////////////////////////////////////////////// might need updates
+  // a hack to support the testing of a single file upload using the drag/drop feature
+  if (file.isForTestingPurpose) {
+    filePath = file.localFilePath
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // check if the file has the expected extension and artifact for the analysis mode
+  if (
+    config.expectedExtensions?.includes(fileExtension) &&
+    config.expectedArtifact == 'analysis'
+  ) {
+    await showGeneralWaitingScreen(
+      'Loading ' +
+        fileName +
+        '... <br><br> This step can take several minutes depending on the size of the file',
+    )
+
+    window.utils.readState(file, fileName, filePath, state, config)
+
+    await stateReadListener()
+    return
+  }
+
+  const msg = 'unkown analysis file'
+  errorAlert(msg)
+}
+
+export function getFileExtension(file: File) {
+  return file.name.split('.').pop() ?? ''
+}
+
+export function isSessionFile(file: File, config: FileImportConfig) {
+  const fileExtension = getFileExtension(file)
+
+  return (
+    config.expectedExtensions?.includes(fileExtension) &&
+    config.expectedArtifact == 'session'
+  )
+}
+
+export function isModelsFile(file: File, config: FileImportConfig) {
+  const fileExtension = getFileExtension(file)
+
+  return (
+    config.expectedExtensions?.includes(fileExtension) &&
+    config.expectedArtifact == 'models'
+  )
+}
+
+export function isQuestionsFile(file: File, config: FileImportConfig) {
+  const fileExtension = getFileExtension(file)
+
+  return (
+    config.expectedExtensions?.includes(fileExtension) &&
+    config.expectedArtifact == 'questions'
+  )
+}
+async function loadDataCollectionFile(
+  file: File,
+  content: string,
+  config: FileImportConfig,
+) {
+  if (isSessionFile(file, config)) {
     await loadSessionFile(file, config)
     return
   }
 
-  if (isModelsFile) {
-    loadModelFile(fileName, content)
+  if (isModelsFile(file, config)) {
+    loadModelFile(file, content)
     return
   }
 
-  if (isQuestionsFile) {
+  if (isQuestionsFile(file, config)) {
     if (await loadQuestions(file)) {
       const filePropertiesDefined = false
       prepareDataCollectionContent(filePropertiesDefined)
@@ -162,23 +191,8 @@ async function loadDataCollectionFile(file: File, content: string, config: LoadF
   console.error(msg)
 }
 
-/**
- * Title: traverse session file
- *
- * Description: read the session file in the server side and then call sessionReadListener() to listen to an event incoming from the server side when the session is read
- *
- * Control-flow summary: get state, get file extension, read the session file in the server side and then call sessionReadListener() to listen to an event incoming from the server side when the session is read
- *
- * @param {object} file file
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-async function loadSessionFile(file: File, config: LoadFileConfig) {
-  const { setState: _setState, ...state } = useStateStore.getState()
+async function loadSessionFile(file: File, config: FileImportConfig) {
+  const { setState: _setState, ...state } = useGlobalStore.getState()
 
   let filePath = file.path
 
@@ -192,28 +206,33 @@ async function loadSessionFile(file: File, config: LoadFileConfig) {
 }
 
 export function getModelIdFromFileName(fileName: string) {
-  return fileName.replace(
-    new RegExp(CONST.MODELS_ID_REGEX, 'g'),
-    '',
-  )
+  return fileName.replace(new RegExp(CONST.MODELS_ID_REGEX, 'g'), '')
 }
 
-function loadModelFile(fileName: string, content: string, path = '') {
-  const {models, setState} = useStateStore.getState()
+function loadModelFile(file: File, content: string, path = file.path) {
+  const models = useSessionStore.getState().models
+  const updateModel = useSessionStore.getState().modelActions.updateModel
 
-  const fileId = getModelIdFromFileName(fileName)
+  const modelId = getModelIdFromFileName(file.name)
 
   // if the file has not been already added to the processing buffer
-  if (models?.[fileId] == null) {
-    // create file object
-    const file: ModelFile = { id: fileId, fileName: fileName, path: path, xml: content }
+  if (models?.[modelId] == null) {
+    const existsMainModel = Object.values(models ?? {}).some(
+      (model) => model?.isMain === true,
+    )
 
-    setState({
-      models: {
-        ...models,
-        [fileId]: file,
-      },
-    })
+    // create file object
+    const model: Model = {
+      id: modelId,
+      fileName: file.name,
+      path: path,
+      xml: content,
+      groupId: CONST.DEFAULT_MODEL_GROUP_ID.toString(),
+      isMain: !existsMainModel,
+      file: file,
+    }
+
+    updateModel(modelId, model)
 
     hideGeneralWaitingScreen()
 
@@ -232,24 +251,11 @@ function loadModelFile(fileName: string, content: string, path = '') {
     // }
   }
 
-  const msg = fileName + ' (id: ' + fileId + ') is already added'
+  const msg = file.name + ' (id: ' + modelId + ') is already added'
   errorAlert(msg)
   console.error(msg)
 }
 
-/**
- * Title: create analysis file info block
- *
- * Description: creating a file info block with information and setting options about the imported analysis file
- *
- * @param {object} file file with the following attributes {"name", "path"}
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
 function createAnalysisFileInfoBlock(file: File) {
   /// create fileInfo block about the imported model
   const fileInfo = document.createElement('div')
@@ -273,55 +279,12 @@ function createAnalysisFileInfoBlock(file: File) {
   // document.getElementById("remove-"+file.path).onclick = () => removeAnalysisFile(file);
 }
 
-/**
- * Title: remove model file
- *
- * Description: procedure to remove an imported model file
- *
- * Control-flow summary: get state, remove the file attribute from state.models and remove the DOM elements related to the file
-
- * @param {object} file file with the following attributes {"id", "fileName" ,"path", "xml"}
- *
- * Returns {void}
- *
-*
- * Additional notes: none
- *
- */
-function removeModelFile(file: ModelFile) {
-  const {setState, ...state} = useStateStore.getState()
-
-  const newState = { ...state, models: { ...state.models, [file.id]: undefined } }
-  setState(newState)
-
-  const fileInfoElement = document.getElementById('fileinfo-' + file.id)
-  if (fileInfoElement != null) {
-    fileInfoElement.remove()
-  }
-
-  document.getElementById('model' + file.id + '-container')?.remove()
-  document.getElementById('model' + file.id + '-explorerItem')?.remove()
-}
-
-/**
- * Title: remove analysis file
- *
- * Description: procedure to remove an imported analysis file
- *
- * @param {object} file file with the following attributes {"name", "path"}
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-async function removeAnalysisFile(file) {
-  if (document.getElementById('fileinfo-' + file.path) != null) {
-    await window.state.removeState(file.path)
-    document.getElementById('fileinfo-' + file.path).remove()
-  }
-}
+// async function removeAnalysisFile(file) {
+//   if (document.getElementById('fileinfo-' + file.path) != null) {
+//     await window.state.removeState(file.path)
+//     document.getElementById('fileinfo-' + file.path).remove()
+//   }
+// }
 
 /**
  * Title: models read listener
@@ -367,7 +330,7 @@ async function stateRead(res) {
   console.log('stateRead', arguments)
 
   // get client state
-  const {setState, ...state} = useStateStore.getState()
+  const { setState, ...state } = useGlobalStore.getState()
 
   // if the server res.success coming from the server is true
   if (res.success) {
@@ -386,12 +349,7 @@ async function stateRead(res) {
           },
         })
 
-        await processModel(
-          newModel.xml,
-          newModel.id,
-          newModel.fileName,
-          newModel.path,
-        )
+        await processModel(newModel.xml, newModel.id, newModel.fileName, newModel.path)
       }
     }
 
@@ -462,7 +420,7 @@ function sessionReadListener() {
  *
  */
 async function sessionRead(res) {
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   const success = res.success
   const msg = res.msg
@@ -471,7 +429,7 @@ async function sessionRead(res) {
   if (success) {
     setState(data)
 
-    const state = useStateStore.getState()
+    const state = useGlobalStore.getState()
     console.log('state', state)
 
     if (Object.keys(state.models ?? {}).length === 0) {
@@ -480,12 +438,7 @@ async function sessionRead(res) {
 
     //process the open the models within the loaded state
     for (const model of Object.values(state.models)) {
-      await processModel(
-        model.xml,
-        model.id,
-        model.fileName,
-        model.path,
-      )
+      await processModel(model.xml, model.id, model.fileName, model.path)
     }
 
     // last step of file import
@@ -517,9 +470,15 @@ async function sessionRead(res) {
  * Additional notes: none
  *
  */
-async function processModel(config: LoadFileConfig, xml: string, id: string, fileName: string, filePath: string) {
+async function processModel(
+  config: FileImportConfig,
+  xml: string,
+  id: string,
+  fileName: string,
+  filePath: string,
+) {
   // get state
-  const { setState, ...state } = useStateStore.getState()
+  const { setState, ...state } = useGlobalStore.getState()
 
   /// construct/update the directory explorer
   constructDirectoryExplorer(filePath, fileName, id)
@@ -605,7 +564,7 @@ function isMain(modeler) {
  *
  */
 function constructDirectoryExplorer(filePath: string, fileName: string, id: string) {
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   /// remove last "/" from the filePath
   filePath = filePath.slice(0, -1)
@@ -724,8 +683,13 @@ function createTabContainer(id, fileName) {
  * Additional notes: none
  *
  */
-async function createModel(fileName: string, id: string, xml: string, currentTabContainerId: string | undefined) {
-  const state = useStateStore.getState()
+async function createModel(
+  fileName: string,
+  id: string,
+  xml: string,
+  currentTabContainerId: string | undefined,
+) {
+  const state = useGlobalStore.getState()
 
   // depending of the argument, either set as a process, or a nested sub-process
   currentTabContainerId = currentTabContainerId ?? 'model' + id + '-content'
@@ -850,7 +814,7 @@ function linkSubProcesses(
   console.log('linkSubProcesses', arguments)
 
   // get state
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   const mainModelElements = mainModel.get('elementRegistry')._elements
 
@@ -949,7 +913,7 @@ function linkSubProcesses(
 function isFileLoaded(fileName: string, fileId: string) {
   console.log('isFileLoaded', arguments)
 
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   /// return null if subProcessFileName was not loaded
   if (!state.models?.hasOwnProperty(fileId)) {
@@ -975,23 +939,18 @@ function isFileLoaded(fileName: string, fileId: string) {
  *
  */
 function assignModelsToGroups() {
-  const { models, setState } = useStateStore.getState()
+  const updateModel = useSessionStore.getState().modelActions.updateModel
 
-  const groupAssignementList = document.getElementsByClassName('group-assignement') as HTMLCollectionOf<HTMLInputElement>
+  const groupAssignementList = document.getElementsByClassName(
+    'group-assignement',
+  ) as HTMLCollectionOf<HTMLInputElement>
 
   for (let i = 0; i < groupAssignementList.length; i++) {
     const modelId = groupAssignementList[i]?.getAttribute('modelId') ?? ''
     const groupId = groupAssignementList[i]?.value
-    const model = models === undefined ? undefined : models[modelId]
 
-    setState({
-      models: {
-        ...models,
-        [modelId]: {
-          ...model,
-          groupId,
-        },
-      },
+    updateModel(modelId, {
+      groupId,
     })
   }
 }

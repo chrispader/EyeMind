@@ -1,33 +1,41 @@
-import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
+import { CONST } from '@/CONST'
+import { translate } from '@/app/LANG'
 import { ROUTES } from '@/app/client/ROUTES'
 import FileImport from '@/app/client/components/FileImport'
 import {
   getModelIdFromFileName,
-  loadFiles,
+  isModelsFile,
 } from '@/app/client/components/FileImport/loadFile'
-import { errorAlert } from '@/app/client/modules/utils/utils'
-import { useStateStore } from '@/app/client/state/state'
+import type { FileImportConfig } from '@/app/client/components/FileImport/types'
+import { type Model, createDefaultModel } from '@/app/client/model/models'
+import { errorAlert, readFileContent } from '@/app/client/modules/utils/utils'
+import { useDraftModels, useModelActions } from '@/app/client/state/session'
+
+const fileImportConfig: FileImportConfig = {
+  mode: 'data-collection',
+  importMode: 'multiple',
+  expectedArtifact: 'models',
+  expectedExtensions: ['bpmn', 'odm'],
+}
 
 export function EyeTrackingLoadModelsPage() {
-  const { models, updateModel, setState } = useStateStore()
   const navigate = useNavigate()
 
-  // TODO: Remove once state is split up
-  useEffect(() => {
-    setState({
-      importMode: 'multiple',
-      expectedArtifact: 'models',
-      expectedExtensions: ['bpmn', 'odm'],
-    })
-  }, [setState])
+  const draftModels = useDraftModels()
+  const { addModels, removeModel } = useModelActions()
 
-  function removeModelFile(file: File) {
-    updateModel(getModelIdFromFileName(file.name), undefined)
-  }
+  // TODO: Remove once state is split up
+  // useEffect(() => {
+  //   setState({
+  //     importMode: 'multiple',
+  //     expectedArtifact: 'models',
+  //     expectedExtensions: ['bpmn', 'odm'],
+  //   })
+  // }, [setState])
 
   function validateModels() {
-    const modelValues = Object.values(models ?? {})
+    const modelValues = Object.values(draftModels ?? {})
 
     const mainModels = modelValues.filter((model) => model?.isMain === true)
 
@@ -57,72 +65,117 @@ export function EyeTrackingLoadModelsPage() {
     console.error(msg)
   }
 
+  async function addDroppedModels(files: File[]) {
+    let models: Model[] = []
+
+    for (const file of files) {
+      const modelId = getModelIdFromFileName(file.name)
+
+      if (!isModelsFile(file, fileImportConfig)) {
+        continue
+      }
+
+      if (draftModels?.[modelId] !== undefined) {
+        const msg = file.name + ' (id: ' + modelId + ') is already added'
+        errorAlert(msg)
+        console.error(msg)
+        continue
+      }
+
+      // create file object
+      const model = createDefaultModel(file, true)
+
+      const doesMainModelExist = Object.values(draftModels ?? {}).some(
+        (model) => model?.isMain,
+      )
+      model.isMain = !doesMainModelExist
+      model.groupId = CONST.DEFAULT_MODEL_GROUP_ID.toString()
+
+      const content = await new Promise<string>((resolve, reject) => {
+        try {
+          // readFileContent then traverseDataCollectionFile and traverseMoreItems
+          readFileContent(file, async (content: string) => {
+            resolve(content)
+          })
+        } catch (error) {
+          reject(error)
+        }
+      })
+      model.xml = content
+
+      models.push(model)
+
+      // try {
+      //   // process model
+      //   // await processModel(config, file.xml, file.id, file.fileName, file.path)
+      //   // create file info menu
+      //   // createModelFileInfoBlock(file)
+      // } catch (error) {
+      //   // something wrong happened with the opening of the diagram
+      //   removeModelFile(file)
+      //   console.error(file.fileName + ' is invalid')
+      //   errorAlert(file.fileName + ' is invalid')
+      // }
+    }
+
+    addModels(models)
+  }
+
   return (
     <FileImport
-      mode="data-collection"
-      importMode="multiple"
-      expectedArtifact="models"
-      expectedExtensions={['bpmn', 'odm']}
-      uploadLabel="Drop models files"
-      onLoad={validateModels}
-      onDrop={loadFiles}
-      onRemove={removeModelFile}
-      renderItemContent={(file) => <ModelFileItem file={file} />}
+      items={Object.values(draftModels)}
+      uploadLabel={translate('dropModelsFiles')}
+      onSubmit={validateModels}
+      onDrop={addDroppedModels}
+      onRemove={(model) => removeModel(model.id)}
+      renderItem={(model) => <DraftModelItem model={model} />}
     />
   )
 }
 
-function ModelFileItem({ file }: { file: File }) {
-  const { models, updateModel } = useStateStore()
-  const modelFile = models?.[getModelIdFromFileName(file.name)]
-
-  if (modelFile == null) {
-    return null
-  }
+function DraftModelItem({ model }: { model: Model }) {
+  const { updateModel } = useModelActions()
 
   return (
     <>
-      <div className="column file-info">{modelFile.fileName}</div>
-      <div className="column">
+      <div className='column file-info'>{model.fileName}</div>
+      <div className='column'>
         <input
-          type="checkbox"
-          className="set-as-main"
-          id={`set-as-main-${file.id}`}
-          name="set-as-main"
-          modelId={modelFile.id}
-          defaultChecked={modelFile.isMain}
+          type='checkbox'
+          className='set-as-main'
+          id={`set-as-main-${model.id}`}
+          name='set-as-main'
+          defaultChecked={model.isMain}
           onChange={(e) => {
-            updateModel(modelFile.id, { isMain: e.target.checked })
+            updateModel(model.id, { isMain: e.target.checked })
           }}
         />
-        Set as main
+        {translate('setAsMain')}
       </div>
-      <div className="column">
+      <div className='column'>
         <input
-          type="checkbox"
-          className="unclosable-tab"
-          id={`unclosable-tab-${file.id}`}
-          modelId={modelFile.id}
+          type='checkbox'
+          className='unclosable-tab'
+          id={`unclosable-tab-${model.id}`}
           onChange={(e) => {
-            updateModel(modelFile.id, { unclosable: e.target.checked })
+            updateModel(model.id, { unclosable: e.target.checked })
           }}
-          defaultChecked={modelFile.unclosable}
+          defaultChecked={model.unclosable}
         />
-        Unclosable Tab
+        {translate('unclosableTab')}
       </div>
-      <div className="column">
+      <div className='column'>
         Group:{' '}
         <input
-          className="group-assignement"
-          modelId={modelFile.id}
-          type="text"
+          className='group-assignement'
+          type='text'
           size={2}
           onChange={(e) => {
-            updateModel(modelFile.id, { groupId: e.target.value })
+            updateModel(model.id, { groupId: e.target.value })
           }}
-          placeholder={modelFile.groupId}
-          name={`group-assignement-for-file-${file.id}`}
-          id={`group-assignement-for-file-${file.id}`}
+          placeholder={model.groupId}
+          name={`group-assignement-for-file-${model.id}`}
+          id={`group-assignement-for-file-${model.id}`}
         />
       </div>
     </>

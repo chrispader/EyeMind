@@ -1,6 +1,5 @@
-import { useCallback, useMemo, useState } from 'react'
-import { loadFiles } from '@/app/client/components/FileImport/loadFile'
-import { LoadFileConfig } from '@/app/client/components/FileImport/types'
+import { useCallback, useState } from 'react'
+import { translate } from '@/app/LANG'
 import { containerClasses } from '@/app/client/css/styles'
 import { cancelDefault } from '@/app/client/modules/utils/utils'
 
@@ -10,69 +9,56 @@ declare global {
   }
 }
 
-type FileImportProps = LoadFileConfig & {
-  uploadLabel: string
-  onLoad: () => void
-  onDrop: (files: File[], config: LoadFileConfig) => void
-  onRemove?: (file: File) => void
-  renderItemContent?: (item: File) => React.ReactElement
+type FileImportProps<FileType> = {
+  items: FileType[]
+  getItemId?: (item: FileType) => string
+  uploadLabel?: string
+  submitLabel?: string
+  onSubmit: () => void
+  onDrop: (files: File[]) => void
+  onRemove?: (file: FileType) => void
+  renderItem?: (item: FileType) => React.ReactElement
 }
 
-function FileImport({
-  uploadLabel,
-  mode = 'data-collection',
-  importMode = 'multiple',
-  expectedArtifact,
-  expectedExtensions,
-  onLoad,
-  renderItemContent,
+function FileImport<FileType>({
+  items,
+  getItemId,
+  onSubmit,
+  uploadLabel = translate('dropFiles'),
+  submitLabel = translate('loadFiles'),
+  renderItem,
   onRemove,
   onDrop,
-}: FileImportProps): React.ReactElement {
+}: FileImportProps<FileType>): React.ReactElement {
   const [isActive, setIsActive] = useState(false)
-  const [files, setFiles] = useState<File[]>([])
 
-  const config: LoadFileConfig = useMemo(
-    () => ({
-      mode,
-      importMode,
-      expectedArtifact,
-      expectedExtensions,
-    }),
-    [mode, importMode, expectedArtifact, expectedExtensions],
-  )
-
-  const shouldHoldItems = renderItemContent != null && onRemove != null
+  const shouldHoldItems = renderItem != null && onRemove != null
 
   const handleDroppedFiles = useCallback(
     async (e: React.DragEvent<HTMLDivElement>) => {
-      console.log('onDrop')
+      cancelDefault(e)
 
       setIsActive(false)
 
       // a hack to support the testing of a single file upload using the drag/drop feature as the testing library playwright have an issue with webkitGetAsEntry returning always null
-      if (e.dataTransfer.isForTestingPurpose) {
-        loadFiles([e.dataTransfer.files[0]!], config)
-        return
-      }
-
-      cancelDefault(e)
+      // if (e.dataTransfer.isForTestingPurpose) {
+      //   loadFiles([e.dataTransfer.files[0]!], config)
+      //   return
+      // }
 
       const files = e.dataTransfer.files
       const filesArray = Array.from(files)
-      setFiles(filesArray)
-
-      onDrop(filesArray, config)
+      onDrop(filesArray)
     },
-    [config, onDrop],
+    [onDrop],
   )
 
   return (
-    <div className={`${containerClasses} import-view`} id="import-view">
-      <div className="import-box" id="import-box">
+    <div className={`${containerClasses} import-view`} id='import-view'>
+      <div className='import-box' id='import-box'>
         <div
           className={`upload-zone ${isActive ? 'upload-zone-active' : ''}`}
-          id="upload-zone"
+          id='upload-zone'
           onDrop={handleDroppedFiles}
           onDragEnter={() => setIsActive(true)}
           onDragOver={(e) => {
@@ -82,37 +68,40 @@ function FileImport({
             e.dataTransfer.dropEffect = 'copy'
           }}
           onDragLeave={() => setIsActive(false)}>
-          <span id="upload-label" className="upload-label">
+          <span id='upload-label' className='upload-label'>
             {uploadLabel}
           </span>
           {shouldHoldItems && (
-            <div className="file-list" id="file-list">
-              {files.map((file, index) => (
-                <div id={`fileinfo-${file.id}`} className="row" key={index}>
-                  {renderItemContent(file)}
-                  <div className="column">
-                    <button
-                      className="remove-btn"
-                      id={`remove-${file.id}`}
-                      onClick={() => {
-                        onRemove(file)
-                        setFiles(files.filter((f) => f.id !== file.id))
-                      }}>
-                      Remove
-                    </button>
+            <div className='file-list' id='file-list'>
+              {items.map((item, index) => {
+                const itemId = getItemId?.(item) ?? index
+                return (
+                  <div id={`fileinfo-${itemId}`} className='row' key={itemId}>
+                    {renderItem(item)}
+                    <div className='column'>
+                      <button
+                        className='remove-btn'
+                        id={`remove-${itemId}`}
+                        onClick={() => {
+                          onRemove(item)
+                        }}>
+                        Remove
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
-        <div className="process-files-btn-container">
+
+        <div className='process-files-btn-container'>
           <button
-            className="process-files-btn"
-            id="process-files"
-            disabled={files.length == 0}
-            onClick={onLoad}>
-            Load files
+            className='process-files-btn'
+            id='process-files'
+            disabled={items.length == 0}
+            onClick={onSubmit}>
+            {submitLabel}
           </button>
         </div>
       </div>

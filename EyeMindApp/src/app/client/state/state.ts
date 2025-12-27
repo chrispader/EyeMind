@@ -21,9 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import DataFrame from 'dataframe-js'
 import { create } from 'zustand'
-import { LoadFileConfig } from '@/app/client/components/FileImport/types'
+import { FileImportConfig } from '@/app/client/components/FileImport/types'
 
-export type GlobalState = LoadFileConfig & {
+export type GlobalState = FileImportConfig & {
   linkingSubProcessesMode?: string
   processedGazeData?: Record<string, unknown>
   questions?: DataFrame | Record<string, string>[]

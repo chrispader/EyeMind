@@ -1,14 +1,17 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { CONST } from '@/CONST'
 import { translate } from '@/app/LANG'
 import { ROUTES } from '@/app/client/ROUTES'
+import { ErrorList } from '@/app/client/components/ErrorList'
 import FileImport from '@/app/client/components/FileImport'
-import {
-  getModelIdFromFileName,
-  isModelsFile,
-} from '@/app/client/components/FileImport/loadFile'
+import { isModelsFile } from '@/app/client/components/FileImport/loadFile'
 import type { FileImportConfig } from '@/app/client/components/FileImport/types'
-import { type Model, createDefaultModel } from '@/app/client/model/models'
+import {
+  type Model,
+  createDefaultModel,
+  getModelIdFromFileName,
+} from '@/app/client/model/models'
 import { errorAlert, readFileContent } from '@/app/client/modules/utils/utils'
 import { useDraftModels, useModelActions } from '@/app/client/state/session'
 
@@ -23,50 +26,41 @@ export function EyeTrackingLoadModelsPage() {
   const navigate = useNavigate()
 
   const draftModels = useDraftModels()
-  const { addModels, removeModel } = useModelActions()
+  const { addModels, removeModel, updateModel } = useModelActions()
 
-  // TODO: Remove once state is split up
-  // useEffect(() => {
-  //   setState({
-  //     importMode: 'multiple',
-  //     expectedArtifact: 'models',
-  //     expectedExtensions: ['bpmn', 'odm'],
-  //   })
-  // }, [setState])
+  const draftModelValues = Object.values(draftModels)
+
+  const [errors, setErrors] = useState<string[]>([])
 
   function validateModels() {
-    const modelValues = Object.values(draftModels ?? {})
-
-    const mainModels = modelValues.filter((model) => model?.isMain === true)
-
-    console.log({ mainModels })
+    const mainModels = draftModelValues.filter((model) => model?.isMain === true)
 
     if (mainModels.length !== 1) {
-      const msg = 'There must be exactly one model set as main'
-      errorAlert(msg)
-      console.error(msg)
+      setErrors(['There must be exactly one model set as main'])
       return
     }
 
-    if (modelValues.some((model) => (model?.groupId ?? '') === '')) {
-      const msg = 'All models must be assigned to a group'
-      errorAlert(msg)
-      console.error(msg)
+    if (draftModelValues.some((model) => (model?.groupId ?? '') === '')) {
+      setErrors(['All models must be assigned to a group'])
       return
     }
 
-    if (modelValues.length > 0) {
-      navigate(ROUTES.EYE_TRACKING_LOAD_QUESTIONS)
+    if (draftModelValues.length === 0) {
+      setErrors(['No models to load'])
       return
     }
 
-    const msg = 'No models to load'
-    errorAlert(msg)
-    console.error(msg)
+    // Mark all draft models as not draft
+    for (const model of Object.values(draftModels)) {
+      updateModel(model.id, { isDraft: false })
+    }
+
+    navigate(ROUTES.EYE_TRACKING_LOAD_QUESTIONS)
   }
 
-  async function addDroppedModels(files: File[]) {
-    let models: Model[] = []
+  async function addDraftModels(files: File[]) {
+    let draftModelsToAdd: Model[] = []
+    let newErrors: string[] = []
 
     for (const file of files) {
       const modelId = getModelIdFromFileName(file.name)
@@ -76,13 +70,10 @@ export function EyeTrackingLoadModelsPage() {
       }
 
       if (draftModels?.[modelId] !== undefined) {
-        const msg = file.name + ' (id: ' + modelId + ') is already added'
-        errorAlert(msg)
-        console.error(msg)
+        newErrors.push(file.name + ' (id: ' + modelId + ') is already added')
         continue
       }
 
-      // create file object
       const model = createDefaultModel(file, true)
 
       const doesMainModelExist = Object.values(draftModels ?? {}).some(
@@ -103,7 +94,7 @@ export function EyeTrackingLoadModelsPage() {
       })
       model.xml = content
 
-      models.push(model)
+      draftModelsToAdd.push(model)
 
       // try {
       //   // process model
@@ -118,15 +109,22 @@ export function EyeTrackingLoadModelsPage() {
       // }
     }
 
-    addModels(models)
+    if (newErrors.length > 0) {
+      setErrors(newErrors)
+      return
+    }
+
+    addModels(draftModelsToAdd)
   }
 
   return (
     <FileImport
-      items={Object.values(draftModels)}
+      items={draftModelValues}
+      errors={errors}
+      onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
       uploadLabel={translate('dropModelsFiles')}
       onSubmit={validateModels}
-      onDrop={addDroppedModels}
+      onDrop={addDraftModels}
       onRemove={(model) => removeModel(model.id)}
       renderItem={(model) => <DraftModelItem model={model} />}
     />
@@ -165,7 +163,7 @@ function DraftModelItem({ model }: { model: Model }) {
         {translate('unclosableTab')}
       </div>
       <div className='column'>
-        Group:{' '}
+        Group:
         <input
           className='group-assignement'
           type='text'

@@ -24,7 +24,7 @@ import BpmnModeler from 'bpmn-js/lib/Modeler'
 import BpmnNavigatedViewer from 'bpmn-js/lib/NavigatedViewer'
 import { CONST } from '@/CONST'
 import { FileImportConfig } from '@/app/client/components/FileImport/types'
-import { Model } from '@/app/client/model/models'
+import { Model, getModelIdFromFileName } from '@/app/client/model/models'
 import {
   cancelDefault,
   errorAlert,
@@ -203,10 +203,6 @@ async function loadSessionFile(file: File, config: FileImportConfig) {
 
   await window.utils.readState(file, file.name, filePath, state, config)
   sessionReadListener()
-}
-
-export function getModelIdFromFileName(fileName: string) {
-  return fileName.replace(new RegExp(CONST.MODELS_ID_REGEX, 'g'), '')
 }
 
 function loadModelFile(file: File, content: string, path = file.path) {

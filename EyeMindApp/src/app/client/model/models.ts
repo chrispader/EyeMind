@@ -1,4 +1,7 @@
-export type Model = {
+import { CONST } from '@/CONST'
+import type { Draftable } from '../types/Draftable'
+
+export type Model = Draftable & {
   id: string
   fileName?: string
   path?: string
@@ -7,8 +10,11 @@ export type Model = {
   groupId?: string
   unclosable?: boolean
   mainTab?: boolean
-  isDraft?: boolean
   file: File
+}
+
+export function getModelIdFromFileName(fileName: string) {
+  return fileName.replace(new RegExp(CONST.MODELS_ID_REGEX, 'g'), '')
 }
 
 export function createDefaultModel(file: File, isDraft: boolean = false): Model {

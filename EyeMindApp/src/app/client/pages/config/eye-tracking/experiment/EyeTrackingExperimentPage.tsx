@@ -598,7 +598,7 @@ export function EyeTrackingExperimentPage(): React.ReactElement {
                   id='gaze-sample-size-in-percentage'
                   type='text'
                   defaultValue='20'
-                />{' '}
+                />
                 %
               </div>
             </div>

@@ -227,7 +227,7 @@ function loadModelFile(file: File, content: string, path = file.path) {
       fileName: file.name,
       path: path,
       xml: content,
-      groupId: CONST.DEFAULT_MODEL_GROUP_ID.toString(),
+      groupId: CONST.DEFAULT_MODEL_GROUP_ID,
       isMain: !existsMainModel,
       file: file,
     }

@@ -89,7 +89,7 @@ export function EyeTrackingLoadModelsPage() {
         (model) => model?.isMain,
       )
       model.isMain = !doesMainModelExist
-      model.groupId = CONST.DEFAULT_MODEL_GROUP_ID.toString()
+      model.groupId = CONST.DEFAULT_MODEL_GROUP_ID
 
       const content = await new Promise<string>((resolve, reject) => {
         try {

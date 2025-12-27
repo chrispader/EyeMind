@@ -43,7 +43,7 @@ const CONST = {
     '^next-button-area-in-questionID_',
   ],
 
-  DEFAULT_MODEL_GROUP_ID: 1,
+  DEFAULT_MODEL_GROUP_ID: '1',
 }
 
 export { CONST }

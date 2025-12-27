@@ -4,10 +4,10 @@ import { ROUTES } from '@/app/client/ROUTES'
 import FileImport from '@/app/client/components/FileImport'
 import { loadFiles } from '@/app/client/components/FileImport/loadFile'
 import { errorAlert } from '@/app/client/modules/utils/utils'
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 
 export function EyeTrackingLoadSessionPage(): React.ReactElement {
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
   const navigate = useNavigate()
 
   // TODO: Remove once state is split up

@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router'
 import { ROUTES } from '@/app/client/ROUTES'
 import FileImport from '@/app/client/components/FileImport'
 import { loadFiles } from '@/app/client/components/FileImport/loadFile'
-import { LoadFileConfig } from '@/app/client/components/FileImport/types'
+import { FileImportConfig } from '@/app/client/components/FileImport/types'
 import { errorAlert } from '@/app/client/modules/utils/utils'
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 
 export function EyeTrackingLoadQuestionsPage(): React.ReactElement {
-  const { setState } = useStateStore()
+  const { setState } = useGlobalStore()
   const navigate = useNavigate()
 
   // TODO: Remove once state is split up
@@ -28,7 +28,7 @@ export function EyeTrackingLoadQuestionsPage(): React.ReactElement {
   async function handleLoad() {
     // Check if there are files to load (FileImport component manages this)
     // We need to load the questions file first, then navigate
-    const { questions: currentQuestions } = useStateStore.getState()
+    const { questions: currentQuestions } = useGlobalStore.getState()
 
     if (
       !currentQuestions ||
@@ -44,7 +44,7 @@ export function EyeTrackingLoadQuestionsPage(): React.ReactElement {
     navigate(ROUTES.EYE_TRACKING_EXPERIMENT)
   }
 
-  function handleDrop(files: File[], config: LoadFileConfig) {
+  function handleDrop(files: File[], config: FileImportConfig) {
     if (files.length > 1) {
       const msg = 'only a single file can be imported'
       console.error(msg)
@@ -59,20 +59,20 @@ export function EyeTrackingLoadQuestionsPage(): React.ReactElement {
 
   return (
     <FileImport
-      mode="data-collection"
-      importMode="single"
-      expectedArtifact="questions"
+      mode='data-collection'
+      importMode='single'
+      expectedArtifact='questions'
       expectedExtensions={['csv']}
-      uploadLabel="Drop a questions csv file"
+      uploadLabel='Drop a questions csv file'
       onDrop={handleDrop}
-      onLoad={handleLoad}
+      onSubmit={handleLoad}
       onRemove={removeQuestionFile}
-      renderItemContent={(file) => <QuestionFileItem file={file} />}
+      renderItem={(file) => <QuestionFileItem file={file} />}
     />
   )
 }
 
 function QuestionFileItem({ file }: { file: File }) {
   // Always show the file name - the file is in the FileImport component's local state
-  return <div className="column file-info">{file.name}</div>
+  return <div className='column file-info'>{file.name}</div>
 }

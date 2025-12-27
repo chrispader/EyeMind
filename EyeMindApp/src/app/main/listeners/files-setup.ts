@@ -1,6 +1,6 @@
 import { BrowserWindow, ipcMain } from 'electron'
-import { LoadFileConfig } from '@/app/client/components/FileImport/types'
-import { ClientState } from '@/app/client/state/state'
+import { FileImportConfig } from '@/app/client/components/FileImport/types'
+import { GlobalState } from '@/app/client/state/state'
 import { readState } from '@/app/server/node/utils/files-setup'
 
 export function fileSetupListener(mainWindow: BrowserWindow) {
@@ -11,8 +11,8 @@ export function fileSetupListener(mainWindow: BrowserWindow) {
       args: [
         fileName: string,
         filePath: string,
-        state: ClientState,
-        config: LoadFileConfig,
+        state: GlobalState,
+        config: FileImportConfig,
       ],
     ) {
       return readState(...args, mainWindow)

@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /* Process hierarchy explorer */
 //import {registerClickEventForLogging} from './click-stream'
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 import { sendClickEvent } from './click-stream'
 import { openWithinTab } from './tabs'
 
@@ -52,7 +52,7 @@ function createUpdateProcessHierarchyExplorer(
 ) {
   console.log('createUpdateProcessHierarchyExplorer', arguments)
 
-  const { setState, ...state } = useStateStore.getState()
+  const { setState, ...state } = useGlobalStore.getState()
 
   /// condition/mechanism to initiate state.processHierarchyExplorer
   if (state.processHierarchyExplorer == null) {
@@ -97,7 +97,7 @@ function renderProcessHierarchyExplorer(
 ) {
   console.log('renderProcessHierarchyExplorer', arguments)
 
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   const container = document.getElementById('process-hierarchy-content')
 
@@ -157,7 +157,7 @@ function renderProcessHierarchyExplorer(
  *
  */
 function resetProcessHierarchy() {
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   const container = document.getElementById('process-hierarchy-content')
 

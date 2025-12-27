@@ -31,7 +31,7 @@ import {
   testListeners,
 } from './modules/ui/window-events'
 import { EyeTrackingExperimentPage } from './pages/config/eye-tracking/experiment/EyeTrackingExperimentPage'
-import { loadServerStateIntoClient, useStateStore } from './state/state'
+import { loadServerStateIntoClient, useGlobalStore } from './state/state'
 
 async function initializeApp(): Promise<void> {
   try {
@@ -55,7 +55,7 @@ async function initializeApp(): Promise<void> {
 }
 
 export function App(): React.ReactElement {
-  const { isLoading, loadingMessage } = useStateStore()
+  const { isLoading, loadingMessage } = useGlobalStore()
 
   useEffect(() => {
     initializeApp()

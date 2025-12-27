@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import { isHeatmapActive, setheatmapActive } from '@/app/client/state/activeFeatures'
 import { getGeneralModelsRegistry } from '@/app/client/state/generalModelsRegistry'
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 import {
   displayElement,
   getSelectValues,
@@ -91,7 +91,7 @@ async function populateQuestionIDSelect() {
   const questionTextLength = await window.globalParameters.QUESTION_TEXT_PREVIEW_LENGTH
 
   if (questionIDSelect?.options.length <= 1) {
-    const state = useStateStore.getState()
+    const state = useGlobalStore.getState()
     const questions = state.questions
 
     for (let i = 0; i < questions.length; i++) {

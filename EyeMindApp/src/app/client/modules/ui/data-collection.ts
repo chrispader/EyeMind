@@ -26,7 +26,7 @@ import {
   updateTextAndDisplayDomElement,
 } from '@/app/client/modules/utils/dom'
 import { errorAlert, infoAlert } from '@/app/client/modules/utils/utils'
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 import { assignModelsToGroups } from '../../components/FileImport/loadFile'
 import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
 import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'
@@ -60,7 +60,7 @@ function importQuestionsInteraction() {
   updateTextAndDisplayDomElement('upload-label', 'Drop questions csv files', 'block')
 
   // get client state
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   setState({
     importMode: 'single',
@@ -85,7 +85,7 @@ function importQuestionsInteraction() {
  *
  */
 async function saveSessionInteraction() {
-  const { setState, ...state } = useStateStore.getState()
+  const { setState, ...state } = useGlobalStore.getState()
 
   if (areRequiredFieldsEntered()) {
     setState({
@@ -130,7 +130,7 @@ async function saveSessionInteraction() {
 function prepareDataCollectionContent(filePropertiesDefined: boolean) {
   // showing file explorer, loading models, questions and configuring tables
 
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   // show or hide file explorer
   if (
@@ -141,7 +141,7 @@ function prepareDataCollectionContent(filePropertiesDefined: boolean) {
   }
 
   // load questions
-  generateQuestionsSequence()
+  // generateQuestionsSequence()
 
   // load models
   const areModelsLoaded = loadModels()
@@ -229,7 +229,7 @@ function recordETInteraction() {
  *
  */
 function loadRecordingFormData() {
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   if (state.processedGazeData === undefined) {
     return
@@ -403,7 +403,7 @@ function areRequiredFieldsEntered() {
  *
  */
 async function initiateETsession() {
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   const styleParameters = await saveStyleParameters()
 
@@ -506,7 +506,7 @@ function startTracking(
 ) {
   // console.log("startTracking function ",arguments);
 
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   setState({
     isEtOn: true,
@@ -542,7 +542,7 @@ type Snapshot = {
  */
 
 function takesnapshot(timestamp: number, code: string, screenX: number, screenY: number) {
-  const { setState, ...state } = useStateStore.getState()
+  const { setState, ...state } = useGlobalStore.getState()
   console.log('state to be used in snapshot', state)
 
   // check that eye-tracking is still on recording
@@ -664,7 +664,7 @@ async function sendFullSnapshot(snapshot) {
 async function stopETInteraction() {
   console.log('stopETInteraction', arguments)
 
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   // set stop-btn interaction to null
   document.getElementById('stop-btn').onclick = null
@@ -715,7 +715,7 @@ async function stopETInteraction() {
 function endTracking(externalProgressWindow) {
   console.log('endTracking function ', arguments)
 
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   setState({
     isEtOn: false,
@@ -741,7 +741,7 @@ function endTracking(externalProgressWindow) {
 function processGazeData(externalProgressWindow) {
   console.log('processGazeData function ', arguments)
 
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   mapGazestoElementsFromPageSnapshotListener()
 

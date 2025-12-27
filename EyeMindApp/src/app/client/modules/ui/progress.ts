@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import { CONST } from '@/CONST'
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 
 /* progress */
 
@@ -110,7 +110,7 @@ function delay(delayInMs: number) {
  *
  */
 async function showGeneralWaitingScreen(text: string) {
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   setState({ isLoading: true, loadingMessage: text })
   await delay(CONST.DELAY_FOR_RENDRING)
@@ -131,7 +131,7 @@ async function showGeneralWaitingScreen(text: string) {
  *
  */
 async function hideGeneralWaitingScreen() {
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
   setState({ isLoading: false, loadingMessage: undefined })
   await delay(CONST.DELAY_FOR_RENDRING)
 }

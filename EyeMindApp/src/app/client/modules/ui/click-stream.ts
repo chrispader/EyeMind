@@ -19,7 +19,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 
 /**
  * Title: send click event to the ET server through the server side
@@ -37,7 +37,7 @@ import { useStateStore } from '@/app/client/state/state'
 async function sendClickEvent(clickTimestamp: number, clickedElement: string) {
   console.log('sendClickEvent', arguments)
 
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   if (state.isEtOn) {
     const res = await window.eyeTracker.sendClickEvent(clickTimestamp, clickedElement)

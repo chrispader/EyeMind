@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import { CONST } from '@/CONST'
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 import { takesnapshot } from './data-collection'
 import { resetProcessHierarchy } from './process-hierarchy-explorer'
 import { closeTabInteraction, openMainTab } from './tabs'
@@ -76,7 +76,7 @@ function resetModel(fileId) {
  *
  */
 function resetNavTabsAndTabs(modelsGroupId?: string) {
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   if (modelsGroupId != null) {
     // differ the execution depending on the linkingSubProcessesMode
@@ -156,7 +156,7 @@ function resetNavTabsAndTabs(modelsGroupId?: string) {
 function showModelsGroup(groupId) {
   console.log('showModelsGroup', arguments)
 
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   if (groupId != null) {
     for (const model of Object.values(state.models ?? {})) {

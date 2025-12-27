@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import { cancelDefault } from '@/app/client/modules/utils/utils'
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 //import {registerClickEventForLogging} from './click-stream'
 import { resetModel } from './canvas'
 import { sendClickEvent } from './click-stream'
@@ -48,7 +48,7 @@ function addToTabHeader(id: string) {
   console.log('addToTabHeader', arguments)
 
   // get state
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   // get file name
   const fileName = document
@@ -263,7 +263,7 @@ function tabDropped(e) {
 function closeTabInteraction(id: string, tabHeader: HTMLElement, takeSnapshot: boolean) {
   console.log('closeTabInteraction', arguments)
 
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   // reset the model of the closed tab
   resetModel(id)
@@ -304,7 +304,7 @@ function changeTab(
   ignoreTabLinks: boolean,
   takeSnapshot: boolean,
 ) {
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   const destinationIdModel = document.getElementById('model' + destinationId + '-content')
   const fileName = destinationIdModel.getAttribute('fileName')
@@ -433,7 +433,7 @@ function openMainTab(
   takeSnapshot: boolean,
   modelsGroupId: string,
 ) {
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   for (const [key, model] of Object.entries(state.models ?? {})) {
     if (model?.mainTab && model.groupId == modelsGroupId) {
@@ -458,7 +458,7 @@ function openMainTab(
  *
  */
 function setMainTab() {
-  const { setState, ...state } = useStateStore.getState()
+  const { setState, ...state } = useGlobalStore.getState()
 
   const setAsMainRadioBoxList = document.getElementsByClassName(
     'set-as-main',
@@ -506,7 +506,7 @@ function setMainTab() {
 function setUnclosableTabs() {
   console.log('setUnclosableTabs', arguments)
 
-  const { setState, ...state } = useStateStore.getState()
+  const { setState, ...state } = useGlobalStore.getState()
 
   const setUnclosableTabCheckBoxList = document.getElementsByClassName(
     'unclosable-tab',

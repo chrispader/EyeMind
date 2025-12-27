@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /*  Shared interactions between data collection and anaylsis  */
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 
 /**
  * Title: load models
@@ -38,7 +38,7 @@ import { useStateStore } from '@/app/client/state/state'
 function loadModels() {
   console.log('loadModels', arguments)
 
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   /// move to loaded-content-view
   document.getElementById('import-view').style.display = 'none'

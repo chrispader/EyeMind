@@ -23,7 +23,7 @@ SOFTWARE.*/
 import DataFrame from 'dataframe-js'
 import { CONST } from '@/CONST'
 import { errorAlert } from '@/app/client/modules/utils/utils'
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 import { resetNavTabsAndTabs } from './canvas'
 import { showModelsGroup } from './canvas'
 import { sendClickEvent } from './click-stream'
@@ -43,7 +43,7 @@ import { stopETInteraction } from './data-collection'
  *
  */
 async function loadQuestions(file: File) {
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   try {
     const contentAsDataFrame = await DataFrame.fromCSV(file) // this statement should not fail if the file is a valid csv
@@ -121,7 +121,7 @@ function checkNeccesaryColumnsInQuestionsFile(
 function generateQuestionsSequence() {
   console.log('generateQuestionsSequence', arguments)
 
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
   const questions = new DataFrame(state.questions ?? [])
 
   document.getElementById('start-questions-btn').onclick = () => startQuestions()
@@ -276,7 +276,7 @@ function generateQuestionsSequence() {
  *
  */
 function startQuestions() {
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
   const questions = new DataFrame(state.questions ?? [])
 
   nextQuestion(null, 0, questions.count(), null, null, questions.getRow(0))
@@ -308,7 +308,7 @@ async function nextQuestion(
   givenAnswer: string | null,
   nextQuestion: DataFrame,
 ) {
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   if (!state.isEtOn) {
     const msg = 'Eye-tracking has not started yet'
@@ -507,7 +507,7 @@ async function sendQuestionEvent(
  *
  */
 function areModelGroupsValid(questions: DataFrame) {
-  const state = useStateStore.getState()
+  const state = useGlobalStore.getState()
 
   const df = new DataFrame(questions)
 

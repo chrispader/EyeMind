@@ -1,15 +1,15 @@
 import json from 'big-json'
 import { BrowserWindow } from 'electron'
 import fs from 'fs'
-import { LoadFileConfig } from '@/app/client/components/FileImport/types'
-import { ClientState } from '@/app/client/state/state'
+import { FileImportConfig } from '@/app/client/components/FileImport/types'
+import { GlobalState } from '@/app/client/state/state'
 import { addState } from '@/app/server/node/dataModels/state'
 
 export function readState(
   fileName: string,
   filePath: string,
-  state: ClientState,
-  config: LoadFileConfig,
+  state: GlobalState,
+  config: FileImportConfig,
   mainWindow: BrowserWindow,
 ) {
   // read JSON and Save state
@@ -68,7 +68,7 @@ export function readState(
   readStream.pipe(parseStream)
 }
 
-export function populateState(state: ClientState, loadedState: ClientState) {
+export function populateState(state: GlobalState, loadedState: GlobalState) {
   state.snapshots = loadedState.snapshots
   state.snapshotsCounter = loadedState.snapshotsCounter
   state.processedGazeData = loadedState.processedGazeData

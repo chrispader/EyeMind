@@ -1,7 +1,7 @@
-import { ClientState } from '@/app/client/state/state'
+import { GlobalState } from '@/app/client/state/state'
 
 /* inits */
-let state: ClientState = {
+let state: GlobalState = {
   snapshotsCounter: 0,
   activeTab: undefined,
   processedGazeData: {},
@@ -14,7 +14,7 @@ let state: ClientState = {
   snapshots: {},
 }
 
-let states: Record<string, ClientState> = {}
+let states: Record<string, GlobalState> = {}
 
 /* data collection */
 
@@ -22,7 +22,7 @@ export function getState() {
   return state
 }
 
-export function setState(newState: ClientState) {
+export function setState(newState: GlobalState) {
   state = newState
 }
 
@@ -51,7 +51,7 @@ export function clearStates() {
   states = {}
 }
 
-export function addState(filepath: string, state: ClientState) {
+export function addState(filepath: string, state: GlobalState) {
   states[filepath] = state
 }
 

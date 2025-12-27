@@ -19,7 +19,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-import { useStateStore } from '@/app/client/state/state'
+import { useGlobalStore } from '@/app/client/state/state'
 import { registerFileUpload } from '../../components/FileImport/loadFile'
 import { downloadInteraction } from './download'
 import {
@@ -42,7 +42,7 @@ const REPORT_FREQUENCY = 1000
 async function analysisModeInteraction() {
   // console.log("analysisModeInteraction function",arguments);
 
-  const { setState } = useStateStore.getState()
+  const { setState } = useGlobalStore.getState()
 
   // set state mode
   setState({

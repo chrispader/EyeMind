@@ -119,7 +119,7 @@ export function App(): React.ReactElement {
 
           <div className='section'>
             <div className='title'>
-              Interpolation:{' '}
+              Interpolation:
               <input type='checkbox' id='is-interpolation' defaultChecked />
             </div>
             <div className='row'>
@@ -200,7 +200,7 @@ export function App(): React.ReactElement {
 
           <div className='section'>
             <div className='title'>
-              Discard short fixations:{' '}
+              Discard short fixations:
               <input type='checkbox' id='is-discard-short-fixations' defaultChecked />
             </div>
             <div className='row'>
@@ -220,7 +220,7 @@ export function App(): React.ReactElement {
 
           <div className='section'>
             <div className='title'>
-              Merge adjacent fixations:{' '}
+              Merge adjacent fixations:
               <input type='checkbox' id='is-merge-adjacent-fixations' defaultChecked />
             </div>
             <div className='row'>
@@ -254,9 +254,7 @@ export function App(): React.ReactElement {
             <div className='row'>
               <div className='column'>
                 <span className='text'>
-                  {' '}
-                  Handling of fixation spanning over multiple elements, tabs or
-                  questions{' '}
+                  Handling of fixation spanning over multiple elements, tabs or questions
                 </span>
               </div>
               <div className='column'>

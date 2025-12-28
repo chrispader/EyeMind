@@ -1,12 +1,12 @@
 // import svgr from '@svgr/vite-plugin'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
-// Path aliases matching webpack.common.config.ts
-// Resolve from project root to maintain compatibility
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
 const projectRoot = path.resolve(__dirname)
 const alias = Object.fromEntries(
   Object.entries({
@@ -25,43 +25,8 @@ export default defineConfig({
     tailwindcss(),
     react({
       babel: {
-        plugins: [
-          // React Compiler support
-          ['babel-plugin-react-compiler', {}],
-        ],
+        plugins: [['babel-plugin-react-compiler', {}]],
       },
-    }),
-    // svgr({
-    //   // SVG as React components by default
-    //   svgrOptions: {
-    //     exportType: 'default',
-    //   },
-    // }),
-    nodePolyfills({
-      // Polyfills for Node.js modules used in renderer
-      globals: {
-        Buffer: true,
-        global: true,
-        process: true,
-      },
-      // Exclude Node.js built-ins that shouldn't be polyfilled
-      exclude: [
-        'fs',
-        'tls',
-        'net',
-        'path',
-        'zlib',
-        'http',
-        'https',
-        'stream',
-        'crypto',
-        'request',
-        'assert',
-        'child_process',
-        'util',
-        'url',
-        'os',
-      ],
     }),
   ],
   build: {

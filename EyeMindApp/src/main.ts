@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 import { BrowserWindow, app, session } from 'electron'
 import { REACT_DEVELOPER_TOOLS, installExtension } from 'electron-devtools-installer'
-import electronSquirrelStartup from 'electron-squirrel-startup'
+import started from 'electron-squirrel-startup'
 import { analysisListeners } from '@/app/listeners/analysis'
 import { downloadListener } from '@/app/listeners/download'
 import { eyeTrackerListeners } from '@/app/listeners/eye-tracker'
@@ -49,7 +49,7 @@ declare const MAIN_WINDOW_VITE_NAME: string
 declare const MAIN_WINDOW_PRELOAD_VITE_NAME: string
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (Boolean(electronSquirrelStartup)) app.quit()
+if (Boolean(started)) app.quit()
 
 const createMainWindow = (): BrowserWindow => {
   // Create the browser window.

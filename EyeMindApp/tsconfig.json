@@ -10,8 +10,8 @@
     "verbatimModuleSyntax": false,
     "forceConsistentCasingInFileNames": true,
     "lib": ["esnext", "dom"],
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noStrictGenericChecks": false,
@@ -35,12 +35,6 @@
       "@extra/*": ["extra/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    ".eslintrc.js",
-    "vite*.ts",
-    ".react-router/types/**/*",
-    "vite.common.config.ts"
-  ],
+  "include": ["src/**/*", ".eslintrc.js", "vite*.ts", ".react-router/types/**/*"],
   "exclude": ["node_modules", "dist"]
 }

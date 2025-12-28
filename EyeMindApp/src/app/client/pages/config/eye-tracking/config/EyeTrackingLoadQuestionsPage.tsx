@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { ROUTES } from '@/app/client/ROUTES'
-import { ErrorList } from '@/app/client/components/ErrorList'
 import FileImport from '@/app/client/components/FileImport'
 import { isQuestionsFile } from '@/app/client/components/FileImport/loadFile'
 import { FileImportConfig } from '@/app/client/components/FileImport/types'
 import {
   type QuestionFile,
   createDefaultQuestionFile,
+  extractQuestionsFromFile,
   getQuestionFileIdFromFileName,
 } from '@/app/client/model/questions'
-import { useQuestionFileActions, useQuestionFiles } from '@/app/client/state/session'
+import { ROUTES_NAMES } from '@/app/client/routes'
+import { useQuestionActions, useQuestionFiles } from '@/app/client/state/session'
 
 const fileImportConfig: FileImportConfig = {
   mode: 'data-collection',
@@ -23,7 +23,7 @@ export function EyeTrackingLoadQuestionsPage(): React.ReactElement {
   const navigate = useNavigate()
 
   const questionFiles = useQuestionFiles()
-  const { addQuestionFiles, removeQuestionFile } = useQuestionFileActions()
+  const { addQuestionFiles, removeQuestionFile, setQuestions } = useQuestionActions()
 
   const [errors, setErrors] = useState<string[]>([])
 
@@ -33,7 +33,17 @@ export function EyeTrackingLoadQuestionsPage(): React.ReactElement {
       return
     }
 
-    navigate(ROUTES.EYE_TRACKING_EXPERIMENT)
+    try {
+      const questions = await extractQuestionsFromFile(file)
+      setQuestions(questions)
+      navigate(ROUTES_NAMES.EYE_TRACKING_EXPERIMENT)
+    } catch (error) {
+      let msg = 'An error occured while validating the questions file'
+      if (error instanceof Error) {
+        msg += ': ' + error.message
+      }
+      setErrors([msg])
+    }
   }
 
   function addDroppedQuestions(files: File[]) {

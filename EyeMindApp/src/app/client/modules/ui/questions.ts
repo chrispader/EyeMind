@@ -21,89 +21,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /* Questions */
 import DataFrame from 'dataframe-js'
-import { CONST } from '@/CONST'
 import { errorAlert } from '@/app/client/modules/utils/utils'
 import { useGlobalStore } from '@/app/client/state/state'
 import { resetNavTabsAndTabs } from './canvas'
 import { showModelsGroup } from './canvas'
 import { sendClickEvent } from './click-stream'
 import { stopETInteraction } from './data-collection'
-
-/**
- * Title: load questions
- *
- * Description: load questions and store them in state object
- *
- * @param {object} file file
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-async function loadQuestions(file: File) {
-  const { setState } = useGlobalStore.getState()
-
-  try {
-    const contentAsDataFrame = await DataFrame.fromCSV(file) // this statement should not fail if the file is a valid csv
-    contentAsDataFrame.show()
-    setState({
-      questions: contentAsDataFrame.toCollection() as Record<string, string>[], //should be stored as Collection to faciliate the transfer to the server and the export
-    })
-
-    const requiredColumns = CONST.RQUIRED_COLUMNS_IN_QUESTION_FILE
-    const questionsTypeSupported = CONST.QUESTION_TYPES_SUPPORTED
-
-    if (
-      !checkNeccesaryColumnsInQuestionsFile(
-        contentAsDataFrame,
-        requiredColumns,
-        questionsTypeSupported,
-      )
-    )
-      throw 'required columns or question types not suported'
-
-    return true
-  } catch (error) {
-    const msg = 'An error occured, check the validity of the file'
-    console.error(msg)
-    errorAlert(msg)
-    return false
-  }
-}
-
-/**
- * Title: check that the neccesary columns are in the questions file
- *
- * Description: check that the neccesary columns are in the questions file
- *
- * @param {object} df dataframe object
- * @param {array} requiredColumns array of required columns
- * @param {array} questionsTypeSupported array of question types supported
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-function checkNeccesaryColumnsInQuestionsFile(
-  df: DataFrame,
-  requiredColumns: string[],
-  questionsTypeSupported: string[],
-) {
-  const checker = (arr: string[], target: string[]) =>
-    target.every((v) => arr.includes(v))
-
-  const allRequiredColumnsThere = checker(df.listColumns(), requiredColumns)
-  const containsOnlySupportedQuestionTypes = checker(
-    questionsTypeSupported,
-    df.unique('type').toArray().flat(),
-  )
-
-  return allRequiredColumnsThere && containsOnlySupportedQuestionTypes
-}
 
 /**
  * Title: generate questions sequence

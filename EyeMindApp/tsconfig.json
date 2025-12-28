@@ -34,6 +34,6 @@
       "@extra/*": ["extra/*"]
     }
   },
-  "include": ["src/**/*", ".eslintrc.js", "webpack*.ts", ".react-router/types/**/*"],
+  "include": ["src/**/*", ".eslintrc.js", "vite*.ts", ".react-router/types/**/*"],
   "exclude": ["node_modules", "dist"]
 }

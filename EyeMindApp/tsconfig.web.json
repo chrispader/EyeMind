@@ -1,0 +1,20 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+  "include": [
+    "src/types/**/*",
+    "src/renderer/**/*",
+    "src/preload/*.d.ts",
+    ".react-router/types/**/*"
+  ],
+  "rootDirs": [".", "./.react-router/types"],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "paths": {
+      "*": ["node_modules/*"],
+      "@/*": ["src/*"]
+    }
+  }
+}

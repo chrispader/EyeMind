@@ -1,40 +1,4 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "allowSyntheticDefaultImports": true,
-    "allowImportingTsExtensions": true,
-    "baseUrl": ".",
-    "esModuleInterop": true,
-    "verbatimModuleSyntax": false,
-    "forceConsistentCasingInFileNames": true,
-    "lib": ["esnext", "dom"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noStrictGenericChecks": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ESNext",
-    "sourceMap": true,
-    "outDir": "dist",
-    "jsx": "react-jsx",
-    "rootDirs": [".", "./.react-router/types"],
-    "paths": {
-      "*": ["node_modules/*"],
-      "@/*": ["src/*"],
-      "@extra/*": ["extra/*"]
-    }
-  },
-  "include": ["src/**/*", ".eslintrc.js", "vite*.ts", ".react-router/types/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "files": [],
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }]
 }

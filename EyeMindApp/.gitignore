@@ -98,3 +98,6 @@ public
 out
 dist
 outputData
+
+# React Router
+.react-router

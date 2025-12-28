@@ -3,7 +3,6 @@ import 'bpmn-js/dist/assets/bpmn-js.css'
 import 'bpmn-js/dist/assets/diagram-js.css'
 import { useEffect } from 'react'
 import { HashRouter, Route, Routes } from 'react-router'
-import { ROUTES } from '@/app/client/ROUTES'
 import { LoadingScreen } from '@/app/client/components/LoadingScreen'
 import { ProcessingStates } from '@/app/client/components/ProcessingStates'
 import '@/app/client/css/app.css'
@@ -17,6 +16,7 @@ import { EyeTrackingLoadModelsPage } from '@/app/client/pages/config/eye-trackin
 import { EyeTrackingLoadQuestionsPage } from '@/app/client/pages/config/eye-tracking/config/EyeTrackingLoadQuestionsPage'
 import { EyeTrackingLoadSessionPage } from '@/app/client/pages/config/eye-tracking/config/EyeTrackingLoadSessionPage'
 import { EyeTrackingNewSessionPage } from '@/app/client/pages/config/eye-tracking/config/EyeTrackingNewSessionPage'
+import { ROUTES_NAMES } from '@/app/client/routes'
 import '@extra/object-diagram-modeler/starter/app/css/app.css'
 import { DownloadModal } from './components/DownloadModal'
 import { FixationSettingsModal } from './components/FixationSettingsModal'
@@ -65,38 +65,38 @@ export function App(): React.ReactElement {
     <>
       <HashRouter>
         <Routes>
-          <Route path={ROUTES.HOME} element={<ConfigPagesWrapper />}>
+          <Route path={ROUTES_NAMES.HOME} element={<ConfigPagesWrapper />}>
             <Route index element={<HomePage />} />
-            <Route path={ROUTES.EYE_TRACKING} element={<EyeTrackingPage />} />
+            <Route path={ROUTES_NAMES.EYE_TRACKING} element={<EyeTrackingPage />} />
             <Route
-              path={ROUTES.EYE_TRACKING_NEW_SESSION}
+              path={ROUTES_NAMES.EYE_TRACKING_NEW_SESSION}
               element={<EyeTrackingNewSessionPage />}
             />
 
             <Route
-              path={ROUTES.EYE_TRACKING_NEW_LOAD_MODELS}
+              path={ROUTES_NAMES.EYE_TRACKING_NEW_LOAD_MODELS}
               element={<EyeTrackingLoadModelsPage />}
             />
             <Route
-              path={ROUTES.EYE_TRACKING_LOAD_QUESTIONS}
+              path={ROUTES_NAMES.EYE_TRACKING_LOAD_QUESTIONS}
               element={<EyeTrackingLoadQuestionsPage />}
             />
             <Route
-              path={ROUTES.EYE_TRACKING_LOAD_SESSION}
+              path={ROUTES_NAMES.EYE_TRACKING_LOAD_SESSION}
               element={<EyeTrackingLoadSessionPage />}
             />
+          </Route>
 
-            <Route
-              path={ROUTES.EYE_TRACKING_EXPERIMENT}
-              element={<EyeTrackingExperimentPage />}
-            />
+          <Route
+            path={ROUTES_NAMES.EYE_TRACKING_EXPERIMENT}
+            element={<EyeTrackingExperimentPage />}
+          />
 
-            <Route path={ROUTES.ANALYSIS} element={<AnalysisPage />} />
+          {/* <Route path={ROUTES.ANALYSIS} element={<AnalysisPage />} />
             <Route path={ROUTES.FIXATION_SETTINGS} element={<FixationSettingsModal />} />
             <Route path={ROUTES.HEATMAP_SETTINGS} element={<HeatmapSettingsModal />} />
             <Route path={ROUTES.DOWNLOAD} element={<DownloadModal />} />
-            <Route path={ROUTES.GAZE_PROJECTION} element={<GazeProjectionModal />} />
-          </Route>
+            <Route path={ROUTES.GAZE_PROJECTION} element={<GazeProjectionModal />} /> */}
         </Routes>
       </HashRouter>
 

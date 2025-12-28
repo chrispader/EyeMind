@@ -1,4 +1,4 @@
-import { GlobalState } from '@/app/client/state/state'
+import { GlobalState } from '@/app/state/state'
 
 /* inits */
 let state: GlobalState = {

@@ -1,9 +1,9 @@
 import json from 'big-json'
 import { BrowserWindow } from 'electron'
 import fs from 'fs'
-import { FileImportConfig } from '@/app/client/components/FileImport/types'
-import { GlobalState } from '@/app/client/state/state'
+import { FileImportConfig } from '@/app/components/FileImport/types'
 import { addState } from '@/app/server/node/dataModels/state'
+import { GlobalState } from '@/app/state/state'
 
 export function readState(
   fileName: string,

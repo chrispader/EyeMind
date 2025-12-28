@@ -49,6 +49,28 @@ type Progress = {
   onUpdateProcessingMessage: (callback: (args: unknown[]) => void) => void
 }
 
+type Utils = {
+  stateDownload: (
+    fileName: string,
+    includeTimeStampInFileName: boolean,
+    customDownload: unknown,
+  ) => Promise<unknown>
+  readState: (
+    file: unknown,
+    fileName: string,
+    filePath: string | null,
+    state: unknown,
+    config: unknown,
+  ) => Promise<unknown>
+  onStateRead: (callback: (args: unknown[]) => void) => void
+  saveSession: (state: unknown) => Promise<unknown>
+  recoverSession: (
+    gazeDataFilename: string,
+    snapshotsContentDataFilename: string,
+  ) => Promise<unknown>
+  onSessionRead: (callback: (args: unknown[]) => void) => void
+}
+
 declare global {
   interface Window {
     electron: ElectronAPI
@@ -58,5 +80,6 @@ declare global {
     Rserver: Rserver
     state: State
     progress: Progress
+    utils: Utils
   }
 }

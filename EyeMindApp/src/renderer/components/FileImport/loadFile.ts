@@ -50,14 +50,6 @@ import {
 } from '../../modules/ui/tabs'
 import { useSessionStore } from '../../state/session'
 
-declare global {
-  interface File {
-    id: string
-    isForTestingPurpose: boolean
-    localFilePath: string
-  }
-}
-
 // types of modeler objects supported by the tool
 const modelers = {
   BpmnModeler: BpmnModeler,

@@ -1,15 +1,16 @@
-import { useEffect, useRef, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useGlobalStore } from '@/renderer/state/global'
 import { recordETInteraction } from './recording'
 
 const NAV_TABS_SCROLL_DISTANCE = 20
 
-
 export function EyeTrackingExperimentPage({}): React.ReactElement {
   const globalStore = useGlobalStore()
 
   const isIndexTabVisible = globalStore.mode == 'data-collection'
-  const isExplorerVisible = globalStore.linkingSubProcessesMode !== 'newTab' && globalStore.linkingSubProcessesMode !== 'withinTab'
+  const isExplorerVisible =
+    globalStore.linkingSubProcessesMode !== 'newTab' &&
+    globalStore.linkingSubProcessesMode !== 'withinTab'
 
   const toTabLeft = useRef<HTMLDivElement>(null)
   const toTabRight = useRef<HTMLDivElement>(null)
@@ -25,7 +26,6 @@ export function EyeTrackingExperimentPage({}): React.ReactElement {
   }
 
   const isSessionLoaded = useRef(false)
-
 
   useEffect(() => {
     // set file properties not already defined (that is the case when you load a session)
@@ -247,8 +247,8 @@ export function EyeTrackingExperimentPage({}): React.ReactElement {
         <div className='tabs' id='tabs'>
           {isExplorerVisible && (
             <div
-            id='explorer'
-            className='explorer gaze-element'
+              id='explorer'
+              className='explorer gaze-element'
               data-element-id='file-explorer-area'>
               <ul id='explorer-groups' className='root'></ul>
             </div>

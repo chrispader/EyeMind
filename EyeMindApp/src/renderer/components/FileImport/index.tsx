@@ -4,12 +4,6 @@ import { containerClasses } from '@/renderer/css/styles'
 import { cancelDefault } from '@/renderer/modules/utils/utils'
 import { ErrorList } from '../ErrorList'
 
-declare global {
-  interface DataTransfer {
-    isForTestingPurpose: boolean
-  }
-}
-
 type FileImportProps<FileType> = {
   items: FileType[]
   getItemId?: (item: FileType) => string

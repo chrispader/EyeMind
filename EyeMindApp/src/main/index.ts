@@ -23,18 +23,18 @@ import { BrowserWindow, app, session } from 'electron'
 import { REACT_DEVELOPER_TOOLS, installExtension } from 'electron-devtools-installer'
 import started from 'electron-squirrel-startup'
 import path from 'path'
-import { analysisListeners } from '@/renderer/listeners/analysis'
-import { downloadListener } from '@/renderer/listeners/download'
-import { eyeTrackerListeners } from '@/renderer/listeners/eye-tracker'
-import { fileSetupListener } from '@/renderer/listeners/files-setup'
+import { analysisListeners } from '@/main/listeners/analysis'
+import { downloadListener } from '@/main/listeners/download'
+import { eyeTrackerListeners } from '@/main/listeners/eye-tracker'
+import { fileSetupListener } from '@/main/listeners/files-setup'
 import {
   fixationFilterListeners,
   shutdownFixationFilterServer,
-} from '@/renderer/listeners/fixation-filter'
-import { testListeners } from '@/renderer/listeners/serverTests'
-import { sessionListeners } from '@/renderer/listeners/session'
-import { stateListeners } from '@/renderer/listeners/state'
-import { windowListeners } from '@/renderer/listeners/window'
+} from '@/main/listeners/fixation-filter'
+import { testListeners } from '@/main/listeners/serverTests'
+import { sessionListeners } from '@/main/listeners/session'
+import { stateListeners } from '@/main/listeners/state'
+import { windowListeners } from '@/main/listeners/window'
 
 app.whenReady().then(() => {
   installExtension(REACT_DEVELOPER_TOOLS)

@@ -4,9 +4,8 @@
     "src/types/**/*",
     "src/renderer/**/*",
     "src/preload/*.d.ts",
-    ".react-router/types/**/*"
+    "src/main/listeners"
   ],
-  "rootDirs": [".", "./.react-router/types"],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",

@@ -454,4 +454,4 @@ function areModelGroupsValid(questions: DataFrame) {
   return checker(modelGroups, df.unique('model-group').toArray().flat())
 }
 
-export { loadQuestions, generateQuestionsSequence, startQuestions, areModelGroupsValid }
+export { generateQuestionsSequence, startQuestions, areModelGroupsValid }

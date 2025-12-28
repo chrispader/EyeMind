@@ -445,7 +445,7 @@ export function customizedHeatMap(
 
   let aggregatedDf
 
-  // differ the execution depending on the measure type (see measures in modal in app/client/index.html)
+  // differ the execution depending on the measure type (see measures in modal in renderer/index.html)
   if (measureType == 'element_level') {
     // i.e., visit level
     aggregatedDf = groupedDfFromFixations

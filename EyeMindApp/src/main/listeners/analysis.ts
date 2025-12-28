@@ -1,6 +1,6 @@
 import { BrowserWindow, ipcMain } from 'electron'
-import { IpcNamespace } from '@/renderer/listeners/types'
-import { IpcListenerParameters } from '@/renderer/listeners/types'
+import { IpcNamespace } from '@/main/listeners/types'
+import { IpcListenerParameters } from '@/main/listeners/types'
 import {
   applyCorrectionOffset,
   gazeDataFragmentMapped,

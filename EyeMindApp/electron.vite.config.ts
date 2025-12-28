@@ -1,46 +1,42 @@
 import tailwindcss from '@tailwindcss/vite'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
-import { bytecodePlugin, defineConfig, externalizeDepsPlugin } from 'electron-vite'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import {
+  type ElectronViteConfig,
+  bytecodePlugin,
+  defineConfig,
+  externalizeDepsPlugin,
+} from 'electron-vite'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const nodePlugins = [externalizeDepsPlugin(), bytecodePlugin(), tsconfigPaths()]
 
-const nodePlugins = [externalizeDepsPlugin(), bytecodePlugin()]
-const alias = {
-  '@': path.resolve(__dirname, 'src'),
+export const rendererConfig: NonNullable<ElectronViteConfig['renderer']> = {
+  plugins: [
+    tailwindcss(),
+    tanstackRouter({
+      routesDirectory: './src/renderer/app/routes',
+      generatedRouteTree: './src/renderer/app/routeTree.gen.ts',
+    }),
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler', {}]],
+      },
+    }),
+    tsconfigPaths(),
+  ],
+  build: {
+    minify: true,
+  },
+  assetsInclude: ['**/*.bpmn'],
 }
 
 export default defineConfig({
   main: {
     plugins: nodePlugins,
-    resolve: {
-      alias,
-    },
   },
   preload: {
     plugins: nodePlugins,
-    resolve: {
-      alias,
-    },
   },
-  renderer: {
-    root: path.resolve(__dirname, 'src/app'),
-    resolve: {
-      alias,
-      extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
-    },
-    plugins: [
-      tailwindcss(),
-      react({
-        babel: {
-          plugins: [['babel-plugin-react-compiler', {}]],
-        },
-      }),
-    ],
-    build: {
-      minify: false,
-    },
-    assetsInclude: ['**/*.bpmn'],
-  },
+  renderer: rendererConfig,
 })

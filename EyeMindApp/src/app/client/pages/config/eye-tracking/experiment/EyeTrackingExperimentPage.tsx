@@ -1,4 +1,71 @@
+import { useEffect, useRef, useRef } from 'react'
+import { useGlobalStore } from '@/app/client/state/state'
+import { recordETInteraction } from './recording'
+
+const NAV_TABS_SCROLL_DISTANCE = 20
+
+
 export function EyeTrackingExperimentPage(): React.ReactElement {
+  const globalStore = useGlobalStore()
+
+  const isIndexTabVisible = globalStore.mode == 'data-collection'
+  const isExplorerVisible = globalStore.linkingSubProcessesMode !== 'newTab' && globalStore.linkingSubProcessesMode !== 'withinTab'
+
+  const toTabLeft = useRef<HTMLDivElement>(null)
+  const toTabRight = useRef<HTMLDivElement>(null)
+  const navTabs = useRef<HTMLDivElement>(null)
+  function handleToTabLeftClick() {
+    if (!navTabs.current) return
+
+    navTabs.current.scrollLeft -= NAV_TABS_SCROLL_DISTANCE
+  }
+  function handleToTabRightClick() {
+    if (!navTabs.current) return
+    navTabs.current.scrollLeft += NAV_TABS_SCROLL_DISTANCE
+  }
+
+
+  useEffect(() => {
+
+
+    // load questions
+    // generateQuestionsSequence()
+
+    // load models
+    const areModelsLoaded = loadModels()
+
+    // set file properties not already defined (that is the case when you load a session)
+    if (!filePropertiesDefined) {
+      assignModelsToGroups()
+      setMainTab()
+      setUnclosableTabs()
+    }
+
+    // openMainTab (in "hide" mode)
+    /*        if(state.linkingSubProcessesMode!="withinTab") {
+          openMainTab("hide",false,false);
+        }*/
+
+    /* clicks listener */
+    //clicksListener();
+
+    // loaded-content view interaction
+    document.getElementById('mode-text').innerText = 'Eye-tracking Mode'
+    document.getElementById('feature-text').innerText = ''
+    document.getElementById('eye-tracking-icons').style.display = 'block'
+    document.getElementById('record-btn').onclick = () => recordETInteraction()
+
+    /// start ET modal view interaction
+    document.getElementById('close-startET-modal').onclick = closeStartETModalInteraction
+    document.getElementById('submit-recording-form').onclick = () => startETInteraction()
+    document.getElementById('save-session').onclick = () => saveSessionInteraction()
+
+    // put in fullscreen
+    if (areModelsLoaded && window.hasOwnProperty('electron')) {
+      window.electron.putFullScreen()
+    }
+  }, [])
+
   return (
     <div className='loaded-content-view' id='loaded-content-view'>
       <div className='top-menu'>
@@ -165,14 +232,18 @@ export function EyeTrackingExperimentPage(): React.ReactElement {
       <div className='nav-tabs-and-tabs' id='nav-tabs-and-tabs'>
         <div id='nav-tabs-container' className='nav-tabs-container'>
           <div
+            ref={toTabLeft}
             id='to-tab-left'
+            onClick={handleToTabLeftClick}
             className='to-tab-left gaze-element'
             data-element-id='to-tab-left-button'>
             &lt;&lt;
           </div>
-          <div className='nav-tabs' id='nav-tabs'></div>
+          <div ref={navTabs} className='nav-tabs' id='nav-tabs'></div>
           <div
+            ref={toTabRight}
             id='to-tab-right'
+            onClick={handleToTabRightClick}
             className='to-tab-right gaze-element'
             data-element-id='to-tab-right-button'>
             &gt;
@@ -180,12 +251,14 @@ export function EyeTrackingExperimentPage(): React.ReactElement {
         </div>
 
         <div className='tabs' id='tabs'>
-          <div
+          {isExplorerVisible && (
+            <div
             id='explorer'
             className='explorer gaze-element'
-            data-element-id='file-explorer-area'>
-            <ul id='explorer-groups' className='root'></ul>
-          </div>
+              data-element-id='file-explorer-area'>
+              <ul id='explorer-groups' className='root'></ul>
+            </div>
+          )}
           <div id='tabs-containers' className='tabs-containers'>
             <div id='process-hierarchy' className='process-hierarchy'>
               <div
@@ -193,9 +266,11 @@ export function EyeTrackingExperimentPage(): React.ReactElement {
                 className='process-hierarchy-content gaze-element'
                 data-element-id='process-hierarchy-content-area'></div>
             </div>
-            <div id='index-tab' className='index-tab'>
-              {/* Could be used for instructions */}
-            </div>
+            {isIndexTabVisible && (
+              <div id='index-tab' className='index-tab'>
+                {/* Could be used for instructions */}
+              </div>
+            )}
           </div>
         </div>
       </div>

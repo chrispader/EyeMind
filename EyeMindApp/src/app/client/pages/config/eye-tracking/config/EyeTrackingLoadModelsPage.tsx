@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { CONST } from '@/CONST'
 import { translate } from '@/app/LANG'
-import { ROUTES } from '@/app/client/ROUTES'
 import { ErrorList } from '@/app/client/components/ErrorList'
 import FileImport from '@/app/client/components/FileImport'
 import { isModelsFile } from '@/app/client/components/FileImport/loadFile'
@@ -13,6 +12,7 @@ import {
   getModelIdFromFileName,
 } from '@/app/client/model/models'
 import { errorAlert, readFileContent } from '@/app/client/modules/utils/utils'
+import { ROUTES_NAMES } from '@/app/client/routes'
 import { useDraftModels, useModelActions } from '@/app/client/state/session'
 
 const fileImportConfig: FileImportConfig = {
@@ -55,7 +55,7 @@ export function EyeTrackingLoadModelsPage() {
       updateModel(model.id, { isDraft: false })
     }
 
-    navigate(ROUTES.EYE_TRACKING_LOAD_QUESTIONS)
+    navigate(ROUTES_NAMES.EYE_TRACKING_LOAD_QUESTIONS)
   }
 
   async function addDraftModels(files: File[]) {

@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
-import { ROUTES } from '@/app/client/ROUTES'
 import FileImport from '@/app/client/components/FileImport'
 import { loadFiles } from '@/app/client/components/FileImport/loadFile'
 import { errorAlert } from '@/app/client/modules/utils/utils'
+import { ROUTES_NAMES } from '@/app/client/routes'
 import { useGlobalStore } from '@/app/client/state/state'
 
 export function EyeTrackingLoadSessionPage(): React.ReactElement {
@@ -37,7 +37,7 @@ export function EyeTrackingLoadSessionPage(): React.ReactElement {
         loadFiles(files, config)
       }}
       onSubmit={() => {
-        navigate(ROUTES.EYE_TRACKING_EXPERIMENT)
+        navigate(ROUTES_NAMES.EYE_TRACKING_EXPERIMENT)
       }}
     />
   )

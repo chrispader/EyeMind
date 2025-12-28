@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { ROUTES } from '@/app/client/ROUTES'
 import { containerClasses } from '@/app/client/css/styles'
 import {
   SUB_PROCESS_LINKING_MODES,
   type SubProcessLinkingMode,
 } from '@/app/client/model/settings'
+import { ROUTES_NAMES } from '@/app/client/routes'
 import { useSessionActions } from '@/app/client/state/session'
 
 export function EyeTrackingNewSessionPage(): React.ReactElement {
@@ -20,7 +20,7 @@ export function EyeTrackingNewSessionPage(): React.ReactElement {
       subProcessLinkingMode: subProcessLinkingMode,
     })
 
-    navigate(ROUTES.EYE_TRACKING_NEW_LOAD_MODELS)
+    navigate(ROUTES_NAMES.EYE_TRACKING_NEW_LOAD_MODELS)
   }
 
   return (

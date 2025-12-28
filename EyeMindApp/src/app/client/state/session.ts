@@ -2,7 +2,11 @@ import { type StateCreator, create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { useShallow } from 'zustand/react/shallow'
 import { Model, createDefaultModel } from '@/app/client/model/models'
-import { type QuestionFile, createDefaultQuestionFile } from '../model/questions'
+import {
+  type QuestionFile,
+  type Questions,
+  createDefaultQuestionFile,
+} from '../model/questions'
 import type { SessionSettings } from '../model/settings'
 
 type ModelActions = {
@@ -18,7 +22,7 @@ type ModelsSlice = {
   modelActions: ModelActions
 }
 
-type QuestionFilesActions = {
+type QuestionActions = {
   addQuestionFile: (questionFile: QuestionFile | File) => void
   addQuestionFiles: (questionFiles: (QuestionFile | File)[]) => void
   removeQuestionFile: (questionFileId: string) => void
@@ -26,12 +30,17 @@ type QuestionFilesActions = {
     questionFileId: string,
     questionFileDelta: Partial<QuestionFile>,
   ) => void
-  resetQuestionFiles: () => void
+
+  setQuestions: (questions: Questions) => void
+
+  resetQuestions: () => void
 }
 
-type QuestionFilesSlice = {
+type QuestionsSlice = {
   questionFiles: Record<string, QuestionFile>
-  questionFilesActions: QuestionFilesActions
+  questions: Questions
+
+  questionActions: QuestionActions
 }
 
 type SessionSlice = {
@@ -44,7 +53,7 @@ type SessionSlice = {
   }
 }
 
-export type SessionStore = ModelsSlice & QuestionFilesSlice & SessionSlice
+export type SessionStore = ModelsSlice & QuestionsSlice & SessionSlice
 
 const createModelsSlice: StateCreator<
   SessionStore,
@@ -109,11 +118,12 @@ const createQuestionFilesSlice: StateCreator<
   SessionStore,
   [['zustand/immer', never]],
   [],
-  QuestionFilesSlice
+  QuestionsSlice
 > = (set) => ({
   questionFiles: {},
+  questions: [],
 
-  questionFilesActions: {
+  questionActions: {
     addQuestionFile: (newQuestionFile) => {
       set((state) => {
         if (newQuestionFile instanceof File) {
@@ -156,9 +166,16 @@ const createQuestionFilesSlice: StateCreator<
       })
     },
 
-    resetQuestionFiles: () => {
+    setQuestions: (questions: Questions) => {
+      set((state) => {
+        state.questions = questions
+      })
+    },
+
+    resetQuestions: () => {
       set((state) => {
         state.questionFiles = {}
+        state.questions = []
       })
     },
   },
@@ -184,9 +201,9 @@ const createSessionSlice: StateCreator<
     },
 
     reset: () => {
-      const { actions, modelActions, questionFilesActions } = get()
+      const { actions, modelActions, questionActions: questionFilesActions } = get()
       modelActions.resetModels()
-      questionFilesActions.resetQuestionFiles()
+      questionFilesActions.resetQuestions()
       actions.resetSessionSettings()
     },
   },
@@ -220,7 +237,7 @@ export const useModel = (modelId: string) =>
 export const useDraftModels = () => useModels((model) => model.isDraft)
 
 export const useQuestionFiles = () => useSessionStore((state) => state.questionFiles)
-export const useQuestionFileActions = () =>
-  useSessionStore((state) => state.questionFilesActions)
 export const useQuestionFile = (questionFileId: string) =>
   useSessionStore((state) => state.questionFiles?.[questionFileId])
+export const useQuestions = () => useSessionStore((state) => state.questions)
+export const useQuestionActions = () => useSessionStore((state) => state.questionActions)

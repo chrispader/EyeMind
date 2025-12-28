@@ -1,8 +1,9 @@
+// import svgr from '@svgr/vite-plugin'
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import svgr from '@svgr/vite-plugin'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
-import { defineConfig } from 'vite'
 import path from 'path'
+import { defineConfig } from 'vite'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // Path aliases matching webpack.common.config.ts
 // Resolve from project root to maintain compatibility
@@ -21,6 +22,7 @@ export default defineConfig({
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
   },
   plugins: [
+    tailwindcss(),
     react({
       babel: {
         plugins: [
@@ -29,12 +31,12 @@ export default defineConfig({
         ],
       },
     }),
-    svgr({
-      // SVG as React components by default
-      svgrOptions: {
-        exportType: 'default',
-      },
-    }),
+    // svgr({
+    //   // SVG as React components by default
+    //   svgrOptions: {
+    //     exportType: 'default',
+    //   },
+    // }),
     nodePolyfills({
       // Polyfills for Node.js modules used in renderer
       globals: {
@@ -43,7 +45,23 @@ export default defineConfig({
         process: true,
       },
       // Exclude Node.js built-ins that shouldn't be polyfilled
-      exclude: ['fs', 'tls', 'net', 'path', 'zlib', 'http', 'https', 'stream', 'crypto', 'request', 'assert', 'child_process', 'util', 'url', 'os'],
+      exclude: [
+        'fs',
+        'tls',
+        'net',
+        'path',
+        'zlib',
+        'http',
+        'https',
+        'stream',
+        'crypto',
+        'request',
+        'assert',
+        'child_process',
+        'util',
+        'url',
+        'os',
+      ],
     }),
   ],
   build: {
@@ -55,4 +73,3 @@ export default defineConfig({
   // CSS is handled automatically by Vite with PostCSS
   // PostCSS config is read from postcss.config.mjs
 })
-

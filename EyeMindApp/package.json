@@ -4,6 +4,7 @@
   "productName": "EyeMind App",
   "description": "Eye tracking in conceptual models",
   "main": ".vite/build/main",
+  "type": "module",
   "scripts": {
     "start": "electron-forge start --inspect-electron",
     "package": "electron-forge package",
@@ -43,7 +44,6 @@
     "@electron-forge/plugin-vite": "^6.3.0",
     "@electron/fuses": "^1.8.0",
     "@playwright/test": "^1.26.0",
-    "@svgr/vite-plugin": "^4.3.3",
     "@trivago/prettier-plugin-sort-imports": "^5.2.1",
     "@types/big-json": "^3.2.5",
     "@types/dataframe-js": "^1.4.3",
@@ -74,6 +74,7 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "bfj": "9.1.2",

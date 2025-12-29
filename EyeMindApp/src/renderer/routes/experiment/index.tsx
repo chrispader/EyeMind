@@ -1,10 +1,15 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
 import { useGlobalStore } from '@/renderer/state/global'
-import { recordETInteraction } from './recording'
+import { recordETInteraction } from '../../utils/recording'
 
 const NAV_TABS_SCROLL_DISTANCE = 20
 
-export function EyeTrackingExperimentPage({}): React.ReactElement {
+export const Route = createFileRoute('/experiment/')({
+  component: EyeTrackingExperimentPage,
+})
+
+function EyeTrackingExperimentPage({}): React.ReactElement {
   const globalStore = useGlobalStore()
 
   const isIndexTabVisible = globalStore.mode == 'data-collection'

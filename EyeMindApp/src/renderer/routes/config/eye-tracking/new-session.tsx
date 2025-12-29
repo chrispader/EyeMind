@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { containerClasses } from '@/renderer/css/styles'
@@ -5,10 +6,14 @@ import {
   SUB_PROCESS_LINKING_MODES,
   type SubProcessLinkingMode,
 } from '@/renderer/model/settings'
-import { ROUTES_NAMES } from '@/renderer/routes'
 import { useSessionActions } from '@/renderer/state/session'
+import { Route as loadModelsRoute } from './load-models'
 
-export function EyeTrackingNewSessionPage(): React.ReactElement {
+export const Route = createFileRoute('/config/eye-tracking/new-session')({
+  component: EyeTrackingNewSessionPage,
+})
+
+function EyeTrackingNewSessionPage(): React.ReactElement {
   const { updateSessionSettings } = useSessionActions()
   const navigate = useNavigate()
 
@@ -20,7 +25,7 @@ export function EyeTrackingNewSessionPage(): React.ReactElement {
       subProcessLinkingMode: subProcessLinkingMode,
     })
 
-    navigate(ROUTES_NAMES.EYE_TRACKING_NEW_LOAD_MODELS)
+    navigate(loadModelsRoute.to)
   }
 
   return (

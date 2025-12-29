@@ -99,5 +99,5 @@ out
 dist
 outputData
 
-# React Router
-.react-router
+# TanStack Router
+src/renderer/routeTree.gen.ts

@@ -1,12 +1,17 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import FileImport from '@/renderer/components/FileImport'
 import { loadFiles } from '@/renderer/components/FileImport/loadFile'
 import { errorAlert } from '@/renderer/modules/utils/utils'
-import { ROUTES_NAMES } from '@/renderer/routes'
 import { useGlobalStore } from '@/renderer/state/global'
+import { Route as experimentRoute } from '../../experiment'
 
-export function EyeTrackingLoadSessionPage(): React.ReactElement {
+export const Route = createFileRoute('/config/eye-tracking/load-session')({
+  component: EyeTrackingLoadSessionPage,
+})
+
+function EyeTrackingLoadSessionPage(): React.ReactElement {
   const { setState } = useGlobalStore.getState()
   const navigate = useNavigate()
 
@@ -37,7 +42,7 @@ export function EyeTrackingLoadSessionPage(): React.ReactElement {
         loadFiles(files, config)
       }}
       onSubmit={() => {
-        navigate(ROUTES_NAMES.EYE_TRACKING_EXPERIMENT)
+        navigate(experimentRoute.to)
       }}
     />
   )

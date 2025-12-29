@@ -1,6 +1,6 @@
-import { NavLink } from 'react-router'
+import { Link } from '@tanstack/react-router'
 
-type ConfigLinkButtonProps = React.ComponentProps<typeof NavLink> & {
+type ConfigLinkButtonProps = React.ComponentProps<typeof Link> & {
   configClass: string
 }
 
@@ -11,9 +11,9 @@ function ConfigLinkButton({
   ...props
 }: ConfigLinkButtonProps) {
   return (
-    <NavLink to={to} className={`config-button ${configClass}`} {...props}>
+    <Link to={to} className={`config-button ${configClass}`} {...props}>
       {children}
-    </NavLink>
+    </Link>
   )
 }
 

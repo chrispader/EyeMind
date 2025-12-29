@@ -11,7 +11,7 @@ module.exports = {
     sourceType: 'module',
     createDefaultProgram: true,
   },
-  ignorePatterns: ['**/node_modules', 'environments', '**/public', '**/lib', '**/dist'],
+  ignorePatterns: ['src/renderer/routeTree.gen.ts', 'environments', '**/node_modules'],
   extends: [
     'react-app',
     'plugin:@typescript-eslint/recommended',
@@ -74,6 +74,6 @@ module.exports = {
     ],
 
     'react-hooks/rules-of-hooks': 'error',
-    // 'react-hooks/exhaustive-deps': 'error',
+    'react-hooks/exhaustive-deps': 'error',
   },
 }

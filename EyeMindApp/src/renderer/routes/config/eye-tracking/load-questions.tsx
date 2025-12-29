@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import FileImport from '@/renderer/components/FileImport'
@@ -9,8 +10,8 @@ import {
   extractQuestionsFromFile,
   getQuestionFileIdFromFileName,
 } from '@/renderer/model/questions'
-import { ROUTES_NAMES } from '@/renderer/routes'
 import { useQuestionActions, useQuestionFiles } from '@/renderer/state/session'
+import { Route as experimentRoute } from '../../experiment'
 
 const fileImportConfig: FileImportConfig = {
   mode: 'data-collection',
@@ -19,7 +20,11 @@ const fileImportConfig: FileImportConfig = {
   expectedExtensions: ['csv'],
 }
 
-export function EyeTrackingLoadQuestionsPage(): React.ReactElement {
+export const Route = createFileRoute('/config/eye-tracking/load-questions')({
+  component: EyeTrackingLoadQuestionsPage,
+})
+
+function EyeTrackingLoadQuestionsPage(): React.ReactElement {
   const navigate = useNavigate()
 
   const questionFiles = useQuestionFiles()
@@ -28,21 +33,25 @@ export function EyeTrackingLoadQuestionsPage(): React.ReactElement {
   const [errors, setErrors] = useState<string[]>([])
 
   async function validateQuestionFiles() {
-    if (Object.values(questionFiles).length === 0) {
+    const questionFilesValues = Object.values(questionFiles)
+
+    if (questionFilesValues.length === 0) {
       setErrors(['No questions files to load. Please drop a questions file first.'])
       return
     }
 
-    try {
-      const questions = await extractQuestionsFromFile(file)
-      setQuestions(questions)
-      navigate(ROUTES_NAMES.EYE_TRACKING_EXPERIMENT)
-    } catch (error) {
-      let msg = 'An error occured while validating the questions file'
-      if (error instanceof Error) {
-        msg += ': ' + error.message
+    for (const file of questionFilesValues) {
+      try {
+        const questions = await extractQuestionsFromFile(file.file)
+        setQuestions(questions)
+        navigate(experimentRoute.to)
+      } catch (error) {
+        let msg = 'An error occured while validating the questions file'
+        if (error instanceof Error) {
+          msg += ': ' + error.message
+        }
+        setErrors([msg])
       }
-      setErrors([msg])
     }
   }
 

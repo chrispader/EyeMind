@@ -15,8 +15,8 @@ export const rendererConfig: NonNullable<ElectronViteConfig['renderer']> = {
   plugins: [
     tailwindcss(),
     tanstackRouter({
-      routesDirectory: './src/renderer/app/routes',
-      generatedRouteTree: './src/renderer/app/routeTree.gen.ts',
+      routesDirectory: './src/renderer/routes',
+      generatedRouteTree: './src/renderer/routeTree.gen.ts',
     }),
     react({
       babel: {

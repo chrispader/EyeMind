@@ -1,8 +1,8 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { CONST } from '@/CONST'
 import { translate } from '@/renderer/LANG'
-import { ErrorList } from '@/renderer/components/ErrorList'
 import FileImport from '@/renderer/components/FileImport'
 import { isModelsFile } from '@/renderer/components/FileImport/loadFile'
 import type { FileImportConfig } from '@/renderer/components/FileImport/types'
@@ -11,9 +11,9 @@ import {
   createDefaultModel,
   getModelIdFromFileName,
 } from '@/renderer/model/models'
-import { errorAlert, readFileContent } from '@/renderer/modules/utils/utils'
-import { ROUTES_NAMES } from '@/renderer/routes'
+import { readFileContent } from '@/renderer/modules/utils/utils'
 import { useDraftModels, useModelActions } from '@/renderer/state/session'
+import { Route as loadQuestionsRoute } from './load-questions'
 
 const fileImportConfig: FileImportConfig = {
   mode: 'data-collection',
@@ -22,7 +22,11 @@ const fileImportConfig: FileImportConfig = {
   expectedExtensions: ['bpmn', 'odm'],
 }
 
-export function EyeTrackingLoadModelsPage() {
+export const Route = createFileRoute('/config/eye-tracking/load-models')({
+  component: EyeTrackingLoadModelsPage,
+})
+
+function EyeTrackingLoadModelsPage() {
   const navigate = useNavigate()
 
   const draftModels = useDraftModels()
@@ -55,7 +59,7 @@ export function EyeTrackingLoadModelsPage() {
       updateModel(model.id, { isDraft: false })
     }
 
-    navigate(ROUTES_NAMES.EYE_TRACKING_LOAD_QUESTIONS)
+    navigate(loadQuestionsRoute.to)
   }
 
   async function addDraftModels(files: File[]) {

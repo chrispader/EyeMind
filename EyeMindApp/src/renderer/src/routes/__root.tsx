@@ -37,9 +37,9 @@ function RootComponent(): React.ReactElement {
     <>
       <Outlet />
 
-      <FixationSettingsModal />
+      {/* <FixationSettingsModal /> */}
 
-      <ProcessingStates />
+      {/* <ProcessingStates /> */}
 
       <LoadingScreen message={loadingMessage ?? ''} visible={isLoading ?? false} />
 

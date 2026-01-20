@@ -1,9 +1,9 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 import 'bpmn-js/dist/assets/bpmn-js.css'
 import 'bpmn-js/dist/assets/diagram-js.css'
 import { useEffect } from 'react'
-import { StrictMode } from 'react'
 
 import { FixationSettingsModal } from '@/renderer/components/FixationSettingsModal'
 import { LoadingScreen } from '@/renderer/components/LoadingScreen'
@@ -35,7 +35,7 @@ function RootComponent(): React.ReactElement {
   }, [])
 
   return (
-    <StrictMode>
+    <>
       <Outlet />
 
       <FixationSettingsModal />
@@ -43,7 +43,9 @@ function RootComponent(): React.ReactElement {
       <ProcessingStates />
 
       <LoadingScreen message={loadingMessage ?? ''} visible={isLoading ?? false} />
-    </StrictMode>
+
+      <TanStackRouterDevtools />
+    </>
   )
 }
 

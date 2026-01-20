@@ -1,7 +1,8 @@
+import { stateDownload } from '@renderer/server/node/utils/download'
 import { ipcMain } from 'electron'
+
 import { IpcListenerParameters } from '@/main/listeners/types'
 import { IpcNamespace } from '@/main/listeners/types'
-import { stateDownload } from '@/renderer/server/node/utils/download'
 
 type DownloadListenerParameters<FunctionName extends keyof IpcNamespace<'utils'>> =
   IpcListenerParameters<'utils', FunctionName>

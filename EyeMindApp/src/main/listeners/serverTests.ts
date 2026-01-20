@@ -1,5 +1,5 @@
+import { getServerState } from '@renderer/server/node/utils/test'
 import { ipcMain } from 'electron'
-import { getServerState } from '@/renderer/server/node/utils/test'
 
 export function testListeners() {
   ipcMain.handle('getServerState', async function () {

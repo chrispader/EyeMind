@@ -1,4 +1,3 @@
-import { ipcMain } from 'electron'
 import {
   areAreGazesCorrectedOfState,
   clearState,
@@ -11,7 +10,9 @@ import {
   getStyleParametersOfState,
   removeState,
   setAreGazesCorrectedOfState,
-} from '@/renderer/server/node/dataModels/state'
+} from '@renderer/server/node/dataModels/state'
+import { ipcMain } from 'electron'
+
 import { IpcListenerParameters, IpcNamespace } from './types'
 
 type StateListenerParameters<FunctionName extends keyof IpcNamespace<'state'>> =

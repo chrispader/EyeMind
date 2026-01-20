@@ -1,18 +1,18 @@
-appId: com.eyemind.app
-productName: EyeMind App
+appId: com.electron.app
+productName: vite-electron-example
 directories:
   buildResources: build
 files:
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 asarUnpack:
   - resources/**
 win:
-  executableName: EyeMind App
+  executableName: vite-electron-example
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -33,12 +33,13 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: Amine Abbad-Andaloussi
+  maintainer: electronjs.org
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
   provider: generic
+  url: https://example.com/auto-updates
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

@@ -100,4 +100,4 @@ dist
 outputData
 
 # TanStack Router
-src/renderer/routeTree.gen.ts
+src/renderer/src/routeTree.gen.ts

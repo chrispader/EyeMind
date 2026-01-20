@@ -1,6 +1,3 @@
-import { BrowserWindow, ipcMain } from 'electron'
-import { IpcNamespace } from '@/main/listeners/types'
-import { IpcListenerParameters } from '@/main/listeners/types'
 import {
   applyCorrectionOffset,
   gazeDataFragmentMapped,
@@ -9,7 +6,11 @@ import {
   getStatesInfo,
   shouldEnableHeatmap,
   summerizedFixationLog,
-} from '@/renderer/server/node/analysis/analysis'
+} from '@renderer/server/node/analysis/analysis'
+import { BrowserWindow, ipcMain } from 'electron'
+
+import { IpcNamespace } from '@/main/listeners/types'
+import { IpcListenerParameters } from '@/main/listeners/types'
 
 type AnalysisListenerParameters<FunctionName extends keyof IpcNamespace<'analysis'>> =
   IpcListenerParameters<'analysis', FunctionName>

@@ -1,3 +1,5 @@
+import { fixationFilter } from '@renderer/server/node/connectors/fixation-filter'
+import { getLocalRpid, setLocalRpid } from '@renderer/server/node/dataModels/processes'
 import child from 'child_process'
 import detect from 'detect-port'
 import { app, ipcMain } from 'electron'
@@ -5,11 +7,10 @@ import { BrowserWindow } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import kill from 'tree-kill'
+
 import { CONST } from '@/CONST'
 import { IpcListenerParameters } from '@/main/listeners/types'
 import { IpcNamespace } from '@/main/listeners/types'
-import { fixationFilter } from '@/renderer/server/node/connectors/fixation-filter'
-import { getLocalRpid, setLocalRpid } from '@/renderer/server/node/dataModels/processes'
 
 type PastConfig = {
   childRProcessID: number

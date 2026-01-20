@@ -11,7 +11,11 @@ module.exports = {
     sourceType: 'module',
     createDefaultProgram: true,
   },
-  ignorePatterns: ['src/renderer/routeTree.gen.ts', 'environments', '**/node_modules'],
+  ignorePatterns: [
+    'src/renderer/src/routeTree.gen.ts',
+    'environments',
+    '**/node_modules',
+  ],
   extends: [
     'react-app',
     'plugin:@typescript-eslint/recommended',

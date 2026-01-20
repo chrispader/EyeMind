@@ -1,6 +1,7 @@
+import { FileImportConfig } from '@renderer/components/FileImport/types'
+import { readState } from '@renderer/server/node/utils/files-setup'
 import { BrowserWindow, ipcMain } from 'electron'
-import { FileImportConfig } from '@/renderer/components/FileImport/types'
-import { readState } from '@/renderer/server/node/utils/files-setup'
+
 import { GlobalState } from '@/types/GlobalState'
 
 export function fileSetupListener(mainWindow: BrowserWindow) {

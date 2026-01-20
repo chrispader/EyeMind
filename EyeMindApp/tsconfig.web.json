@@ -13,7 +13,8 @@
     "moduleResolution": "bundler",
     "paths": {
       "*": ["node_modules/*"],
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@renderer/*": ["src/renderer/src/*"]
     }
   }
 }

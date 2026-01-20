@@ -1,47 +1,47 @@
-// import { FixationSettingsModal } from '@renderer/components/FixationSettingsModal'
-// import { LoadingScreen } from '@renderer/components/LoadingScreen'
-// import { ProcessingStates } from '@renderer/components/ProcessingStates'
-// import '@renderer/css/app.css'
-// import '@renderer/css/main.css'
-// import '@renderer/css/new.css'
-// import '@renderer/extra/object-diagram-modeler/starter/app/css/app.css'
-// import { closeModalOutsideClickInteraction } from '@renderer/modules/ui/shared-interactions'
-// import {
-//   DisableCriticalKeys,
-//   handleWindowRefresh,
-//   takeSnapshotOnWindowMovement,
-//   takeSnapshotOnWindowResize,
-//   testListeners,
-// } from '@renderer/modules/ui/window-events'
-// import { loadServerStateIntoClient, useGlobalStore } from '@renderer/state/global'
+import { FixationSettingsModal } from '@renderer/components/FixationSettingsModal'
+import { LoadingScreen } from '@renderer/components/LoadingScreen'
+import { ProcessingStates } from '@renderer/components/ProcessingStates'
+import '@renderer/css/app.css'
+import '@renderer/css/main.css'
+import '@renderer/css/new.css'
+import '@renderer/extra/object-diagram-modeler/starter/app/css/app.css'
+import { closeModalOutsideClickInteraction } from '@renderer/modules/ui/shared-interactions'
+import {
+  DisableCriticalKeys,
+  handleWindowRefresh,
+  takeSnapshotOnWindowMovement,
+  takeSnapshotOnWindowResize,
+  testListeners,
+} from '@renderer/modules/ui/window-events'
+import { loadServerStateIntoClient, useGlobalStore } from '@renderer/state/global'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-// import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
-// import 'bpmn-js/dist/assets/bpmn-js.css'
-// import 'bpmn-js/dist/assets/diagram-js.css'
+import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
+import 'bpmn-js/dist/assets/bpmn-js.css'
+import 'bpmn-js/dist/assets/diagram-js.css'
 import { useEffect } from 'react'
 
 export const Route = createRootRoute({
   component: RootComponent,
-  errorComponent: ErrorBoundary
+  errorComponent: ErrorBoundary,
 })
 
 function RootComponent(): React.ReactElement {
-  // const { isLoading, loadingMessage } = useGlobalStore()
+  const { isLoading, loadingMessage } = useGlobalStore()
 
-  // useEffect(() => {
-  //   initializeApp()
-  // }, [])
+  useEffect(() => {
+    initializeApp()
+  }, [])
 
   return (
     <>
       <Outlet />
 
-      {/* <FixationSettingsModal /> */}
+      <FixationSettingsModal />
 
-      {/* <ProcessingStates /> */}
+      <ProcessingStates />
 
-      {/* <LoadingScreen message={loadingMessage ?? ''} visible={isLoading ?? false} /> */}
+      <LoadingScreen message={loadingMessage ?? ''} visible={isLoading ?? false} />
 
       <TanStackRouterDevtools />
     </>
@@ -59,11 +59,11 @@ function ErrorBoundary({ error }: { error: Error }) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
+    <main className='pt-16 p-4 container mx-auto'>
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
+        <pre className='w-full p-4 overflow-x-auto'>
           <code>{stack}</code>
         </pre>
       )}
@@ -71,23 +71,23 @@ function ErrorBoundary({ error }: { error: Error }) {
   )
 }
 
-// async function initializeApp(): Promise<void> {
-//   try {
-//     // Load server state
-//     await loadServerStateIntoClient()
+async function initializeApp(): Promise<void> {
+  try {
+    // Load server state
+    await loadServerStateIntoClient()
 
-//     // Call window event listeners
-//     DisableCriticalKeys()
-//     handleWindowRefresh()
-//     takeSnapshotOnWindowResize()
-//     takeSnapshotOnWindowMovement()
+    // Call window event listeners
+    DisableCriticalKeys()
+    handleWindowRefresh()
+    takeSnapshotOnWindowResize()
+    takeSnapshotOnWindowMovement()
 
-//     // Test listener
-//     testListeners()
+    // Test listener
+    testListeners()
 
-//     // Event listener for clicks outside the modal area
-//     window.onclick = closeModalOutsideClickInteraction
-//   } catch (error) {
-//     console.error('Error initializing app:', error)
-//   }
-// }
+    // Event listener for clicks outside the modal area
+    window.onclick = closeModalOutsideClickInteraction
+  } catch (error) {
+    console.error('Error initializing app:', error)
+  }
+}

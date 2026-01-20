@@ -1,6 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
 import { CONST } from '@/CONST'
 import { translate } from '@/renderer/LANG'
 import FileImport from '@/renderer/components/FileImport'

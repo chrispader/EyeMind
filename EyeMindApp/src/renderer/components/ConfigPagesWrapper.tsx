@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from 'react-router'
+import { Outlet, useLocation } from '@tanstack/react-router'
 import { HeaderBar } from '@/renderer/components/HeaderBar'
 
 export function ConfigPagesWrapper(): React.ReactElement {

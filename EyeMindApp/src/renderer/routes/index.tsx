@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
+
 import ConfigLinkButton from '@/renderer/components/ConfigLinkButton'
 import { containerClasses } from '@/renderer/css/styles'
+
 import { Route as analysisRoute } from './analysis'
 import { Route as eyeTrackingPageRoute } from './config/eye-tracking'
 

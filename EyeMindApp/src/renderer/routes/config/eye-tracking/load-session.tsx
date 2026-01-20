@@ -1,6 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router'
 import FileImport from '@/renderer/components/FileImport'
 import { loadFiles } from '@/renderer/components/FileImport/loadFile'
 import { errorAlert } from '@/renderer/modules/utils/utils'

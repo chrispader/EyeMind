@@ -1,5 +1,5 @@
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import React, { useCallback } from 'react'
-import { useLocation, useNavigate } from 'react-router'
 import { Spacer } from '@/renderer/components/Spacer'
 
 interface HeaderBarProps {

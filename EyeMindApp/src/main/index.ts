@@ -23,18 +23,18 @@ import { BrowserWindow, app, session } from 'electron'
 import { REACT_DEVELOPER_TOOLS, installExtension } from 'electron-devtools-installer'
 import started from 'electron-squirrel-startup'
 import path from 'path'
-import { analysisListeners } from '@/main/listeners/analysis'
-import { downloadListener } from '@/main/listeners/download'
-import { eyeTrackerListeners } from '@/main/listeners/eye-tracker'
-import { fileSetupListener } from '@/main/listeners/files-setup'
-import {
-  fixationFilterListeners,
-  shutdownFixationFilterServer,
-} from '@/main/listeners/fixation-filter'
-import { testListeners } from '@/main/listeners/serverTests'
-import { sessionListeners } from '@/main/listeners/session'
-import { stateListeners } from '@/main/listeners/state'
-import { windowListeners } from '@/main/listeners/window'
+// import { analysisListeners } from '@/main/listeners/analysis'
+// import { downloadListener } from '@/main/listeners/download'
+// import { eyeTrackerListeners } from '@/main/listeners/eye-tracker'
+// import { fileSetupListener } from '@/main/listeners/files-setup'
+// import {
+//   fixationFilterListeners,
+//   shutdownFixationFilterServer,
+// } from '@/main/listeners/fixation-filter'
+// import { testListeners } from '@/main/listeners/serverTests'
+// import { sessionListeners } from '@/main/listeners/session'
+// import { stateListeners } from '@/main/listeners/state'
+// import { windowListeners } from '@/main/listeners/window'
 
 app.whenReady().then(() => {
   installExtension(REACT_DEVELOPER_TOOLS)
@@ -64,8 +64,8 @@ const createMainWindow = (): BrowserWindow => {
       preload: path.join(__dirname, '../preload/index.js'),
       // Allow loading files from local file system like images
       webSecurity: false,
-      nodeIntegration: true,
-    },
+      nodeIntegration: true
+    }
   })
 
   mainWindow.maximize()
@@ -79,8 +79,8 @@ const createMainWindow = (): BrowserWindow => {
         overrideBrowserWindowOptions: {
           frame: false,
           fullscreen: false,
-          backgroundColor: '#E7EAED',
-        },
+          backgroundColor: '#E7EAED'
+        }
       }
     }
     return { action: 'deny' }
@@ -94,32 +94,32 @@ const createMainWindow = (): BrowserWindow => {
     mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
 
-  // initiate set listeners
-  stateListeners()
+  // // initiate set listeners
+  // stateListeners()
 
-  // initiate window listeners
-  windowListeners(mainWindow)
+  // // initiate window listeners
+  // windowListeners(mainWindow)
 
-  // initiate fixation filter (R) listeners
-  fixationFilterListeners(mainWindow)
+  // // initiate fixation filter (R) listeners
+  // fixationFilterListeners(mainWindow)
 
-  // initiate analysis listener
-  analysisListeners(mainWindow)
+  // // initiate analysis listener
+  // analysisListeners(mainWindow)
 
-  // initiate download listener
-  downloadListener()
+  // // initiate download listener
+  // downloadListener()
 
-  // initiate file-setup listener
-  fileSetupListener(mainWindow)
+  // // initiate file-setup listener
+  // fileSetupListener(mainWindow)
 
-  // initiate eye-tracker listeners
-  eyeTrackerListeners(mainWindow)
+  // // initiate eye-tracker listeners
+  // eyeTrackerListeners(mainWindow)
 
-  // initiate session listeners
-  sessionListeners()
+  // // initiate session listeners
+  // sessionListeners()
 
-  // initiate initiate test listeners
-  testListeners()
+  // // initiate initiate test listeners
+  // testListeners()
 
   return mainWindow
 }
@@ -152,7 +152,7 @@ app.on('ready', () => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', async () => {
-  await shutdownFixationFilterServer()
+  // await shutdownFixationFilterServer()
 
   // quit electron app
   if (process.platform !== 'darwin') app.quit()

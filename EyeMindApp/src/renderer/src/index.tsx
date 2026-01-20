@@ -18,9 +18,6 @@ const rootElement = document.getElementById('root')!
 
 createRoot(rootElement).render(
   <StrictMode>
-    <div className='fixed top-0 left-0 w-full h-full bg-black text-white z-50 flex items-center justify-center'>
-      <p>Hello World!</p>
-    </div>
     <RouterProvider router={router} />
   </StrictMode>,
 )

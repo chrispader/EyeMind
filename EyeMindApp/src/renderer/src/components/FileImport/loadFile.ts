@@ -63,7 +63,11 @@ export async function loadFiles(files: File[], config: FileImportConfig) {
       return await new Promise<void>((resolve, reject) => {
         try {
           // readFileContent then traverseDataCollectionFile and traverseMoreItems
-          readFileContent(file, async (content: string) => {
+          readFileContent(file, async (content) => {
+            if (typeof content !== 'string') {
+              reject(new Error('File content is not a string'))
+              return
+            }
             await loadDataCollectionFile(file, content, config)
             resolve()
           })
@@ -236,7 +240,7 @@ function loadModelFile(file: File, content: string, path = file.path) {
   console.error(msg)
 }
 
-function createAnalysisFileInfoBlock(file: File) {
+function createAnalysisFileInfoBlock(file: { name: string; path: string }) {
   /// create fileInfo block about the imported model
   const fileInfo = document.createElement('div')
   fileInfo.setAttribute('id', 'fileinfo-' + file.path)
@@ -284,7 +288,7 @@ function stateReadListener() {
   return new Promise<void>(async (resolve) => {
     window.utils.onStateRead(async function (args) {
       const res = args[0]
-      const file = { name: args[1], path: args[2] }
+      const file = { name: args[1] as string, path: args[2] as string }
       createAnalysisFileInfoBlock(file)
 
       await stateRead(res)
@@ -685,8 +689,8 @@ async function createModel(
   document.getElementById(currentTabContainerId).append(modelContainer)
 
   /// choice based on type of file (bpmn or odm) and whether it is for data-collection (NavigatedViewer) or for anaylsis (Modeler) (i.e., Modeler is used to allow coloring the activities, which is required for the heatmaps)
-  let view = null
-  let language = null
+  let view: 'NavigatedViewer' | 'Modeler' | null = null
+  let language: 'Bpmn' | 'Odm' | null = null
   // support for bpmn and odm file
   if (fileName.endsWith('bpmn')) language = 'Bpmn'
   else if (fileName.endsWith('odm')) language = 'Odm'
@@ -699,7 +703,7 @@ async function createModel(
   const modeler = await setUpModelerObject(language, view, currentTabContainerId, id, xml)
 
   // listen to changes in the canvas.viewbox i.e., scrolling, zooming and take a snapshot
-  modeler.on('canvas.viewbox.changed', (context) => {
+  modeler.on('canvas.viewbox.changed', (_context) => {
     // console.log("canvas.viewbox.changed on tab ", state.activeTab);
     // take snapshot on canvas.viewbox.changed
     takesnapshot(Date.now(), document.body.innerHTML, window.screenX, window.screenY)

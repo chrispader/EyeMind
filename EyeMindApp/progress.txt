@@ -333,3 +333,38 @@ By file:
 - `questions.ts` cannot be deleted yet - still used by `data-collection.ts`
 - All remaining modules are tightly coupled - removal requires full React migration of data collection flow
 - PRD tasks 5-6 target removal/integration of these imperative modules
+
+## 2026-01-25 - Type Error Fixes (Continued)
+
+### Completed
+Fixed type errors, reducing web errors from 245 → 229 (16 errors fixed, ~6.5% reduction):
+
+**Configuration Fix:**
+- `tsconfig.web.json` - Added `src/types/**/*.ts` to include paths, enabling global type extensions
+
+**loadFile.ts Fixes:**
+- Line 66: Fixed `readFileContent` callback to handle `string | ArrayBuffer | null` return type
+- Lines 692-693: Added explicit union types for `view` and `language` variables
+- Line 706: Prefixed unused `context` parameter with underscore
+- Line 243: Changed `createAnalysisFileInfoBlock` param from `File` to `{ name: string; path: string }`
+- Line 291: Added type assertions for IPC callback args
+
+### Results
+- Web typecheck: 229 errors (down from 245)
+- 16 errors eliminated (~6.5% reduction)
+
+### Remaining Errors (229)
+Majority in legacy imperative modules:
+- modules/ui/data-collection.ts (~74)
+- components/FileImport/loadFile.ts (~45)
+- modules/ui/questions.ts (~50)
+- modules/ui/tabs.ts (~21)
+- modules/utils/dom.ts (~19)
+- server/node/analysis/analysis.ts (~9)
+- modules/ui/canvas.ts (~12)
+
+### Notes
+- Many remaining errors are argument count mismatches (processModel called with 4 args instead of 5)
+- These are existing bugs in code that needs architectural refactoring, not just type fixes
+- DataFrame library types are weak (`any` everywhere), causing false positives
+- PRD task 4 (type errors) requires continued iteration

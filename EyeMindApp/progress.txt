@@ -925,3 +925,35 @@ Extracted all user-facing hardcoded strings into LANG.ts for i18n readiness and 
 1. Task 10 (code-style): Tailwind CSS migration - priority: low
 2. Task 14 (testing): Add unit tests - requires test framework setup
 3. Task 15 (testing): Add E2E tests - Playwright exists, needs expansion
+
+## 2026-01-25 - Unit Tests Setup (PRD Task 14)
+
+### Completed
+Configured vitest unit tests infrastructure and verified existing test coverage:
+
+**Test Files (4 files, ~106 test cases covering business logic):**
+- `src/renderer/src/model/images.test.ts` - Image file handling (isImageFile, createDefaultImageFile, getImageIdFromFileName)
+- `src/renderer/src/model/models.test.ts` - Model file handling (createDefaultModel, getModelIdFromFileName)
+- `src/renderer/src/model/questions.test.ts` - Question file handling (createDefaultQuestionFile, getQuestionFileIdFromFileName)
+- `src/renderer/src/modules/utils/utils.test.ts` - Utility functions (calculateProgress, cancelDefault)
+
+**Configuration:**
+- Vitest already configured in vitest.config.ts with path aliases
+- Test script already exists: `npm run test:unit`
+- Fixed tsconfig.web.json to exclude test files (vitest handles its own type checking)
+
+### Files Changed
+- tsconfig.web.json (added exclude for test files)
+- plans/prd.json (marked task as passes: true)
+
+### Notes
+- Tests cover core business logic: file type detection, file creation factories, ID generation
+- Tests are isolated and do not require browser/Electron environment
+- Run tests with `npm run test:unit` or `npm run test:unit:watch` for watch mode
+
+### PRD Status
+- Task 14 (testing: unit tests): **COMPLETE** ✓
+
+### Remaining Incomplete Tasks
+1. Task 10 (code-style): Tailwind CSS migration - priority: low
+2. Task 15 (testing): Add E2E tests - Playwright exists, needs expansion

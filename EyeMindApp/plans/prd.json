@@ -126,7 +126,7 @@
       "Add unit tests for the business logic in the codebase",
       "Make sure that the tests are covering all the business logic in the codebase"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "testing",

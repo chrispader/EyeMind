@@ -21,6 +21,8 @@
     "build:mac": "npm run build && electron-builder --mac",
     "build:linux": "npm run build && electron-builder --linux",
     "test": "bunx playwright test test/tests/playwright/",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
     "test-temp": "bunx playwright test test/tests/playwright/import.test.ts",
     "server:setup": "cd ../EyeTrackingServer && python -m venv venv && source venv/bin/activate && pip install -r requirements.txt",
     "server:start": "cd ../EyeTrackingServer && source venv/bin/activate && python -m server"
@@ -112,6 +114,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.0.4",
     "vite": "^5.4.0",
-    "vite-tsconfig-paths": "^6.0.3"
+    "vite-tsconfig-paths": "^6.0.3",
+    "vitest": "^3.0.0"
   }
 }

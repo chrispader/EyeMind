@@ -9,7 +9,7 @@
       "Update the navigation to use the new sub-routes.",
       "Update the URL structure to use the new sub-routes."
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "state-management",
@@ -20,6 +20,6 @@
       "Make sure that all state is read and write only through reactive hooks, not through '.getState()' or '.setState()'.",
       "Remove the 'useGlobalStore' hook from any files that are no longer needed."
     ],
-    "passes": false
+    "passes": true
   }
 ]

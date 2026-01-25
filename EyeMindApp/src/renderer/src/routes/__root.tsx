@@ -21,6 +21,8 @@ import 'bpmn-js/dist/assets/bpmn-js.css'
 import 'bpmn-js/dist/assets/diagram-js.css'
 import { useEffect } from 'react'
 
+import { HeaderBar } from '../components/HeaderBar'
+
 export const Route = createRootRoute({
   component: RootComponent,
   errorComponent: ErrorBoundary,
@@ -35,6 +37,7 @@ function RootComponent(): React.ReactElement {
 
   return (
     <>
+      <HeaderBar title='EyeMind' />
       <Outlet />
 
       {/* <FixationSettingsModal /> */}

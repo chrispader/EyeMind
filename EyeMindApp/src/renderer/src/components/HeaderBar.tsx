@@ -1,33 +1,28 @@
 import { Spacer } from '@renderer/components/Spacer'
-import { useLocation, useNavigate } from '@tanstack/react-router'
-import React, { useCallback } from 'react'
+import { useCanGoBack, useLocation, useRouter } from '@tanstack/react-router'
+import React from 'react'
+import { IoChevronBackOutline } from 'react-icons/io5'
 
 interface HeaderBarProps {
-  showBackButton?: boolean
   title?: string
 }
 
-export function HeaderBar({
-  showBackButton = true,
-  title,
-}: HeaderBarProps): React.ReactElement {
-  const navigate = useNavigate()
+export function HeaderBar({ title }: HeaderBarProps): React.ReactElement {
+  const router = useRouter()
+  const canGoBack = useCanGoBack()
   const location = useLocation()
-
-  const handleBackClick = useCallback(() => {
-    navigate(-1)
-  }, [navigate])
+  const isRoot = location.pathname === '/'
 
   return (
     <div className='header-bar'>
       <div className='header-bar-content'>
-        {showBackButton && (
+        {canGoBack && !isRoot && (
           <>
             <button
               className='back-button'
-              onClick={handleBackClick}
+              onClick={() => router.history.back()}
               aria-label='Go back'>
-              ← Back
+              <IoChevronBackOutline />
             </button>
             <Spacer horizontal={20} />
           </>

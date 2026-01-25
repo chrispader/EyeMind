@@ -59,5 +59,55 @@
     "description": "Remove all unused code and imports across the codebase",
     "steps": ["Remove all unused code and imports across the codebase"],
     "passes": true
+  },
+  {
+    "category": "state-management",
+    "description": "Remove any usages of Zustand `.getState()` and `.setState()` across the codebase",
+    "steps": [
+      "Refactor all usages of Zustand `.getState()` and `.setState()` to use the new reactive hooks.",
+      "Remove any usages of Zustand `.getState()` and `.setState()` across the codebase."
+    ],
+    "passes": false
+  },
+  {
+    "category": "feature",
+    "description": "Add support to load image files into the experiment",
+    "steps": [
+      "Add support for image files (.png, .jpeg) to the configuration pages, allowing to upload them and use them in the experiment, e.g. in the FileImport component",
+      "Choose the best React library to view this image in a canvas and allow gesture(zoom, pan) on it",
+      "Create a new component to display the image in a canvas"
+    ],
+    "passes": false
+  },
+  {
+    "category": "code-style",
+    "description": "Migrate all vanilla CSS styling to Tailwind CSS",
+    "priority": "low",
+    "steps": [
+      "Migrate all vanilla CSS styling to Tailwind CSS utility classes",
+      "Extract potential reusable React components, to prevent duplicate styling",
+      "Remove all unused CSS classes from the codebase",
+      "Remove all unused CSS files from the codebase"
+    ],
+    "passes": false
+  },
+  {
+    "category": "type-safety",
+    "description": "Improve the type safety of the IPC layer (preload + contextBridge)",
+    "steps": [
+      "Add proper type definitions to the IPC layer (preload + contextBridge)",
+      "Figure out a way to reduce boilerplate code for loading the functions into the contextBridge"
+    ],
+    "passes": false
+  },
+  {
+    "category": "code-quality",
+    "description": "Migrate the files in ./src/main/listeners into a single organized file",
+    "steps": [
+      "Move the files in ./src/main/listeners into a single organized file",
+      "Update the imports in the new file to use the new file",
+      "Update the exports in the new file to use the new file"
+    ],
+    "passes": false
   }
 ]

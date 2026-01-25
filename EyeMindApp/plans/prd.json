@@ -21,5 +21,20 @@
       "Remove the 'useGlobalStore' hook from any files that are no longer needed."
     ],
     "passes": true
+  },
+  {
+    "category": "project-structure",
+    "description": "Split up the React code in the experiments routes into more sub-components",
+    "steps": [
+      "Extract self-sustained components from experiments into src/components.",
+      "Make sure the components are independent of state and only rely on their props."
+    ],
+    "passes": true
+  },
+  {
+    "category": "code-quality",
+    "description": "Fix all type errors and imports across the codebase",
+    "steps": ["Fix all type errors and imports across the codebase"],
+    "passes": false
   }
 ]

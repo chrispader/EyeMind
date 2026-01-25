@@ -104,3 +104,42 @@ All PRD tasks verified complete:
 2. **state-management**: passes=true ✓
 
 No remaining tasks in PRD. Migration complete.
+
+## 2026-01-25 - Component Extraction Task (Complete)
+
+### Completed
+Extracted reusable form components from experiment modal routes to src/components:
+
+**New Components Created:**
+- `src/components/form/FormRow.tsx` - Basic row/column layout with label
+- `src/components/form/InputField.tsx` - Text/number input field
+- `src/components/form/SelectField.tsx` - Select dropdown (single/multiple)
+- `src/components/form/CheckboxField.tsx` - Checkbox field
+- `src/components/form/TextareaField.tsx` - Textarea field
+- `src/components/form/SubmitButton.tsx` - Centered submit button
+- `src/components/form/index.ts` - Barrel export
+- `src/components/ModalContainer.tsx` - Modal wrapper with close button
+
+**Refactored Routes (now use extracted components):**
+- `routes/experiment/export-options.tsx` - 51 → 25 lines
+- `routes/experiment/gaze-projection-settings.tsx` - 70 → 36 lines
+- `routes/experiment/recording-settings.tsx` - 133 → 43 lines
+- `routes/experiment/heatmap-settings.tsx` - 220 → 91 lines
+
+**Updated Existing Modal Components:**
+- `components/DownloadModal.tsx` - Now uses form components
+- `components/GazeProjectionModal.tsx` - Now uses form components
+- `components/HeatmapSettingsModal.tsx` - Now uses form components
+
+### Benefits
+- All form components are stateless, props-only
+- Consistent form field styling across modals
+- Reduced code duplication (~400 lines removed)
+- ModalContainer handles common modal structure
+
+### Notes
+- FixationSettingsModal kept as-is (complex section-based layout)
+- Form components pass all data through props, no internal state
+
+**Project Structure PRD task 3 is COMPLETE**:
+- passes: true ✓

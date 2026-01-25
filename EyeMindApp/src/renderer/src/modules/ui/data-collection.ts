@@ -34,7 +34,6 @@ import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'
 import { updateProcessMessageListener } from './progress'
 import { generateQuestionsSequence } from './questions'
 import { startQuestions } from './questions'
-import { loadModels } from './shared-interactions'
 import { setMainTab, setUnclosableTabs } from './tabs'
 
 /**

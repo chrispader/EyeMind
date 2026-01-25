@@ -182,3 +182,33 @@ These cannot be deleted yet (used by React routes/components):
 - PRD task 5 (remove UI code) is PARTIALLY complete
 - Full removal requires React refactoring of dependent functionality
 - Remaining 10 modules form tightly coupled dependency graph
+
+## 2026-01-25 - Remove shared-interactions.ts Module
+
+### Completed
+Removed `shared-interactions.ts` by inlining its single function into `__root.tsx`:
+
+**Changes:**
+- Inlined `closeModalOutsideClickInteraction` function into `__root.tsx` (with proper TypeScript types)
+- Removed broken import `loadModels` from `data-collection.ts` (function never existed, dead import)
+- Deleted `src/renderer/src/modules/ui/shared-interactions.ts`
+
+### Impact
+- modules/ui reduced: 10 → 9 files
+- Removed 1 broken import (loadModels was never defined)
+
+### Remaining modules/ui Files (9)
+- canvas.ts (used internally by tabs, questions, window-events)
+- click-stream.ts (used by loadFile.ts, process-hierarchy-explorer.ts)
+- data-collection.ts (used by loadFile.ts, window-events.ts)
+- mapping.ts (used by data-collection.ts)
+- process-hierarchy-explorer.ts (used by canvas.ts, tabs.ts)
+- progress.ts (used by loadFile.ts, data-collection.ts)
+- questions.ts (used by loadFile.ts, data-collection.ts)
+- tabs.ts (used by experiment/index.tsx, loadFile.ts)
+- window-events.ts (used by __root.tsx)
+
+### Notes
+- All remaining modules are tightly coupled in dependency graph
+- Root dependencies from React code: window-events.ts (→__root), tabs.ts (→experiment/index, loadFile)
+- Full removal requires converting imperative tab/canvas/data-collection logic to React

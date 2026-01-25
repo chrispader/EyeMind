@@ -3,7 +3,6 @@ import '@renderer/css/app.css'
 import '@renderer/css/main.css'
 import '@renderer/css/new.css'
 import '@renderer/extra/object-diagram-modeler/starter/app/css/app.css'
-import { closeModalOutsideClickInteraction } from '@renderer/modules/ui/shared-interactions'
 import {
   DisableCriticalKeys,
   handleWindowRefresh,
@@ -20,6 +19,18 @@ import 'bpmn-js/dist/assets/diagram-js.css'
 import { useEffect } from 'react'
 
 import { HeaderBar } from '../components/HeaderBar'
+
+/** Close modal when clicking outside modal content area (legacy pattern for imperative modals) */
+function closeModalOutsideClickInteraction(event: MouseEvent) {
+  const target = event.target as HTMLElement
+  if (
+    target === document.getElementById('startET-modal') ||
+    target === document.getElementById('heatmap-settings-modal') ||
+    target === document.getElementById('download-modal')
+  ) {
+    target.style.display = 'none'
+  }
+}
 
 export const Route = createRootRoute({
   component: RootComponent,

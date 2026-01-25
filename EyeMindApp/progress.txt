@@ -143,3 +143,42 @@ Extracted reusable form components from experiment modal routes to src/component
 
 **Project Structure PRD task 3 is COMPLETE**:
 - passes: true ✓
+
+## 2026-01-25 - Remove Unused UI Modules (Partial)
+
+### Completed
+Deleted 5 unused imperative UI modules from modules/ui/:
+- `analysis.ts` (15 errors)
+- `download.ts` (13 errors)
+- `fixation-filter.ts` (32 errors)
+- `gaze-projections.ts` (129 errors)
+- `heatmap.ts` (90 errors)
+
+### Impact
+- Type errors reduced: 684 → 405 (41% reduction, 279 errors eliminated)
+- ~62KB of dead code removed
+
+### Files Deleted
+- src/renderer/src/modules/ui/analysis.ts
+- src/renderer/src/modules/ui/download.ts
+- src/renderer/src/modules/ui/fixation-filter.ts
+- src/renderer/src/modules/ui/gaze-projections.ts
+- src/renderer/src/modules/ui/heatmap.ts
+
+### Remaining modules/ui Files
+These cannot be deleted yet (used by React routes/components):
+- canvas.ts (used by tabs.ts, questions.ts, window-events.ts)
+- click-stream.ts (used by loadFile.ts)
+- data-collection.ts (used by loadFile.ts)
+- mapping.ts (used by data-collection.ts)
+- process-hierarchy-explorer.ts (used by tabs.ts)
+- progress.ts (used by loadFile.ts)
+- questions.ts (used by loadFile.ts)
+- shared-interactions.ts (used by __root.tsx)
+- tabs.ts (used by experiment/index.tsx, loadFile.ts)
+- window-events.ts (used by __root.tsx)
+
+### Notes
+- PRD task 5 (remove UI code) is PARTIALLY complete
+- Full removal requires React refactoring of dependent functionality
+- Remaining 10 modules form tightly coupled dependency graph

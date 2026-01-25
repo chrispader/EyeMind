@@ -1,5 +1,5 @@
 import { assignModelsToGroups } from '@renderer/components/FileImport/loadFile'
-import { setMainTab, setUnclosableTabs } from '@renderer/modules/ui/tabs'
+import { setMainTab, setUnclosableTabs } from '@renderer/actions/tabs'
 import { useGlobalStore } from '@renderer/state/global'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'

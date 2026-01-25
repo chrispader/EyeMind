@@ -455,108 +455,11 @@ function openMainTab(
   }
 }
 
-/**
- * Title: set main tab
- *
- * Description: find the main tab and set it as a main tab
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-function setMainTab() {
-  const { setState, ...state } = useGlobalStore.getState()
-
-  const setAsMainRadioBoxList = document.getElementsByClassName(
-    'set-as-main',
-  ) as HTMLCollectionOf<HTMLInputElement>
-
-  for (let i = 0; i < setAsMainRadioBoxList.length; i++) {
-    const checked = setAsMainRadioBoxList[i]?.checked ?? false
-    if (checked) {
-      const modelId = setAsMainRadioBoxList[i]?.getAttribute('modelId')
-      if (modelId == null || state.models == null) {
-        continue
-      }
-
-      const model = state.models[modelId]
-      if (model == null) {
-        continue
-      }
-
-      setState({
-        models: {
-          ...state.models,
-          [modelId]: {
-            ...model,
-            mainTab: checked,
-          },
-        },
-      })
-    }
-  }
-}
-
-/**
- * Title: set unclosable tabs
- *
- * Description: find the unclsable tabs and set the property to be unclosabled to them
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-function setUnclosableTabs() {
-  console.log('setUnclosableTabs', arguments)
-
-  const { setState, ...state } = useGlobalStore.getState()
-
-  const setUnclosableTabCheckBoxList = document.getElementsByClassName(
-    'unclosable-tab',
-  ) as HTMLCollectionOf<HTMLInputElement>
-  // console.log("setUnclosableTabCheckBoxList", setUnclosableTabCheckBoxList);
-
-  for (let i = 0; i < setUnclosableTabCheckBoxList.length; i++) {
-    const checked = setUnclosableTabCheckBoxList[i]?.checked ?? false
-    if (checked) {
-      const modelId = setUnclosableTabCheckBoxList[i]?.getAttribute('modelId')
-      if (modelId == null || state.models == null) {
-        continue
-      }
-
-      const model = state.models[modelId]
-      if (model == null) {
-        continue
-      }
-
-      setState({
-        models: {
-          ...state.models,
-          [modelId]: {
-            ...model,
-            unclosable: checked,
-          },
-        },
-      })
-    }
-  }
-}
-
 export {
   addToTabHeader,
   changeTab,
   openInTab,
   openWithinTab,
   openMainTab,
-  setUnclosableTabs,
-  setMainTab,
   closeTabInteraction,
 }

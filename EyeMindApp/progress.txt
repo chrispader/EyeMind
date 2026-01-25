@@ -567,3 +567,45 @@ These are tightly coupled tab/canvas/window management code:
 - Remaining 4 modules form the core tab/viewer system
 - Full removal requires converting tab system to React components (larger scope)
 - PRD task 6 (integration) depends on completing task 5
+
+## 2026-01-25 - Remove More UI Code (PRD Task 5-6 Continued)
+
+### Completed
+Moved more imperative code from modules/ui/ to actions/:
+
+**New Action Files:**
+- `actions/window-events.ts` - Window lifecycle handlers (handleWindowRefresh, takeSnapshotOnWindowResize, takeSnapshotOnWindowMovement, DisableCriticalKeys)
+- `actions/tabs.ts` - Tab property setters (setMainTab, setUnclosableTabs)
+
+**Deleted:**
+- `modules/ui/window-events.ts` - All functions moved to actions
+
+**Updated React Imports:**
+- `__root.tsx` - Now imports window-events from actions; testListeners inlined
+- `experiment/index.tsx` - Now imports setMainTab/setUnclosableTabs from actions
+
+**Cleaned Up:**
+- Removed `setMainTab`, `setUnclosableTabs` from `modules/ui/tabs.ts`
+
+### Impact
+- modules/ui reduced: 4 → 3 files
+- actions/ now has 5 files: snapshot.ts, loading.ts, click-stream.ts, window-events.ts, tabs.ts
+- React routes no longer directly import window-events from modules/ui
+- Type check: 0 errors ✓
+
+### Remaining modules/ui Files (3)
+These are tightly coupled tab/canvas management code:
+- `canvas.ts` - Canvas/model rendering, used by tabs.ts
+- `tabs.ts` - Tab management (used by loadFile.ts, canvas.ts)
+- `process-hierarchy-explorer.ts` - Process hierarchy UI (used by tabs.ts)
+
+### External Dependencies on modules/ui
+Only `__root.tsx` still imports from modules/ui - for test utilities only:
+- `resetModel`, `resetNavTabsAndTabs` from canvas.ts
+- `openMainTab` from tabs.ts
+These are exposed via `window.clientTests` for E2E testing.
+
+### Notes
+- PRD task 5 (remove UI code) progress: 7 → 3 modules/ui files remain
+- Remaining 3 modules are core viewer system, tightly interdependent
+- Full removal requires converting tab/canvas to React components (large scope)

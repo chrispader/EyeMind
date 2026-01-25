@@ -1,12 +1,20 @@
 import type DataFrame from 'dataframe-js'
 
 export type ProcessedGazeData = {
-  gazeData?: unknown[]
+  gazeData?: unknown[] | string
   fixationData?: unknown[] | null
   fixationFilterData?: { status?: string } | null
   participantID?: string
   areGazesCorrected?: boolean
   temporaryCorrectedGazeData?: unknown[]
+  xScreenDim?: string
+  yScreenDim?: string
+  screenDistance?: string
+  monitorSize?: string
+  recordingID?: string
+  experimentID?: string
+  experimenterID?: string
+  additionalNotes?: string
 }
 
 export type GlobalState = {

@@ -356,10 +356,10 @@ export async function dataMapped(
 
   /// extend fullGazeData with dataMapped
   const state = getState()
-  state.processedGazeData.gazeData!.push.apply(
-    state.processedGazeData.gazeData!,
-    dataMapped,
-  ) // check if the use of a global variable here is ok
+  const gazeData = state.processedGazeData.gazeData
+  if (Array.isArray(gazeData)) {
+    gazeData.push.apply(gazeData, dataMapped)
+  }
   setState(state) // implementation: to be kept so afterwards stateDownload would not need a parameter state.
 
   // set next start

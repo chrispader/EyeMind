@@ -285,9 +285,9 @@ function createAnalysisFileInfoBlock(file: { name: string; path: string }) {
  */
 
 function stateReadListener() {
-  return new Promise<void>(async (resolve) => {
-    window.utils.onStateRead(async function (args) {
-      const res = args[0]
+  return new Promise<void>((resolve) => {
+    window.utils.onStateRead(async function (args: unknown[]) {
+      const res = args[0] as { success: boolean; msg?: string; data?: { models: Record<string, { xml: string; id: string; fileName: string; path: string }>; questions: Array<{ id: string }> } }
       const file = { name: args[1] as string, path: args[2] as string }
       createAnalysisFileInfoBlock(file)
 
@@ -310,14 +310,14 @@ function stateReadListener() {
  * Additional notes: none
  *
  */
-async function stateRead(res) {
+async function stateRead(res: { success: boolean; msg?: string; data?: { models: Record<string, { xml: string; id: string; fileName: string; path: string }>; questions: Array<{ id: string }> } }) {
   console.log('stateRead', arguments)
 
   // get client state
   const { setState, ...state } = useGlobalStore.getState()
 
   // if the server res.success coming from the server is true
-  if (res.success) {
+  if (res.success && res.data) {
     //process the models within the loaded state
     for (const key of Object.keys(res.data.models)) {
       // add the new models to (client) state.models
@@ -333,30 +333,29 @@ async function stateRead(res) {
           },
         })
 
-        await processModel(newModel.xml, newModel.id, newModel.fileName, newModel.path)
+        // stateRead is called from analysis mode (via onStateRead listener)
+        const config: FileImportConfig = { mode: 'analysis' }
+        await processModel(config, newModel.xml, newModel.id, newModel.fileName, newModel.path)
       }
     }
 
     //process the questions within the loaded state
-    if (state.questions === undefined) {
-      state.questions = []
-    }
-
-    res.data.questions.forEach(function (question) {
+    // Cast to array - in this context we're adding plain objects
+    const questions = (Array.isArray(state.questions) ? state.questions : []) as Array<{ id: string } & Record<string, unknown>>
+    res.data.questions.forEach(function (question: { id: string }) {
       // add the new questions to (client) state.quetions
-      if (
-        state.questions.find((existingQuestion) => existingQuestion.id == question.id) ==
-        null
-      ) {
+      const existingQuestion = questions.find((eq) => eq.id === question.id)
+      if (existingQuestion == null) {
         console.log('new question ', question)
-        state.questions.push(question)
+        questions.push(question)
       } else {
         console.log('existng question', question)
       }
     })
+    setState({ questions: questions as unknown as Record<string, string>[] })
   } else {
     console.error(res.msg)
-    errorAlert(res.msg)
+    errorAlert(res.msg ?? '')
   }
 
   await hideGeneralWaitingScreen()
@@ -381,9 +380,9 @@ async function stateRead(res) {
 function sessionReadListener() {
   console.log('sessionReadListener', arguments)
 
-  window.utils.onSessionRead(async function (args) {
+  window.utils.onSessionRead(async function (args: unknown[]) {
     console.log('onSessionRead', arguments)
-    const res = args[0]
+    const res = args[0] as { success: boolean; msg?: string; data?: Record<string, unknown> }
     await sessionRead(res)
   })
 }
@@ -403,14 +402,16 @@ function sessionReadListener() {
  * Additional notes: none
  *
  */
-async function sessionRead(res) {
+type ModelData = { xml: string; id: string; fileName: string; path: string }
+
+async function sessionRead(res: { success: boolean; msg?: string; data?: Record<string, unknown> }) {
   const { setState } = useGlobalStore.getState()
 
   const success = res.success
-  const msg = res.msg
+  const msg = res.msg ?? ''
   const data = res.data
 
-  if (success) {
+  if (success && data) {
     setState(data)
 
     const state = useGlobalStore.getState()
@@ -420,9 +421,12 @@ async function sessionRead(res) {
       return
     }
 
+    // sessionRead is called from data-collection mode (via sessionReadListener)
+    const config: FileImportConfig = { mode: 'data-collection' }
+
     //process the open the models within the loaded state
-    for (const model of Object.values(state.models)) {
-      await processModel(model.xml, model.id, model.fileName, model.path)
+    for (const model of Object.values(state.models ?? {}) as ModelData[]) {
+      await processModel(config, model.xml, model.id, model.fileName, model.path)
     }
 
     // last step of file import
@@ -477,8 +481,8 @@ async function processModel(
 
   // differ the execution depending on the state.mode
   if (config.mode == 'data-collection') {
-    const previousModel = state.models === undefined ? undefined : state.models[id]
-    const newModel = { ...previousModel, isMain: isMain(modeler) }
+    const previousModel = state.models?.[id] ?? {}
+    const newModel = { ...(previousModel as Record<string, unknown>), isMain: isMain(modeler) }
 
     // state.models[id].isMain if the model is the main model of the process (cf. isMain())
     setState({
@@ -490,7 +494,12 @@ async function processModel(
   }
   if (config.mode == 'analysis') {
     // add attributes needed to show the heatmaps
-    const generalModelRegistry = {}
+    const generalModelRegistry: {
+      elementRegistry?: unknown
+      commandStack?: unknown
+      overlays?: unknown
+      language?: string
+    } = {}
     generalModelRegistry.elementRegistry = modeler.get('elementRegistry')
     if (modeler.language == 'Bpmn')
       generalModelRegistry.commandStack = modeler.get('commandStack') /// odm do not have a commandStack
@@ -555,7 +564,7 @@ function constructDirectoryExplorer(filePath: string, fileName: string, id: stri
 
   /// create/extend the explorer hierarchy
   const dirs = filePath.split('/')
-  const path = []
+  const path: string[] = []
 
   // iterate over the folders within the path
   for (let i = 0; i < dirs.length; i++) {
@@ -579,10 +588,10 @@ function constructDirectoryExplorer(filePath: string, fileName: string, id: stri
 
         /// if the sub-path has only one folder append it to explorer-groups otherwise append it to its parent
         if (path.length == 1) {
-          document.getElementById('explorer-groups').appendChild(li)
+          document.getElementById('explorer-groups')?.appendChild(li)
         } else {
           const parent = path.slice(0, -1)
-          document.getElementById('explorer-group-' + parent.join('/')).appendChild(li)
+          document.getElementById('explorer-group-' + parent.join('/'))?.appendChild(li)
         }
       }
     }
@@ -597,16 +606,16 @@ function constructDirectoryExplorer(filePath: string, fileName: string, id: stri
   explorerItem.setAttribute('fileName', fileName)
   explorerItem.innerHTML = fileName
   explorerItem.onclick = function () {
-    sendClickEvent(Date.now(), explorerItem.getAttribute('data-element-id'))
+    sendClickEvent(Date.now(), explorerItem.getAttribute('data-element-id') ?? '')
     addToTabHeader(id)
     changeTab(id, false, true)
   }
 
   // if filePath!="" then append the explorerItem to the corresponding "explorer-group-"+filePath ul otherwise append directly to explorer-groups (root)
   if (filePath != '') {
-    document.getElementById('explorer-group-' + filePath).appendChild(explorerItem)
+    document.getElementById('explorer-group-' + filePath)?.appendChild(explorerItem)
   } else {
-    document.getElementById('explorer-groups').appendChild(explorerItem)
+    document.getElementById('explorer-groups')?.appendChild(explorerItem)
   }
 }
 
@@ -633,7 +642,7 @@ function createTabContainer(id, fileName) {
   const tabContainer = document.createElement('div')
   tabContainer.setAttribute('id', 'model' + id + '-container')
   tabContainer.setAttribute('class', 'tab-container')
-  document.getElementById('tabs-containers').appendChild(tabContainer)
+  document.getElementById('tabs-containers')?.appendChild(tabContainer)
 
   // create tab content holder
   const tabContentHolder = document.createElement('div')
@@ -671,7 +680,7 @@ async function createModel(
   fileName: string,
   id: string,
   xml: string,
-  currentTabContainerId: string | undefined,
+  currentTabContainerId?: string,
 ) {
   const state = useGlobalStore.getState()
 
@@ -686,7 +695,7 @@ async function createModel(
   modelContainer.setAttribute('FileName', fileName)
 
   // append the model container to its parent (i.e., dom element with id=currentTabContainerId)
-  document.getElementById(currentTabContainerId).append(modelContainer)
+  document.getElementById(currentTabContainerId)?.append(modelContainer)
 
   /// choice based on type of file (bpmn or odm) and whether it is for data-collection (NavigatedViewer) or for anaylsis (Modeler) (i.e., Modeler is used to allow coloring the activities, which is required for the heatmaps)
   let view: 'NavigatedViewer' | 'Modeler' | null = null
@@ -765,10 +774,10 @@ async function setUpModelerObject(language, view, currentTabContainerId, id, xml
  * Additional notes: none
  *
  */
-function removeBPMNioLogo(container) {
+function removeBPMNioLogo(container: string): void {
   console.log('removeBPMNioLogo function', arguments)
 
-  document.getElementById(container).querySelector('.bjs-powered-by').remove()
+  document.getElementById(container)?.querySelector('.bjs-powered-by')?.remove()
 }
 
 /**
@@ -790,17 +799,18 @@ function removeBPMNioLogo(container) {
  *
  */
 function linkSubProcesses(
-  mainModel,
-  mainModelId,
-  mainModelprocessId,
-  currentTabContainerId,
-) {
+  mainModel: { get: (name: string) => { _elements: Record<string, { element: { type: string; collapsed: boolean; id: string; businessObject: { name: string } } }> } },
+  mainModelId: string,
+  mainModelprocessId: string,
+  currentTabContainerId: string,
+): void {
   console.log('linkSubProcesses', arguments)
 
   // get state
   const state = useGlobalStore.getState()
 
   const mainModelElements = mainModel.get('elementRegistry')._elements
+  const globalParams = window.globalParameters as { MODELS_ID_REGEX?: string } | undefined
 
   /// iterate the elements of mainModel
   Object.keys(mainModelElements).forEach((key) => {
@@ -816,7 +826,7 @@ function linkSubProcesses(
       // get information about the sub-process
       const subProcessFileName = mainModelElements[key].element.id
       const subProcessId = subProcessFileName.replace(
-        new RegExp(window.globalParameters.MODELS_ID_REGEX, 'g'),
+        new RegExp(globalParams?.MODELS_ID_REGEX ?? '', 'g'),
         '',
       )
       const subProcessActivityLabelInMainModel =
@@ -825,7 +835,9 @@ function linkSubProcesses(
       // locate the svg element refering to a collasped subprocess
       const subProcessActivitySVGObjectInMainModel = document
         .getElementById(currentTabContainerId)
-        .querySelector('[data-element-id="' + subProcessFileName + '"]')
+        ?.querySelector('[data-element-id="' + subProcessFileName + '"]') as HTMLElement | null
+
+      if (!subProcessActivitySVGObjectInMainModel) return
 
       if (state.linkingSubProcessesMode == 'newTab') {
         subProcessActivitySVGObjectInMainModel.addEventListener('click', function (e) {
@@ -834,7 +846,7 @@ function linkSubProcesses(
           // send click event
           sendClickEvent(
             Date.now(),
-            subProcessActivitySVGObjectInMainModel.getAttribute('data-element-id'),
+            subProcessActivitySVGObjectInMainModel.getAttribute('data-element-id') ?? '',
           )
           // open the sub-process in tab if isFileLoaded
           if (isFileLoaded(subProcessFileName, subProcessId)) {
@@ -852,7 +864,7 @@ function linkSubProcesses(
           // send click event
           sendClickEvent(
             Date.now(),
-            subProcessActivitySVGObjectInMainModel.getAttribute('data-element-id'),
+            subProcessActivitySVGObjectInMainModel.getAttribute('data-element-id') ?? '',
           )
 
           // open the sub-process within tab if isFileLoaded
@@ -862,6 +874,7 @@ function linkSubProcesses(
               mainModelprocessId,
               subProcessId,
               subProcessActivityLabelInMainModel,
+              0, // position
             )
           }
         })

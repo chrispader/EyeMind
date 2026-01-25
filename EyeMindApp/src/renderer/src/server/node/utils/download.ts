@@ -147,7 +147,8 @@ async function downloadFile(
 
       const participantID = state.processedGazeData.participantID
 
-      var dataframeForState = new DataFrame(state.processedGazeData.gazeData ?? [])
+      const gazeDataArray = Array.isArray(state.processedGazeData.gazeData) ? state.processedGazeData.gazeData : []
+      var dataframeForState = new DataFrame(gazeDataArray)
       dataframeForState = dataframeForState.withColumn(
         'participantID',
         () => participantID,

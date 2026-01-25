@@ -22,12 +22,21 @@ SOFTWARE.*/
 /* Questions */
 import { errorAlert } from '@renderer/modules/utils/utils'
 import { useGlobalStore } from '@renderer/state/global'
-import DataFrame from 'dataframe-js'
+import DataFrame, { Row } from 'dataframe-js'
 
 import { resetNavTabsAndTabs } from './canvas'
 import { showModelsGroup } from './canvas'
 import { sendClickEvent } from './click-stream'
 import { stopETInteraction } from './data-collection'
+
+interface QuestionEvent {
+  questionTimestamp: number
+  questionEventType: string
+  questionPosition: number | string | null
+  questionText: string
+  questionAnswer: string
+  questionID: string
+}
 
 /**
  * Title: generate questions sequence
@@ -48,11 +57,15 @@ function generateQuestionsSequence() {
   const state = useGlobalStore.getState()
   const questions = new DataFrame(state.questions ?? [])
 
-  document.getElementById('start-questions-btn').onclick = () => startQuestions()
+  const startBtn = document.getElementById('start-questions-btn')
+  if (startBtn) startBtn.onclick = () => startQuestions()
 
-  document.getElementById('questions-ready').style.display = 'block'
+  const questionsReady = document.getElementById('questions-ready') as HTMLElement | null
+  if (questionsReady) questionsReady.style.display = 'block'
 
-  questions.map((row: DataFrame, rowNum: number) => {
+  const rowCount = questions.count() as number
+  for (let rowNum = 0; rowNum < rowCount; rowNum++) {
+    const row = questions.getRow(rowNum) as Row
     const question = document.createElement('div')
     question.setAttribute('id', 'question' + rowNum)
     question.setAttribute('class', 'question gaze-element')
@@ -60,7 +73,7 @@ function generateQuestionsSequence() {
       'data-element-id',
       'question-area-for-questionID_' + row.get('id'),
     )
-    document.getElementById('questions').append(question)
+    document.getElementById('questions')?.append(question)
 
     const title = document.createElement('div')
     title.setAttribute('class', 'title gaze-element')
@@ -94,9 +107,11 @@ function generateQuestionsSequence() {
       const elementOfInterest = document.getElementById(
         'long-answer-question' + rowNum + '-answer',
       )
-      elementOfInterest.addEventListener('click', () =>
-        sendClickEvent(Date.now(), elementOfInterest.getAttribute('data-element-id')),
-      )
+      if (elementOfInterest) {
+        elementOfInterest.addEventListener('click', () =>
+          sendClickEvent(Date.now(), elementOfInterest.getAttribute('data-element-id') ?? ''),
+        )
+      }
     } else if (row.get('type') == 'multiple-choice') {
       console.log('multiple-choice')
 
@@ -139,9 +154,11 @@ function generateQuestionsSequence() {
         const elementOfInterest = document.getElementById(
           'option-answer-for-questionID_' + row.get('id') + '_option_' + i,
         )
-        elementOfInterest.addEventListener('click', () =>
-          sendClickEvent(Date.now(), elementOfInterest.getAttribute('data-element-id')),
-        )
+        if (elementOfInterest) {
+          elementOfInterest.addEventListener('click', () =>
+            sendClickEvent(Date.now(), elementOfInterest.getAttribute('data-element-id') ?? ''),
+          )
+        }
       }
     } else {
       console.error(row.get('type') + 'is an unkown question type')
@@ -162,28 +179,30 @@ function generateQuestionsSequence() {
       '-btn">Next</button>'
     answerAndNext.append(next)
 
-    document.getElementById('next-question' + rowNum + '-btn').onclick = async () => {
-      // record click
-      const elementOfInterest = document.getElementById('next-question' + rowNum + '-btn')
-      sendClickEvent(Date.now(), elementOfInterest.getAttribute('data-element-id'))
+    const nextBtn = document.getElementById('next-question' + rowNum + '-btn')
+    if (nextBtn) {
+      nextBtn.onclick = async () => {
+        // record click
+        const elementOfInterest = document.getElementById('next-question' + rowNum + '-btn')
+        sendClickEvent(Date.now(), elementOfInterest?.getAttribute('data-element-id') ?? '')
 
-      const answerText =
-        row.get('type') == 'open-question'
-          ? document.getElementById('long-answer-question' + rowNum + '-answer').value
-          : row.get('type') == 'multiple-choice' &&
-              document.querySelector(
-                'input[name="multiple-choice-question' + rowNum + '-answer"]:checked',
-              ) != null
-            ? document.querySelector(
-                'input[name="multiple-choice-question' + rowNum + '-answer"]:checked',
-              ).value
-            : ''
+        let answerText = ''
+        if (row.get('type') == 'open-question') {
+          const answerInput = document.getElementById('long-answer-question' + rowNum + '-answer') as HTMLInputElement | null
+          answerText = answerInput?.value ?? ''
+        } else if (row.get('type') == 'multiple-choice') {
+          const checkedRadio = document.querySelector(
+            'input[name="multiple-choice-question' + rowNum + '-answer"]:checked',
+          ) as HTMLInputElement | null
+          answerText = checkedRadio?.value ?? ''
+        }
 
-      const nextRow = rowNum + 1 < questions.count() ? questions.getRow(rowNum + 1) : null
-      await nextQuestion(rowNum, rowNum + 1, questions.count(), row, answerText, nextRow)
-      /// nextQuestion(currentQuestionId, nextQuestionId, questionsArrSize , currentQuestion, givenAnswer, nextQuestion)
+        const nextRow = rowNum + 1 < rowCount ? (questions.getRow(rowNum + 1) as Row) : null
+        await nextQuestionFn(rowNum, rowNum + 1, rowCount, row, answerText, nextRow)
+        /// nextQuestion(currentQuestionId, nextQuestionId, questionsArrSize , currentQuestion, givenAnswer, nextQuestion)
+      }
     }
-  })
+  }
 }
 
 /**
@@ -203,7 +222,7 @@ function startQuestions() {
   const state = useGlobalStore.getState()
   const questions = new DataFrame(state.questions ?? [])
 
-  nextQuestion(null, 0, questions.count(), null, null, questions.getRow(0))
+  nextQuestionFn(null, 0, questions.count(), null, null, questions.getRow(0))
 }
 
 /**
@@ -224,48 +243,54 @@ function startQuestions() {
  * Additional notes: none
  *
  */
-async function nextQuestion(
-  currentQuestionId: string | null,
+async function nextQuestionFn(
+  currentQuestionId: number | null,
   nextQuestionId: number,
   questionsArrSize: number,
-  currentQuestion: DataFrame | null,
+  currentQuestion: Row | null,
   givenAnswer: string | null,
-  nextQuestion: DataFrame,
-) {
+  nextQuestionRow: Row | null,
+): Promise<void> {
   const state = useGlobalStore.getState()
 
   if (!state.isEtOn) {
     const msg = 'Eye-tracking has not started yet'
     errorAlert(msg)
     console.error(msg)
-    return null
+    return
   }
 
-  if (nextQuestionId == 0) {
-    document.getElementById('questions-ready').style.display = 'none'
-    await questionOnset(nextQuestion, nextQuestionId)
-    document.getElementById('question' + nextQuestionId).style.display = 'block'
+  if (nextQuestionId == 0 && nextQuestionRow) {
+    const questionsReadyEl = document.getElementById('questions-ready') as HTMLElement | null
+    if (questionsReadyEl) questionsReadyEl.style.display = 'none'
+    await questionOnset(nextQuestionRow, nextQuestionId)
+    const questionEl = document.getElementById('question' + nextQuestionId) as HTMLElement | null
+    if (questionEl) questionEl.style.display = 'block'
 
     // show appropriate models group
-    showModelsGroup(nextQuestion.get('model-group'))
+    showModelsGroup(nextQuestionRow.get('model-group'))
 
     // reset nav tabs and tabs
-    resetNavTabsAndTabs(nextQuestion.get('model-group'))
-  } else if (nextQuestionId < questionsArrSize) {
-    document.getElementById('question' + currentQuestionId).style.display = 'none'
+    resetNavTabsAndTabs(nextQuestionRow.get('model-group'))
+  } else if (nextQuestionId < questionsArrSize && nextQuestionRow) {
+    const currentQuestionEl = document.getElementById('question' + currentQuestionId) as HTMLElement | null
+    if (currentQuestionEl) currentQuestionEl.style.display = 'none'
     await questionOffset(currentQuestion, currentQuestionId, givenAnswer)
-    await questionOnset(nextQuestion, nextQuestionId)
-    document.getElementById('question' + nextQuestionId).style.display = 'block'
+    await questionOnset(nextQuestionRow, nextQuestionId)
+    const nextQuestionEl = document.getElementById('question' + nextQuestionId) as HTMLElement | null
+    if (nextQuestionEl) nextQuestionEl.style.display = 'block'
 
     // show appropriate models group
-    showModelsGroup(nextQuestion.get('model-group'))
+    showModelsGroup(nextQuestionRow.get('model-group'))
 
     // reset nav tabs and tabs
-    resetNavTabsAndTabs(nextQuestion.get('model-group'))
+    resetNavTabsAndTabs(nextQuestionRow.get('model-group'))
   } else if (nextQuestionId >= questionsArrSize) {
-    document.getElementById('question' + currentQuestionId).style.display = 'none'
+    const currentQuestionEl = document.getElementById('question' + currentQuestionId) as HTMLElement | null
+    if (currentQuestionEl) currentQuestionEl.style.display = 'none'
     await questionOffset(currentQuestion, currentQuestionId, givenAnswer)
-    document.getElementById('questions-over').style.display = 'block'
+    const questionsOverEl = document.getElementById('questions-over') as HTMLElement | null
+    if (questionsOverEl) questionsOverEl.style.display = 'block'
 
     // show appropriate models group
     //showModelsGroup(null)
@@ -292,7 +317,7 @@ async function nextQuestion(
  * Additional notes: none
  *
  */
-async function questionOnset(question, questionPosition) {
+async function questionOnset(question: Row, questionPosition: number): Promise<void> {
   const questionText = question.get('question')
   const questionLogId = question.get('id')
   const questionTimestamp = Date.now()
@@ -329,8 +354,9 @@ async function questionOnset(question, questionPosition) {
  * Additional notes: none
  *
  */
-async function questionOffset(question, questionPosition, questionAnswer) {
+async function questionOffset(question: Row | null, questionPosition: number | null, questionAnswer: string | null): Promise<void> {
   console.log('QuestionOffset', arguments)
+  if (!question) return
 
   const questionText = question.get('question')
   const questionLogId = question.get('id')
@@ -349,7 +375,7 @@ async function questionOffset(question, questionPosition, questionAnswer) {
     questionEventType,
     questionPosition,
     questionText,
-    questionAnswer,
+    questionAnswer ?? '',
     questionLogId,
   )
 }
@@ -373,45 +399,40 @@ async function questionOffset(question, questionPosition, questionAnswer) {
  *
  */
 async function sendQuestionEvent(
-  questionTimestamp,
-  questionEventType,
-  questionPosition,
-  questionText,
-  questionAnswer,
-  questionID,
-) {
+  questionTimestamp: number,
+  questionEventType: string,
+  questionPosition: number | null,
+  questionText: string,
+  questionAnswer: string,
+  questionID: string,
+): Promise<void> {
   console.log('sendQuestionEvent', arguments)
 
-  // for testing purpose
-  if (window.hasOwnProperty('clientTests') && questionEventType == 'questionOnset') {
-    window.clientTests.lastOnSetQuestionEvent = {
-      questionTimestamp: questionTimestamp,
-      questionEventType: questionEventType,
-      questionPosition: questionPosition,
-      questionText: questionText,
-      questionAnswer: questionAnswer,
-      questionID: questionID,
-    }
-  }
-  if (window.hasOwnProperty('clientTests') && questionEventType == 'questionOffset') {
-    window.clientTests.lastOffSetQuestionEvent = {
-      questionTimestamp: questionTimestamp,
-      questionEventType: questionEventType,
-      questionPosition: questionPosition,
-      questionText: questionText,
-      questionAnswer: questionAnswer,
-      questionID: questionID,
-    }
-  }
-
-  const res = await window.eyeTracker.sendQuestionEvent(
+  const event: QuestionEvent = {
     questionTimestamp,
     questionEventType,
     questionPosition,
     questionText,
     questionAnswer,
     questionID,
-  )
+  }
+
+  // for testing purpose
+  if (window.hasOwnProperty('clientTests') && questionEventType == 'questionOnset') {
+    ;(window.clientTests as typeof window.clientTests & { lastOnSetQuestionEvent?: QuestionEvent }).lastOnSetQuestionEvent = event
+  }
+  if (window.hasOwnProperty('clientTests') && questionEventType == 'questionOffset') {
+    ;(window.clientTests as typeof window.clientTests & { lastOffSetQuestionEvent?: QuestionEvent }).lastOffSetQuestionEvent = event
+  }
+
+  const res = (await window.eyeTracker.sendQuestionEvent(
+    questionTimestamp,
+    questionEventType,
+    String(questionPosition ?? ''),
+    questionText,
+    questionAnswer,
+    questionID,
+  )) as { success: boolean; msg?: string }
   if (!res.success) {
     console.error(res.msg)
   }
@@ -430,14 +451,14 @@ async function sendQuestionEvent(
  * Additional notes: none
  *
  */
-function areModelGroupsValid(questions: DataFrame) {
+function areModelGroupsValid(questions: DataFrame): boolean {
   const state = useGlobalStore.getState()
 
   const df = new DataFrame(questions)
 
   // get model groups
   const modelGroups: string[] = []
-  for (const model of Object.values(state.models ?? {})) {
+  for (const model of Object.values(state.models ?? {}) as Array<{ groupId?: string } | undefined>) {
     if (!modelGroups.includes(model?.groupId ?? '')) {
       console.log('push')
       modelGroups.push(model?.groupId ?? '')
@@ -447,7 +468,7 @@ function areModelGroupsValid(questions: DataFrame) {
   console.log('modelGroups', modelGroups)
 
   // check
-  const checker = (arr, target) => target.every((v) => arr.includes(v))
+  const checker = (arr: string[], target: unknown[]): boolean => target.every((v) => arr.includes(String(v)))
   console.log(
     "df.unique('model-group').toArray().flat()",
     df.unique('model-group').toArray().flat(),

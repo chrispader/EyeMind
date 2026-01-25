@@ -406,3 +406,54 @@ All in 3 large legacy imperative files:
 - These 3 files are tightly coupled and form the core imperative data flow
 - Fixing requires either massive type additions or architectural refactoring
 - PRD tasks 5-6 target removal/integration of these modules into React
+
+## 2026-01-25 - Type Error Fixes (COMPLETE)
+
+### Completed
+Fixed ALL remaining type errors in web compilation (167 → 0 errors):
+
+**Files Fixed:**
+
+1. **modules/ui/questions.ts (53 → 0 errors)**
+   - Imported `Row` type from dataframe-js
+   - Added `QuestionEvent` interface for test tracking
+   - Fixed Row vs DataFrame type usage in map callback
+   - Added null checks for all DOM element access
+   - Fixed function parameter types throughout
+   - Renamed `nextQuestion` to `nextQuestionFn` to avoid param shadowing
+
+2. **modules/ui/data-collection.ts (74 → 0 errors)**
+   - Removed unused imports and dead functions (`_saveSessionInteraction`, `_closeStartETModalInteraction`, `_startETInteraction`, `areRequiredFieldsEntered`, `initiateETsession`, `setupTracking`, `startTracking`)
+   - Added `IpcResult` type for IPC responses
+   - Added null checks for all DOM element access
+   - Fixed `stopETInteraction` function with proper typing
+   - Fixed `initiateProgressWindow` return type
+   - Fixed function argument count mismatches
+
+3. **components/FileImport/loadFile.ts (40 → 0 errors)**
+   - Added `FileImportConfig` to `stateRead` and `sessionRead` calls
+   - Added `ModelData` type for session models
+   - Fixed `processModel` calls to include config argument
+   - Fixed `openWithinTab` call to include position argument
+   - Added null checks for DOM element access
+   - Fixed `questions` array type handling
+   - Added proper typing for `linkSubProcesses` function
+   - Fixed `window.globalParameters` type access
+
+4. **Additional files:**
+   - `server/node/connectors/eye-tracker.ts` - Fixed gazeData array check
+   - `server/node/utils/download.ts` - Fixed gazeData DataFrame creation
+   - `types/GlobalState.ts` - Extended ProcessedGazeData with recording fields
+
+### Results
+- **Web typecheck (tsconfig.web.json): 0 errors** ✓
+- PRD task 4 (code-quality: fix type errors) is COMPLETE
+
+### Impact
+- All 167 web type errors eliminated
+- Code quality significantly improved
+- Type safety restored to the codebase
+- Dead code removed from data-collection.ts (~150 lines)
+
+### Notes
+- PRD task 4 "passes" should now be set to true

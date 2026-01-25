@@ -28,13 +28,11 @@ import {
 import { errorAlert, infoAlert } from '@renderer/modules/utils/utils'
 import { useGlobalStore } from '@renderer/state/global'
 
-import { assignModelsToGroups } from '../../components/FileImport/loadFile'
 import { mapGazestoElementsFromPageSnapshotListener } from './mapping'
 import { hideGeneralWaitingScreen, showGeneralWaitingScreen } from './progress'
 import { updateProcessMessageListener } from './progress'
-import { generateQuestionsSequence } from './questions'
-import { startQuestions } from './questions'
-import { setMainTab, setUnclosableTabs } from './tabs'
+
+type IpcResult = { success: boolean; msg?: string }
 
 /**
  * Title: import questions interactions
@@ -71,325 +69,6 @@ function importQuestionsInteraction() {
   })
 }
 
-/**
- * Title:save Eye-tracking session interaction
- *
- * Description: saving the current data collection session settings into a file that can be loaded for a later data collection
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-async function saveSessionInteraction() {
-  const { setState, ...state } = useGlobalStore.getState()
-
-  if (areRequiredFieldsEntered()) {
-    setState({
-      processedGazeData: {
-        xScreenDim: (document.getElementById('x-dim') as HTMLInputElement).value,
-        yScreenDim: (document.getElementById('y-dim') as HTMLInputElement).value,
-        screenDistance: (document.getElementById('screen-distance') as HTMLInputElement)
-          .value,
-        monitorSize: (document.getElementById('monitor-size') as HTMLInputElement).value,
-        experimentID: (document.getElementById('experiment-id') as HTMLInputElement)
-          .value,
-        experimenterID: (document.getElementById('experimenter-id') as HTMLInputElement)
-          .value,
-        additionalNotes: (document.getElementById('additional-notes') as HTMLInputElement)
-          .value,
-      },
-    })
-
-    const res = await window.utils.saveSession(state)
-
-    if (res.success) {
-      infoAlert(res.msg)
-    } else {
-      errorAlert(res.msg)
-    }
-  }
-}
-
-/**
- * Title: prepare the loaded content view for data collection
- *
- * Description: prepare the loaded content view for data collection
- *
- * @param {booleam} filePropertiesDefined allows to set unclosable tabs if not already defined (that is the case when you load a session)
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-function prepareDataCollectionContent(filePropertiesDefined: boolean) {
-  // showing file explorer, loading models, questions and configuring tables
-
-  const state = useGlobalStore.getState()
-}
-
-/**
- * Title: closing the start ET modal by settings its display to none
- *
- * Description:closing the start ET modal by settings its display to none
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-function closeStartETModalInteraction() {
-  console.log('closeStartETModalInteraction', arguments)
-
-  /// hide startET modal
-  document.getElementById('startET-modal').style.display = 'none'
-}
-
-/**
- * Title: start eye-tracking recording
- *
- * Description: a flow that executes when you press start eye-tracking recording
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-async function startETInteraction() {
-  console.log('startETInteraction', arguments)
-
-  if (areRequiredFieldsEntered()) {
-    let setup = false
-
-    try {
-      await setupTracking(
-        document.getElementById('x-dim').value,
-        document.getElementById('y-dim').value,
-      )
-      setup = true
-    } catch (error) {
-      const msg =
-        'Cannot setup the eye-tracking session. Please make sure that the eye-tracking server is running.'
-      errorAlert(msg)
-      console.error(msg)
-    }
-
-    // console.log("setup",setup)
-
-    if (setup) {
-      // prevent another click on submit-recording-form by setting submit-recording-form interaction to null
-      document.getElementById('submit-recording-form').onclick = null
-
-      // set record-btn interaction to null
-      document.getElementById('record-btn').onclick = null
-
-      // initiate ET session
-      await initiateETsession()
-
-      // hide startET-modal
-      document.getElementById('startET-modal').style.display = 'none'
-
-      // update ET icons and cursor
-      document.getElementById('record-btn').src = 'icons/record_disabled.svg'
-      document.getElementById('record-btn').style.cursor = 'default'
-      document.getElementById('stop-btn').src = 'icons/stop_enabled.svg'
-      document.getElementById('stop-btn').style.cursor = 'pointer'
-
-      // set stop-btn interaction
-      document.getElementById('stop-btn').onclick = () => stopETInteraction()
-
-      try {
-        // start tracking
-        startTracking(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
-
-        /*          // show main tab
-          console.log("state.linkingSubProcessesMode",state.linkingSubProcessesMode)
-          if(state.linkingSubProcessesMode=="withinTab") {
-            openMainTab("display",true,false);
-          }
-          else {
-            openMainTab("display",false,false);
-          }*/
-
-        // start questions - show first question
-        startQuestions()
-      } catch (error) {
-        const msg = 'Eror when starting the eye-tracking'
-        errorAlert(msg)
-        console.error(msg)
-      }
-    }
-  }
-}
-
-/**
- * Title: checking if all the required fields are entered
- *
- * Description: checking if all the required fields are entered
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-function areRequiredFieldsEntered() {
-  // console.log("areRequiredFieldsEntered",arguments);
-
-  if (
-    document.getElementById('recording-id').value == '' ||
-    isNaN(Number(document.getElementById('x-dim').value)) ||
-    document.getElementById('x-dim').value == '' ||
-    isNaN(Number(document.getElementById('y-dim').value)) ||
-    document.getElementById('y-dim').value == '' ||
-    isNaN(Number(document.getElementById('screen-distance').value)) ||
-    document.getElementById('screen-distance').value == '' ||
-    isNaN(Number(document.getElementById('monitor-size').value)) ||
-    document.getElementById('monitor-size').value == ''
-  ) {
-    errorAlert('Some required fields are missing or invalid')
-    return false
-  }
-
-  return true
-}
-
-/**
- * Title: initiate eye-tracking session by setting a set of settings to state
- *
- * Description: initiate eye-tracking session by setting a set of settings to state
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-async function initiateETsession() {
-  const { setState } = useGlobalStore.getState()
-
-  const styleParameters = await saveStyleParameters()
-
-  setState({
-    styleParameters,
-    processedGazeData: {
-      xScreenDim: (document.getElementById('x-dim') as HTMLInputElement).value,
-      yScreenDim: (document.getElementById('y-dim') as HTMLInputElement).value,
-      screenDistance: (document.getElementById('screen-distance') as HTMLInputElement)
-        .value,
-      monitorSize: (document.getElementById('monitor-size') as HTMLInputElement).value,
-      recordingID: (document.getElementById('recording-id') as HTMLInputElement).value,
-      participantID: (document.getElementById('participant-id') as HTMLInputElement)
-        .value,
-      experimentID: (document.getElementById('experiment-id') as HTMLInputElement).value,
-      experimenterID: (document.getElementById('experimenter-id') as HTMLInputElement)
-        .value,
-      additionalNotes: (document.getElementById('additional-notes') as HTMLInputElement)
-        .value,
-      gazeData: '',
-    },
-  })
-}
-
-/**
- * Title: Save style parameters
- *
- * Description: Save CSS style parameters
- *
- * @param {void} . .
- *
- * Returns {void}
- *
- *
- * Additional notes: this is used for reconstructing the snapshots allowing in turn to correct the gazes mapping later
- *
- */
-async function saveStyleParameters() {
-  let stylesContent = ''
-
-  const styles = document.querySelectorAll('link')
-  for (let i = 0; i < styles.length; i++) {
-    const url = styles[i].getAttribute('href')
-    // console.log("url",url);
-    const data = await fetch(url)
-    const text = await data.text()
-
-    stylesContent += ' ' + text
-  }
-
-  // console.log("stylesContent",stylesContent);
-  return stylesContent
-}
-
-/**
- * Title: setup tracking
- *
- * Description: setup the communication with the eye-tracking server
- *
- * @param {string} xScreenDim screen dimension on the x axis
- * @param {string} yScreenDim screen dimension on the y axis
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-async function setupTracking(xScreenDim: number, yScreenDim: number) {
-  console.log('setupTracking function')
-
-  const res = await window.eyeTracker.setupTracking(xScreenDim, yScreenDim)
-  console.log('res', res)
-  if (!res.success) {
-    throw res.msg
-  }
-}
-
-/**
- * Title: start tracking
- *
- * Description: start eye-tracking and take a snasphot
- *
- * @param {string} timestamp current timestamp
- * @param {string} code HTML code of the current page
- * @param {string} screenX window.screenX
- * @param {string} screenY window.screenY
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-function startTracking(
-  timestamp: number,
-  code: string,
-  screenX: number,
-  screenY: number,
-) {
-  // console.log("startTracking function ",arguments);
-
-  const { setState } = useGlobalStore.getState()
-
-  setState({
-    isEtOn: true,
-  })
-}
 
 type Snapshot = {
   id: number
@@ -419,7 +98,7 @@ type Snapshot = {
  *
  */
 
-function takesnapshot(timestamp: number, code: string, screenX: number, screenY: number) {
+function takesnapshot(_timestamp: number, _code: string, _screenX: number, _screenY: number): void {
   const { setState, ...state } = useGlobalStore.getState()
   console.log('state to be used in snapshot', state)
 
@@ -433,8 +112,8 @@ function takesnapshot(timestamp: number, code: string, screenX: number, screenY:
   const snapshot: Snapshot = {
     id: state.snapshotsCounter ?? 0,
     tabName: state.activeTab,
-    timestamp,
-    code,
+    timestamp: Date.now(),
+    code: document.body.innerHTML,
     screenX: 0,
     screenY: 0,
     boundingClientRect: null,
@@ -453,7 +132,7 @@ function takesnapshot(timestamp: number, code: string, screenX: number, screenY:
     // console.log("shownTabs",shownTabs);
     // console.log("selected svg",svg);
 
-    snapshot.boundingClientRect = JSON.stringify(svg.getBoundingClientRect())
+    snapshot.boundingClientRect = svg ? JSON.stringify(svg.getBoundingClientRect()) : null
     // console.log("snapshot.boundingClientRect",snapshot.boundingClientRect)
   } else {
     snapshot.boundingClientRect = null
@@ -478,7 +157,7 @@ function takesnapshot(timestamp: number, code: string, screenX: number, screenY:
 
   // for testing purpose
   if ('clientTests' in window) {
-    window.clientTests.lastSnapshot = snapshot
+    ;(window.clientTests as typeof window.clientTests & { lastSnapshot?: Snapshot }).lastSnapshot = snapshot
   }
 }
 
@@ -495,10 +174,10 @@ function takesnapshot(timestamp: number, code: string, screenX: number, screenY:
  * Additional notes: none
  *
  */
-async function sendSnapshotID(snapshot) {
+async function sendSnapshotID(snapshot: Snapshot): Promise<void> {
   console.log('sendSnapshotID', arguments)
 
-  const res = await window.eyeTracker.sendSnapshotID(snapshot)
+  const res = (await window.eyeTracker.sendSnapshotID(snapshot)) as IpcResult
   if (!res.success) {
     console.error(res.msg)
   }
@@ -517,10 +196,10 @@ async function sendSnapshotID(snapshot) {
  * Additional notes: none
  *
  */
-async function sendFullSnapshot(snapshot) {
+async function sendFullSnapshot(snapshot: Snapshot): Promise<void> {
   console.log('sendFullSnapshot ', arguments)
 
-  const res = await window.eyeTracker.sendFullSnapshot(snapshot)
+  const res = (await window.eyeTracker.sendFullSnapshot(snapshot)) as IpcResult
   if (!res.success) {
     console.error(res.msg)
   }
@@ -539,23 +218,23 @@ async function sendFullSnapshot(snapshot) {
  * Additional notes: none
  *
  */
-async function stopETInteraction() {
+async function stopETInteraction(): Promise<void> {
   console.log('stopETInteraction', arguments)
 
   const state = useGlobalStore.getState()
 
   // set stop-btn interaction to null
-  document.getElementById('stop-btn').onclick = null
-
-  // update ET icons and cursor
-  document.getElementById('stop-btn').src = 'icons/stop_disabled.svg'
-  document.getElementById('stop-btn').style.cursor = 'default'
+  const stopBtn = document.getElementById('stop-btn') as HTMLImageElement | null
+  if (stopBtn) {
+    stopBtn.onclick = null
+    // update ET icons and cursor
+    stopBtn.src = 'icons/stop_disabled.svg'
+    stopBtn.style.cursor = 'default'
+  }
 
   // show waiting screen
   await showGeneralWaitingScreen(
     'Please wait while the gaze data is being processed<br>Do not resize this window',
-    'wait',
-    'all-content',
   )
 
   // intiate progress report
@@ -565,7 +244,7 @@ async function stopETInteraction() {
   if (!window.hasOwnProperty('externalProgressWindows'))
     window.externalProgressWindows = {}
   const externalProgressWindow = 'Window' + Date.now()
-  window.externalProgressWindows[externalProgressWindow] = progressWindow
+  if (progressWindow) window.externalProgressWindows[externalProgressWindow] = progressWindow
 
   // initiate update process message listener
   updateProcessMessageListener()
@@ -590,7 +269,7 @@ async function stopETInteraction() {
  * Additional notes: none
  *
  */
-function endTracking(externalProgressWindow) {
+function endTracking(externalProgressWindow: string): void {
   console.log('endTracking function ', arguments)
 
   const { setState } = useGlobalStore.getState()
@@ -616,7 +295,7 @@ function endTracking(externalProgressWindow) {
  * Additional notes: none
  *
  */
-function processGazeData(externalProgressWindow) {
+function processGazeData(externalProgressWindow: string): void {
   console.log('processGazeData function ', arguments)
 
   const state = useGlobalStore.getState()
@@ -644,7 +323,7 @@ function processGazeData(externalProgressWindow) {
  * Additional notes: the progress of the gaze mapping is coming from the server side (see progress)
  *
  */
-function initiateProgressWindow(styleParameters) {
+function initiateProgressWindow(styleParameters: string | undefined): Window | null {
   console.log('initiateProgressWindow', arguments)
 
   const progressWindow = window.open(
@@ -653,17 +332,19 @@ function initiateProgressWindow(styleParameters) {
     '_blank, width=500, height=200, directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no',
   )
 
+  if (!progressWindow) return null
+
   // clone document.getElementById("wait-processing-gaze-data")
-  const waitProcessingGazeData = document.getElementById('wait').cloneNode(true)
+  const waitProcessingGazeData = document.getElementById('wait')?.cloneNode(true)
 
   // append to the pop-up window
-  progressWindow.document.body.appendChild(waitProcessingGazeData)
+  if (waitProcessingGazeData) progressWindow.document.body.appendChild(waitProcessingGazeData)
 
   // remove wait-icon
-  progressWindow.document.getElementById('wait-icon').remove()
+  progressWindow.document.getElementById('wait-icon')?.remove()
 
   // add style
-  progressWindow.document.head.innerHTML = '<style>' + styleParameters + '</style>'
+  progressWindow.document.head.innerHTML = '<style>' + (styleParameters ?? '') + '</style>'
 
   return progressWindow
 }
@@ -681,14 +362,14 @@ function initiateProgressWindow(styleParameters) {
  * Additional notes: none
  *
  */
-function completeProcessingListener() {
+function completeProcessingListener(): void {
   console.log('completeProcessingListener', arguments)
 
-  window.eyeTracker.onCompleteProcessingListener(async function (args) {
+  window.eyeTracker.onCompleteProcessingListener(async function (args: unknown[]) {
     console.log('onCompleteProcessingListener', arguments)
-    const externalProgressWindow = args[0]
-    const msg = args[1]
-    const success = args[2]
+    const externalProgressWindow = args[0] as string
+    const msg = args[1] as string
+    const success = args[2] as boolean
     await completeProcessing(externalProgressWindow, msg, success)
   })
 }
@@ -706,15 +387,16 @@ function completeProcessingListener() {
  * Additional notes: none
  *
  */
-async function completeProcessing(externalProgressWindow, msg, success) {
+async function completeProcessing(externalProgressWindow: string, msg: string, success: boolean): Promise<void> {
   console.log('completeProcessing', arguments)
 
   // close progress report
-  window.externalProgressWindows[externalProgressWindow].close()
+  window.externalProgressWindows[externalProgressWindow]?.close()
 
   // move to finished-processing-gaze-data
-  document.getElementById('all-content').style.display = 'none'
-  await hideGeneralWaitingScreen('finished-processing-gaze-data', 'wait')
+  const allContent = document.getElementById('all-content') as HTMLElement | null
+  if (allContent) allContent.style.display = 'none'
+  await hideGeneralWaitingScreen()
 
   // remove full screen mode
   if (window.hasOwnProperty('electron')) {
@@ -726,6 +408,23 @@ async function completeProcessing(externalProgressWindow, msg, success) {
   } else {
     errorAlert(msg)
   }
+}
+
+/**
+ * Title: prepare the loaded content view for data collection
+ *
+ * Description: prepare the loaded content view for data collection
+ *
+ * @param {booleam} _filePropertiesDefined allows to set unclosable tabs if not already defined (that is the case when you load a session)
+ *
+ * Returns {void}
+ *
+ *
+ * Additional notes: Now a no-op stub - content view preparation is handled in React
+ *
+ */
+function prepareDataCollectionContent(_filePropertiesDefined: boolean): void {
+  // No-op: content preparation now handled in React routes
 }
 
 export {

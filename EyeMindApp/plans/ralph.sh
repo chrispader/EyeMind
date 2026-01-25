@@ -14,7 +14,7 @@ for ((i=1; i<=$1; i++)); do
   echo "Iteration $i"
   echo "--------------------------------"
 
-  result=$(claude --permission-mode acceptEdits -p \
+  result=$(claude --permission-mode acceptEdits --allow-dangerously-skip-permissions -p \
 "@plans/prd.json @progress.txt \
 1. Decide which task to work on next. \
 This should be the one YOU decide has the highest priority, \

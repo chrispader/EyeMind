@@ -26,56 +26,6 @@ import { CONST } from '@/CONST'
 /* progress */
 
 /**
- * Title: update processing message listener
- *
- * Description: a listener for receving processing messages from the server side
- *
- * @param {void} .
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-function updateProcessMessageListener() {
-  window.progress.onUpdateProcessingMessage(async function (args) {
-    const msg = args[0] as string
-    const externalProgressWindow = args[1] as HTMLElement
-    await updateProcessingMessage(msg, externalProgressWindow)
-  })
-}
-
-/**
- * Title: update processing message
- *
- * Description: update the content of documentContainer.getElementById("wait-progress")
- *
- * @param {string} msg message to show
- * @param {object} the container of the "wait-progress" DOM object
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
- */
-async function updateProcessingMessage(msg: string, container: HTMLElement) {
-  let documentContainer
-
-  if (typeof container == 'string' && container != '') {
-    documentContainer = window.externalProgressWindows[container].document
-  } else {
-    documentContainer = document
-  }
-
-  const waitProgress = documentContainer.getElementById('wait-progress')
-  if (waitProgress) waitProgress.innerHTML = msg
-
-  await delay(CONST.DELAY_FOR_RENDRING)
-}
-
-/**
  * Title: delay
  *
  * Description: sleep for some milliseconds
@@ -102,8 +52,6 @@ function delay(delayInMs: number) {
  * Description: show general waiting screen
  *
  * @param {string} text to display in document.getElementById("wait-title")
- * @param {string} show id of the DOM element to show
- * @param {string} hide id of the DOM element to hide
  *
  * Returns {void}
  *
@@ -123,9 +71,6 @@ async function showGeneralWaitingScreen(text: string) {
  *
  * Description: hide general waiting screen
  *
- * @param {string} show id of the DOM element to show
- * @param {string} hide id of the DOM element to hide
- *
  * Returns {void}
  *
  *
@@ -139,8 +84,6 @@ async function hideGeneralWaitingScreen() {
 }
 
 export {
-  updateProcessingMessage,
-  updateProcessMessageListener,
   showGeneralWaitingScreen,
   hideGeneralWaitingScreen,
 }

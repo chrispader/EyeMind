@@ -457,3 +457,44 @@ Fixed ALL remaining type errors in web compilation (167 → 0 errors):
 
 ### Notes
 - PRD task 4 "passes" should now be set to true
+
+## 2026-01-25 - Remove More Unused UI Modules (Continued)
+
+### Completed
+Deleted additional unused imperative UI modules and cleaned up dead code:
+
+**Deleted Files:**
+- `modules/ui/questions.ts` (480 lines) - Entire module unused after tracing imports
+- `modules/ui/mapping.ts` (157 lines) - Only imported by dead code in data-collection.ts
+
+**Cleaned Up Dead Code in data-collection.ts:**
+- Removed dead exports: `stopETInteraction`, `importQuestionsInteraction`
+- Removed dead functions: `endTracking`, `processGazeData`, `initiateProgressWindow`, `completeProcessingListener`, `completeProcessing`
+- Removed unused imports: `hideChildElements`, `moveFromTo`, `updateTextAndDisplayDomElement`, `errorAlert`, `infoAlert`, `mapGazestoElementsFromPageSnapshotListener`, `showGeneralWaitingScreen`, `hideGeneralWaitingScreen`, `updateProcessMessageListener`
+- data-collection.ts reduced: 436 → 182 lines (~58% smaller)
+
+**Slimmed Down progress.ts:**
+- Removed unused exports: `updateProcessingMessage`, `updateProcessMessageListener`
+- progress.ts reduced: 133 → 89 lines (~33% smaller)
+
+### Impact
+- modules/ui reduced: 9 → 7 files
+- Total code removed: ~725 lines
+- Remaining modules/ui files (7): canvas.ts, click-stream.ts, data-collection.ts, process-hierarchy-explorer.ts, progress.ts, tabs.ts, window-events.ts
+
+### Remaining modules/ui Dependency Graph
+External (React code):
+- `__root.tsx` → window-events.ts
+- `experiment/index.tsx` → tabs.ts
+- `loadFile.ts` → click-stream.ts, data-collection.ts, progress.ts, tabs.ts
+
+Internal:
+- window-events.ts → canvas.ts, data-collection.ts, tabs.ts
+- canvas.ts → data-collection.ts, process-hierarchy-explorer.ts, tabs.ts
+- tabs.ts → canvas.ts, click-stream.ts, data-collection.ts, process-hierarchy-explorer.ts
+- process-hierarchy-explorer.ts → click-stream.ts, tabs.ts
+
+### Notes
+- PRD task 5 (remove UI code) continues to progress
+- Remaining 7 modules are still tightly coupled and actively used
+- Full removal would require significant React refactoring of tab/canvas/data-collection logic

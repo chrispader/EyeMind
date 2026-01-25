@@ -84,10 +84,10 @@ export function summerizedFixationLog(data, mode, areGazesCorrected) {
 
   // filter out gaze which do not belong to fixations
   fixationDataFrame = fixationDataFrame.filter(
-    (row) =>
+    ((row: { get: (key: string) => unknown }) =>
       row.get('FixID') != null &&
       row.get(elementAttrName) != null &&
-      row.get('tabName') != null,
+      row.get('tabName') != null) as unknown as () => DataFrame,
   )
 
   fixationDataFrame = fixationDataFrame
@@ -123,21 +123,25 @@ export function summerizedFixationLog(data, mode, areGazesCorrected) {
 
   // discard the groups with null
   fixationDataFrame = fixationDataFrame.filter(
-    (row) => row.get('Element in Tab for question') != null,
+    ((row: { get: (key: string) => unknown }) =>
+      row.get('Element in Tab for question') != null) as unknown as () => DataFrame,
   )
 
   // separate element, tab and question
   fixationDataFrame = fixationDataFrame.withColumn(
     'element',
-    (row) => row.get('Element in Tab for question')[0],
+    ((row: { get: (key: string) => unknown[] }) =>
+      row.get('Element in Tab for question')[0]) as unknown as () => unknown,
   )
   fixationDataFrame = fixationDataFrame.withColumn(
     'tabName',
-    (row) => row.get('Element in Tab for question')[1],
+    ((row: { get: (key: string) => unknown[] }) =>
+      row.get('Element in Tab for question')[1]) as unknown as () => unknown,
   )
   fixationDataFrame = fixationDataFrame.withColumn(
     'questionID',
-    (row) => row.get('Element in Tab for question')[2],
+    ((row: { get: (key: string) => unknown[] }) =>
+      row.get('Element in Tab for question')[2]) as unknown as () => unknown,
   )
 
   // drop Element in Tab Element in Tab for question
@@ -323,7 +327,7 @@ export function generateHeatMap(
   for (const filePath of filePaths) {
     const state = getStates()[filePath]
     const participantID = state.processedGazeData.participantID
-    const fixationData = new DataFrame(state.processedGazeData.fixationData)
+    const fixationData = new DataFrame(state.processedGazeData.fixationData!)
     const gazeData = state.processedGazeData.gazeData
     const areGazesCorrected = state.processedGazeData.areGazesCorrected
 
@@ -394,20 +398,20 @@ export function generateHeatMap(
 
   // in fixationDatam filter out rows with empty element or tabName, filter in rows with required questionID
   const fixationDataFiltered = fixationDataFrame!.filter(
-    (row) =>
+    ((row: { get: (key: string) => unknown }) =>
       row.get('element') != '' &&
       row.get('tabName') != null &&
-      row.get('questionID') == questionID,
+      row.get('questionID') == questionID) as unknown as () => DataFrame,
   )
   // group fixationDataFiltered by element and tabName
   const groupedDfFixationData = fixationDataFiltered.groupBy('element', 'tabName')
 
   // in elementVisitsDfFromGazes, filter out rows with empty element or tabName, filter in rows with required questionID
   const elementVisitsDfFromGazesFiltered = elementVisitsDfFromGazes!.filter(
-    (row) =>
+    ((row: { get: (key: string) => unknown }) =>
       row.get('element') != '' &&
       row.get('tabName') != null &&
-      row.get('questionID') == questionID,
+      row.get('questionID') == questionID) as unknown as () => DataFrame,
   )
   // group elementVisitsDfFromGazesFiltered by element and tabName from gazes
   const groupedDfElementVisitsFromGazes = elementVisitsDfFromGazesFiltered.groupBy(
@@ -417,10 +421,10 @@ export function generateHeatMap(
 
   // in elementVisitsDfFromFixations, filter out rows with empty element or tabName, filter in rows with required questionID
   const elementVisitsDfFromFixationsFiltered = elementVisitsDfFromFixations!.filter(
-    (row) =>
+    ((row: { get: (key: string) => unknown }) =>
       row.get('element') != '' &&
       row.get('tabName') != null &&
-      row.get('questionID') == questionID,
+      row.get('questionID') == questionID) as unknown as () => DataFrame,
   )
   // group elementVisitsDfFromFixationsFiltered by element and tabName
   const groupedDfElementVisitsFromFixations =
@@ -474,7 +478,7 @@ export function customizedHeatMap(
             return grpObj.count()
           default: {
             console.error('aggrgation function "', aggregation, '" is not supported')
-            return false
+            return NaN
           }
         }
       })
@@ -496,7 +500,7 @@ export function customizedHeatMap(
             return grpObj.count()
           default: {
             console.error('aggrgation function "', aggregation, '" is not supported')
-            return false
+            return NaN
           }
         }
       })
@@ -519,7 +523,7 @@ export function customizedHeatMap(
             return grpObj.count()
           default: {
             console.error('aggrgation function "', aggregation, '" is not supported')
-            return false
+            return NaN
           }
         }
       })

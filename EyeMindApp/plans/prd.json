@@ -145,7 +145,7 @@
       "Migrate all global state into new or existing Zustand stores",
       "Make sure that the global state is properly migrated into the new or existing Zustand stores"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "project-structure",

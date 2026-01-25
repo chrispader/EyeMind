@@ -833,3 +833,37 @@ Fixed missing styles on the Analysis route:
 
 ### PRD Status
 - Task 18 (code-style: fix Analysis route styles): **COMPLETE** ✓
+
+## 2026-01-25 - Global State Verification (PRD Task 16)
+
+### Analysis
+Verified that all renderer global state is properly managed through Zustand stores:
+
+**Zustand Stores (properly implemented):**
+- `SessionStore` - Domain data: models, questions, images, settings (session.ts)
+- `GlobalStore` - Server state sync: processedGazeData, etc. (global.ts)
+
+**Other "global" patterns found (NOT application state):**
+1. `window.clientTests` - E2E test hooks (intentional, not app state)
+2. `window.onclick` / `window.onkeydown` - DOM event handlers (not state)
+3. `server/node/dataModels/state.ts` - Backend/main process state (different layer)
+4. `_resetModel` in tab-management.ts - Function reference for circular dep (not state)
+
+**Conclusion:**
+All renderer application state that should be in Zustand IS in Zustand. The patterns found are either:
+- DOM event handlers (not state)
+- Test utilities (intentional)
+- Backend state (main process, not renderer)
+- Architectural workarounds (function injection)
+
+### Files Changed
+- plans/prd.json (marked task as passes: true)
+
+### PRD Status
+- Task 16 (state-management: global state → Zustand): **COMPLETE** ✓
+
+### Remaining Incomplete Tasks
+1. Task 10 (code-style): Tailwind CSS migration - priority: low
+2. Task 14 (testing): Add unit tests - requires test framework setup
+3. Task 15 (testing): Add E2E tests - Playwright exists, needs expansion
+4. Task 17 (project-structure): Extract strings to LANG/CONST

@@ -67,7 +67,7 @@
       "Refactor all usages of Zustand `.getState()` and `.setState()` to use the new reactive hooks.",
       "Remove any usages of Zustand `.getState()` and `.setState()` across the codebase."
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "feature",
@@ -98,7 +98,7 @@
       "Add proper type definitions to the IPC layer (preload + contextBridge)",
       "Figure out a way to reduce boilerplate code for loading the functions into the contextBridge"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "code-quality",

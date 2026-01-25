@@ -1,142 +1,101 @@
+/**
+ * Type definitions for the preload context bridge.
+ *
+ * This file declares the global Window interface extensions
+ * that are exposed via contextBridge.exposeInMainWorld.
+ *
+ * Types are imported from @/types/IpcApi.ts (single source of truth).
+ */
+
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { GlobalState } from '@/types/GlobalState'
+import type {
+  Analysis,
+  EyeTracker,
+  IpcEventCallback,
+  Rserver,
+  State,
+  Utils,
+} from '@/types/IpcApi'
+
+// ============================================================================
+// Custom Electron API Extensions
+// ============================================================================
 
 type CustomElectronAPI = ElectronAPI & {
   putFullScreen: () => void
   message: (type: string, text: string) => void
   removeFullScreen: () => void
-  onBrowserMovement: (func: (args: unknown[]) => void) => void
-  onBrowserResize: (func: (args: unknown[]) => void) => void
+  onBrowserMovement: (func: IpcEventCallback<'browserMovement'>) => void
+  onBrowserResize: (func: IpcEventCallback<'browserResize'>) => void
 }
 
-type Analysis = {
-  summerizedFixationLog: (
-    data: unknown,
-    mode: unknown,
-    areGazesCorrected: unknown,
-  ) => Promise<unknown>
-  generateHeatMap: (
-    filePaths: unknown,
-    elementRegistryTypes: unknown,
-    measure: unknown,
-    measureType: unknown,
-    aggregation: unknown,
-    additionalElementsToIclude: unknown,
-    questionID: unknown,
-  ) => Promise<unknown>
-  shouldEnableHeatmap: () => Promise<unknown>
-  getRandomGazeSet: (samplingRatio: unknown, stateFile: unknown) => Promise<unknown>
-  applyCorrectionOffset: (
-    externalMappingWindow: unknown,
-    stateFile: unknown,
-    snapshotId: unknown,
-    xOffset: unknown,
-    yOffset: unknown,
-  ) => Promise<unknown>
-  onApplyCorrectionOnGazeFragment: (func: (args: unknown[]) => void) => void
-  gazeDataFragmentMapped: (
-    stateFile: unknown,
-    gazeDataFragment: unknown,
-    start: unknown,
-    gazeDataSize: unknown,
-    externalMappingWindow: unknown,
-    snapshotId: unknown,
-    xOffset: unknown,
-    yOffset: unknown,
-  ) => Promise<unknown>
-  onCompleteCorrectionListener: (func: (args: unknown[]) => void) => void
-  getStatesInfo: () => Promise<unknown>
+// ============================================================================
+// Renderer-side API types (with event listeners added)
+// ============================================================================
+
+/** Analysis API with event listeners */
+type RendererAnalysis = Analysis & {
+  onApplyCorrectionOnGazeFragment: (
+    func: IpcEventCallback<'applyCorrectionOnGazeFragment'>,
+  ) => void
+  onCompleteCorrectionListener: (func: IpcEventCallback<'completeCorrectionListener'>) => void
 }
 
+/** EyeTracker API with event listeners */
+type RendererEyeTracker = EyeTracker & {
+  onMapGazestoElementsFromPageSnapshot: (
+    callback: IpcEventCallback<'mapGazestoElementsFromPageSnapshot'>,
+  ) => void
+  onCompleteProcessingListener: (
+    callback: IpcEventCallback<'completeProcessingListener'>,
+  ) => void
+}
+
+/** Rserver API with event listeners */
+type RendererRserver = Rserver & {
+  onCompleteFixationFilterListener: (
+    callback: IpcEventCallback<'completeFixationFilterListener'>,
+  ) => void
+}
+
+/** Utils API with event listeners */
+type RendererUtils = Utils & {
+  onStateRead: (callback: IpcEventCallback<'stateRead'>) => void
+  onSessionRead: (callback: IpcEventCallback<'sessionRead'>) => void
+}
+
+/** Progress event API */
+type Progress = {
+  onUpdateProcessingMessage: (callback: IpcEventCallback<'updateProcessingMessage'>) => void
+}
+
+/** Server test utilities */
 type ServerTests = {
   getServerState: () => Promise<unknown>
 }
 
-type EyeTracker = {
-  setupTracking: (xScreenDim: number, yScreenDim: number) => Promise<unknown>
-  sendSnapshotID: (snapshot: unknown) => Promise<unknown>
-  sendFullSnapshot: (snapshot: unknown) => Promise<unknown>
-  sendQuestionEvent: (
-    questionTimestamp: number,
-    questionEventType: string,
-    questionPosition: string,
-    questionText: string,
-    questionAnswer: string,
-    questionID: string,
-  ) => Promise<unknown>
-  processGazeData: (state: unknown, externalProgressWindow: unknown) => Promise<unknown>
-  onMapGazestoElementsFromPageSnapshot: (callback: (args: unknown[]) => void) => void
-  dataMapped: (
-    dataMapped: unknown,
-    start: number,
-    gazeDataSize: number,
-    externalProgressWindow: unknown,
-  ) => Promise<unknown>
-  onCompleteProcessingListener: (callback: (args: unknown[]) => void) => void
-  sendClickEvent: (clickTimestamp: number, clickedElement: string) => Promise<unknown>
-}
-
-type Rserver = {
-  startRserver: () => void
-  fixationFilter: (fixationFilterSettings: unknown) => Promise<unknown>
-  onCompleteFixationFilterListener: (callback: (args: unknown[]) => void) => void
-}
-
-type State = {
-  getState: () => Promise<GlobalState>
-  clearState: () => Promise<unknown>
-  getStyleParametersOfState: (filePath: string) => Promise<unknown>
-  setAreGazesCorrectedOfState: (filePath: string, val: boolean) => Promise<unknown>
-  getQuestions: () => Promise<unknown>
-  getStates: () => Promise<unknown>
-  clearStates: () => Promise<unknown>
-  removeState: (filePath: string) => Promise<unknown>
-  doesStateExist: (filePath: string) => Promise<boolean>
-  getSnapshotsOfState: (filePath: string) => Promise<unknown>
-  areAreGazesCorrectedOfState: (filePath: string) => Promise<boolean>
-}
-
-type Progress = {
-  onUpdateProcessingMessage: (callback: (args: unknown[]) => void) => void
-}
-
-type Utils = {
-  stateDownload: (
-    fileName: string,
-    includeTimeStampInFileName: boolean,
-    customDownload: unknown,
-  ) => Promise<unknown>
-  readState: (
-    file: unknown,
-    fileName: string,
-    filePath: string | null,
-    state: unknown,
-    config: unknown,
-  ) => Promise<unknown>
-  onStateRead: (callback: (args: unknown[]) => void) => void
-  saveSession: (state: unknown) => Promise<unknown>
-  recoverSession: (
-    gazeDataFilename: string,
-    snapshotsContentDataFilename: string,
-  ) => Promise<unknown>
-  onSessionRead: (callback: (args: unknown[]) => void) => void
-}
+// ============================================================================
+// Global Window Declaration
+// ============================================================================
 
 declare global {
   interface Window {
     electron: CustomElectronAPI
     api: unknown
 
-    eyeTracker: EyeTracker
-    Rserver: Rserver
+    // IPC namespaces
+    eyeTracker: RendererEyeTracker
+    Rserver: RendererRserver
     state: State
     progress: Progress
-    utils: Utils
-    analysis: Analysis
+    utils: RendererUtils
+    analysis: RendererAnalysis
     serverTests: ServerTests
-    globalParameters: unknown
+    globalParameters: typeof import('@/CONST').CONST
+
     /** Dynamically created external progress windows for long-running operations */
     externalProgressWindows: Record<string, Window>
+
     /** Client-side test utilities exposed for testing */
     clientTests: {
       getClientState: () => unknown
@@ -147,3 +106,5 @@ declare global {
     }
   }
 }
+
+export {}

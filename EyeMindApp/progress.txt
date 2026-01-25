@@ -645,3 +645,52 @@ Moved ALL remaining modules/ui code to actions/ and deleted the directory:
 - Task 5 (Remove UI code): **COMPLETE** ✓
 - Task 6 (Integrate into actions): **COMPLETE** ✓
 - All PRD tasks now pass: true
+
+## 2026-01-25 - IPC Type Safety Improvements (PRD Task: type-safety)
+
+### Completed
+Improved type safety of the IPC layer (preload + contextBridge):
+
+**Enhanced IpcApi.ts (Single Source of Truth):**
+- Replaced `unknown` types with proper concrete types throughout
+- Added `IpcResult<T>` discriminated union for operation results
+- Added typed result types: `StyleParameters`, `Snapshot`, `StateInfo`, `HeatmapResult`, `FixationLogSummary`, `RandomGazeSet`, `QuestionsData`
+- Added `IpcEventPayloads` type for all main→renderer event payloads
+- Added `IpcEventCallback<T>` type for type-safe event listeners
+- Added `IpcReturnType` utility type for extracting return types
+- Added `IpcInvokeChannel` and `IpcEventChannel` union types
+
+**Updated preload/index.d.ts:**
+- Now imports types from IpcApi.ts instead of duplicating them
+- Uses `IpcEventCallback<T>` for all event listener callbacks
+- Added `RendererAnalysis`, `RendererEyeTracker`, `RendererRserver`, `RendererUtils` types that extend base APIs with event listeners
+- Properly typed `globalParameters` as `typeof CONST`
+
+**Created ipc-helpers.ts (Boilerplate Reduction):**
+- Added `createNamespaceRegistrar<NS>()` factory for type-safe handler registration
+- Provides `.spread()`, `.noArgs()`, `.array()`, `.custom()` methods
+- Channel names are validated against namespace API types
+- Eliminates need for per-file type aliases
+
+**Refactored state.ts listener:**
+- Demonstrated usage of new helper pattern
+- Reduced from 84 lines to 36 lines (~57% reduction)
+- Removed boilerplate type alias definition
+
+### Files Changed
+- src/types/IpcApi.ts (enhanced with proper types)
+- src/preload/index.d.ts (imports from IpcApi.ts)
+- src/main/listeners/ipc-helpers.ts (new)
+- src/main/listeners/types.ts (re-exports helpers)
+- src/main/listeners/state.ts (refactored to use helpers)
+
+### Impact
+- Type safety significantly improved across IPC boundary
+- Single source of truth for IPC types (IpcApi.ts)
+- Reduced boilerplate for future listener files
+- Event callbacks now properly typed instead of `unknown[]`
+- Return types properly specified instead of `Promise<unknown>`
+
+### PRD Status Update
+- Task 8 (state-management getState/setState): Already complete (verified no usages remain)
+- Task: type-safety: **COMPLETE** ✓

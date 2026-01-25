@@ -1,51 +1,112 @@
 /**
  * Shared IPC API type definitions used by both main process and renderer.
  * These types define the function signatures for IPC communication.
+ *
+ * This is the SINGLE SOURCE OF TRUTH for all IPC types.
+ * Both preload/index.ts and preload/index.d.ts should derive types from here.
  */
 
-import { GlobalState } from './GlobalState'
+import { GlobalState, ProcessedGazeData } from './GlobalState'
+
+// ============================================================================
+// Common Result Types
+// ============================================================================
+
+/** Standard IPC result type for operations that may fail */
+export type IpcResult<T = void> =
+  | { success: true; data: T }
+  | { success: false; error: string }
+
+/** Style parameters returned from state queries */
+export type StyleParameters = {
+  color?: string
+  fontSize?: number
+  [key: string]: unknown
+}
+
+/** Snapshot data structure for eye-tracking */
+export type Snapshot = {
+  id: number
+  tabName?: string
+  timestamp: number
+  code: string
+  screenX: number
+  screenY: number
+  boundingClientRect: string | null
+}
+
+/** State info for dropdown/selection */
+export type StateInfo = Record<string, string>
+
+/** Heatmap generation result */
+export type HeatmapResult = {
+  svg?: string
+  error?: string
+}
+
+/** Fixation log summary result */
+export type FixationLogSummary = {
+  data: unknown[]
+  summary: Record<string, unknown>
+}
+
+/** Random gaze set result */
+export type RandomGazeSet = {
+  gazes: Array<{ x: number; y: number; timestamp: number }>
+}
+
+/** Questions data structure */
+export type QuestionsData = Array<{
+  id: string
+  text: string
+  [key: string]: unknown
+}>
+
+// ============================================================================
+// Namespace API Types
+// ============================================================================
 
 export type Analysis = {
   summerizedFixationLog: (
-    data: unknown,
-    mode: unknown,
-    areGazesCorrected: unknown,
-  ) => Promise<unknown>
+    data: ProcessedGazeData,
+    mode: string,
+    areGazesCorrected: boolean,
+  ) => Promise<FixationLogSummary>
   generateHeatMap: (
-    filePaths: unknown,
-    elementRegistryTypes: unknown,
-    measure: unknown,
-    measureType: unknown,
-    aggregation: unknown,
-    additionalElementsToIclude: unknown,
-    questionID: unknown,
-  ) => Promise<unknown>
-  shouldEnableHeatmap: () => Promise<unknown>
-  getRandomGazeSet: (samplingRatio: unknown, stateFile: unknown) => Promise<unknown>
+    filePaths: string[],
+    elementRegistryTypes: string[],
+    measure: string,
+    measureType: string,
+    aggregation: string,
+    additionalElementsToInclude: string[],
+    questionID: string | null,
+  ) => Promise<HeatmapResult>
+  shouldEnableHeatmap: () => Promise<boolean>
+  getRandomGazeSet: (samplingRatio: number, stateFile: string) => Promise<RandomGazeSet>
   applyCorrectionOffset: (
-    externalMappingWindow: unknown,
-    stateFile: unknown,
-    snapshotId: unknown,
-    xOffset: unknown,
-    yOffset: unknown,
-  ) => Promise<unknown>
+    externalMappingWindow: string,
+    stateFile: string,
+    snapshotId: string,
+    xOffset: number,
+    yOffset: number,
+  ) => Promise<IpcResult>
   gazeDataFragmentMapped: (
-    stateFile: unknown,
-    gazeDataFragment: unknown,
-    start: unknown,
-    gazeDataSize: unknown,
-    externalMappingWindow: unknown,
-    snapshotId: unknown,
-    xOffset: unknown,
-    yOffset: unknown,
-  ) => Promise<unknown>
-  getStatesInfo: () => Promise<unknown>
+    stateFile: string,
+    gazeDataFragment: unknown[],
+    start: number,
+    gazeDataSize: number,
+    externalMappingWindow: string,
+    snapshotId: string,
+    xOffset: number,
+    yOffset: number,
+  ) => Promise<IpcResult>
+  getStatesInfo: () => Promise<StateInfo>
 }
 
 export type EyeTracker = {
-  setupTracking: (xScreenDim: number, yScreenDim: number) => Promise<unknown>
-  sendSnapshotID: (snapshot: unknown) => Promise<unknown>
-  sendFullSnapshot: (snapshot: unknown) => Promise<unknown>
+  setupTracking: (xScreenDim: number, yScreenDim: number) => Promise<IpcResult>
+  sendSnapshotID: (snapshot: Snapshot) => Promise<IpcResult>
+  sendFullSnapshot: (snapshot: Snapshot) => Promise<IpcResult>
   sendQuestionEvent: (
     questionTimestamp: number,
     questionEventType: string,
@@ -53,33 +114,40 @@ export type EyeTracker = {
     questionText: string,
     questionAnswer: string,
     questionID: string,
-  ) => Promise<unknown>
-  processGazeData: (state: unknown, externalProgressWindow: unknown) => Promise<unknown>
+  ) => Promise<IpcResult>
+  processGazeData: (
+    state: ProcessedGazeData,
+    externalProgressWindow: string,
+  ) => Promise<IpcResult>
   dataMapped: (
-    dataMapped: unknown,
+    dataMapped: unknown[],
     start: number,
     gazeDataSize: number,
-    externalProgressWindow: unknown,
-  ) => Promise<unknown>
-  sendClickEvent: (clickTimestamp: number, clickedElement: string) => Promise<unknown>
+    externalProgressWindow: string,
+  ) => Promise<IpcResult>
+  sendClickEvent: (clickTimestamp: number, clickedElement: string) => Promise<IpcResult>
 }
 
 export type Rserver = {
   startRserver: () => void
-  fixationFilter: (fixationFilterSettings: unknown) => Promise<unknown>
+  fixationFilter: (fixationFilterSettings: {
+    dispersionThreshold?: number
+    durationThreshold?: number
+    [key: string]: unknown
+  }) => Promise<IpcResult>
 }
 
 export type State = {
   getState: () => Promise<GlobalState>
-  clearState: () => Promise<unknown>
-  getStyleParametersOfState: (filePath: string) => Promise<unknown>
-  setAreGazesCorrectedOfState: (filePath: string, val: boolean) => Promise<unknown>
-  getQuestions: () => Promise<unknown>
-  getStates: () => Promise<unknown>
-  clearStates: () => Promise<unknown>
-  removeState: (filePath: string) => Promise<unknown>
+  clearState: () => Promise<IpcResult>
+  getStyleParametersOfState: (filePath: string) => Promise<StyleParameters | null>
+  setAreGazesCorrectedOfState: (filePath: string, val: boolean) => Promise<IpcResult>
+  getQuestions: () => Promise<QuestionsData>
+  getStates: () => Promise<Record<string, GlobalState>>
+  clearStates: () => Promise<IpcResult>
+  removeState: (filePath: string) => Promise<IpcResult>
   doesStateExist: (filePath: string) => Promise<boolean>
-  getSnapshotsOfState: (filePath: string) => Promise<unknown>
+  getSnapshotsOfState: (filePath: string) => Promise<Snapshot[]>
   areAreGazesCorrectedOfState: (filePath: string) => Promise<boolean>
 }
 
@@ -88,19 +156,19 @@ export type Utils = {
     fileName: string,
     includeTimeStampInFileName: boolean,
     type: string,
-  ) => Promise<unknown>
+  ) => Promise<IpcResult<string>>
   readState: (
-    file: unknown,
+    file: File | null,
     fileName: string,
     filePath: string | null,
-    state: unknown,
-    config: unknown,
-  ) => Promise<unknown>
-  saveSession: (state: unknown) => Promise<unknown>
+    state: GlobalState,
+    config: { expectedArtifact?: string; expectedExtensions?: string[] },
+  ) => Promise<IpcResult>
+  saveSession: (state: GlobalState) => Promise<IpcResult>
   recoverSession: (
     gazeDataFilename: string,
     snapshotsContentDataFilename: string,
-  ) => Promise<unknown>
+  ) => Promise<IpcResult<GlobalState>>
 }
 
 export type Download = {
@@ -108,21 +176,48 @@ export type Download = {
     fileName: string,
     includeTimeStampInFileName: boolean,
     type: string,
-  ) => Promise<unknown>
+  ) => Promise<IpcResult<string>>
 }
 
 export type Session = {
-  saveSession: (state: unknown) => Promise<unknown>
+  saveSession: (state: GlobalState) => Promise<IpcResult>
   recoverSession: (
     gazeDataFilename: string,
     snapshotsContentDataFilename: string,
-  ) => Promise<unknown>
+  ) => Promise<IpcResult<GlobalState>>
 }
 
 export type Window = {
-  putFullScreen: () => Promise<void>
-  removeFullScreen: () => Promise<void>
+  putFullScreen: () => void
+  removeFullScreen: () => void
 }
+
+// ============================================================================
+// Event Callback Types (for ipcRenderer.on listeners)
+// ============================================================================
+
+/** Event payload types for main→renderer events */
+export type IpcEventPayloads = {
+  browserMovement: [x: number, y: number]
+  browserResize: [width: number, height: number]
+  applyCorrectionOnGazeFragment: [fragmentIndex: number, progress: number]
+  completeCorrectionListener: [success: boolean]
+  mapGazestoElementsFromPageSnapshot: [snapshotId: string, progress: number]
+  completeProcessingListener: [success: boolean]
+  completeFixationFilterListener: [success: boolean]
+  updateProcessingMessage: [message: string, progress: number]
+  stateRead: [state: GlobalState, error?: string]
+  sessionRead: [state: GlobalState, error?: string]
+}
+
+/** Type for event listener callback functions */
+export type IpcEventCallback<T extends keyof IpcEventPayloads> = (
+  args: IpcEventPayloads[T],
+) => void
+
+// ============================================================================
+// Namespace Map
+// ============================================================================
 
 /** Map of namespace names to their API types */
 export interface IpcApiMap {
@@ -136,6 +231,10 @@ export interface IpcApiMap {
   window: Window
 }
 
+// ============================================================================
+// Utility Types for Type-Safe IPC
+// ============================================================================
+
 /** Get the type of a specific IPC namespace */
 export type IpcNamespace<K extends keyof IpcApiMap> = IpcApiMap[K]
 
@@ -144,3 +243,17 @@ export type IpcListenerParameters<
   NS extends keyof IpcApiMap,
   FN extends keyof IpcApiMap[NS],
 > = IpcApiMap[NS][FN] extends (...args: infer P) => unknown ? P : never
+
+/** Get the return type for a function in an IPC namespace */
+export type IpcReturnType<
+  NS extends keyof IpcApiMap,
+  FN extends keyof IpcApiMap[NS],
+> = IpcApiMap[NS][FN] extends (...args: unknown[]) => infer R ? R : never
+
+/** Channel names for invoke handlers */
+export type IpcInvokeChannel = {
+  [NS in keyof IpcApiMap]: keyof IpcApiMap[NS]
+}[keyof IpcApiMap]
+
+/** Channel names for event listeners */
+export type IpcEventChannel = keyof IpcEventPayloads

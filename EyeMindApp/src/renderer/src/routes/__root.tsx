@@ -1,6 +1,4 @@
-import { FixationSettingsModal } from '@renderer/components/FixationSettingsModal'
 import { LoadingScreen } from '@renderer/components/LoadingScreen'
-import { ProcessingStates } from '@renderer/components/ProcessingStates'
 import '@renderer/css/app.css'
 import '@renderer/css/main.css'
 import '@renderer/css/new.css'

@@ -25,7 +25,7 @@ function EyeTrackingNewSessionPage(): React.ReactElement {
       subProcessLinkingMode: subProcessLinkingMode,
     })
 
-    navigate(loadModelsRoute.to)
+    navigate({ to: loadModelsRoute.to })
   }
 
   return (

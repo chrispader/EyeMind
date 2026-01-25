@@ -44,7 +44,7 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
       try {
         const questions = await extractQuestionsFromFile(file.file)
         setQuestions(questions)
-        navigate(experimentRoute.to)
+        navigate({ to: experimentRoute.to })
       } catch (error) {
         let msg = 'An error occured while validating the questions file'
         if (error instanceof Error) {

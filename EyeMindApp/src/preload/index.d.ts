@@ -1,6 +1,57 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 import { GlobalState } from '@/types/GlobalState'
 
+type CustomElectronAPI = ElectronAPI & {
+  putFullScreen: () => void
+  message: (type: string, text: string) => void
+  removeFullScreen: () => void
+  onBrowserMovement: (func: (args: unknown[]) => void) => void
+  onBrowserResize: (func: (args: unknown[]) => void) => void
+}
+
+type Analysis = {
+  summerizedFixationLog: (
+    data: unknown,
+    mode: unknown,
+    areGazesCorrected: unknown,
+  ) => Promise<unknown>
+  generateHeatMap: (
+    filePaths: unknown,
+    elementRegistryTypes: unknown,
+    measure: unknown,
+    measureType: unknown,
+    aggregation: unknown,
+    additionalElementsToIclude: unknown,
+    questionID: unknown,
+  ) => Promise<unknown>
+  shouldEnableHeatmap: () => Promise<unknown>
+  getRandomGazeSet: (samplingRatio: unknown, stateFile: unknown) => Promise<unknown>
+  applyCorrectionOffset: (
+    externalMappingWindow: unknown,
+    stateFile: unknown,
+    snapshotId: unknown,
+    xOffset: unknown,
+    yOffset: unknown,
+  ) => Promise<unknown>
+  onApplyCorrectionOnGazeFragment: (func: (args: unknown[]) => void) => void
+  gazeDataFragmentMapped: (
+    stateFile: unknown,
+    gazeDataFragment: unknown,
+    start: unknown,
+    gazeDataSize: unknown,
+    externalMappingWindow: unknown,
+    snapshotId: unknown,
+    xOffset: unknown,
+    yOffset: unknown,
+  ) => Promise<unknown>
+  onCompleteCorrectionListener: (func: (args: unknown[]) => void) => void
+  getStatesInfo: () => Promise<unknown>
+}
+
+type ServerTests = {
+  getServerState: () => Promise<unknown>
+}
+
 type EyeTracker = {
   setupTracking: (xScreenDim: number, yScreenDim: number) => Promise<unknown>
   sendSnapshotID: (snapshot: unknown) => Promise<unknown>
@@ -73,7 +124,7 @@ type Utils = {
 
 declare global {
   interface Window {
-    electron: ElectronAPI
+    electron: CustomElectronAPI
     api: unknown
 
     eyeTracker: EyeTracker
@@ -81,5 +132,8 @@ declare global {
     state: State
     progress: Progress
     utils: Utils
+    analysis: Analysis
+    serverTests: ServerTests
+    globalParameters: unknown
   }
 }

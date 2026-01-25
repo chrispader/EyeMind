@@ -1,48 +1,49 @@
 import FileImport from '@renderer/components/FileImport'
 import { loadFiles } from '@renderer/components/FileImport/loadFile'
-import { errorAlert } from '@renderer/modules/utils/utils'
-import { useGlobalStore } from '@renderer/state/global'
+import { FileImportConfig } from '@renderer/components/FileImport/types'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useState } from 'react'
 
 import { Route as experimentRoute } from '../../experiment'
+
+const fileImportConfig: FileImportConfig = {
+  mode: 'data-collection',
+  importMode: 'single',
+  expectedArtifact: 'session',
+  expectedExtensions: ['json'],
+}
 
 export const Route = createFileRoute('/config/eye-tracking/load-session')({
   component: EyeTrackingLoadSessionPage,
 })
 
 function EyeTrackingLoadSessionPage(): React.ReactElement {
-  const { setState } = useGlobalStore.getState()
   const navigate = useNavigate()
-
-  // TODO: Remove once state is split up
-  useEffect(() => {
-    setState({
-      importMode: 'single',
-      expectedArtifact: 'session',
-      expectedExtensions: ['json'],
-    })
-  }, [setState])
+  const [errors, setErrors] = useState<string[]>([])
+  const [sessionFile, setSessionFile] = useState<File | null>(null)
 
   return (
     <FileImport
-      mode='data-collection'
-      importMode='single'
-      expectedArtifact='session'
-      expectedExtensions={['json']}
+      items={sessionFile ? [sessionFile] : []}
+      errors={errors}
+      onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
       uploadLabel='Drop a session file'
-      onDrop={(files, config) => {
+      onDrop={(files) => {
         if (files.length > 1) {
-          const msg = 'only a single file can be imported' // check third argument
-          console.error(msg)
-          errorAlert(msg)
+          setErrors(['Only a single file can be imported'])
           return
         }
 
-        loadFiles(files, config)
+        const file = files[0]
+        if (file) {
+          setSessionFile(file)
+        }
       }}
       onSubmit={() => {
-        navigate(experimentRoute.to)
+        if (sessionFile) {
+          loadFiles([sessionFile], fileImportConfig)
+          navigate({ to: experimentRoute.to })
+        }
       }}
     />
   )

@@ -60,7 +60,7 @@ function EyeTrackingLoadModelsPage() {
       updateModel(model.id, { isDraft: false })
     }
 
-    navigate(loadQuestionsRoute.to)
+    navigate({ to: loadQuestionsRoute.to })
   }
 
   async function addDraftModels(files: File[]) {

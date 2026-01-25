@@ -957,3 +957,49 @@ Configured vitest unit tests infrastructure and verified existing test coverage:
 ### Remaining Incomplete Tasks
 1. Task 10 (code-style): Tailwind CSS migration - priority: low
 2. Task 15 (testing): Add E2E tests - Playwright exists, needs expansion
+
+## 2026-01-25 - E2E Tests Setup (PRD Task 15)
+
+### Completed
+Added Playwright configuration and navigation tests to complete E2E test infrastructure:
+
+**New Files Created:**
+- `playwright.config.ts` - Playwright configuration with proper settings for Electron testing
+- `test/tests/playwright/navigation.test.ts` - 5 new E2E tests for React route navigation
+
+**Navigation Tests Added:**
+1. `home-page-navigation-to-eye-tracking` - Verifies home page loads and navigates to eye-tracking config
+2. `home-page-navigation-to-analysis` - Verifies analysis page navigation and back button
+3. `new-session-flow-navigation` - Tests new session flow through load-images step
+4. `load-session-page-accessible` - Verifies load session page with file upload
+5. `experiment-page-recording-settings-accessible` - Verifies experiment page access
+
+**Existing Test Coverage (60+ tests in 10 files):**
+- `import.test.ts` (19 tests) - Model/question/session file import
+- `tabs.test.ts` (8 tests) - Tab management
+- `takesnapshot.test.ts` (8 tests) - Eye-tracking snapshot functionality
+- `clicks.test.ts` (7 tests) - Click event tracking
+- `loaded-content.test.ts` (6 tests) - Content loading verification
+- `questions.test.ts` (4 tests) - Question handling
+- `canvas.test.ts` (4 tests) - Canvas/model reset
+- `process-hierarchy-explorer.test.ts` (3 tests) - Process hierarchy UI
+- `file-explorer.test.ts` (1 test) - File explorer functionality
+- `mapping.test.ts` - Gaze mapping tests
+
+### Configuration
+- `playwright.config.ts` sets up:
+  - Test directory: `./test/tests/playwright`
+  - 60 second timeout per test
+  - Sequential execution (workers: 1) for Electron
+  - HTML and list reporters
+
+### Notes
+- Run E2E tests with `nr test` or `bunx playwright test`
+- Tests require built app (`nr build` first for production tests)
+- Electron tests run sequentially due to single-process nature
+
+### PRD Status
+- Task 15 (testing: E2E tests): **COMPLETE** ✓
+
+### Remaining Incomplete Task
+1. Task 10 (code-style): Tailwind CSS migration - priority: **low**

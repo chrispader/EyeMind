@@ -136,7 +136,7 @@
       "Make sure that the tests are covering all the app",
       "Make sure that the tests are running correctly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "state-management",

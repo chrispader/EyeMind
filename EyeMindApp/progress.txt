@@ -368,3 +368,41 @@ Majority in legacy imperative modules:
 - These are existing bugs in code that needs architectural refactoring, not just type fixes
 - DataFrame library types are weak (`any` everywhere), causing false positives
 - PRD task 4 (type errors) requires continued iteration
+
+## 2026-01-25 - Type Error Fixes (canvas, dom, tabs)
+
+### Completed
+Fixed type errors in 3 smaller imperative modules, reducing web errors from 215 → 167 (48 errors fixed, ~22% reduction):
+
+**canvas.ts (8 → 0 errors):**
+- Added type for `resetModel` param
+- Cast `tabHeader` to HTMLElement for closeTabInteraction
+- Added `ModelEntry` type for model iteration
+- Added null checks for DOM element access
+
+**dom.ts (19 → 0 errors):**
+- Added types to all function parameters
+- Added null guards for all getElementById calls
+- Cast select elements to HTMLSelectElement
+- Fixed statesInfo typing with proper Record<string, string>
+
+**tabs.ts (21 → 0 errors):**
+- Fixed fileName extraction with optional chaining
+- Added types to event handlers (DragEvent)
+- Added null checks for DOM element access
+- Added `ModelEntry` type for model iteration
+
+### Results
+- Web typecheck: 167 errors (down from 215)
+- 48 errors eliminated (~22% reduction)
+
+### Remaining Errors (167)
+All in 3 large legacy imperative files:
+- modules/ui/data-collection.ts (74)
+- modules/ui/questions.ts (53)
+- components/FileImport/loadFile.ts (40)
+
+### Notes
+- These 3 files are tightly coupled and form the core imperative data flow
+- Fixing requires either massive type additions or architectural refactoring
+- PRD tasks 5-6 target removal/integration of these modules into React

@@ -39,7 +39,7 @@ import { closeTabInteraction, openMainTab } from './tabs'
  * Additional notes: none
  *
  */
-function resetModel(fileId) {
+function resetModel(fileId: string) {
   console.log('resetModel', arguments)
 
   const container = document.querySelector('[id="model' + fileId + '-container"]')
@@ -55,8 +55,8 @@ function resetModel(fileId) {
       Object.keys(viewport).length == 1
     ) {
       viewport[0].removeAttribute('transform')
-      djs_overlay_container[0].style.removeProperty('transform')
-      djs_overlay_container[0].style.removeProperty('transform-origin')
+      ;(djs_overlay_container[0] as HTMLElement).style.removeProperty('transform')
+      ;(djs_overlay_container[0] as HTMLElement).style.removeProperty('transform-origin')
     } else {
       console.error(
         'Object.keys(djs_overlay_container).length==1 && Object.keys(viewport).length==1 not satified',
@@ -87,15 +87,16 @@ function resetNavTabsAndTabs(modelsGroupId?: string) {
       state.linkingSubProcessesMode == 'no'
     ) {
       // get all opened navTabs
-      const navTabs = document.getElementById('nav-tabs').querySelectorAll('.tab-link')
+      const navTabsEl = document.getElementById('nav-tabs')
+      const navTabs = navTabsEl?.querySelectorAll('.tab-link') ?? []
 
       for (let i = 0; i < navTabs.length; ++i) {
         const tabHeader = navTabs[i]
         const fileName = tabHeader?.getAttribute('file')
-        const fileId = fileName?.replace(new RegExp(CONST.MODELS_ID_REGEX, 'g'), '')
+        const fileId = fileName?.replace(new RegExp(CONST.MODELS_ID_REGEX, 'g'), '') ?? ''
 
         // close tab
-        closeTabInteraction(fileId, tabHeader, false)
+        closeTabInteraction(fileId, tabHeader as HTMLElement, false)
 
         /*
             // check the navTab refers to a main process or not
@@ -134,7 +135,8 @@ function resetNavTabsAndTabs(modelsGroupId?: string) {
     }
   } else {
     // hide nav-tabs-and-tabs
-    document.getElementById('nav-tabs-and-tabs').style.display = 'none'
+    const navTabsAndTabs = document.getElementById('nav-tabs-and-tabs')
+    if (navTabsAndTabs) navTabsAndTabs.style.display = 'none'
 
     // takesnapshot
     takesnapshot(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
@@ -155,26 +157,26 @@ function resetNavTabsAndTabs(modelsGroupId?: string) {
  * Additional notes: none
  *
  */
-function showModelsGroup(groupId) {
+function showModelsGroup(groupId: string | null) {
   console.log('showModelsGroup', arguments)
 
   const state = useGlobalStore.getState()
 
+  type ModelEntry = { id?: string; groupId?: string }
+
   if (groupId != null) {
-    for (const model of Object.values(state.models ?? {})) {
+    for (const model of Object.values(state.models ?? {}) as ModelEntry[]) {
       //console.log(model,model.id,document.getElementById("model"+model.id+"-explorerItem"))
 
-      if (model?.groupId == groupId) {
-        document.getElementById('model' + model.id + '-explorerItem').style.display =
-          'block'
-      } else {
-        document.getElementById('model' + model.id + '-explorerItem').style.display =
-          'none'
+      const el = document.getElementById('model' + model.id + '-explorerItem')
+      if (el) {
+        el.style.display = model?.groupId == groupId ? 'block' : 'none'
       }
     }
   } else {
-    for (const model of Object.values(state.models ?? {})) {
-      document.getElementById('model' + model.id + '-explorerItem').style.display = 'none'
+    for (const model of Object.values(state.models ?? {}) as ModelEntry[]) {
+      const el = document.getElementById('model' + model.id + '-explorerItem')
+      if (el) el.style.display = 'none'
     }
   }
 }

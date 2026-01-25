@@ -39,11 +39,16 @@ SOFTWARE.*/
  *
  */
 
-function moveFromTo(fromDomElementId, toDomElementId, toDomElementDisplayMode) {
+function moveFromTo(
+  fromDomElementId: string,
+  toDomElementId: string,
+  toDomElementDisplayMode: string,
+) {
   console.log('moveFromTo', arguments)
 
   hideElement(fromDomElementId)
-  document.getElementById(toDomElementId).style.display = toDomElementDisplayMode
+  const toEl = document.getElementById(toDomElementId)
+  if (toEl) toEl.style.display = toDomElementDisplayMode
 }
 
 /**
@@ -65,11 +70,18 @@ function moveFromTo(fromDomElementId, toDomElementId, toDomElementDisplayMode) {
  *
  */
 
-function updateTextAndDisplayDomElement(domElementId, text, domElementDisplayMode) {
+function updateTextAndDisplayDomElement(
+  domElementId: string,
+  text: string,
+  domElementDisplayMode: string,
+) {
   console.log('updateTextAndDisplayDomElement', arguments)
 
-  document.getElementById(domElementId).innerText = text
-  document.getElementById(domElementId).style.display = domElementDisplayMode
+  const el = document.getElementById(domElementId)
+  if (el) {
+    el.innerText = text
+    el.style.display = domElementDisplayMode
+  }
 }
 
 /**
@@ -89,11 +101,12 @@ function updateTextAndDisplayDomElement(domElementId, text, domElementDisplayMod
  * Additional notes: none
  *
  */
-function displayElement(domElementId, mode) {
+function displayElement(domElementId: string, mode: string) {
   console.log('displayElement', arguments)
 
   if (mode != 'none') {
-    document.getElementById(domElementId).style.display = mode
+    const el = document.getElementById(domElementId)
+    if (el) el.style.display = mode
   } else {
     console.error('Use hideElement() instead')
   }
@@ -116,12 +129,14 @@ function displayElement(domElementId, mode) {
  *
  */
 
-function hideChildElements(domElementId) {
+function hideChildElements(domElementId: string) {
   console.log('hideChildElements', arguments)
 
   const parentElement = document.getElementById(domElementId)
-  for (const child of parentElement.children) {
-    child.style.display = 'none'
+  if (parentElement) {
+    for (const child of Array.from(parentElement.children) as HTMLElement[]) {
+      child.style.display = 'none'
+    }
   }
 }
 
@@ -139,17 +154,18 @@ function hideChildElements(domElementId) {
  * Additional notes: none
  *
  */
-async function populateParticipantFileSelect(targetDomId) {
+async function populateParticipantFileSelect(targetDomId: string) {
   console.log('populateParticipantFileSelect', arguments)
 
-  const pariticipantFileSelect = document.getElementById(targetDomId)
+  const pariticipantFileSelect = document.getElementById(targetDomId) as HTMLSelectElement | null
+  if (!pariticipantFileSelect) return
 
   if (
     pariticipantFileSelect.options.length == 0 ||
     (pariticipantFileSelect.options.length == 1 &&
       pariticipantFileSelect.options[0].value == '')
   ) {
-    const statesInfo = await window.analysis.getStatesInfo()
+    const statesInfo = (await window.analysis.getStatesInfo()) as Record<string, string>
 
     for (const [key, participantID] of Object.entries(statesInfo)) {
       const opt = document.createElement('option')
@@ -175,11 +191,11 @@ async function populateParticipantFileSelect(targetDomId) {
  * Additional notes: none
  *
  */
-function getSelectValues(selectId, outType) {
-  const select = document.getElementById(selectId)
-  const result = []
-  const options = select != null && select.options
-  let opt
+function getSelectValues(selectId: string, outType: 'value' | 'text') {
+  const select = document.getElementById(selectId) as HTMLSelectElement | null
+  const result: string[] = []
+  if (!select) return null
+  const options = select.options
 
   if (outType != 'value' && outType != 'text') {
     console.error('unsuported outType', outType)
@@ -187,7 +203,7 @@ function getSelectValues(selectId, outType) {
   }
 
   for (let i = 0, iLen = options.length; i < iLen; i++) {
-    opt = options[i]
+    const opt = options[i]
 
     if (opt.selected) {
       result.push(opt[outType])
@@ -210,19 +226,23 @@ function getSelectValues(selectId, outType) {
  * Additional notes: none
  *
  */
-function updateShownUserConfig(userConfig) {
+function updateShownUserConfig(userConfig: Record<string, unknown>) {
   console.log('updateShownUserConfig', arguments)
 
-  document.getElementById('user-config-content').innerHTML = ''
+  const el = document.getElementById('user-config-content')
+  if (!el) return
+
+  el.innerHTML = ''
 
   for (const [key, value] of Object.entries(userConfig)) {
-    document.getElementById('user-config-content').innerHTML +=
+    el.innerHTML +=
       '<span class=key>' + key + '</span>: <span class=value>' + value + '</span><br>'
   }
 }
 
 function hideElement(domElementId: string) {
-  document.getElementById(domElementId).style.display = 'none'
+  const el = document.getElementById(domElementId)
+  if (el) el.style.display = 'none'
 }
 
 export {

@@ -52,9 +52,8 @@ function addToTabHeader(id: string) {
   const state = useGlobalStore.getState()
 
   // get file name
-  const fileName = document
-    .getElementById('model' + id + '-content')
-    .getAttribute('fileName')
+  const fileName =
+    document.getElementById('model' + id + '-content')?.getAttribute('fileName') ?? ''
 
   // if a tab header is not already in nav-tabs
   if (document.getElementById('model' + id) == null) {
@@ -77,8 +76,8 @@ function addToTabHeader(id: string) {
     tabHeader_fileName.setAttribute('class', 'fileName gaze-element')
     tabHeader_fileName.setAttribute('data-element-id', 'tab-link-to_' + fileName)
     tabHeader_fileName.setAttribute('file', fileName ?? '')
-    tabHeader_fileName.addEventListener('click', function (e) {
-      sendClickEvent(Date.now(), tabHeader_fileName.getAttribute('data-element-id')) // send click event
+    tabHeader_fileName.addEventListener('click', function (_e) {
+      sendClickEvent(Date.now(), tabHeader_fileName.getAttribute('data-element-id') ?? '') // send click event
       changeTab(id, false, true)
     })
     // since a tabHeader_fileName DOM is created every time addToTabHeader() is called and document.getElementById("model"+id)==null, registerClickEventForLogging is used to log clicks on this element
@@ -98,16 +97,18 @@ function addToTabHeader(id: string) {
     //registerClickEventForLogging(tabHeader_close);
 
     tabHeader_close.onclick = () => {
-      sendClickEvent(Date.now(), tabHeader_close.getAttribute('data-element-id')) // send click event
+      sendClickEvent(Date.now(), tabHeader_close.getAttribute('data-element-id') ?? '') // send click event
       closeTabInteraction(id, tabHeader, true) //close tab and take snapshot
     }
 
     /// append only if the task is not unclosable
-    if (state.models?.[id]?.unclosable != null && !state.models[id].unclosable) {
+    type ModelEntry = { unclosable?: boolean }
+    const model = state.models?.[id] as ModelEntry | undefined
+    if (model?.unclosable != null && !model.unclosable) {
       tabHeader.appendChild(tabHeader_close)
     }
 
-    document.getElementById('nav-tabs').appendChild(tabHeader)
+    document.getElementById('nav-tabs')?.appendChild(tabHeader)
 
     // set scroll position
     setScrollPosition(document.getElementById('nav-tabs'), 'openning', tabHeader)
@@ -129,8 +130,14 @@ function addToTabHeader(id: string) {
  * Additional notes: none. // to do: closing tabs and going back to an already opened tab + testing
  *
  */
-function setScrollPosition(container, context, tabHeader) {
+function setScrollPosition(
+  container: HTMLElement | null,
+  context: 'openning' | 'changingTab',
+  tabHeader: HTMLElement,
+) {
   console.log('setScrollPosition', arguments)
+
+  if (!container) return
 
   const tabHeaderStartPos = tabHeader.offsetLeft
   const tabHeaderEndPos = tabHeaderStartPos + tabHeader.offsetWidth
@@ -175,25 +182,24 @@ function setScrollPosition(container, context, tabHeader) {
  * Additional notes: none
  *
  */
-function tabDragStart(e) {
+function tabDragStart(e: DragEvent) {
   console.log('tabDragStart', arguments)
 
   // find the selectedFile
-  const selected = e.target
-  const selectedFile = selected.getAttribute('file')
+  const selected = e.target as HTMLElement | null
+  const selectedFile = selected?.getAttribute('file')
 
   // locate the corresponding tab header
   const target = document.querySelector('.tab-link[file="' + selectedFile + '"]')
   // console.log("tabDragStart target",target);
 
   // find its index
-  const index = Array.prototype.slice
-    .call(document.getElementById('nav-tabs').children)
-    .indexOf(target)
+  const navTabs = document.getElementById('nav-tabs')
+  const index = navTabs ? Array.prototype.slice.call(navTabs.children).indexOf(target) : -1
   // console.log("index", index);
 
   // start the transfer of this index
-  e.dataTransfer.setData('text/plain', index)
+  e.dataTransfer?.setData('text/plain', String(index))
 }
 
 /**
@@ -209,39 +215,40 @@ function tabDragStart(e) {
  * Additional notes: none
  *
  */
-function tabDropped(e) {
+function tabDropped(e: DragEvent) {
   console.log('tabDropped', arguments)
 
   cancelDefault(e)
 
   // get old index (i.e., transfered index)
-  const oldIndex = e.dataTransfer.getData('text/plain')
+  const oldIndex = Number(e.dataTransfer?.getData('text/plain') ?? -1)
 
   // find the selectedFile
-  const selected = e.target
-  const selectedFile = selected.getAttribute('file')
+  const selected = e.target as HTMLElement | null
+  const selectedFile = selected?.getAttribute('file')
   // locate the corresponding tab header
   const target = document.querySelector('.tab-link[file="' + selectedFile + '"]')
   // console.log("dropped target",target);
   // find its index which will be the new index
-  const newIndex = Array.prototype.slice
-    .call(document.getElementById('nav-tabs').children)
-    .indexOf(target)
+  const navTabs = document.getElementById('nav-tabs')
+  const newIndex = navTabs ? Array.prototype.slice.call(navTabs.children).indexOf(target) : -1
   // console.log("newIndex", newIndex);
 
   /// only when the indices are different
-  if (oldIndex != newIndex) {
+  if (oldIndex != newIndex && navTabs && target) {
     // remove the dropped item from the old place
-    const element = document.getElementById('nav-tabs').children[oldIndex]
-    element.remove()
+    const element = navTabs.children[oldIndex]
+    element?.remove()
 
     // insert the dropped item at the new place
-    if (newIndex < oldIndex) {
-      target.before(element)
-      // // console.log("tab set before");
-    } else {
-      target.after(element)
-      // // console.log("tab set after");
+    if (element) {
+      if (newIndex < oldIndex) {
+        target.before(element)
+        // // console.log("tab set before");
+      } else {
+        target.after(element)
+        // // console.log("tab set after");
+      }
     }
   }
 }
@@ -273,8 +280,9 @@ function closeTabInteraction(id: string, tabHeader: HTMLElement, takeSnapshot: b
   tabHeader.remove()
 
   /// if the tab to be closed is the one which is actually shown, hide it and set state.activeTab to ""
-  if (document.getElementById('model' + id + '-container').style.display == 'flex') {
-    document.getElementById('model' + id + '-container').style.display = 'none'
+  const containerEl = document.getElementById('model' + id + '-container')
+  if (containerEl?.style.display == 'flex') {
+    containerEl.style.display = 'none'
     setState({ activeTab: '' })
     // console.log("active tab changed ",state.activeTab);
   }
@@ -308,11 +316,12 @@ function changeTab(
   const { setState } = useGlobalStore.getState()
 
   const destinationIdModel = document.getElementById('model' + destinationId + '-content')
-  const fileName = destinationIdModel.getAttribute('fileName')
+  const fileName = destinationIdModel?.getAttribute('fileName') ?? ''
 
   /// hide index-tab once tabs are changed. The goal of this tab is to prevent users from seeing the models before the data collection
-  if (document.getElementById('index-tab').style.display != 'none') {
-    document.getElementById('index-tab').style.display = 'none'
+  const indexTab = document.getElementById('index-tab')
+  if (indexTab && indexTab.style.display != 'none') {
+    indexTab.style.display = 'none'
   }
 
   // hide the currently opened/active tab container
@@ -326,7 +335,9 @@ function changeTab(
   const destinationIdTabContainer = document.getElementById(
     'model' + destinationId + '-container',
   )
-  destinationIdTabContainer.style.display = 'flex' //"block";
+  if (destinationIdTabContainer) {
+    destinationIdTabContainer.style.display = 'flex' //"block";
+  }
 
   // change active navigation tab link if tab links are allowed
   if (!ignoreTabLinks) {
@@ -338,14 +349,12 @@ function changeTab(
 
     // ´activate the destination tab link
     const destinationIdTabLink = document.getElementById('model' + destinationId)
-    destinationIdTabLink.className += ' active'
+    if (destinationIdTabLink) {
+      destinationIdTabLink.className += ' active'
 
-    // set scroll position
-    setScrollPosition(
-      document.getElementById('nav-tabs'),
-      'changingTab',
-      destinationIdTabLink,
-    )
+      // set scroll position
+      setScrollPosition(document.getElementById('nav-tabs'), 'changingTab', destinationIdTabLink)
+    }
   }
 
   // update state.activeTab
@@ -395,11 +404,11 @@ function openInTab(subProcessId: string) {
  *
  */
 async function openWithinTab(
-  mainModelId,
-  mainModelprocessId,
-  subProcessId,
-  subProcessActivityLabelInMainModel,
-  position,
+  mainModelId: string,
+  mainModelprocessId: string,
+  subProcessId: string,
+  subProcessActivityLabelInMainModel: string,
+  position: number,
 ) {
   console.log('openWithinTab', arguments)
 
@@ -436,7 +445,8 @@ function openMainTab(
 ) {
   const state = useGlobalStore.getState()
 
-  for (const [key, model] of Object.entries(state.models ?? {})) {
+  type ModelEntry = { mainTab?: boolean; groupId?: string }
+  for (const [key, model] of Object.entries(state.models ?? {}) as [string, ModelEntry][]) {
     if (model?.mainTab && model.groupId == modelsGroupId) {
       if (!ignoreTabLinks) addToTabHeader(key)
       changeTab(key, ignoreTabLinks, takeSnapshot)

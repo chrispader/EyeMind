@@ -1,0 +1,25 @@
+[
+  {
+    "category": "project-structure",
+    "description": "Split up the React code from /experiment/index route into separate sensible sub-routes.",
+    "steps": [
+      "Create a new route file for each sub-route in ./routes/experiment directory.",
+      "Move the React code from /experiment/index route into the new sub-routes.",
+      "Update the /experiment/index route to use the new sub-routes.",
+      "Update the navigation to use the new sub-routes.",
+      "Update the URL structure to use the new sub-routes."
+    ],
+    "passes": false
+  },
+  {
+    "category": "state-management",
+    "description": "Use the 'session' Zustand store for any state that needs to be shared between routes.",
+    "steps": [
+      "If needed, add additional slices to the 'session' Zustand store.",
+      "Update all current usages of 'useGlobalStore' to use 'useSessionStore' instead.",
+      "Make sure that all state is read and write only through reactive hooks, not through '.getState()' or '.setState()'.",
+      "Remove the 'useGlobalStore' hook from any files that are no longer needed."
+    ],
+    "passes": false
+  }
+]

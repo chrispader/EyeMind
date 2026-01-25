@@ -694,3 +694,46 @@ Improved type safety of the IPC layer (preload + contextBridge):
 ### PRD Status Update
 - Task 8 (state-management getState/setState): Already complete (verified no usages remain)
 - Task: type-safety: **COMPLETE** ✓
+
+## 2026-01-25 - Image File Support (PRD Task 9)
+
+### Completed
+Added support for loading image files (.png, .jpeg, .gif, .webp) into the experiment:
+
+**New Files Created:**
+- `src/renderer/src/model/images.ts` - ImageFile type, helpers (isImageFile, readFileAsDataUrl, createDefaultImageFile)
+- `src/renderer/src/routes/config/eye-tracking/load-images.tsx` - New route for uploading images during configuration
+- `src/renderer/src/components/ImageViewer.tsx` - Canvas component with zoom/pan/gesture support
+
+**State Management:**
+- Added ImagesSlice to session store (state/session.ts)
+- Image state: `images: Record<string, ImageFile>`
+- Actions: addImageFile, addImageFiles, removeImageFile, updateImageFile, resetImages
+- Hooks: useImages, useImageActions, useDraftImages
+
+**ImageViewer Features:**
+- Mouse wheel zoom (toward cursor position)
+- Click-and-drag panning
+- Touch gesture support (pinch to zoom, pan)
+- Zoom controls (+/-/Reset buttons)
+- Scale indicator
+- Configurable min/max scale
+
+**Route Flow:**
+- Load Images route is before Load Models in the flow
+- Images are optional (can skip with 0 files)
+- Images assigned to groups like models
+
+### Files Changed
+- src/renderer/src/model/images.ts (new)
+- src/renderer/src/routes/config/eye-tracking/load-images.tsx (new)
+- src/renderer/src/components/ImageViewer.tsx (new)
+- src/renderer/src/state/session.ts (added images slice)
+- src/main/listeners/types.ts (fixed type export)
+- plans/prd.json (marked task as passes: true)
+
+### Notes
+- Built custom ImageViewer instead of react-zoom-pan-pinch to avoid additional dependency
+- ImageViewer is zero-dependency, uses native React + DOM APIs
+- TypeCheck passes: 0 errors
+- PRD Task 9 (feature: image support): **COMPLETE** ✓

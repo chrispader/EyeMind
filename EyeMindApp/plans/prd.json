@@ -77,7 +77,7 @@
       "Choose the best React library to view this image in a canvas and allow gesture(zoom, pan) on it",
       "Create a new component to display the image in a canvas"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "code-style",

@@ -737,3 +737,43 @@ Added support for loading image files (.png, .jpeg, .gif, .webp) into the experi
 - ImageViewer is zero-dependency, uses native React + DOM APIs
 - TypeCheck passes: 0 errors
 - PRD Task 9 (feature: image support): **COMPLETE** ✓
+
+## 2026-01-25 - Consolidate Listeners (PRD Task 12)
+
+### Completed
+Consolidated 9 separate listener files into a single organized file:
+
+**Deleted Files (9):**
+- `src/main/listeners/analysis.ts`
+- `src/main/listeners/download.ts`
+- `src/main/listeners/eye-tracker.ts`
+- `src/main/listeners/files-setup.ts`
+- `src/main/listeners/fixation-filter.ts`
+- `src/main/listeners/serverTests.ts`
+- `src/main/listeners/session.ts`
+- `src/main/listeners/state.ts`
+- `src/main/listeners/window.ts`
+
+**New Structure:**
+- `src/main/listeners/index.ts` - Single consolidated file with all listeners organized by namespace
+- `src/main/listeners/ipc-helpers.ts` - Type-safe registration helpers (kept)
+- `src/main/listeners/types.ts` - Type re-exports (kept)
+
+**Changes to index.ts:**
+- Created `registerAllListeners(mainWindow)` function that registers all handlers
+- Organized listeners into clear sections: State, Analysis, EyeTracker, FixationFilter/RServer, Utils, FileSetup, Window, Test
+- Used type-safe parameter helpers imported from IpcApi.ts
+- Reduced main/index.ts from 11 listener imports to single import
+
+**Updated main/index.ts:**
+- Simplified from 11 individual listener calls to single `registerAllListeners(mainWindow)` call
+- Kept `shutdownFixationFilterServer` export for app shutdown
+
+### Impact
+- Listeners reduced: 9 files → 1 file
+- main/index.ts simplified significantly
+- TypeCheck passes: 0 errors ✓
+
+### PRD Status
+- Task 12 (code-quality: consolidate listeners): **COMPLETE** ✓
+- Only remaining incomplete task: Task 10 (Tailwind migration, priority=low)

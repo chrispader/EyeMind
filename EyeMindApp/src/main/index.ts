@@ -24,18 +24,7 @@ import { REACT_DEVELOPER_TOOLS, installExtension } from 'electron-devtools-insta
 import started from 'electron-squirrel-startup'
 import path from 'path'
 
-import { analysisListeners } from '@/main/listeners/analysis'
-import { downloadListener } from '@/main/listeners/download'
-import { eyeTrackerListeners } from '@/main/listeners/eye-tracker'
-import { fileSetupListener } from '@/main/listeners/files-setup'
-import {
-  fixationFilterListeners,
-  shutdownFixationFilterServer,
-} from '@/main/listeners/fixation-filter'
-import { testListeners } from '@/main/listeners/serverTests'
-import { sessionListeners } from '@/main/listeners/session'
-import { stateListeners } from '@/main/listeners/state'
-import { windowListeners } from '@/main/listeners/window'
+import { registerAllListeners, shutdownFixationFilterServer } from '@/main/listeners'
 
 app.whenReady().then(() => {
   installExtension(REACT_DEVELOPER_TOOLS)
@@ -95,32 +84,8 @@ const createMainWindow = (): BrowserWindow => {
     mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
 
-  // initiate set listeners
-  stateListeners()
-
-  // initiate window listeners
-  windowListeners(mainWindow)
-
-  // initiate fixation filter (R) listeners
-  fixationFilterListeners(mainWindow)
-
-  // initiate analysis listener
-  analysisListeners(mainWindow)
-
-  // initiate download listener
-  downloadListener()
-
-  // initiate file-setup listener
-  fileSetupListener(mainWindow)
-
-  // initiate eye-tracker listeners
-  eyeTrackerListeners(mainWindow)
-
-  // initiate session listeners
-  sessionListeners()
-
-  // initiate initiate test listeners
-  testListeners()
+  // Register all IPC listeners
+  registerAllListeners(mainWindow)
 
   return mainWindow
 }

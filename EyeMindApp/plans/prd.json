@@ -108,6 +108,6 @@
       "Update the imports in the new file to use the new file",
       "Update the exports in the new file to use the new file"
     ],
-    "passes": false
+    "passes": true
   }
 ]

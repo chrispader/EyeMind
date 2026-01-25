@@ -1,3 +1,4 @@
+import LANG from '@renderer/LANG'
 import { containerClasses } from '@renderer/css/styles'
 import {
   SUB_PROCESS_LINKING_MODES,
@@ -32,11 +33,11 @@ function EyeTrackingNewSessionPage(): React.ReactElement {
     <div className={containerClasses} id='data-collection-settings-view'>
       <div className='data-collection-settings-box' id='data-collection-settings-box'>
         <div id='settings' className='settings'>
-          <h2>Advanced settings</h2>
+          <h2>{LANG.advancedSettings}</h2>
 
           <div className='row'>
             <div className='column'>
-              <span className='text-container'>Linking of sub-processes*:</span>
+              <span className='text-container'>{LANG.linkingSubProcesses}</span>
             </div>
 
             <div className='column'>
@@ -56,8 +57,7 @@ function EyeTrackingNewSessionPage(): React.ReactElement {
           </div>
 
           <div id='info-linking' className='info-link'>
-            *If linking is supported, then ids of the activities refering to collapsed
-            sub-processes should be the same as the names of the corresponding BPMN files.
+            {LANG.linkingSubProcessesInfo}
           </div>
         </div>
 
@@ -66,7 +66,7 @@ function EyeTrackingNewSessionPage(): React.ReactElement {
             className='proceed-data-collection-settings-btn'
             id='proceed-data-collection-settings'
             onClick={proceedWithAdvancedSettings}>
-            Proceed
+            {LANG.proceed}
           </button>
         </div>
       </div>

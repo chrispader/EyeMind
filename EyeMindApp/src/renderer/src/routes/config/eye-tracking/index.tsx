@@ -1,3 +1,4 @@
+import LANG from '@renderer/LANG'
 import ConfigLinkButton from '@renderer/components/ConfigLinkButton'
 import { containerClasses } from '@renderer/css/styles'
 import { createFileRoute } from '@tanstack/react-router'
@@ -15,10 +16,10 @@ function EyeTrackingPage(): React.ReactElement {
       className={`${containerClasses} button-gaps`}
       id='data-collection-session-options-view'>
       <ConfigLinkButton to={newSessionRoute.to} configClass='new-session'>
-        New session
+        {LANG.newSession}
       </ConfigLinkButton>
       <ConfigLinkButton to={loadSessionRoute.to} configClass='load-session'>
-        Load session
+        {LANG.loadSession}
       </ConfigLinkButton>
     </div>
   )

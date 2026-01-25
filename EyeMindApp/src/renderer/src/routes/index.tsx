@@ -1,3 +1,4 @@
+import LANG from '@renderer/LANG'
 import ConfigLinkButton from '@renderer/components/ConfigLinkButton'
 import { containerClasses } from '@renderer/css/styles'
 import { createFileRoute } from '@tanstack/react-router'
@@ -13,10 +14,10 @@ function HomePage(): React.ReactElement {
   return (
     <div id='home' className={`${containerClasses} button-gaps`}>
       <ConfigLinkButton to={eyeTrackingPageRoute.to} configClass='eye-tracking'>
-        Eye-tracking
+        {LANG.eyeTracking}
       </ConfigLinkButton>
       <ConfigLinkButton to={analysisRoute.to} configClass='analysis'>
-        Analysis
+        {LANG.analysis}
       </ConfigLinkButton>
     </div>
   )

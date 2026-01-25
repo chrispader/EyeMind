@@ -1,3 +1,5 @@
+import LANG from '@renderer/LANG'
+
 function LoadingScreen({
   message,
   visible = true,
@@ -12,7 +14,7 @@ function LoadingScreen({
         <br />
         <div id="wait-progress"></div>
         <br />
-        <img className="wait-icon" id="wait-icon" src="icons/loading.jpg" alt="Loading" />
+        <img className="wait-icon" id="wait-icon" src="icons/loading.jpg" alt={LANG.loading} />
       </div>
     </div>
   )

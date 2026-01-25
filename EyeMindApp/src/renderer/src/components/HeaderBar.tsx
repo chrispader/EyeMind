@@ -1,3 +1,4 @@
+import LANG from '@renderer/LANG'
 import { Spacer } from '@renderer/components/Spacer'
 import { useCanGoBack, useLocation, useRouter } from '@tanstack/react-router'
 import React from 'react'
@@ -21,7 +22,7 @@ export function HeaderBar({ title }: HeaderBarProps): React.ReactElement {
             <button
               className='back-button'
               onClick={() => router.history.back()}
-              aria-label='Go back'>
+              aria-label={LANG.goBack}>
               <IoArrowBackOutline />
             </button>
             <Spacer horizontal={20} />

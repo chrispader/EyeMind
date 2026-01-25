@@ -1,3 +1,4 @@
+import LANG from '@renderer/LANG'
 import FileImport from '@renderer/components/FileImport'
 import { loadFiles } from '@renderer/components/FileImport/loadFile'
 import { FileImportConfig } from '@renderer/components/FileImport/types'
@@ -27,10 +28,10 @@ function EyeTrackingLoadSessionPage(): React.ReactElement {
       items={sessionFile ? [sessionFile] : []}
       errors={errors}
       onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
-      uploadLabel='Drop a session file'
+      uploadLabel={LANG.dropSessionFile}
       onDrop={(files) => {
         if (files.length > 1) {
-          setErrors(['Only a single file can be imported'])
+          setErrors([LANG.errorSingleFileOnly])
           return
         }
 

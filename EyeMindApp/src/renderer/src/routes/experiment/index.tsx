@@ -1,9 +1,9 @@
-import { assignModelsToGroups } from '@renderer/components/FileImport/loadFile'
+import LANG from '@renderer/LANG'
 import { setMainTab, setUnclosableTabs } from '@renderer/actions/tabs'
+import { assignModelsToGroups } from '@renderer/components/FileImport/loadFile'
 import { useGlobalStore } from '@renderer/state/global'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
-
 
 const NAV_TABS_SCROLL_DISTANCE = 20
 
@@ -47,7 +47,7 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
     const featureText = document.getElementById('feature-text')
     const etIcons = document.getElementById('eye-tracking-icons')
 
-    if (modeText) modeText.innerText = 'Eye-tracking Mode'
+    if (modeText) modeText.innerText = LANG.eyeTrackingMode
     if (featureText) featureText.innerText = ''
     if (etIcons) etIcons.style.display = 'block'
 
@@ -81,7 +81,7 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
                     src='icons/record_enabled.svg'
                     width='20px'
                     height='20px'
-                    alt='Record'
+                    alt={LANG.iconRecord}
                   />
                 </Link>
                 <img
@@ -90,54 +90,54 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
                   style={{ marginTop: '10px', marginRight: '50px' }}
                   width='20px'
                   height='20px'
-                  alt='Stop'
+                  alt={LANG.iconStop}
                 />
               </div>
 
               <div id='analysis-icons' className='analysis-icons'>
                 <img
                   id='fixation-filter-btn'
-                  title='Fixation filter'
+                  title={LANG.iconFixationFilter}
                   className='icon'
                   src='icons/fixation-filter.svg'
                   width='90px'
                   height='40px'
-                  alt='Fixation filter'
+                  alt={LANG.iconFixationFilter}
                 />
                 <Link to='/experiment/gaze-projection-settings'>
                   <img
                     id='projections-mapping-btn'
-                    title='Gaze projections and corrections'
+                    title={LANG.titleGazeProjections}
                     className='icon'
                     style={{ marginLeft: '-50px' }}
                     src='icons/projections-mapping.svg'
                     width='90px'
                     height='40px'
-                    alt='Projections mapping'
+                    alt={LANG.iconProjectionsMapping}
                   />
                 </Link>
                 <Link to='/experiment/heatmap-settings'>
                   <img
                     id='heatmap-btn'
-                    title='Heatmap and overlays'
+                    title={LANG.titleHeatmapOverlays}
                     className='icon'
                     src='icons/heatmap_disabled.svg'
                     style={{ marginLeft: '-50px', paddingTop: '3px' }}
                     width='90px'
                     height='40px'
-                    alt='Heatmap'
+                    alt={LANG.iconHeatmap}
                   />
                 </Link>
                 <Link to='/experiment/export-options'>
                   <img
                     id='download-btn'
-                    title='Download'
+                    title={LANG.download}
                     className='icon'
                     src='icons/download.svg'
                     style={{ marginLeft: '-50px' }}
                     width='90px'
                     height='40px'
-                    alt='Download'
+                    alt={LANG.iconDownload}
                   />
                 </Link>
               </div>
@@ -158,7 +158,7 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
                   className='start-questions-btn gaze-element'
                   data-element-id='start-questions-btn'
                   id='start-questions-btn'>
-                  Start questions
+                  {LANG.startQuestions}
                 </button>
               </div>
             </div>
@@ -171,7 +171,7 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
             <div
               className='finished gaze-element'
               data-element-id='questions-finished-text'>
-              Questions finished
+              {LANG.questionsFinished}
             </div>
           </div>
         </div>
@@ -180,7 +180,7 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
       <div id='user-configuration' className='user-configuration'>
         <div className='row'>
           <div className='column-title'>
-            <span className='title-text-container'>User Configuration</span>
+            <span className='title-text-container'>{LANG.userConfiguration}</span>
           </div>
           <div className='column'>
             <div id='user-config-content'></div>
@@ -191,10 +191,10 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
       <div id='gaze-correction' className='gaze-correction'>
         <div className='row'>
           <div className='column-title'>
-            <span className='title-text-container'>General offset correction</span>
+            <span className='title-text-container'>{LANG.generalOffsetCorrection}</span>
           </div>
           <div className='column'>
-            <span className='field-text-container'>x offset: </span>
+            <span className='field-text-container'>{LANG.xOffset}</span>
           </div>
           <div className='column'>
             <input
@@ -204,7 +204,7 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
             />
           </div>
           <div className='column'>
-            <span className='field-text-container'>y offset: </span>
+            <span className='field-text-container'>{LANG.yOffset}</span>
           </div>
           <div className='column'>
             <input
@@ -216,13 +216,13 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
           <div className='column'></div>
           <div className='column'>
             <button className='btn' id='update-correction-offset'>
-              Update
+              {LANG.update}
             </button>
           </div>
           <div className='column' style={{ width: '200px' }}></div>
           <div className='column'>
             <button className='btn-long' id='apply-correction-offset'>
-              Apply correction to data
+              {LANG.applyCorrectionToData}
             </button>
           </div>
         </div>

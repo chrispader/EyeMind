@@ -1,3 +1,4 @@
+import LANG from '@renderer/LANG'
 import { createFileRoute } from '@tanstack/react-router'
 import { ModalContainer } from '../../components/ModalContainer'
 import { SelectField, CheckboxField, SubmitButton } from '../../components/form'
@@ -11,81 +12,81 @@ function HeatmapSettingsPage(): React.ReactElement {
     <ModalContainer
       id="heatmap-settings-modal"
       className="heatmap-settings-modal"
-      title="Heatmap Settings"
+      title={LANG.heatmapSettings}
       closeId="close-heatmap-settings">
-      <SelectField label="Participant (File) " id="participants-files-heatmap" multiple />
+      <SelectField label={LANG.participantFile} id="participants-files-heatmap" multiple />
 
-      <SelectField label="Question ID: " id="question">
-        <option value="">Select</option>
+      <SelectField label={LANG.questionId} id="question">
+        <option value="">{LANG.select}</option>
       </SelectField>
 
-      <SelectField label="Measure: " id="measure">
+      <SelectField label={LANG.measure} id="measure">
         <option value="" data-measure-type="" data-aggregations="">
-          Select
+          {LANG.select}
         </option>
         <option
           value="visit_duration"
           data-measure-type="element_level"
           data-aggregations="sum-max-min-mean">
-          Visit Duration (From Fixations)
+          {LANG.visitDurationFixations}
         </option>
         <option value="visit_count" data-measure-type="element_level" data-aggregations="count">
-          Visit Count (From Fixations)
+          {LANG.visitCountFixations}
         </option>
         <option
           value="visit_duration"
           data-measure-type="gaze_level"
           data-aggregations="sum-max-min-mean">
-          Visit Duration (From Gazes)
+          {LANG.visitDurationGazes}
         </option>
         <option value="visit_count" data-measure-type="gaze_level" data-aggregations="count">
-          Visit Count (From Gazes)
+          {LANG.visitCountGazes}
         </option>
         <option
           value="Fixation Duration"
           data-measure-type="fixation_level"
           data-aggregations="sum-max-min-mean">
-          Fixation Duration
+          {LANG.fixationDuration}
         </option>
         <option value="Fixation Count" data-measure-type="fixation_level" data-aggregations="count">
-          Fixation Count
+          {LANG.fixationCount}
         </option>
       </SelectField>
 
-      <SelectField label="Aggregation function: " id="aggregation">
+      <SelectField label={LANG.aggregationFunction} id="aggregation">
         <option id="no-aggr" value="" data-aggregation-type="" className="">
-          Select
+          {LANG.select}
         </option>
         <option id="sum-aggr" value="sum" data-aggregation-type="time" className="aggr">
-          Sum
+          {LANG.sum}
         </option>
         <option id="max-aggr" value="max" data-aggregation-type="time" className="aggr">
-          Max
+          {LANG.max}
         </option>
         <option id="min-aggr" value="min" data-aggregation-type="time" className="aggr">
-          Min
+          {LANG.min}
         </option>
         <option id="mean-aggr" value="mean" data-aggregation-type="time" className="aggr">
-          Mean
+          {LANG.mean}
         </option>
         <option id="count-aggr" value="count" data-aggregation-type="number" className="aggr">
-          Count
+          {LANG.count}
         </option>
       </SelectField>
 
-      <SelectField label="Timestamp unit: " id="timestamp-unit" defaultValue="ms">
-        <option value="s">Second</option>
-        <option value="ms">Millisecond</option>
-        <option value="us">Microsecond</option>
+      <SelectField label={LANG.timestampUnit} id="timestamp-unit" defaultValue="ms">
+        <option value="s">{LANG.second}</option>
+        <option value="ms">{LANG.millisecond}</option>
+        <option value="us">{LANG.microsecond}</option>
       </SelectField>
 
-      <CheckboxField label="Additionally include pools and lanes:" id="inc-pools-lanes" />
-      <CheckboxField label="Additionally include groups (border only):" id="inc-groups" />
-      <CheckboxField label="Additionally include expended sub-processes:" id="inc-expended-sub-processes" />
-      <CheckboxField label="Additionally include processes:" id="inc-processes" />
-      <CheckboxField label="Additionally include edges:" id="inc-edges" />
+      <CheckboxField label={LANG.includePoolsLanes} id="inc-pools-lanes" />
+      <CheckboxField label={LANG.includeGroups} id="inc-groups" />
+      <CheckboxField label={LANG.includeExpandedSubProcesses} id="inc-expended-sub-processes" />
+      <CheckboxField label={LANG.includeProcesses} id="inc-processes" />
+      <CheckboxField label={LANG.includeEdges} id="inc-edges" />
 
-      <SubmitButton id="submit-heatmap-form" value="Show heatmap" />
+      <SubmitButton id="submit-heatmap-form" value={LANG.showHeatmap} />
     </ModalContainer>
   )
 }

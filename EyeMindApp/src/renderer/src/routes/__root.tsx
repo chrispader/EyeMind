@@ -1,16 +1,17 @@
-import { LoadingScreen } from '@renderer/components/LoadingScreen'
-import '@renderer/css/app.css'
-import '@renderer/css/main.css'
-import '@renderer/css/new.css'
-import '@renderer/extra/object-diagram-modeler/starter/app/css/app.css'
+import LANG from '@renderer/LANG'
+import { resetModel, resetNavTabsAndTabs } from '@renderer/actions/canvas'
+import { openMainTab } from '@renderer/actions/tab-management'
 import {
   DisableCriticalKeys,
   handleWindowRefresh,
   takeSnapshotOnWindowMovement,
   takeSnapshotOnWindowResize,
 } from '@renderer/actions/window-events'
-import { resetModel, resetNavTabsAndTabs } from '@renderer/actions/canvas'
-import { openMainTab } from '@renderer/actions/tab-management'
+import { LoadingScreen } from '@renderer/components/LoadingScreen'
+import '@renderer/css/app.css'
+import '@renderer/css/main.css'
+import '@renderer/css/new.css'
+import '@renderer/extra/object-diagram-modeler/starter/app/css/app.css'
 import { loadServerStateIntoClient, useGlobalStore } from '@renderer/state/global'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
@@ -62,8 +63,8 @@ function RootComponent(): React.ReactElement {
 }
 
 function ErrorBoundary({ error }: { error: Error }) {
-  let message = 'Oops!'
-  let details = 'An unexpected error occurred.'
+  let message: string = LANG.errorOops
+  let details: string = LANG.errorUnexpected
   let stack: string | undefined
 
   if (error instanceof Error) {

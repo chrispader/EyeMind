@@ -1,3 +1,4 @@
+import LANG from '@renderer/LANG'
 import { createFileRoute } from '@tanstack/react-router'
 import { ModalContainer } from '../../components/ModalContainer'
 import { InputField, TextareaField } from '../../components/form'
@@ -11,17 +12,17 @@ function RecordingSettingsPage(): React.ReactElement {
     <ModalContainer
       id="startET-modal"
       className="startET-modal"
-      title="Data Collection Settings"
+      title={LANG.dataCollectionSettings}
       closeId="close-startET-modal">
-      <InputField label=" X Screen dimension in pixels*: " id="x-dim" />
-      <InputField label=" Y Screen dimension in pixels*: " id="y-dim" />
-      <InputField label=" Screen distance in centimeters*: " id="screen-distance" />
-      <InputField label=" Monitor size in inches*: " id="monitor-size" />
-      <InputField label=" Recording ID*: " id="recording-id" />
-      <InputField label=" Participant ID: " id="participant-id" />
-      <InputField label=" Experiment ID: " id="experiment-id" />
-      <InputField label=" Experimenter ID:" id="experimenter-id" />
-      <TextareaField label=" Additional notes: " id="additional-notes" />
+      <InputField label={LANG.xScreenDimension} id="x-dim" />
+      <InputField label={LANG.yScreenDimension} id="y-dim" />
+      <InputField label={LANG.screenDistance} id="screen-distance" />
+      <InputField label={LANG.monitorSize} id="monitor-size" />
+      <InputField label={LANG.recordingId} id="recording-id" />
+      <InputField label={LANG.participantId} id="participant-id" />
+      <InputField label={LANG.experimentId} id="experiment-id" />
+      <InputField label={LANG.experimenterId} id="experimenter-id" />
+      <TextareaField label={LANG.additionalNotes} id="additional-notes" />
 
       <div className="row">
         <div style={{ textAlign: 'center' }}>
@@ -29,14 +30,14 @@ function RecordingSettingsPage(): React.ReactElement {
             type="submit"
             className="submit-form-button"
             id="submit-recording-form"
-            value="Start recording"
+            value={LANG.startRecording}
           />
-          <input type="submit" className="save-session" id="save-session" value="Save Session" />
+          <input type="submit" className="save-session" id="save-session" value={LANG.saveSession} />
         </div>
       </div>
 
       <div className="row">
-        <div style={{ textAlign: 'center' }}>* required fields</div>
+        <div style={{ textAlign: 'center' }}>{LANG.requiredFields}</div>
       </div>
     </ModalContainer>
   )

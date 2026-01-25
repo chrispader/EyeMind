@@ -1,3 +1,4 @@
+import LANG from '@renderer/LANG'
 import FileImport from '@renderer/components/FileImport'
 import { isQuestionsFile } from '@renderer/components/FileImport/loadFile'
 import { FileImportConfig } from '@renderer/components/FileImport/types'
@@ -36,7 +37,7 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
     const questionFilesValues = Object.values(questionFiles)
 
     if (questionFilesValues.length === 0) {
-      setErrors(['No questions files to load. Please drop a questions file first.'])
+      setErrors([LANG.errorNoQuestionsFiles])
       return
     }
 
@@ -46,7 +47,7 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
         setQuestions(questions)
         navigate({ to: experimentRoute.to })
       } catch (error) {
-        let msg = 'An error occured while validating the questions file'
+        let msg = LANG.errorValidatingQuestions
         if (error instanceof Error) {
           msg += ': ' + error.message
         }
@@ -64,13 +65,13 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
 
       if (!isQuestionsFile(file, fileImportConfig)) {
         newErrors.push(
-          file.name + ' (id: ' + questionFileId + ') is not a valid questions file',
+          `${file.name} (id: ${questionFileId}) ${LANG.errorNotValidQuestionsFile}`,
         )
         continue
       }
 
       if (questionFiles?.[questionFileId] !== undefined) {
-        newErrors.push(file.name + ' (id: ' + questionFileId + ') is already added')
+        newErrors.push(`${file.name} (id: ${questionFileId}) ${LANG.errorAlreadyAdded}`)
         continue
       }
 
@@ -92,7 +93,7 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
       items={Object.values(questionFiles)}
       errors={errors}
       onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
-      uploadLabel='Drop a questions csv file'
+      uploadLabel={LANG.dropQuestionsFile}
       onDrop={addDroppedQuestions}
       onSubmit={validateQuestionFiles}
       onRemove={(questionFile) => removeQuestionFile(questionFile.id)}

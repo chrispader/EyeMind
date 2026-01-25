@@ -154,7 +154,7 @@
       "Extract all hardcoded strings into LANG.ts and CONST.ts files",
       "Update all usages of the hardcoded strings to use the new LANG.ts and CONST.ts files"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "code-style",

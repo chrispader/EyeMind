@@ -1,3 +1,4 @@
+import LANG from '@renderer/LANG'
 import FileImport from '@renderer/components/FileImport'
 import { isImageFile, readFileAsDataUrl } from '@renderer/model/images'
 import {
@@ -43,13 +44,13 @@ function EyeTrackingLoadImagesPage() {
 
     for (const file of files) {
       if (!isImageFile(file)) {
-        newErrors.push(`${file.name} is not a supported image format`)
+        newErrors.push(`${file.name} ${LANG.errorNotSupportedImageFormat}`)
         continue
       }
 
       const existingImage = draftImages[file.name.replace(/[\W_.]/g, '')]
       if (existingImage !== undefined) {
-        newErrors.push(`${file.name} is already added`)
+        newErrors.push(`${file.name} ${LANG.errorAlreadyAdded}`)
         continue
       }
 
@@ -59,7 +60,7 @@ function EyeTrackingLoadImagesPage() {
         imageFile.groupId = CONST.DEFAULT_MODEL_GROUP_ID
         imagesToAdd.push(imageFile)
       } catch (error) {
-        newErrors.push(`Failed to read ${file.name}`)
+        newErrors.push(`${LANG.errorFailedToRead} ${file.name}`)
       }
     }
 
@@ -77,8 +78,8 @@ function EyeTrackingLoadImagesPage() {
       items={draftImageValues}
       errors={errors}
       onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
-      uploadLabel='Drop image files here (PNG, JPEG, GIF, WebP)'
-      submitLabel={draftImageValues.length === 0 ? 'Skip' : 'Continue'}
+      uploadLabel={LANG.dropImageFiles}
+      submitLabel={draftImageValues.length === 0 ? LANG.skip : LANG.continue}
       onSubmit={validateImages}
       onDrop={addDraftImages}
       onRemove={(image) => removeImageFile(image.id)}
@@ -101,7 +102,7 @@ function DraftImageItem({ image }: { image: ImageFile }) {
         <div className='font-medium'>{image.fileName}</div>
       </div>
       <div className='flex items-center gap-2'>
-        <span>Group:</span>
+        <span>{LANG.group}</span>
         <input
           className='w-12 px-2 py-1 border rounded'
           type='text'

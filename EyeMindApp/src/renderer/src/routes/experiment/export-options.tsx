@@ -1,3 +1,4 @@
+import LANG from '@renderer/LANG'
 import { createFileRoute } from '@tanstack/react-router'
 import { ModalContainer } from '../../components/ModalContainer'
 import { SelectField, SubmitButton } from '../../components/form'
@@ -11,15 +12,15 @@ function ExportOptionsPage(): React.ReactElement {
     <ModalContainer
       id="download-modal"
       className="download-modal"
-      title="Export Options"
+      title={LANG.exportOptions}
       closeId="close-download">
-      <SelectField label="File type " id="download-file-type">
-        <option value="analysis-data">Analysis File</option>
-        <option value="gaze-data">Gaze Data</option>
-        <option value="fixation-data">Fixation Data</option>
+      <SelectField label={LANG.fileType} id="download-file-type">
+        <option value="analysis-data">{LANG.analysisFile}</option>
+        <option value="gaze-data">{LANG.gazeData}</option>
+        <option value="fixation-data">{LANG.fixationData}</option>
       </SelectField>
 
-      <SubmitButton id="submit-download-form" value="Download" />
+      <SubmitButton id="submit-download-form" value={LANG.download} />
     </ModalContainer>
   )
 }

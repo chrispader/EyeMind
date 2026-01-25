@@ -1,4 +1,4 @@
-import { translate } from '@renderer/LANG'
+import LANG, { translate } from '@renderer/LANG'
 import { containerClasses } from '@renderer/css/styles'
 import { cancelDefault } from '@renderer/modules/utils/utils'
 import { useCallback, useState } from 'react'
@@ -85,7 +85,7 @@ function FileImport<FileType>({
                         onClick={() => {
                           onRemove(item)
                         }}>
-                        Remove
+                        {LANG.remove}
                       </button>
                     </div>
                   </div>

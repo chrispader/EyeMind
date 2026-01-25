@@ -1,4 +1,4 @@
-import { translate } from '@renderer/LANG'
+import LANG, { translate } from '@renderer/LANG'
 import FileImport from '@renderer/components/FileImport'
 import { isModelsFile } from '@renderer/components/FileImport/loadFile'
 import type { FileImportConfig } from '@renderer/components/FileImport/types'
@@ -41,17 +41,17 @@ function EyeTrackingLoadModelsPage() {
     const mainModels = draftModelValues.filter((model) => model?.isMain === true)
 
     if (mainModels.length !== 1) {
-      setErrors(['There must be exactly one model set as main'])
+      setErrors([LANG.errorExactlyOneMain])
       return
     }
 
     if (draftModelValues.some((model) => (model?.groupId ?? '') === '')) {
-      setErrors(['All models must be assigned to a group'])
+      setErrors([LANG.errorAllModelsNeedGroup])
       return
     }
 
     if (draftModelValues.length === 0) {
-      setErrors(['No models to load'])
+      setErrors([LANG.errorNoModelsToLoad])
       return
     }
 
@@ -75,7 +75,7 @@ function EyeTrackingLoadModelsPage() {
       }
 
       if (draftModels?.[modelId] !== undefined) {
-        newErrors.push(file.name + ' (id: ' + modelId + ') is already added')
+        newErrors.push(`${file.name} (id: ${modelId}) ${LANG.errorAlreadyAdded}`)
         continue
       }
 
@@ -168,7 +168,7 @@ function DraftModelItem({ model }: { model: Model }) {
         {translate('unclosableTab')}
       </div>
       <div className='column'>
-        Group:
+        {LANG.group}
         <input
           className='group-assignement'
           type='text'

@@ -866,4 +866,62 @@ All renderer application state that should be in Zustand IS in Zustand. The patt
 1. Task 10 (code-style): Tailwind CSS migration - priority: low
 2. Task 14 (testing): Add unit tests - requires test framework setup
 3. Task 15 (testing): Add E2E tests - Playwright exists, needs expansion
-4. Task 17 (project-structure): Extract strings to LANG/CONST
+
+## 2026-01-25 - Extract Strings to LANG.ts (PRD Task 17)
+
+### Completed
+Extracted all user-facing hardcoded strings into LANG.ts for i18n readiness and maintainability.
+
+**LANG.ts Expanded:**
+- Extended from 5 to 85+ string constants
+- Organized by category: Common, File Import, Home Page, Eye-tracking Config, Experiment Page, etc.
+- Added `LangKey` type export for type-safe access
+- Added default export for direct LANG.key usage
+
+**Categories of Strings Extracted:**
+1. Common UI (select, remove, dismiss, update, proceed, continue, skip, download, close, loading)
+2. File Import labels (dropModelsFiles, dropQuestionsFile, dropSessionFile, dropImageFiles)
+3. Navigation (eyeTracking, analysis, newSession, loadSession, backToHome)
+4. Experiment page (eyeTrackingMode, userConfiguration, generalOffsetCorrection, startQuestions, etc.)
+5. Modal titles and labels (dataCollectionSettings, heatmapSettings, exportOptions, gazeProjectionSettings)
+6. Heatmap options (visitDurationFixations, visitCountFixations, fixationDuration, etc.)
+7. Aggregation/Timestamp options (sum, max, min, mean, count, second, millisecond, microsecond)
+8. Error messages (errorOops, errorUnexpected, errorNoQuestionsFiles, errorExactlyOneMain, etc.)
+9. Icon alt text (iconRecord, iconStop, iconFixationFilter, iconProjectionsMapping, etc.)
+
+**Files Updated (16):**
+- Routes:
+  - routes/index.tsx
+  - routes/analysis/index.tsx
+  - routes/__root.tsx
+  - routes/config/eye-tracking/index.tsx
+  - routes/config/eye-tracking/new-session.tsx
+  - routes/config/eye-tracking/load-images.tsx
+  - routes/config/eye-tracking/load-models.tsx
+  - routes/config/eye-tracking/load-questions.tsx
+  - routes/config/eye-tracking/load-session.tsx
+  - routes/experiment/index.tsx
+  - routes/experiment/heatmap-settings.tsx
+  - routes/experiment/recording-settings.tsx
+  - routes/experiment/export-options.tsx
+  - routes/experiment/gaze-projection-settings.tsx
+- Components:
+  - components/ErrorList.tsx
+  - components/FileImport/index.tsx
+  - components/ModalContainer.tsx
+  - components/LoadingScreen.tsx
+  - components/HeaderBar.tsx
+
+### Impact
+- All user-facing strings centralized in LANG.ts
+- Ready for i18n/localization
+- Type-safe string access via translate() or LANG.key
+- TypeCheck passes: 0 errors
+
+### PRD Status
+- Task 17 (project-structure: Extract strings to LANG/CONST): **COMPLETE** ✓
+
+### Remaining Incomplete Tasks
+1. Task 10 (code-style): Tailwind CSS migration - priority: low
+2. Task 14 (testing): Add unit tests - requires test framework setup
+3. Task 15 (testing): Add E2E tests - Playwright exists, needs expansion

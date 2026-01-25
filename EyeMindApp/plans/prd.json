@@ -109,5 +109,60 @@
       "Update the exports in the new file to use the new file"
     ],
     "passes": true
+  },
+  {
+    "category": "navigation",
+    "description": "Fix broken navigation links in the app",
+    "steps": [
+      "Fix all broken navigation links in the app",
+      "Make sure that the navigation links are working correctly"
+    ],
+    "passes": true
+  },
+  {
+    "category": "testing",
+    "description": "Add unit tests for the business logic in the codebase",
+    "steps": [
+      "Add unit tests for the business logic in the codebase",
+      "Make sure that the tests are covering all the business logic in the codebase"
+    ],
+    "passes": false
+  },
+  {
+    "category": "testing",
+    "description": "Add end-to-end tests for the app",
+    "steps": [
+      "Add end-to-end tests for the app",
+      "Make sure that the tests are covering all the app",
+      "Make sure that the tests are running correctly"
+    ],
+    "passes": false
+  },
+  {
+    "category": "state-management",
+    "description": "Migrate all global state into new or existing Zustand stores",
+    "steps": [
+      "Migrate all global state into new or existing Zustand stores",
+      "Make sure that the global state is properly migrated into the new or existing Zustand stores"
+    ],
+    "passes": false
+  },
+  {
+    "category": "project-structure",
+    "description": "Extract all hardcoded strings into LANG.ts and CONST.ts files",
+    "steps": [
+      "Extract all hardcoded strings into LANG.ts and CONST.ts files",
+      "Update all usages of the hardcoded strings to use the new LANG.ts and CONST.ts files"
+    ],
+    "passes": false
+  },
+  {
+    "category": "code-style",
+    "description": "Fix missing styles on the Analysis route",
+    "steps": [
+      "Fix missing styles on the Analysis route",
+      "Make sure that the styles are working correctly"
+    ],
+    "passes": false
   }
 ]

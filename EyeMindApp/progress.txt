@@ -777,3 +777,32 @@ Consolidated 9 separate listener files into a single organized file:
 ### PRD Status
 - Task 12 (code-quality: consolidate listeners): **COMPLETE** ✓
 - Only remaining incomplete task: Task 10 (Tailwind migration, priority=low)
+
+## 2026-01-25 - Fix Broken Navigation (PRD Task 13)
+
+### Completed
+Fixed broken navigation flow in the config/eye-tracking routes:
+
+**Issue Found:**
+- `new-session.tsx` was navigating directly to `load-models` route, skipping the `load-images` route
+
+**Fix:**
+- Changed navigation from `loadModelsRoute.to` to `loadImagesRoute.to`
+
+**Correct Flow (now):**
+1. `/config/eye-tracking/new-session` → (Proceed)
+2. `/config/eye-tracking/load-images` → (Continue/Skip)
+3. `/config/eye-tracking/load-models` → (Continue)
+4. `/config/eye-tracking/load-questions` → (Continue)
+5. `/experiment`
+
+### Files Changed
+- `src/renderer/src/routes/config/eye-tracking/new-session.tsx`
+
+### Notes
+- Analysis route (`/analysis`) appears to be a placeholder with duplicate home buttons
+- This is related to PRD task 18 (missing styles on Analysis route) - the route needs proper implementation
+- TypeCheck passes: 0 errors ✓
+
+### PRD Status
+- Task 13 (navigation: fix broken links): **COMPLETE** ✓

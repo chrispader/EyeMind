@@ -1,9 +1,4 @@
-import { dialog, ipcMain } from 'electron'
-import { BrowserWindow } from 'electron'
-import { IpcListenerParameters, IpcNamespace } from '@/main/listeners/types'
-
-type ElectronListenerParameters<FunctionName extends keyof IpcNamespace<'electron'>> =
-  IpcListenerParameters<'electron', FunctionName>
+import { dialog, ipcMain, BrowserWindow } from 'electron'
 
 export function windowListeners(mainWindow: BrowserWindow) {
   mainWindow.on('moved', function () {
@@ -22,13 +17,10 @@ export function windowListeners(mainWindow: BrowserWindow) {
     mainWindow.setFullScreen(false)
   })
 
-  ipcMain.on(
-    'message',
-    function (_e, [type, text]: ElectronListenerParameters<'message'>) {
-      dialog.showMessageBox(mainWindow, {
-        type: type as Electron.MessageBoxOptions['type'],
-        message: text,
-      })
-    },
-  )
+  ipcMain.on('message', function (_e, type: string, text: string) {
+    dialog.showMessageBox(mainWindow, {
+      type: type as Electron.MessageBoxOptions['type'],
+      message: text,
+    })
+  })
 }

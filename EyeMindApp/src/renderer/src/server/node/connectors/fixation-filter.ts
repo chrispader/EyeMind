@@ -52,14 +52,14 @@ export async function applyFixationFilter(fixationFilterSettings, id, state, mai
 
   const partialCommunicationUriToRerver =
     CONST.COMMUNICATION_HOST_TO_R_SERVER + ':' + CONST.R_PORT
-  const params = {}
-
-  params.xScreenDim = state.processedGazeData.xScreenDim
-  params.yScreenDim = state.processedGazeData.yScreenDim
-  params.screenDistance = state.processedGazeData.screenDistance
-  params.monitorSize = state.processedGazeData.monitorSize
-  params.areGazesCorrected = state.processedGazeData.areGazesCorrected
-  params.fixationFilterData = state.processedGazeData.fixationFilterData
+  const params: Record<string, unknown> = {
+    xScreenDim: state.processedGazeData.xScreenDim,
+    yScreenDim: state.processedGazeData.yScreenDim,
+    screenDistance: state.processedGazeData.screenDistance,
+    monitorSize: state.processedGazeData.monitorSize,
+    areGazesCorrected: state.processedGazeData.areGazesCorrected,
+    fixationFilterData: state.processedGazeData.fixationFilterData,
+  }
 
   /// SetParamData request
   mainWindow.webContents.send(
@@ -68,8 +68,9 @@ export async function applyFixationFilter(fixationFilterSettings, id, state, mai
     '',
   )
 
-  let message = { params: params }
-  let communication = {
+  let message: { params?: Record<string, unknown>; dataFragment?: unknown } = { params: params }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let communication: any = {
     method: CONST.COMMUNICATION_METHOD_TO_R_SERVER,
     uri: partialCommunicationUriToRerver + '/SetParamData',
     body: message,

@@ -212,3 +212,57 @@ Removed `shared-interactions.ts` by inlining its single function into `__root.ts
 - All remaining modules are tightly coupled in dependency graph
 - Root dependencies from React code: window-events.ts (→__root), tabs.ts (→experiment/index, loadFile)
 - Full removal requires converting imperative tab/canvas/data-collection logic to React
+
+## 2026-01-25 - Type Error Fixes (Partial)
+
+### Completed
+Fixed type errors in main process (node) compilation - now passes:
+- Created `src/types/IpcApi.ts` with shared IPC API type definitions
+- Updated `src/main/listeners/types.ts` to use shared types
+- Fixed `GlobalState` type - added `ProcessedGazeData` type, `models`, `temp` properties
+- Made `processedGazeData` required (always initialized)
+- Fixed `src/preload/index.ts` - removed `satisfies typeof window.*` (didn't work in Node context)
+- Fixed `src/main/listeners/window.ts` - simplified types, removed IPC type dependency
+- Fixed `src/renderer/src/server/node/connectors/fixation-filter.ts` - typed params/message/communication
+- Fixed `src/renderer/src/server/node/connectors/eye-tracker.ts` - added `Result` type, removed unused response vars
+- Fixed `src/renderer/src/server/node/analysis/analysis.ts` - typed visits array, added non-null assertions
+- Fixed `src/renderer/src/server/node/utils/download.ts` - typed DataFrame, added null guards
+- Fixed `src/renderer/src/server/node/dataModels/state.ts` - added null guard
+- Fixed `src/renderer/src/state/global.ts` - initialized processedGazeData in Zustand store
+
+### Results
+- Node typecheck (tsconfig.node.json): **0 errors** ✓
+- Web typecheck (tsconfig.web.json): 295 errors (pre-existing in legacy imperative modules)
+
+### Files Changed
+- src/types/GlobalState.ts (enhanced)
+- src/types/IpcApi.ts (new)
+- src/main/listeners/types.ts
+- src/main/listeners/window.ts
+- src/preload/index.ts
+- src/preload/index.d.ts (unchanged, declares global Window)
+- src/renderer/src/server/node/connectors/fixation-filter.ts
+- src/renderer/src/server/node/connectors/eye-tracker.ts
+- src/renderer/src/server/node/analysis/analysis.ts
+- src/renderer/src/server/node/utils/download.ts
+- src/renderer/src/server/node/dataModels/state.ts
+- src/renderer/src/state/global.ts
+
+### Remaining Web Errors (295)
+All in legacy imperative modules scheduled for removal:
+- modules/ui/data-collection.ts (76)
+- components/FileImport/loadFile.ts (55)
+- modules/ui/questions.ts (53)
+- modules/ui/tabs.ts (21)
+- modules/utils/dom.ts (19)
+- utils/recording.ts (17)
+- modules/ui/canvas.ts (12)
+- server/node/analysis/analysis.ts (9)
+- modules/ui/window-events.ts (8)
+- modules/ui/mapping.ts (8)
+- Others (17)
+
+### Notes
+- The web type errors are in legacy imperative code that PRD tasks 5-6 target for removal/integration
+- These modules have always had type issues per progress.txt history
+- Fixing these requires either massive type additions or removal (PRD approach)

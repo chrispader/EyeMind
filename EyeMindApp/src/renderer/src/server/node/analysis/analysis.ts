@@ -153,11 +153,20 @@ export function getfirstValue(group, element, tab, currentQuestion) {
   return group.select(element, tab, currentQuestion).toArray()[0]
 }
 
+type ElementVisit = {
+  element: unknown
+  tabName: unknown
+  questionID: unknown
+  visit_start: unknown
+  visit_end: unknown
+  visit_duration: number
+}
+
 export function fixationsToElementVisits(dataFrame) {
   // Note: a visit to an element refers to the time interval from the onset of the first fixation on that element, to the offset of the last consecuctive fixation on that element
   // console.log("fixationsToElementVisits function",arguments);
 
-  const visits = []
+  const visits: ElementVisit[] = []
 
   let visit_start
   let visit_end
@@ -166,7 +175,7 @@ export function fixationsToElementVisits(dataFrame) {
   let visit_question
   let visit
 
-  dataFrame.map((row, i, rows) => {
+  dataFrame.map((row, i, _rows) => {
     const el = row
 
     // first iteration
@@ -230,7 +239,7 @@ export function gazesToElementVisits(data, areGazesCorrected) {
   const elementAttrName = areGazesCorrected ? 'element-with-correction' : 'element'
   // console.log("element attribute name", elementAttrName);
 
-  const visits = []
+  const visits: ElementVisit[] = []
 
   let visit_start
   let visit_end
@@ -306,9 +315,9 @@ export function generateHeatMap(
   // derive the list the elements to exclude
   const elementsToExclude = getElementsToExclude(additionalElementsToIclude)
 
-  let fixationDataFrame = null
-  let elementVisitsDfFromGazes = null
-  let elementVisitsDfFromFixations = null
+  let fixationDataFrame: DataFrame | null = null
+  let elementVisitsDfFromGazes: DataFrame | null = null
+  let elementVisitsDfFromFixations: DataFrame | null = null
 
   // get state, fixationData, gazeData, areGazesCorrected
   for (const filePath of filePaths) {
@@ -384,7 +393,7 @@ export function generateHeatMap(
   //elementVisitsDfFromFixations.toCSV(true, 'elementVisitsDfFromFixations.csv')
 
   // in fixationDatam filter out rows with empty element or tabName, filter in rows with required questionID
-  const fixationDataFiltered = fixationDataFrame.filter(
+  const fixationDataFiltered = fixationDataFrame!.filter(
     (row) =>
       row.get('element') != '' &&
       row.get('tabName') != null &&
@@ -394,7 +403,7 @@ export function generateHeatMap(
   const groupedDfFixationData = fixationDataFiltered.groupBy('element', 'tabName')
 
   // in elementVisitsDfFromGazes, filter out rows with empty element or tabName, filter in rows with required questionID
-  const elementVisitsDfFromGazesFiltered = elementVisitsDfFromGazes.filter(
+  const elementVisitsDfFromGazesFiltered = elementVisitsDfFromGazes!.filter(
     (row) =>
       row.get('element') != '' &&
       row.get('tabName') != null &&
@@ -407,7 +416,7 @@ export function generateHeatMap(
   )
 
   // in elementVisitsDfFromFixations, filter out rows with empty element or tabName, filter in rows with required questionID
-  const elementVisitsDfFromFixationsFiltered = elementVisitsDfFromFixations.filter(
+  const elementVisitsDfFromFixationsFiltered = elementVisitsDfFromFixations!.filter(
     (row) =>
       row.get('element') != '' &&
       row.get('tabName') != null &&
@@ -440,7 +449,7 @@ export function customizedHeatMap(
   measureType,
   aggregation,
   elementsToExclude,
-  questionID,
+  _questionID,
 ) {
   // console.log("customizedHeatMap function ",arguments);
 
@@ -678,15 +687,16 @@ Gaze correction analysis
 
 export function getRandomGazeSet(samplingRatio, filePath) {
   const state = getStates()[filePath]
+  const gazeData = state.processedGazeData.gazeData!
 
-  const gazeDataKeys = Object.keys(state.processedGazeData.gazeData)
+  const gazeDataKeys = Object.keys(gazeData)
   const numberOfGazesToSelect = Math.floor(samplingRatio * gazeDataKeys.length)
   const min = 0
   const max = gazeDataKeys.length - numberOfGazesToSelect
   const startSequence = randomNumberInRange(min, max)
   const endSequence = startSequence + numberOfGazesToSelect
 
-  const randomGazeSet = state.processedGazeData.gazeData.slice(startSequence, endSequence)
+  const randomGazeSet = gazeData.slice(startSequence, endSequence)
 
   return randomGazeSet
 }
@@ -701,7 +711,7 @@ export function applyCorrectionOffset(
 ) {
   // gaze data size
   const state = getStates()[stateFile]
-  const gazeDataSize = state.processedGazeData.gazeData.length
+  const gazeDataSize = state.processedGazeData.gazeData!.length
 
   // set temporary attribute to store the corrections
   state.processedGazeData.temporaryCorrectedGazeData = []
@@ -752,7 +762,7 @@ export function correctGazeDataFragment(
 
   // get gaze data
   const state = getStates()[stateFile]
-  const gazeData = state.processedGazeData.gazeData
+  const gazeData = state.processedGazeData.gazeData!
   const snapshots = start == 0 ? state.snapshots : null
 
   // select gaze data fragment
@@ -794,8 +804,8 @@ export async function gazeDataFragmentMapped(
   // console.log("gazeDataFragmentMapped",arguments);
 
   const state = getStates()[stateFile]
-  state.processedGazeData.temporaryCorrectedGazeData.push.apply(
-    state.processedGazeData.temporaryCorrectedGazeData,
+  state.processedGazeData.temporaryCorrectedGazeData!.push.apply(
+    state.processedGazeData.temporaryCorrectedGazeData!,
     gazeDataFragment,
   ) // check if the use of a global variable here is ok
 

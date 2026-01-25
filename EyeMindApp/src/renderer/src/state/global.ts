@@ -9,6 +9,7 @@ export type GlobalStore = GlobalState & {
 
 const useGlobalStore = create<GlobalStore>((set) => ({
   setState: set,
+  processedGazeData: {},
 }))
 
 /**

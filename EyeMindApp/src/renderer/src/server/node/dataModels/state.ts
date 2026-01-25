@@ -74,7 +74,10 @@ export function getStyleParametersOfState(filePath: string) {
 }
 
 export function setAreGazesCorrectedOfState(filePath: string, val: boolean) {
-  states[filePath].processedGazeData.areGazesCorrected = val
+  const stateAtPath = states[filePath]
+  if (stateAtPath?.processedGazeData) {
+    stateAtPath.processedGazeData.areGazesCorrected = val
+  }
 }
 
 export function areAreGazesCorrectedOfState(filePath: string) {

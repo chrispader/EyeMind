@@ -31,12 +31,12 @@ contextBridge.exposeInMainWorld('electron', {
     ipcRenderer.on('browserMovement', (_event, ...args) => func(args)),
   onBrowserResize: (func) =>
     ipcRenderer.on('browserResize', (_event, ...args) => func(args)),
-} satisfies typeof window.electron)
+})
 
 // contextBridge.exposeInMainWorld listeners/test.js
 contextBridge.exposeInMainWorld('serverTests', {
   getServerState: () => ipcRenderer.invoke('getServerState'),
-} satisfies typeof window.serverTests)
+})
 
 // contextBridge.exposeInMainWorld globals.js
 contextBridge.exposeInMainWorld('globalParameters', CONST)
@@ -105,7 +105,7 @@ contextBridge.exposeInMainWorld('analysis', {
   onCompleteCorrectionListener: (func) =>
     ipcRenderer.on('completeCorrectionListener', (_event, ...args) => func(args)),
   getStatesInfo: () => ipcRenderer.invoke('getStatesInfo'),
-} satisfies typeof window.analysis)
+})
 
 // contextBridge.exposeInMainWorld listeners/download.js, session.js
 contextBridge.exposeInMainWorld('utils', {
@@ -131,7 +131,7 @@ contextBridge.exposeInMainWorld('utils', {
     ]),
   onSessionRead: (func) =>
     ipcRenderer.once('sessionRead', (_event, ...args) => func(args)),
-} satisfies typeof window.utils)
+})
 
 // contextBridge.exposeInMainWorld listeners/eye-tracker.js
 contextBridge.exposeInMainWorld('eyeTracker', {
@@ -170,7 +170,7 @@ contextBridge.exposeInMainWorld('eyeTracker', {
     ipcRenderer.once('completeProcessingListener', (_event, ...args) => func(args)),
   sendClickEvent: (clickTimestamp, clickedElement) =>
     ipcRenderer.invoke('sendClickEvent', [clickTimestamp, clickedElement]),
-} satisfies typeof window.eyeTracker)
+})
 
 // contextBridge.exposeInMainWorld listeners/fixation-filter.js
 contextBridge.exposeInMainWorld('Rserver', {
@@ -179,7 +179,7 @@ contextBridge.exposeInMainWorld('Rserver', {
     ipcRenderer.invoke('fixationFilter', [fixationFilterSettings]),
   onCompleteFixationFilterListener: (func) =>
     ipcRenderer.on('completeFixationFilterListener', (_event, ...args) => func(args)),
-} satisfies typeof window.Rserver)
+})
 
 // contextBridge.exposeInMainWorld listeners/state.js
 contextBridge.exposeInMainWorld('state', {
@@ -198,10 +198,10 @@ contextBridge.exposeInMainWorld('state', {
     ipcRenderer.invoke('getSnapshotsOfState', [filePath]),
   areAreGazesCorrectedOfState: (filePath) =>
     ipcRenderer.invoke('areAreGazesCorrectedOfState', [filePath]),
-} satisfies typeof window.state)
+})
 
 // contextBridge.exposeInMainWorld
 contextBridge.exposeInMainWorld('progress', {
   onUpdateProcessingMessage: (func) =>
     ipcRenderer.on('updateProcessingMessage', (_event, ...args) => func(args)), //listeners/eye-tracker.js
-} satisfies typeof window.progress)
+})

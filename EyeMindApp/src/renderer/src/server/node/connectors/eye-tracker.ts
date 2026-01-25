@@ -5,9 +5,11 @@ import request from 'request-promise'
 
 import { CONST } from '@/CONST'
 
+type Result = { success?: boolean; msg?: string }
+
 export async function setupTracking(xScreenDim, yScreenDim) {
   // console.log("setupTracking function");
-  const res = {}
+  const res: Result = {}
 
   // send setup data to the eye-tracking server
   const setupData = {
@@ -42,7 +44,7 @@ export async function setupTracking(xScreenDim, yScreenDim) {
 
 export async function sendSnapshotID(snapshot) {
   // console.log("sendSnapshotID function ",arguments);
-  const res = {}
+  const res: Result = {}
 
   const snapshotData = {
     action: 'addSnapshot',
@@ -59,7 +61,7 @@ export async function sendSnapshotID(snapshot) {
   // console.log("communication object to be sent", communication);
 
   try {
-    const response = await request(communication)
+    await request(communication)
     res.success = true
   } catch (error) {
     const msg = 'A problem occured when sending the snapshot id. ' + error
@@ -72,7 +74,7 @@ export async function sendSnapshotID(snapshot) {
 
 export async function sendFullSnapshot(snapshot) {
   // console.log("sendFullSnapshot function ",arguments);
-  const res = {}
+  const res: Result = {}
 
   const snapshotData = { action: 'logFullSnapshot', content: snapshot }
   const communication = {
@@ -85,7 +87,7 @@ export async function sendFullSnapshot(snapshot) {
   // console.log("communication object to be sent", communication);
 
   try {
-    const response = await request(communication)
+    await request(communication)
     res.success = true
   } catch (error) {
     const msg = 'A problem occured when sending the full snapshot. ' + error
@@ -104,7 +106,7 @@ export async function sendQuestionEvent(
   questionAnswer,
   questionID,
 ) {
-  const res = {}
+  const res: Result = {}
 
   // send question event data to the eye-tracking server
   const data = {
@@ -125,7 +127,7 @@ export async function sendQuestionEvent(
   }
 
   try {
-    const response = await request(communication)
+    await request(communication)
     res.success = true
   } catch (error) {
     const msg = 'A problem occured when sending the question event. ' + error
@@ -137,7 +139,7 @@ export async function sendQuestionEvent(
 }
 
 export async function sendClickEvent(clickTimestamp, clickedElement) {
-  const res = {}
+  const res: Result = {}
 
   // send question event data to the eye-tracking server
   const data = {
@@ -154,7 +156,7 @@ export async function sendClickEvent(clickTimestamp, clickedElement) {
   }
 
   try {
-    const response = await request(communication)
+    await request(communication)
     res.success = true
   } catch (error) {
     const msg = 'A problem occured when sending the click event. ' + error
@@ -270,11 +272,11 @@ export async function fetchSnapshotsInFragement(
   // request to ET server to snapshots in range [start,end]
   await request(com).then(function (res) {
     const state = getState()
-    Object.assign(state.snapshots, res)
+    Object.assign(state.snapshots ?? {}, res)
   })
 
   const state = getState()
-  console.log(Object.keys(state.snapshots).length)
+  console.log(Object.keys(state.snapshots ?? {}).length)
 
   // report progress through updateProcessingMessage
   mainWindow.webContents.send(
@@ -354,8 +356,8 @@ export async function dataMapped(
 
   /// extend fullGazeData with dataMapped
   const state = getState()
-  state.processedGazeData.gazeData.push.apply(
-    state.processedGazeData.gazeData,
+  state.processedGazeData.gazeData!.push.apply(
+    state.processedGazeData.gazeData!,
     dataMapped,
   ) // check if the use of a global variable here is ok
   setState(state) // implementation: to be kept so afterwards stateDownload would not need a parameter state.

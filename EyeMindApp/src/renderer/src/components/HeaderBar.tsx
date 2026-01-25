@@ -1,7 +1,7 @@
 import { Spacer } from '@renderer/components/Spacer'
 import { useCanGoBack, useLocation, useRouter } from '@tanstack/react-router'
 import React from 'react'
-import { IoChevronBackOutline } from 'react-icons/io5'
+import { IoArrowBackOutline } from 'react-icons/io5'
 
 interface HeaderBarProps {
   title?: string
@@ -22,7 +22,7 @@ export function HeaderBar({ title }: HeaderBarProps): React.ReactElement {
               className='back-button'
               onClick={() => router.history.back()}
               aria-label='Go back'>
-              <IoChevronBackOutline />
+              <IoArrowBackOutline />
             </button>
             <Spacer horizontal={20} />
           </>

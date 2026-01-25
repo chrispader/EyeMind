@@ -43,7 +43,7 @@ import {
   changeTab,
   openInTab,
   openWithinTab,
-} from '../../modules/ui/tabs'
+} from '@renderer/actions/tab-management'
 import { useSessionStore } from '../../state/session'
 
 // types of modeler objects supported by the tool

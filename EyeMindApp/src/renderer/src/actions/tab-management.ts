@@ -22,14 +22,27 @@ SOFTWARE.*/
 import { cancelDefault } from '@renderer/modules/utils/utils'
 import { useGlobalStore } from '@renderer/state/global'
 
-//import {registerClickEventForLogging} from './click-stream'
-import { resetModel } from './canvas'
 import { sendClickEvent } from '@renderer/actions/click-stream'
 import { takesnapshot } from '@renderer/actions/snapshot'
 import {
   createUpdateProcessHierarchyExplorer,
   renderProcessHierarchyExplorer,
-} from './process-hierarchy-explorer'
+} from '@renderer/actions/process-hierarchy'
+
+// Forward declaration for circular dependency with canvas.ts
+let _resetModel: ((fileId: string) => void) | null = null
+
+export function setResetModelFn(fn: (fileId: string) => void) {
+  _resetModel = fn
+}
+
+function resetModel(fileId: string) {
+  if (_resetModel) {
+    _resetModel(fileId)
+  } else {
+    console.error('resetModel not initialized')
+  }
+}
 
 /**
  * Title: add tab to header
@@ -44,7 +57,7 @@ import {
  * Additional notes: none
  *
  */
-function addToTabHeader(id: string) {
+export function addToTabHeader(id: string) {
   // create tab header if not already there
   console.log('addToTabHeader', arguments)
 
@@ -268,7 +281,7 @@ function tabDropped(e: DragEvent) {
  * Additional notes: none
  *
  */
-function closeTabInteraction(id: string, tabHeader: HTMLElement, takeSnapshot: boolean) {
+export function closeTabInteraction(id: string, tabHeader: HTMLElement, takeSnapshot: boolean) {
   console.log('closeTabInteraction', arguments)
 
   const { setState } = useGlobalStore.getState()
@@ -308,7 +321,7 @@ function closeTabInteraction(id: string, tabHeader: HTMLElement, takeSnapshot: b
  * Additional notes: none
  *
  */
-function changeTab(
+export function changeTab(
   destinationId: string,
   ignoreTabLinks: boolean,
   takeSnapshot: boolean,
@@ -379,7 +392,7 @@ function changeTab(
  * Additional notes: none
  *
  */
-function openInTab(subProcessId: string) {
+export function openInTab(subProcessId: string) {
   console.log('openInTab', arguments)
 
   addToTabHeader(subProcessId)
@@ -403,7 +416,7 @@ function openInTab(subProcessId: string) {
  * Additional notes: none
  *
  */
-async function openWithinTab(
+export async function openWithinTab(
   mainModelId: string,
   mainModelprocessId: string,
   subProcessId: string,
@@ -438,7 +451,7 @@ async function openWithinTab(
  * Additional notes: none
  *
  */
-function openMainTab(
+export function openMainTab(
   ignoreTabLinks: boolean,
   takeSnapshot: boolean,
   modelsGroupId: string,
@@ -453,13 +466,4 @@ function openMainTab(
       break
     }
   }
-}
-
-export {
-  addToTabHeader,
-  changeTab,
-  openInTab,
-  openWithinTab,
-  openMainTab,
-  closeTabInteraction,
 }

@@ -24,8 +24,8 @@ import { useGlobalStore } from '@renderer/state/global'
 import { CONST } from '@/CONST'
 
 import { takesnapshot } from '@renderer/actions/snapshot'
-import { resetProcessHierarchy } from './process-hierarchy-explorer'
-import { closeTabInteraction, openMainTab } from './tabs'
+import { resetProcessHierarchy } from '@renderer/actions/process-hierarchy'
+import { closeTabInteraction, openMainTab, setResetModelFn } from '@renderer/actions/tab-management'
 
 /**
  * Title: Reset model
@@ -39,7 +39,7 @@ import { closeTabInteraction, openMainTab } from './tabs'
  * Additional notes: none
  *
  */
-function resetModel(fileId: string) {
+function resetModelImpl(fileId: string) {
   console.log('resetModel', arguments)
 
   const container = document.querySelector('[id="model' + fileId + '-container"]')
@@ -67,6 +67,11 @@ function resetModel(fileId: string) {
   }
 }
 
+// Initialize the circular dependency
+setResetModelFn(resetModelImpl)
+
+export const resetModel = resetModelImpl
+
 /**
  * Title: Reset navigation tabs and tabs view
  *
@@ -77,7 +82,7 @@ function resetModel(fileId: string) {
  * Additional notes: none
  *
  */
-function resetNavTabsAndTabs(modelsGroupId?: string) {
+export function resetNavTabsAndTabs(modelsGroupId?: string) {
   const state = useGlobalStore.getState()
 
   if (modelsGroupId != null) {
@@ -121,7 +126,7 @@ function resetNavTabsAndTabs(modelsGroupId?: string) {
     } else if (state.linkingSubProcessesMode == 'withinTab') {
       // reset all models
       for (const key of Object.keys(state.models ?? {})) {
-        resetModel(key)
+        resetModelImpl(key)
       }
 
       // open main tab
@@ -157,7 +162,7 @@ function resetNavTabsAndTabs(modelsGroupId?: string) {
  * Additional notes: none
  *
  */
-function showModelsGroup(groupId: string | null) {
+export function showModelsGroup(groupId: string | null) {
   console.log('showModelsGroup', arguments)
 
   const state = useGlobalStore.getState()
@@ -180,5 +185,3 @@ function showModelsGroup(groupId: string | null) {
     }
   }
 }
-
-export { resetModel, resetNavTabsAndTabs, showModelsGroup }

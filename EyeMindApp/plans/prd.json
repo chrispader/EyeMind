@@ -43,7 +43,7 @@
     "steps": [
       "Remove all UI-related code (imperative DOM operations) from the codebase, especially from ./modules/ui"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "project-structure",
@@ -52,7 +52,7 @@
       "Integrate the remaining imperative code from ./modules/ui into the React code or into dedicated actions in ./actions",
       "Remove the ./modules/ui directory."
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "code-quality",

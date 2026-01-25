@@ -9,8 +9,8 @@ import {
   takeSnapshotOnWindowMovement,
   takeSnapshotOnWindowResize,
 } from '@renderer/actions/window-events'
-import { resetModel, resetNavTabsAndTabs } from '@renderer/modules/ui/canvas'
-import { openMainTab } from '@renderer/modules/ui/tabs'
+import { resetModel, resetNavTabsAndTabs } from '@renderer/actions/canvas'
+import { openMainTab } from '@renderer/actions/tab-management'
 import { loadServerStateIntoClient, useGlobalStore } from '@renderer/state/global'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'

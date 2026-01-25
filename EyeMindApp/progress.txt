@@ -609,3 +609,39 @@ These are exposed via `window.clientTests` for E2E testing.
 - PRD task 5 (remove UI code) progress: 7 → 3 modules/ui files remain
 - Remaining 3 modules are core viewer system, tightly interdependent
 - Full removal requires converting tab/canvas to React components (large scope)
+
+## 2026-01-25 - Complete modules/ui Removal (PRD Task 5-6 COMPLETE)
+
+### Completed
+Moved ALL remaining modules/ui code to actions/ and deleted the directory:
+
+**New Action Files:**
+- `actions/canvas.ts` - Canvas/model reset functions (resetModel, resetNavTabsAndTabs, showModelsGroup)
+- `actions/tab-management.ts` - Tab management (addToTabHeader, changeTab, openInTab, openWithinTab, openMainTab, closeTabInteraction)
+- `actions/process-hierarchy.ts` - Process hierarchy explorer (createUpdateProcessHierarchyExplorer, renderProcessHierarchyExplorer, resetProcessHierarchy)
+
+**Updated Imports:**
+- `__root.tsx` - Now imports from `@renderer/actions/canvas` and `@renderer/actions/tab-management`
+- `loadFile.ts` - Now imports from `@renderer/actions/tab-management`
+
+**Deleted:**
+- `modules/ui/canvas.ts`
+- `modules/ui/tabs.ts`
+- `modules/ui/process-hierarchy-explorer.ts`
+- Entire `modules/ui/` directory
+
+**Circular Dependency Resolution:**
+- `canvas.ts` calls `closeTabInteraction` and `openMainTab` from `tab-management.ts`
+- `tab-management.ts` calls `resetModel` from `canvas.ts`
+- Used runtime function injection (`setResetModelFn`) to break the circular dependency
+
+### Impact
+- modules/ui reduced: 3 → 0 files
+- modules/ui directory DELETED
+- actions/ now has 8 files: snapshot.ts, loading.ts, click-stream.ts, window-events.ts, tabs.ts, canvas.ts, tab-management.ts, process-hierarchy.ts
+- Type check: 0 errors ✓
+
+### PRD Status
+- Task 5 (Remove UI code): **COMPLETE** ✓
+- Task 6 (Integrate into actions): **COMPLETE** ✓
+- All PRD tasks now pass: true

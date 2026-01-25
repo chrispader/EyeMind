@@ -20,11 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /* Process hierarchy explorer */
-//import {registerClickEventForLogging} from './click-stream'
 import { useGlobalStore } from '@renderer/state/global'
 
 import { sendClickEvent } from '@renderer/actions/click-stream'
-import { openWithinTab } from './tabs'
+import { openWithinTab } from '@renderer/actions/tab-management'
 
 /**
  * Title: create or update the process hierarchy explorer
@@ -44,7 +43,7 @@ import { openWithinTab } from './tabs'
  * Additional notes: none
  *
  */
-function createUpdateProcessHierarchyExplorer(
+export function createUpdateProcessHierarchyExplorer(
   mainModelId: string,
   mainModelprocessId: string,
   SubProcessId: string,
@@ -92,7 +91,7 @@ function createUpdateProcessHierarchyExplorer(
  * Additional notes: none
  *
  */
-function renderProcessHierarchyExplorer(
+export function renderProcessHierarchyExplorer(
   mainModelName: string,
   mainModelprocessId: string,
 ) {
@@ -158,7 +157,7 @@ function renderProcessHierarchyExplorer(
  * Additional notes: none
  *
  */
-function resetProcessHierarchy() {
+export function resetProcessHierarchy() {
   const { setState } = useGlobalStore.getState()
 
   const container = document.getElementById('process-hierarchy-content')
@@ -170,10 +169,4 @@ function resetProcessHierarchy() {
   setState({
     processHierarchyExplorer: null,
   })
-}
-
-export {
-  createUpdateProcessHierarchyExplorer,
-  renderProcessHierarchyExplorer,
-  resetProcessHierarchy,
 }

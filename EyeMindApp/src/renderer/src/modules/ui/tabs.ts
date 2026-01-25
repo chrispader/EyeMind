@@ -24,8 +24,8 @@ import { useGlobalStore } from '@renderer/state/global'
 
 //import {registerClickEventForLogging} from './click-stream'
 import { resetModel } from './canvas'
-import { sendClickEvent } from './click-stream'
-import { takesnapshot } from './data-collection'
+import { sendClickEvent } from '@renderer/actions/click-stream'
+import { takesnapshot } from '@renderer/actions/snapshot'
 import {
   createUpdateProcessHierarchyExplorer,
   renderProcessHierarchyExplorer,

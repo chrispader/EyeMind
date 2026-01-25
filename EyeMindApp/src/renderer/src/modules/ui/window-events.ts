@@ -23,7 +23,7 @@ SOFTWARE.*/
 import { useGlobalStore } from '@renderer/state/global'
 
 import { resetModel, resetNavTabsAndTabs } from './canvas'
-import { takesnapshot } from './data-collection'
+import { takesnapshot } from '@renderer/actions/snapshot'
 import { openMainTab } from './tabs'
 
 /**

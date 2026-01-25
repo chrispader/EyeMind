@@ -23,7 +23,7 @@ import { useGlobalStore } from '@renderer/state/global'
 
 import { CONST } from '@/CONST'
 
-import { takesnapshot } from './data-collection'
+import { takesnapshot } from '@renderer/actions/snapshot'
 import { resetProcessHierarchy } from './process-hierarchy-explorer'
 import { closeTabInteraction, openMainTab } from './tabs'
 

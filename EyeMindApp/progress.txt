@@ -530,3 +530,40 @@ Removed all verifiably unused code from the codebase:
 - ErrorList.tsx kept - used by FileImport component
 - Typecheck passes: 0 errors
 - PRD task 7 (remove unused code) is COMPLETE
+
+## 2026-01-25 - Remove UI Code & Create Actions (PRD Task 5-6 Partial)
+
+### Completed
+Moved imperative actions from modules/ui/ to new actions/ directory:
+
+**New Actions Directory:**
+- `actions/snapshot.ts` - Eye-tracking snapshot functionality (from data-collection.ts)
+- `actions/loading.ts` - Loading screen state management (from progress.ts)
+- `actions/click-stream.ts` - Click event tracking for eye-tracking (from click-stream.ts)
+
+**Deleted modules/ui Files (4):**
+- `data-collection.ts` - Moved takesnapshot to actions/, removed no-op prepareDataCollectionContent
+- `progress.ts` - Moved to actions/loading.ts
+- `click-stream.ts` - Moved to actions/click-stream.ts
+
+**Cleaned Up Dead Code:**
+- Removed `prepareDataCollectionContent()` call from loadFile.ts (was no-op)
+- Updated all imports to use new @renderer/actions/* paths
+
+### Impact
+- modules/ui reduced: 7 → 4 files
+- New actions/ directory with 3 clean action modules
+- Type check: 0 errors ✓
+
+### Remaining modules/ui Files (4)
+These are tightly coupled tab/canvas/window management code:
+- `canvas.ts` - Canvas/model rendering
+- `tabs.ts` - Tab management (used by experiment/index.tsx, loadFile.ts)
+- `window-events.ts` - Window lifecycle handlers (used by __root.tsx)
+- `process-hierarchy-explorer.ts` - Process hierarchy UI (used by tabs.ts)
+
+### Notes
+- PRD task 5 (remove UI code) is PARTIALLY complete
+- Remaining 4 modules form the core tab/viewer system
+- Full removal requires converting tab system to React components (larger scope)
+- PRD task 6 (integration) depends on completing task 5

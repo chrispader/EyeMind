@@ -19,7 +19,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-/*  data-collection with the support of eye-tracking   */
+/*  Eye-tracking snapshot functionality   */
 import { useGlobalStore } from '@renderer/state/global'
 
 type IpcResult = { success: boolean; msg?: string }
@@ -159,24 +159,4 @@ async function sendFullSnapshot(snapshot: Snapshot): Promise<void> {
   }
 }
 
-/**
- * Title: prepare the loaded content view for data collection
- *
- * Description: prepare the loaded content view for data collection
- *
- * @param {booleam} _filePropertiesDefined allows to set unclosable tabs if not already defined (that is the case when you load a session)
- *
- * Returns {void}
- *
- *
- * Additional notes: Now a no-op stub - content view preparation is handled in React
- *
- */
-function prepareDataCollectionContent(_filePropertiesDefined: boolean): void {
-  // No-op: content preparation now handled in React routes
-}
-
-export {
-  prepareDataCollectionContent,
-  takesnapshot,
-}
+export { takesnapshot }

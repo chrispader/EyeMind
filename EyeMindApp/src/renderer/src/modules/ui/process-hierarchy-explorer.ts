@@ -23,7 +23,7 @@ SOFTWARE.*/
 //import {registerClickEventForLogging} from './click-stream'
 import { useGlobalStore } from '@renderer/state/global'
 
-import { sendClickEvent } from './click-stream'
+import { sendClickEvent } from '@renderer/actions/click-stream'
 import { openWithinTab } from './tabs'
 
 /**

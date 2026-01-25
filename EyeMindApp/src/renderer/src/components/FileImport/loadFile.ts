@@ -32,13 +32,12 @@ import BpmnNavigatedViewer from 'bpmn-js/lib/NavigatedViewer'
 
 import { CONST } from '@/CONST'
 
-import { sendClickEvent } from '../../modules/ui/click-stream'
-import { takesnapshot } from '../../modules/ui/data-collection'
-import { prepareDataCollectionContent } from '../../modules/ui/data-collection'
+import { sendClickEvent } from '@renderer/actions/click-stream'
+import { takesnapshot } from '@renderer/actions/snapshot'
 import {
   hideGeneralWaitingScreen,
   showGeneralWaitingScreen,
-} from '../../modules/ui/progress'
+} from '@renderer/actions/loading'
 import {
   addToTabHeader,
   changeTab,
@@ -392,7 +391,7 @@ function sessionReadListener() {
  *
  * Description: update client state with the state read in the server side (i.e., refering to the loaded session)
  *
- * Control-flow summary: update client state with the state read in the server side (i.e., refering to the loaded session) and call the methods nessary to prepare the data collection view (i.e., processModel(),  prepareDataCollectionContent() )
+ * Control-flow summary: update client state with the state read in the server side (i.e., refering to the loaded session) and call processModel() to prepare the data collection view
 
  * @param {object} res an object coming from the server side with the following attributes: success (boolean), msg (string) and data (state)
  *
@@ -428,10 +427,6 @@ async function sessionRead(res: { success: boolean; msg?: string; data?: Record<
     for (const model of Object.values(state.models ?? {}) as ModelData[]) {
       await processModel(config, model.xml, model.id, model.fileName, model.path)
     }
-
-    // last step of file import
-    const filePropertiesDefined = true
-    prepareDataCollectionContent(filePropertiesDefined)
 
     //infoAlert(msg);
   } else {

@@ -23,20 +23,8 @@ import { useGlobalStore } from '@renderer/state/global'
 
 import { CONST } from '@/CONST'
 
-/* progress */
-
 /**
- * Title: delay
- *
- * Description: sleep for some milliseconds
- *
- * @param {int} delayInMs sleep time in milliseconds
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
+ * Delay for a given number of milliseconds
  */
 function delay(delayInMs: number) {
   return new Promise((resolve) => {
@@ -47,17 +35,7 @@ function delay(delayInMs: number) {
 }
 
 /**
- * Title: show general waiting screen
- *
- * Description: show general waiting screen
- *
- * @param {string} text to display in document.getElementById("wait-title")
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
+ * Show general waiting screen with loading message
  */
 async function showGeneralWaitingScreen(text: string) {
   const { setState } = useGlobalStore.getState()
@@ -67,15 +45,7 @@ async function showGeneralWaitingScreen(text: string) {
 }
 
 /**
- * Title: hide general waiting screen
- *
- * Description: hide general waiting screen
- *
- * Returns {void}
- *
- *
- * Additional notes: none
- *
+ * Hide general waiting screen
  */
 async function hideGeneralWaitingScreen() {
   const { setState } = useGlobalStore.getState()

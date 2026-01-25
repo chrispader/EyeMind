@@ -22,17 +22,10 @@ SOFTWARE.*/
 import { useGlobalStore } from '@renderer/state/global'
 
 /**
- * Title: send click event to the ET server through the server side
+ * Send click event to the eye-tracking server
  *
- * Description: send click event to the ET server through the server side
-
- * @param {int} clickTimestamp timestamp when the click occured
- * @param {string} clickedElement clicked element
- *
- * Returns {void}
- *
- *
- *
+ * @param clickTimestamp timestamp when the click occurred
+ * @param clickedElement clicked element identifier
  */
 async function sendClickEvent(clickTimestamp: number, clickedElement: string) {
   console.log('sendClickEvent', arguments)
@@ -55,75 +48,5 @@ async function sendClickEvent(clickTimestamp: number, clickedElement: string) {
     }
   }
 }
-
-/**
- * Title: clicks listener
- *
- * Description: iterate through document.querySelectorAll(".click-record") and registerClickEventForLogging() for all DOM elements in document.querySelectorAll(".click-record")
- *
- * @param {void} . .
- * Returns {void}
- *
- *
- * Additional notes: clicks should have a class tag "click-record" and attribute data-element-id
- *
- */
-/*function clicksListener() {
-
-	const relevantElements = document.querySelectorAll(".click-record");
-
-	for (let i = 0; i < relevantElements.length; i++) {
-
-			const el = relevantElements[i];
-			registerClickEventForLogging(el);
-
-	}
-
-}*/
-
-/**
- * Title: register click event for logging
- *
- * Description: send the click event to the eye-tracking server (through the server side)
- *
- * @param {void} . .
- * Returns {void}
- *
- *
- * Additional notes:  some variables are exposed in window.clientTests for testing purpose
- *
- */
-/*
-function registerClickEventForLogging(el) {
-
-	el.addEventListener("click", async() => {
-
-	const state = useStateStore.getState()
-
-	console.log("state",state);
-
-
-
-	const clickTimestamp = Date.now();
-	const clickedElement= el.getAttribute("data-element-id");
-
-		// for testing purpose
-		if(window.hasOwnProperty('clientTests')) {
-			window.clientTests.lastRelevantClick = {
-				"clickTimestamp":clickTimestamp,
-				"clickedElement": clickedElement,
-			};
-		}
-
-	console.log("click",clickTimestamp,clickedElement);
-
-	await sendClickEvent(clickTimestamp,clickedElement)
-
-
-
-	});
-
-}
-*/
 
 export { sendClickEvent }

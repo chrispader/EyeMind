@@ -1,4 +1,8 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
+import ConfigLinkButton from '@renderer/components/ConfigLinkButton'
+import { containerClasses } from '@renderer/css/styles'
+import { createFileRoute } from '@tanstack/react-router'
+
+import { Route as homeRoute } from '../index'
 
 export const Route = createFileRoute('/analysis/')({
   component: AnalysisPage,
@@ -6,15 +10,10 @@ export const Route = createFileRoute('/analysis/')({
 
 function AnalysisPage(): React.ReactElement {
   return (
-    <div className='main-view' id='main-view'>
-      <div className='row'>
-        <Link to='/config/eye-tracking' id='eye-tracking' className='btn eye-tracking'>
-          Eye-tracking
-        </Link>
-        <Link to='/analysis' id='analysis' className='btn analysis'>
-          Analysis
-        </Link>
-      </div>
+    <div id='analysis-view' className={`${containerClasses} button-gaps`}>
+      <ConfigLinkButton to={homeRoute.to} configClass='analysis'>
+        Back to Home
+      </ConfigLinkButton>
     </div>
   )
 }

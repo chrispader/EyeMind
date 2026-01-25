@@ -163,6 +163,6 @@
       "Fix missing styles on the Analysis route",
       "Make sure that the styles are working correctly"
     ],
-    "passes": false
+    "passes": true
   }
 ]

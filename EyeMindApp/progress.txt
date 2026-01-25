@@ -806,3 +806,30 @@ Fixed broken navigation flow in the config/eye-tracking routes:
 
 ### PRD Status
 - Task 13 (navigation: fix broken links): **COMPLETE** ✓
+
+## 2026-01-25 - Fix Analysis Route Styles (PRD Task 18)
+
+### Completed
+Fixed missing styles on the Analysis route:
+
+**Issue:**
+- Analysis route used old class names (`main-view`, `row`, `btn`) that had no styles
+- Route was a placeholder showing duplicate home buttons
+
+**Fix:**
+- Updated to use `ConfigLinkButton` component (consistent with HomePage)
+- Used `containerClasses` from styles.ts for proper flex layout
+- Changed from duplicate home buttons to a "Back to Home" button
+- Proper styling now matches the rest of the app
+
+### Files Changed
+- `src/renderer/src/routes/analysis/index.tsx`
+- `plans/prd.json` (marked task as passes: true)
+
+### Notes
+- The Analysis feature itself (heatmaps, gaze correction, fixation analysis) needs further implementation
+- Current route is functional but minimal - just provides navigation back to home
+- Full analysis UI would require implementing the workflow from analysis.ts
+
+### PRD Status
+- Task 18 (code-style: fix Analysis route styles): **COMPLETE** ✓

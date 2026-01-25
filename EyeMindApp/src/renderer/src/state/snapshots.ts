@@ -1,10 +1,17 @@
-let snapshots = null
-
-function setSnapshots(val) {
-  snapshots = val
+export type Snapshot = {
+  code: string
+  tabName: string
+  screenX: number
+  screenY: number
 }
 
-function getSnapshots() {
+let snapshots: Record<number, Snapshot> | null = null
+
+function setSnapshots(val: unknown) {
+  snapshots = val as Record<number, Snapshot> | null
+}
+
+function getSnapshots(): Record<number, Snapshot> | null {
   return snapshots
 }
 

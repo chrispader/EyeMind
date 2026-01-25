@@ -36,7 +36,7 @@ function FileImport<FileType>({
 
   const handleDroppedFiles = useCallback(
     async (e: React.DragEvent<HTMLDivElement>) => {
-      cancelDefault(e)
+      cancelDefault(e.nativeEvent)
 
       setIsActive(false)
 

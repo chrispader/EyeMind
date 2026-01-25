@@ -73,7 +73,7 @@ function handleWindowRefresh() {
  */
 function takeSnapshotOnWindowResize() {
   console.log('takeSnapshotOnWindowResize', arguments)
-  window.electron.onBrowserResize(function (message) {
+  window.electron.onBrowserResize(function (_message) {
     console.log('onBrowserResize')
     takesnapshot(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
   })
@@ -98,7 +98,7 @@ function takeSnapshotOnWindowResize() {
 function takeSnapshotOnWindowMovement() {
   console.log('takeSnapshotOnWindowMovement', arguments)
 
-  window.electron.onBrowserMovement(function (message) {
+  window.electron.onBrowserMovement(function (_message) {
     console.log('onBrowserMovement')
     takesnapshot(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
   })
@@ -122,13 +122,12 @@ function takeSnapshotOnWindowMovement() {
 function testListeners() {
   console.log('testListeners', arguments)
 
-  window.clientTests = {}
-  window.clientTests.getClientState = () => useGlobalStore.getState().state
-  window.clientTests.openMainTabInWithinTabLinks = (modelsGroupId) =>
-    openMainTab(true, false, modelsGroupId)
-  window.clientTests.resetModel = (fileId) => resetModel(fileId)
-  window.clientTests.resetNavTabsAndTabs = (modelsGroupId) =>
-    resetNavTabsAndTabs(modelsGroupId)
+  window.clientTests = {
+    getClientState: () => useGlobalStore.getState(),
+    openMainTabInWithinTabLinks: (modelsGroupId: string) => openMainTab(true, false, modelsGroupId),
+    resetModel: (fileId: string) => resetModel(fileId),
+    resetNavTabsAndTabs: (modelsGroupId: string) => resetNavTabsAndTabs(modelsGroupId),
+  }
 }
 
 /**

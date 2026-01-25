@@ -101,6 +101,7 @@ function renderProcessHierarchyExplorer(
   const state = useGlobalStore.getState()
 
   const container = document.getElementById('process-hierarchy-content')
+  if (!container) return
 
   container.innerHTML = ''
 
@@ -108,7 +109,7 @@ function renderProcessHierarchyExplorer(
   if ((state.processHierarchyExplorer?.length ?? 0) > 1) {
     state.processHierarchyExplorer?.forEach((el, position, array) => {
       // create arrow head
-      if (container?.innerHTML != '') {
+      if (container.innerHTML != '') {
         const arrowhead = document.createElement('span')
         arrowhead.setAttribute('class', 'arrowhead')
         arrowhead.innerHTML = ' > '
@@ -131,7 +132,7 @@ function renderProcessHierarchyExplorer(
 
       // record click and add onlick event to the step to allow changing the tab
       step.onclick = () => {
-        sendClickEvent(Date.now(), step.getAttribute('data-element-id'))
+        sendClickEvent(Date.now(), step.getAttribute('data-element-id') ?? '')
         openWithinTab(mainModelName, mainModelprocessId, el.id, el.label, position)
       }
 
@@ -163,7 +164,7 @@ function resetProcessHierarchy() {
   const container = document.getElementById('process-hierarchy-content')
 
   // reset destination
-  container.innerHTML = ''
+  if (container) container.innerHTML = ''
 
   // set state.processHierarchyExplorer to null
   setState({

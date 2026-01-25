@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ModalContainer } from '../../components/ModalContainer'
-import { InputField, TextareaField, SubmitButton } from '../../components/form'
+import { InputField, TextareaField } from '../../components/form'
 
 export const Route = createFileRoute('/experiment/recording-settings')({
   component: RecordingSettingsPage,

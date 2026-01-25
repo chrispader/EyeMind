@@ -90,8 +90,8 @@ function EyeTrackingLoadModelsPage() {
       const content = await new Promise<string>((resolve, reject) => {
         try {
           // readFileContent then traverseDataCollectionFile and traverseMoreItems
-          readFileContent(file, async (content: string) => {
-            resolve(content)
+          readFileContent(file, async (content) => {
+            resolve(content as string)
           })
         } catch (error) {
           reject(error)

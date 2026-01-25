@@ -20,11 +20,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-function readFileContent(file, callback) {
+function readFileContent(file: File, callback: (content: string | ArrayBuffer | null) => void) {
   const reader = new FileReader()
   reader.onload = async function (e) {
     // get file content
-    const content = e.target.result
+    const content = e.target?.result ?? null
     // call back function
     await callback(content)
   }
@@ -32,44 +32,30 @@ function readFileContent(file, callback) {
   reader.readAsText(file)
 }
 
-function infoAlert(message) {
+function infoAlert(message: string) {
   if (window.hasOwnProperty('electron')) {
     window.electron.message('info', message)
   } else {
-    alert(msg)
+    alert(message)
   }
 }
 
-function errorAlert(message) {
+function errorAlert(message: string) {
   if (window.hasOwnProperty('electron')) {
     window.electron.message('error', message)
   } else {
-    alert(msg)
+    alert(message)
   }
 }
 
-function assign(obj, prop, value) {
-  if (typeof prop === 'string') prop = prop.split('.')
-
-  if (prop.length > 1) {
-    const e = prop.shift()
-    assign(
-      (obj[e] =
-        Object.prototype.toString.call(obj[e]) === '[object Object]' ? obj[e] : {}),
-      prop,
-      value,
-    )
-  } else obj[prop[0]] = value
-}
-
-function cancelDefault(e) {
+function cancelDefault(e: Event) {
   // console.log("cancelDefault",arguments);
   e.preventDefault()
   e.stopPropagation()
 }
 
 // can be removed if no more used in the client side
-function calculateProgress(i, max) {
+function calculateProgress(i: number, max: number) {
   const progress = (i / max) * 100
   return Math.round(progress * 100) / 100
 }

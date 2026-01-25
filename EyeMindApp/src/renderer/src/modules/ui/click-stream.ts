@@ -40,17 +40,18 @@ async function sendClickEvent(clickTimestamp: number, clickedElement: string) {
   const state = useGlobalStore.getState()
 
   if (state.isEtOn) {
-    const res = await window.eyeTracker.sendClickEvent(clickTimestamp, clickedElement)
+    const res = (await window.eyeTracker.sendClickEvent(clickTimestamp, clickedElement)) as {
+      success: boolean
+      msg?: string
+    }
     if (!res.success) {
       console.error(res.msg)
     }
 
-    // for testing purpose
-    if (window.hasOwnProperty('clientTests')) {
-      window.clientTests.lastRelevantClick = {
-        clickTimestamp: clickTimestamp,
-        clickedElement: clickedElement,
-      }
+    // for testing purpose - store last click for test verification
+    window.clientTests.lastRelevantClick = {
+      clickTimestamp: clickTimestamp,
+      clickedElement: clickedElement,
     }
   }
 }

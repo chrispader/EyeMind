@@ -266,3 +266,37 @@ All in legacy imperative modules scheduled for removal:
 - The web type errors are in legacy imperative code that PRD tasks 5-6 target for removal/integration
 - These modules have always had type issues per progress.txt history
 - Fixing these requires either massive type additions or removal (PRD approach)
+
+## 2026-01-25 - Type Error Fixes (Continued)
+
+### Completed
+Fixed type errors across 12 files, reducing web errors from 295 → 264 (31 errors fixed, ~10% reduction):
+
+**Files Fixed:**
+1. `src/types/global.d.ts` - Added `path` property to File interface for Electron
+2. `src/preload/index.d.ts` - Added `externalProgressWindows`, expanded `clientTests` type
+3. `routes/experiment/recording-settings.tsx` - Removed unused SubmitButton import
+4. `modules/ui/progress.ts` - Fixed null check, typed callback args
+5. `modules/ui/click-stream.ts` - Typed IPC response, fixed clientTests assignment
+6. `modules/utils/utils.ts` - Typed all functions, fixed msg→message typo, removed unused assign()
+7. `modules/ui/process-hierarchy-explorer.ts` - Added null checks for DOM elements
+8. `components/FileImport/index.tsx` - Fixed DragEvent compatibility (use nativeEvent)
+9. `routes/config/eye-tracking/load-models.tsx` - Fixed readFileContent callback type
+10. `modules/ui/window-events.ts` - Prefixed unused params, fixed clientTests initialization
+11. `state/snapshots.ts` - Added Snapshot type definition
+12. `modules/ui/mapping.ts` - Added GazePoint type, simplified closest/matchesSelector using Element.matches()
+
+### Remaining Errors (264)
+Concentrated in large legacy imperative files:
+- modules/ui/data-collection.ts (74)
+- components/FileImport/loadFile.ts (56)
+- modules/ui/questions.ts (53)
+- modules/ui/tabs.ts (21)
+- modules/utils/dom.ts (19)
+- utils/recording.ts (17)
+- modules/ui/canvas.ts (12)
+
+### Notes
+- The remaining 183 errors (69%) are in 3 tightly-coupled imperative files
+- These require either massive refactoring or removal per PRD tasks 5-6
+- Smaller utility files (dom.ts, recording.ts) could be fixed but are lower priority

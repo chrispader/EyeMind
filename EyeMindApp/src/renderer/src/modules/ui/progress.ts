@@ -40,8 +40,8 @@ import { CONST } from '@/CONST'
  */
 function updateProcessMessageListener() {
   window.progress.onUpdateProcessingMessage(async function (args) {
-    const msg = args[0]
-    const externalProgressWindow = args[1]
+    const msg = args[0] as string
+    const externalProgressWindow = args[1] as HTMLElement
     await updateProcessingMessage(msg, externalProgressWindow)
   })
 }
@@ -69,7 +69,8 @@ async function updateProcessingMessage(msg: string, container: HTMLElement) {
     documentContainer = document
   }
 
-  documentContainer.getElementById('wait-progress').innerHTML = msg
+  const waitProgress = documentContainer.getElementById('wait-progress')
+  if (waitProgress) waitProgress.innerHTML = msg
 
   await delay(CONST.DELAY_FOR_RENDRING)
 }

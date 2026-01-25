@@ -24,9 +24,9 @@ import { getSnapshots, setSnapshots } from '../../state/snapshots'
 function mapGazestoElementsFromPageSnapshotListener() {
   window.eyeTracker.onMapGazestoElementsFromPageSnapshot(function (args) {
     console.log('mapGazestoElementsFromPageSnapshot', arguments)
-    const gazeData = args[0]
-    const start = args[1]
-    const gazeDataSize = args[2]
+    const gazeData = args[0] as unknown[]
+    const start = args[1] as number
+    const gazeDataSize = args[2] as number
     const externalProgressWindow = args[3]
     const snapshots = args[4]
 
@@ -35,18 +35,27 @@ function mapGazestoElementsFromPageSnapshotListener() {
       setSnapshots(snapshots)
     }
 
-    const dataMapped = mapGazestoElementsFromPageSnapshot(gazeData)
+    const dataMapped = mapGazestoElementsFromPageSnapshot(gazeData as GazePoint[])
     window.eyeTracker.dataMapped(dataMapped, start, gazeDataSize, externalProgressWindow)
   })
 }
 
-function mapGazestoElementsFromPageSnapshot(gazeData) {
+type GazePoint = {
+  x?: number
+  y?: number
+  snapshotId?: number
+  tabName?: string
+  element?: string
+}
+
+function mapGazestoElementsFromPageSnapshot(gazeData: GazePoint[]) {
   console.log('mapGazestoElementsFromPageSnapshot function ', arguments)
 
   const snapshots = getSnapshots()
+  if (!snapshots) return []
 
   let currentSnapshotID = -1
-  const dataMapped = []
+  const dataMapped: GazePoint[] = []
 
   const gazeDataLength = gazeData.length
 
@@ -70,12 +79,13 @@ function mapGazestoElementsFromPageSnapshot(gazeData) {
       /// set tabName
       gazepoint.tabName = snapshots[currentSnapshotID].tabName
       // map gaze point to elements
-      gazepoint.element = doMapping(
-        gazepoint.x,
-        gazepoint.y,
-        snapshots[currentSnapshotID].screenX,
-        snapshots[currentSnapshotID].screenY,
-      )
+      gazepoint.element =
+        doMapping(
+          gazepoint.x,
+          gazepoint.y,
+          snapshots[currentSnapshotID].screenX,
+          snapshots[currentSnapshotID].screenY,
+        ) ?? ''
     } else {
       gazepoint.tabName = ''
       gazepoint.element = ''
@@ -90,23 +100,23 @@ function mapGazestoElementsFromPageSnapshot(gazeData) {
   return dataMapped
 }
 
-function mapGazetoElementsFromSvgSnapshot(rX, rY, snapshotSvg, screenX, screenY) {
+function mapGazetoElementsFromSvgSnapshot(rX: number, rY: number, snapshotSvg: DocumentOrShadowRoot, screenX: number, screenY: number) {
   // console.log("mapGazestoElementsFromSvgSnapshot function,",arguments);
 
   return doMapping(rX, rY, screenX, screenY, snapshotSvg)
 }
 
-function doMapping(x, y, screenX, screenY, container) {
+function doMapping(x: number, y: number, screenX: number, screenY: number, container?: DocumentOrShadowRoot) {
   // console.log("doMapping function ",arguments);
 
-  container = container || document
+  const effectiveContainer = container || document
 
-  // console.log("container",container);
+  // console.log("container",effectiveContainer);
 
-  const relativeX = parseFloat(x) - screenX
-  const relativeY = parseFloat(y) - screenY
+  const relativeX = x - screenX
+  const relativeY = y - screenY
 
-  const target = container.elementFromPoint(relativeX, relativeY)
+  const target = effectiveContainer.elementFromPoint(relativeX, relativeY)
 
   // console.log("relativeX, relativeY", relativeX, relativeY);
   // console.log("target",target);
@@ -122,35 +132,28 @@ function doMapping(x, y, screenX, screenY, container) {
   return out
 }
 
-function closest(element, selector, checkYourSelf) {
+function closest(element: Element | null, selector: string, checkYourSelf: boolean): Element | null {
   // console.log("closest function ",arguments);
 
-  let currentElem = checkYourSelf ? element : element.parentNode
+  if (!element) return null
 
-  while (
-    currentElem &&
-    currentElem.nodeType !== document.DOCUMENT_NODE &&
-    currentElem.nodeType !== document.DOCUMENT_FRAGMENT_NODE
-  ) {
-    if (matchesSelector(currentElem, selector)) {
+  let currentElem: Element | null = checkYourSelf ? element : (element.parentElement ?? null)
+
+  while (currentElem) {
+    if (currentElem.matches(selector)) {
       return currentElem
     }
-
-    currentElem = currentElem.parentNode
+    currentElem = currentElem.parentElement
   }
 
-  return matchesSelector(currentElem, selector) ? currentElem : null
+  return null
 }
 
-function matchesSelector(el, selector) {
+function matchesSelector(el: Element | null, selector: string): boolean {
   // console.log("matchesSelector function ",arguments);
 
   if (!el || el.nodeType !== 1) return false
-  const nodes = el.parentNode.querySelectorAll(selector)
-  for (let i = 0; i < nodes.length; i++) {
-    if (nodes[i] == el) return true
-  }
-  return false
+  return el.matches(selector)
 }
 
 export {

@@ -135,5 +135,15 @@ declare global {
     analysis: Analysis
     serverTests: ServerTests
     globalParameters: unknown
+    /** Dynamically created external progress windows for long-running operations */
+    externalProgressWindows: Record<string, Window>
+    /** Client-side test utilities exposed for testing */
+    clientTests: {
+      getClientState: () => unknown
+      openMainTabInWithinTabLinks: (modelsGroupId: string) => void
+      resetModel: (fileId: string) => void
+      resetNavTabsAndTabs: (modelsGroupId: string) => void
+      lastRelevantClick?: { clickTimestamp: number; clickedElement: string }
+    }
   }
 }

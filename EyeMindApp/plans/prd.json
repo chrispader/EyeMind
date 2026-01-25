@@ -58,6 +58,6 @@
     "category": "code-quality",
     "description": "Remove all unused code and imports across the codebase",
     "steps": ["Remove all unused code and imports across the codebase"],
-    "passes": false
+    "passes": true
   }
 ]

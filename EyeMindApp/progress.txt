@@ -498,3 +498,35 @@ Internal:
 - PRD task 5 (remove UI code) continues to progress
 - Remaining 7 modules are still tightly coupled and actively used
 - Full removal would require significant React refactoring of tab/canvas/data-collection logic
+
+## 2026-01-25 - Remove Unused Code (PRD Task 7)
+
+### Completed
+Removed all verifiably unused code from the codebase:
+
+**Deleted Component Files (6):**
+- `components/HeatmapSettingsModal.tsx` - replaced by route /experiment/heatmap-settings
+- `components/FixationSettingsModal.tsx` - commented out, never imported
+- `components/ProcessingStates.tsx` - commented out, never imported
+- `components/GazeProjectionModal.tsx` - replaced by route /experiment/gaze-projection-settings
+- `components/DownloadModal.tsx` - replaced by route /experiment/export-options
+- `components/LoadedContentView.tsx` - never imported
+
+**Deleted Utility Files (2):**
+- `modules/utils/dom.ts` - never imported (225 lines)
+- `state/snapshots.ts` - exports never imported
+
+**Removed Unused Exports:**
+- `models.ts`: removed `validateModels`, `validateModelsOrThrow`, `ValidationResult` type
+- `session.ts`: removed `useQuestionFile`, `useModel` hooks
+- `generalModelsRegistry.ts`: removed `getGeneralModelsRegistry`
+
+### Impact
+- ~450 lines of dead code removed
+- Cleaner component directory
+- All remaining code is actively used
+
+### Notes
+- ErrorList.tsx kept - used by FileImport component
+- Typecheck passes: 0 errors
+- PRD task 7 (remove unused code) is COMPLETE

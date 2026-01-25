@@ -22,14 +22,10 @@ SOFTWARE.*/
 
 const generalModelsRegistry = {}
 
-function getGeneralModelsRegistry() {
-  return generalModelsRegistry
-}
-
 function addModel(fileid, generalModelRegistry) {
   generalModelsRegistry[fileid] = generalModelRegistry
 
   console.log('new generalModelsRegistry', generalModelsRegistry)
 }
 
-export { getGeneralModelsRegistry, addModel }
+export { addModel }

@@ -232,13 +232,9 @@ export const useModels = (predicate?: (model: Model) => boolean | undefined) =>
     ),
   )
 export const useModelActions = () => useSessionStore((state) => state.modelActions)
-export const useModel = (modelId: string) =>
-  useSessionStore((state) => state.models?.[modelId])
 
 export const useDraftModels = () => useModels((model) => model.isDraft)
 
 export const useQuestionFiles = () => useSessionStore((state) => state.questionFiles)
-export const useQuestionFile = (questionFileId: string) =>
-  useSessionStore((state) => state.questionFiles?.[questionFileId])
 export const useQuestions = () => useSessionStore((state) => state.questions)
 export const useQuestionActions = () => useSessionStore((state) => state.questionActions)

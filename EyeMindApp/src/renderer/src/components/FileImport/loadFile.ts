@@ -39,7 +39,6 @@ import {
   hideGeneralWaitingScreen,
   showGeneralWaitingScreen,
 } from '../../modules/ui/progress'
-import { loadQuestions } from '../../modules/ui/questions'
 import {
   addToTabHeader,
   changeTab,
@@ -168,13 +167,8 @@ async function loadDataCollectionFile(
     return
   }
 
-  if (isQuestionsFile(file, config)) {
-    if (await loadQuestions(file)) {
-      const filePropertiesDefined = false
-      prepareDataCollectionContent(filePropertiesDefined)
-    }
-    return
-  }
+  // Note: Questions are now loaded through the React route /config/eye-tracking/load-questions
+  // The isQuestionsFile branch was removed as it referenced a non-existent function
 
   const msg = 'File type or content not expected'
   errorAlert(msg)

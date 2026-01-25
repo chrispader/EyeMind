@@ -300,3 +300,36 @@ Concentrated in large legacy imperative files:
 - The remaining 183 errors (69%) are in 3 tightly-coupled imperative files
 - These require either massive refactoring or removal per PRD tasks 5-6
 - Smaller utility files (dom.ts, recording.ts) could be fixed but are lower priority
+
+## 2026-01-25 - Remove Dead Code
+
+### Completed
+Removed unused code that reduced type errors from 264 → 246 (18 errors eliminated):
+
+**Deleted Files:**
+- `src/renderer/src/utils/recording.ts` - exported `recordETInteraction` was never imported (17 errors)
+
+**Fixed Broken Import:**
+- `components/FileImport/loadFile.ts` - removed import of non-existent `loadQuestions` function from `modules/ui/questions.ts`
+- Removed dead code branch that called `loadQuestions()` (unreachable since `loadFiles()` is only called with `expectedArtifact: 'session'`)
+- Questions are now loaded through React route `/config/eye-tracking/load-questions`
+
+### Impact
+- Type errors: 264 → 246 (18 errors removed, ~7% reduction)
+- Removed entire `utils/` directory (only contained recording.ts)
+- Cleaned up dead import that referenced non-existent function
+
+### Remaining Errors (246)
+By file:
+- modules/ui/data-collection.ts (74)
+- components/FileImport/loadFile.ts (55)
+- modules/ui/questions.ts (54)
+- modules/ui/tabs.ts (21)
+- modules/utils/dom.ts (19)
+- modules/ui/canvas.ts (12)
+- Others (~11)
+
+### Notes
+- `questions.ts` cannot be deleted yet - still used by `data-collection.ts`
+- All remaining modules are tightly coupled - removal requires full React migration of data collection flow
+- PRD tasks 5-6 target removal/integration of these imperative modules

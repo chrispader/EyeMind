@@ -106,7 +106,7 @@ function ExperimentLayout(): React.ReactElement {
                   height='40px'
                   alt={LANG.iconFixationFilter}
                 />
-                <Link to='/experiment/gaze-projection-settings'>
+                {/* <Link to='/experiment/gaze-projection-settings'>
                   <img
                     id='projections-mapping-btn'
                     title={LANG.titleGazeProjections}
@@ -117,8 +117,8 @@ function ExperimentLayout(): React.ReactElement {
                     height='40px'
                     alt={LANG.iconProjectionsMapping}
                   />
-                </Link>
-                <Link to='/experiment/heatmap-settings'>
+                </Link> */}
+                {/* <Link to='/experiment/heatmap-settings'>
                   <img
                     id='heatmap-btn'
                     title={LANG.titleHeatmapOverlays}
@@ -129,8 +129,8 @@ function ExperimentLayout(): React.ReactElement {
                     height='40px'
                     alt={LANG.iconHeatmap}
                   />
-                </Link>
-                <Link to='/experiment/export-options'>
+                </Link> */}
+                {/* <Link to='/experiment/export-options'>
                   <img
                     id='download-btn'
                     title={LANG.download}
@@ -141,7 +141,7 @@ function ExperimentLayout(): React.ReactElement {
                     height='40px'
                     alt={LANG.iconDownload}
                   />
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>
@@ -179,7 +179,7 @@ function ExperimentLayout(): React.ReactElement {
         </div>
       </div>
 
-      <div id='user-configuration' className='user-configuration'>
+      {/* <div id='user-configuration' className='user-configuration'>
         <div className='row'>
           <div className='column-title'>
             <span className='title-text-container'>{LANG.userConfiguration}</span>
@@ -188,9 +188,9 @@ function ExperimentLayout(): React.ReactElement {
             <div id='user-config-content'></div>
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <div id='gaze-correction' className='gaze-correction'>
+      {/* <div id='gaze-correction' className='gaze-correction'>
         <div className='row'>
           <div className='column-title'>
             <span className='title-text-container'>{LANG.generalOffsetCorrection}</span>
@@ -228,7 +228,7 @@ function ExperimentLayout(): React.ReactElement {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className='nav-tabs-and-tabs' id='nav-tabs-and-tabs'>
         <div id='nav-tabs-container' className='nav-tabs-container'>

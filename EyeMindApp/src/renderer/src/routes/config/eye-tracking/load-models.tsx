@@ -56,18 +56,16 @@ function EyeTrackingLoadModelsPage() {
       }
     }
 
-    const missingGroup = draftModelValues.some((m) => (m?.groupId ?? '') === '')
-    if (missingGroup) {
-      modelErrors.push(LANG.errorAllModelsNeedGroup)
-    }
-
     if (modelErrors.length > 0) {
       setErrors(modelErrors)
       return
     }
 
     for (const model of draftModelValues) {
-      updateModel(model.id, { isDraft: false })
+      updateModel(model.id, {
+        isDraft: false,
+        groupId: model.groupId ?? CONST.DEFAULT_MODEL_GROUP_ID,
+      })
     }
 
     navigate({ to: loadQuestionsRoute.to })
@@ -185,7 +183,7 @@ function DraftModelItem({ model }: { model: Model }) {
         </div>
       </div>
       <div className='table-cell p-1.5 align-middle'>
-        <span className='mr-2'>{LANG.group}</span>
+        <span className='mr-2'>{translate('group')}</span>
         <input
           type='text'
           size={2}
@@ -196,7 +194,7 @@ function DraftModelItem({ model }: { model: Model }) {
               groupId: e.target.value === '' ? undefined : e.target.value,
             })
           }}
-          placeholder='0'
+          placeholder={CONST.DEFAULT_MODEL_GROUP_ID}
           name={`group-assignement-for-file-${model.id}`}
           id={`group-assignement-for-file-${model.id}`}
         />

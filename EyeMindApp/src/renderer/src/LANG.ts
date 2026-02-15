@@ -136,7 +136,6 @@ const LANG = {
   errorAlreadyAdded: 'is already added',
   errorSingleFileOnly: 'Only a single file can be imported',
   errorExactlyOneMain: 'There must be exactly one model set as main',
-  errorAllModelsNeedGroup: 'All models must be assigned to a group',
   errorNoModelsToLoad: 'No models to load',
   errorNotSupportedImageFormat: 'is not a supported image format',
   errorFailedToRead: 'Failed to read',

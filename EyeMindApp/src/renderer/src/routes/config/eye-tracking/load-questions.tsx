@@ -20,6 +20,7 @@ import { useState } from 'react'
 import { CONST } from '@/CONST'
 
 import { Route as experimentRoute } from '../../experiment'
+import { Route as loadModelsRoute } from './load-models'
 
 const fileImportConfig: FileImportConfig = {
   mode: 'data-collection',
@@ -57,6 +58,12 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
 
         // New session flow complete: finalize draft models (isDraft: false, groupId)
         const draftModelValues = Object.values(draftModels)
+
+        if (draftModelValues.length === 0) {
+          navigate({ to: loadModelsRoute.to })
+          return
+        }
+
         for (const model of draftModelValues) {
           updateModel(model.id, {
             isDraft: false,

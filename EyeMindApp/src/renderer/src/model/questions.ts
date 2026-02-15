@@ -1,4 +1,4 @@
-import DataFrame from 'dataframe-js'
+import Papa from 'papaparse'
 
 import { CONST } from '@/CONST'
 
@@ -27,28 +27,41 @@ export function createDefaultQuestionFile(file: File, isDraft = false): Question
   }
 }
 
-export async function extractQuestionsFromFile(file: File) {
-  const contentAsDataFrame = await DataFrame.fromCSV(file) // this statement should not fail if the file is a valid csv
-  contentAsDataFrame.show()
-  const questions = contentAsDataFrame.toCollection() as Record<string, string>[]
+export async function extractQuestionsFromFile(file: File): Promise<Questions> {
+  const text = await file.text()
+  const parsed = Papa.parse<Record<string, string>>(text, {
+    header: true,
+    skipEmptyLines: true,
+  })
 
-  if (!checkNeccesaryColumnsInQuestionsFile(contentAsDataFrame))
-    throw new Error('required columns or question types not suported')
+  if (parsed.errors.length > 0) {
+    const firstError = parsed.errors[0]
+    const message = firstError != null ? firstError.message : 'Unknown error'
+    throw new Error(`CSV parse error: ${message}`)
+  }
+
+  const questions = parsed.data as Questions
+
+  if (!checkNeccesaryColumnsInQuestionsFile(questions)) {
+    throw new Error('required columns or question types not supported')
+  }
 
   return questions
 }
 
-function checkNeccesaryColumnsInQuestionsFile(df: DataFrame) {
+function checkNeccesaryColumnsInQuestionsFile(rows: Questions): boolean {
   const checker = (arr: string[], target: string[]) =>
     target.every((v) => arr.includes(v))
 
-  const allRequiredColumnsThere = checker(
-    df.listColumns(),
-    CONST.RQUIRED_COLUMNS_IN_QUESTION_FILE,
-  )
+  const columns = rows.length > 0 ? Object.keys(rows[0]!) : []
+  const allRequiredColumnsThere = checker(columns, CONST.RQUIRED_COLUMNS_IN_QUESTION_FILE)
+
+  const uniqueTypes = [
+    ...new Set(rows.map((r) => r['type']).filter((t): t is string => t != null)),
+  ]
   const containsOnlySupportedQuestionTypes = checker(
     CONST.QUESTION_TYPES_SUPPORTED,
-    df.unique('type').toArray().flat(),
+    uniqueTypes,
   )
 
   return allRequiredColumnsThere && containsOnlySupportedQuestionTypes

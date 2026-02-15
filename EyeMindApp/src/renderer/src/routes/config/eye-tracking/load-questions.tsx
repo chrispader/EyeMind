@@ -8,9 +8,16 @@ import {
   extractQuestionsFromFile,
   getQuestionFileIdFromFileName,
 } from '@renderer/model/questions'
-import { useQuestionActions, useQuestionFiles } from '@renderer/state/session'
+import {
+  useDraftModels,
+  useModelActions,
+  useQuestionActions,
+  useQuestionFiles,
+} from '@renderer/state/session'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
+
+import { CONST } from '@/CONST'
 
 import { Route as experimentRoute } from '../../experiment'
 
@@ -29,7 +36,9 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
   const navigate = useNavigate()
 
   const questionFiles = useQuestionFiles()
+  const draftModels = useDraftModels()
   const { addQuestionFiles, removeQuestionFile, setQuestions } = useQuestionActions()
+  const { updateModel } = useModelActions()
 
   const [errors, setErrors] = useState<string[]>([])
 
@@ -45,6 +54,16 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
       try {
         const questions = await extractQuestionsFromFile(file.file)
         setQuestions(questions)
+
+        // New session flow complete: finalize draft models (isDraft: false, groupId)
+        const draftModelValues = Object.values(draftModels)
+        for (const model of draftModelValues) {
+          updateModel(model.id, {
+            isDraft: false,
+            groupId: model.groupId ?? CONST.DEFAULT_MODEL_GROUP_ID,
+          })
+        }
+
         navigate({ to: experimentRoute.to })
       } catch (error) {
         let msg = LANG.errorValidatingQuestions
@@ -57,8 +76,8 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
   }
 
   function addDroppedQuestions(files: File[]) {
-    const questionFilesToAdd: QuestionFile[] = []
     const newErrors: string[] = []
+    let questionFileToAdd: QuestionFile | null = null
 
     for (const file of files) {
       const questionFileId = getQuestionFileIdFromFileName(file.name)
@@ -70,14 +89,8 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
         continue
       }
 
-      if (questionFiles[questionFileId] !== undefined) {
-        newErrors.push(`${file.name} (id: ${questionFileId}) ${LANG.errorAlreadyAdded}`)
-        continue
-      }
-
-      const questionFile = createDefaultQuestionFile(file, true)
-
-      questionFilesToAdd.push(questionFile)
+      questionFileToAdd = createDefaultQuestionFile(file, true)
+      break
     }
 
     if (newErrors.length > 0) {
@@ -85,12 +98,22 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
       return
     }
 
-    addQuestionFiles(questionFilesToAdd)
+    if (questionFileToAdd === null) {
+      return
+    }
+
+    const existingIds = Object.keys(questionFiles)
+    for (const id of existingIds) {
+      removeQuestionFile(id)
+    }
+    addQuestionFiles([questionFileToAdd])
   }
+
+  const singleQuestionFile = Object.values(questionFiles).slice(0, 1)
 
   return (
     <FileImport
-      items={Object.values(questionFiles)}
+      items={singleQuestionFile}
       errors={errors}
       onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
       uploadLabel={LANG.dropQuestionsFile}

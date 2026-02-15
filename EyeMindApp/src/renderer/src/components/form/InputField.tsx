@@ -14,10 +14,14 @@ interface InputFieldProps
   suffix?: string
   /** When true, label shows " *" and the field is treated as required for validation. */
   required?: boolean
+  /** When true, input is marked invalid for accessibility and styling. */
+  invalid?: boolean
+  /** Validation error message shown below the input. */
+  error?: string
 }
 
-const inputClassName =
-  'box-border inline-block w-full rounded-sm border border-border px-5 py-3 my-2'
+const inputBaseClassName =
+  'box-border inline-block w-full rounded-sm border px-5 py-3 my-2'
 
 export function InputField({
   label,
@@ -26,17 +30,20 @@ export function InputField({
   defaultValue,
   suffix,
   required = false,
+  invalid = false,
+  error,
   ...rest
 }: InputFieldProps): React.ReactElement {
   return (
-    <FormRow label={label} required={required}>
+    <FormRow label={label} required={required} invalid={invalid} error={error}>
       <>
         <input
-          className={inputClassName}
+          className={`${inputBaseClassName} ${invalid ? 'border-red-500' : 'border-border'}`}
           id={id}
           type={type}
           defaultValue={defaultValue}
           aria-required={required}
+          aria-invalid={invalid}
           {...rest}
         />
         {suffix != null && suffix !== '' && ` ${suffix}`}

@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import LANG, { translate } from '@renderer/LANG'
+import LANG from '@renderer/LANG'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { z } from 'zod'
 
@@ -72,7 +72,7 @@ function RecordingSettingsPage(): React.ReactElement {
   const { setState: _setState, ...stateToSave } = store
 
   const {
-    register,
+    control,
     handleSubmit: handleFormSubmit,
     formState: { isValid },
   } = useForm<RecordingSettingsFormValues>({
@@ -110,23 +110,36 @@ function RecordingSettingsPage(): React.ReactElement {
       <form
         onSubmit={handleFormSubmit(onStartRecording)}
         className='grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1'>
-        {RECORDING_FIELDS.map((field) => {
-          const label = `${LANG.FORM.RECORDING_SETTINGS[field.key]}:`
-          return field.type === 'textarea' ? (
-            <TextareaField
-              key={field.key}
-              label={label}
-              id={field.key}
-              required={field.required}
-              {...register(field.key)}
-            />
-          ) : (
-            <InputField
-              key={field.key}
-              label={label}
-              id={field.key}
-              required={field.required}
-              {...register(field.key)}
+        {RECORDING_FIELDS.map((fieldConfig) => {
+          const label = `${LANG.FORM.RECORDING_SETTINGS[fieldConfig.key]}:`
+          return (
+            <Controller
+              key={fieldConfig.key}
+              name={fieldConfig.key}
+              control={control}
+              render={({ field, fieldState }) => {
+                const invalid = fieldState.invalid
+                const errorMessage = fieldState.error?.message
+                return fieldConfig.type === 'textarea' ? (
+                  <TextareaField
+                    label={label}
+                    id={fieldConfig.key}
+                    required={fieldConfig.required}
+                    invalid={invalid}
+                    error={errorMessage}
+                    {...field}
+                  />
+                ) : (
+                  <InputField
+                    label={label}
+                    id={fieldConfig.key}
+                    required={fieldConfig.required}
+                    invalid={invalid}
+                    error={errorMessage}
+                    {...field}
+                  />
+                )
+              }}
             />
           )
         })}

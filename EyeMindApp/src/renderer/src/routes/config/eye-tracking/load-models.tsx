@@ -2,7 +2,6 @@ import LANG, { translate } from '@renderer/LANG'
 import FileImport from '@renderer/components/FileImport'
 import { isModelsFile } from '@renderer/components/FileImport/loadFile'
 import type { FileImportConfig } from '@renderer/components/FileImport/types'
-import { useToast } from '@renderer/hooks/useToast'
 import { isImageFile, readFileAsDataUrl } from '@renderer/model/images'
 import {
   type Model,
@@ -13,6 +12,7 @@ import {
 import { readFileContent } from '@renderer/modules/utils/utils'
 import { useDraftModels, useModelActions } from '@renderer/state/session'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import toast from 'react-hot-toast'
 
 import { CONST } from '@/CONST'
 
@@ -31,7 +31,6 @@ export const Route = createFileRoute('/config/eye-tracking/load-models')({
 
 function EyeTrackingLoadModelsPage() {
   const navigate = useNavigate()
-  const { toast } = useToast()
 
   const draftModels = useDraftModels()
   const { addModels, removeModel } = useModelActions()
@@ -56,7 +55,7 @@ function EyeTrackingLoadModelsPage() {
 
     if (modelErrors.length > 0) {
       for (const message of modelErrors) {
-        toast({ message, type: 'error', duration: 'short' })
+        toast.error(message, { duration: 3000 })
       }
       return
     }
@@ -115,7 +114,7 @@ function EyeTrackingLoadModelsPage() {
     }
 
     for (const message of newErrors) {
-      toast({ message, type: 'error', duration: 'long' })
+      toast.error(message, { duration: 6000 })
     }
 
     if (modelsToAdd.length > 0) {

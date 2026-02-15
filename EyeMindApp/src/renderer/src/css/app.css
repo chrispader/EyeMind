@@ -155,11 +155,7 @@ a:link {
   transform: translate(-50%, -50%);
 }
 
-.content,
-.content > div {
-  width: 100%;
-  height: 100%;
-}
+
 body::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }

@@ -1,6 +1,6 @@
 import LANG from '@renderer/LANG'
 import FileImport from '@renderer/components/FileImport'
-import { loadFiles } from '@renderer/components/FileImport/loadFile'
+import { isSessionFile, loadFiles } from '@renderer/components/FileImport/loadFile'
 import type { FileImportConfig } from '@renderer/components/FileImport/types'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import toast from 'react-hot-toast'
@@ -36,9 +36,18 @@ function EyeTrackingLoadSessionPage(): React.ReactElement {
         }
 
         const file = files[0]
-        if (file) {
-          setSessionFile(file)
+        if (!file) {
+          return
         }
+
+        if (!isSessionFile(file, fileImportConfig)) {
+          toast.error(`${file.name} ${LANG.errorInvalidSessionFileType}`, {
+            duration: 6000,
+          })
+          return
+        }
+
+        setSessionFile(file)
       }}
       onSubmit={() => {
         if (sessionFile != null) {

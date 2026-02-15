@@ -134,6 +134,7 @@ const LANG = {
   errorNotValidQuestionsFile: 'is not a valid questions file',
   errorAlreadyAdded: 'is already added',
   errorSingleFileOnly: 'Only a single file can be imported',
+  errorInvalidSessionFileType: 'is not a valid session file (expected JSON)',
   errorExactlyOneMain: 'There must be exactly one model set as main',
   errorNoModelsToLoad: 'No models to load',
   errorNotSupportedImageFormat: 'is not a supported image format',

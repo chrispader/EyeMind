@@ -126,8 +126,9 @@ async function loadAnalysisFile(file: File, config: FileImportConfig) {
   errorAlert(msg)
 }
 
-export function getFileExtension(file: File) {
-  return file.name.split('.').pop() ?? ''
+export function getFileExtension(file: File): string {
+  const ext = file.name.split('.').pop() ?? ''
+  return ext.toLowerCase()
 }
 
 export function isSessionFile(file: File, config: FileImportConfig) {

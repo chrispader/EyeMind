@@ -67,7 +67,17 @@ function EyeTrackingLoadModelsPage() {
     const modelsToAdd: Model[] = []
     const newErrors: string[] = []
 
+    const isAcceptedModelFile = (file: File): boolean =>
+      Boolean(
+        isImageFile(file) || isModelsFile(file, fileImportConfig),
+      )
+
     for (const file of files) {
+      if (!isAcceptedModelFile(file)) {
+        newErrors.push(`${file.name} ${LANG.errorInvalidModelFileType}`)
+        continue
+      }
+
       if (isImageFile(file)) {
         const imageModelId = getModelIdFromFileName(file.name)
         if (draftModels[imageModelId] !== undefined) {
@@ -85,10 +95,7 @@ function EyeTrackingLoadModelsPage() {
         continue
       }
 
-      if (!isModelsFile(file, fileImportConfig)) {
-        newErrors.push(`${file.name} ${LANG.errorInvalidModelFileType}`)
-        continue
-      }
+      // BPMN/ODM path (isModelsFile already validated above)
 
       // BPMN models use file.name as id (see createDefaultModel)
       const bpmnModelId = file.name

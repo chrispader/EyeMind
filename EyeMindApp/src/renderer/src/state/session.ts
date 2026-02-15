@@ -239,6 +239,3 @@ export const useDraftModels = () => useModels((model) => model.isDraft)
 export const useQuestionFiles = () => useSessionStore((state) => state.questionFiles)
 export const useQuestions = () => useSessionStore((state) => state.questions)
 export const useQuestionActions = () => useSessionStore((state) => state.questionActions)
-
-export { readFileAsDataUrl } from '@renderer/model/images'
-export { isImageFile } from '@renderer/model/images'

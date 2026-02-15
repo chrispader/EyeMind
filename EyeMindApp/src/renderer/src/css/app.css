@@ -22,17 +22,26 @@ SOFTWARE.*/
 
 @import 'tailwindcss';
 
+/* Quicksand is used for headings and UI emphasis. CSP may need style-src https://fonts.googleapis.com for this to load. */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+@theme {
+  /* Base UI font (body, html, #root) */
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* Headings and emphasized UI text */
+  --font-quicksand: 'Quicksand', sans-serif;
+  /* Tooltip value text that should inherit parent font */
+  --font-inherit: inherit;
+}
+
 body,
 html,
 #root {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-
+  @apply font-sans;
   font-size: 12px;
-
   height: 100%;
   padding: 0;
   margin: 0;
-
   display: flex;
   flex-direction: column;
   background-color: #e7eaed;
@@ -71,6 +80,7 @@ a:link {
 .wait-processing-gaze-data,
 .finished-processing-gaze-data,
 .wait {
+  @apply font-quicksand font-medium;
   background: rgba(231, 234, 237, 0.5);
   position: absolute;
   top: 0;
@@ -79,8 +89,6 @@ a:link {
   bottom: 0;
   text-align: center;
   padding-top: 30px;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
   font-size: 20px;
   position: relative;
 }
@@ -432,26 +440,23 @@ process hierarchy within the tab container
 }
 
 .tabs-containers .process-hierarchy .process-hierarchy-content .step {
+  @apply font-quicksand font-medium;
   cursor: pointer;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
   font-size: 20px;
   color: #1e57b0;
   padding: 10px;
 }
 
 .tabs-containers .process-hierarchy .process-hierarchy-content .laststep {
+  @apply font-quicksand font-medium;
   cursor: pointer;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
   font-size: 20px;
   color: #000;
   padding: 10px;
 }
 
 .tabs-containers .process-hierarchy .process-hierarchy-content .arrowhead {
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
+  @apply font-quicksand font-medium;
   font-size: 20px;
   color: #000;
 }
@@ -464,14 +469,11 @@ process hierarchy within the tab container
 /**/
 
 .tabs-containers .index-tab {
+  @apply font-quicksand font-medium;
   z-index: 3;
-
   text-align: center;
-
   line-height: 300px;
   height: 300px;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
   font-size: 20px;
   color: #444444;
 }
@@ -606,11 +608,10 @@ process hierarchy within the tab container
 }
 
 .upload-zone .upload-text {
+  @apply font-quicksand font-medium;
   top: 200px;
   left: 265px;
   position: absolute;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
   font-size: 20px;
   color: #cccccc;
 }
@@ -621,11 +622,10 @@ process hierarchy within the tab container
 }
 
 .upload-zone .upload-label {
+  @apply font-quicksand font-medium;
   top: 200px;
   left: 285px;
   position: absolute;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
   font-size: 20px;
   color: #ccc;
 }
@@ -924,12 +924,11 @@ process hierarchy within the tab container
 }
 
 .tooltip-line .tooltip-value-text {
-  font-family: inherit;
+  @apply font-inherit;
 }
 
 .tooltip-line .tooltip-value-code {
-  font-family: monospace, monospace;
-  font-size: 1em;
+  @apply font-mono text-base;
 }
 
 .tooltip .tooltip-no-properties {

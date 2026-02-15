@@ -1768,3 +1768,10 @@ process hierarchy within the tab container
   font-size: 18px;
   padding-left: 40px;
 }
+
+/* Toast: wrap long filenames/messages instead of overflowing */
+.app-toaster div {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}

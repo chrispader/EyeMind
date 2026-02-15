@@ -61,6 +61,7 @@ function RootComponent(): React.ReactElement {
       <Toaster
         position='top-center'
         containerStyle={{ zIndex: 9999 }}
+        containerClassName='app-toaster'
         toastOptions={{ duration: 3000 }}
       />
 

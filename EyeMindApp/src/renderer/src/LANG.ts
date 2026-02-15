@@ -138,6 +138,7 @@ const LANG = {
   errorNoModelsToLoad: 'No models to load',
   errorNotSupportedImageFormat: 'is not a supported image format',
   errorFailedToRead: 'Failed to read',
+  errorInvalidModelFileType: 'is not a valid file (expected image or BPMN/ODM model)',
 } as const
 
 export type LangKey = keyof typeof LANG

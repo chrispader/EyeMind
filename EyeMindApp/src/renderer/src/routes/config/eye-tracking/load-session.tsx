@@ -2,6 +2,7 @@ import LANG from '@renderer/LANG'
 import FileImport from '@renderer/components/FileImport'
 import { loadFiles } from '@renderer/components/FileImport/loadFile'
 import type { FileImportConfig } from '@renderer/components/FileImport/types'
+import { useToast } from '@renderer/hooks/useToast'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
@@ -20,18 +21,22 @@ export const Route = createFileRoute('/config/eye-tracking/load-session')({
 
 function EyeTrackingLoadSessionPage(): React.ReactElement {
   const navigate = useNavigate()
-  const [errors, setErrors] = useState<string[]>([])
+  const { toast } = useToast()
   const [sessionFile, setSessionFile] = useState<File | null>(null)
 
   return (
     <FileImport
       items={sessionFile != null ? [sessionFile] : []}
-      errors={errors}
-      onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
+      errors={[]}
+      onDismissError={() => {}}
       uploadLabel={LANG.dropSessionFile}
       onDrop={(files) => {
         if (files.length > 1) {
-          setErrors([LANG.errorSingleFileOnly])
+          toast({
+            message: LANG.errorSingleFileOnly,
+            type: 'error',
+            duration: 'short',
+          })
           return
         }
 

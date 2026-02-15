@@ -16,7 +16,6 @@ import {
   useQuestionFiles,
 } from '@renderer/state/session'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
 
 import { CONST } from '@/CONST'
 
@@ -43,13 +42,11 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
   const { addQuestionFiles, removeQuestionFile, setQuestions } = useQuestionActions()
   const { updateModel } = useModelActions()
 
-  const [errors, setErrors] = useState<string[]>([])
-
   async function validateQuestionFiles() {
     const questionFilesValues = Object.values(questionFiles)
 
     if (questionFilesValues.length === 0) {
-      setErrors([LANG.errorNoQuestionsFiles])
+      toast({ message: LANG.errorNoQuestionsFiles, type: 'error', duration: 'short' })
       return
     }
 
@@ -84,7 +81,7 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
         if (error instanceof Error) {
           msg += ': ' + error.message
         }
-        setErrors([msg])
+        toast({ message: msg, type: 'error', duration: 'long' })
       }
     }
   }
@@ -108,7 +105,11 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
     }
 
     if (newErrors.length > 0) {
-      setErrors(newErrors)
+      toast({
+        message: newErrors.join(' '),
+        type: 'error',
+        duration: 'long',
+      })
       return
     }
 
@@ -128,8 +129,8 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
   return (
     <FileImport
       items={singleQuestionFile}
-      errors={errors}
-      onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
+      errors={[]}
+      onDismissError={() => {}}
       uploadLabel={LANG.dropQuestionsFile}
       onDrop={addDroppedQuestions}
       onSubmit={validateQuestionFiles}

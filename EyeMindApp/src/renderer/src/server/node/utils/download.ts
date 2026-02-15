@@ -147,7 +147,9 @@ async function downloadFile(
 
       const participantID = state.processedGazeData.participantID
 
-      const gazeDataArray = Array.isArray(state.processedGazeData.gazeData) ? state.processedGazeData.gazeData : []
+      const gazeDataArray = Array.isArray(state.processedGazeData.gazeData)
+        ? state.processedGazeData.gazeData
+        : []
       var dataframeForState = new DataFrame(gazeDataArray)
       dataframeForState = dataframeForState.withColumn(
         'participantID',
@@ -212,7 +214,7 @@ async function downloadFile(
       }
     }
 
-    if (!error && dataframe) {
+    if (!error && dataframe != null) {
       try {
         dataframe.toCSV(true, savingPath)
         const msg = 'File exported to ' + savingPath

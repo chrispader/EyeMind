@@ -2,6 +2,7 @@ import KeyboardMoveModule from 'diagram-js/lib/navigation/keyboard-move'
 import MoveCanvasModule from 'diagram-js/lib/navigation/movecanvas'
 import ZoomScrollModule from 'diagram-js/lib/navigation/zoomscroll'
 import inherits from 'inherits'
+
 import Viewer from './Viewer'
 
 /**

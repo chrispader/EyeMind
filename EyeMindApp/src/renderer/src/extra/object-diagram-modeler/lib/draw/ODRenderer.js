@@ -10,6 +10,7 @@ import {
   classes as svgClasses,
   create as svgCreate,
 } from 'tiny-svg'
+
 import { getLabel } from '../features/label-editing/LabelUtil'
 import { getBusinessObject, is } from '../util/ModelUtil'
 import { getFillColor, getRectPath, getSemantic, getStrokeColor } from './ODRendererUtil'
@@ -255,7 +256,7 @@ export default function ODRenderer(
 
     var defs = domQuery('defs', canvas._svg)
 
-    if (!defs) {
+    if (defs == null) {
       defs = svgCreate('defs')
 
       svgAppend(canvas._svg, defs)

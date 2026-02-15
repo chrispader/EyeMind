@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { _electron as electron } from 'playwright'
+
 import { delay } from '../utils/utils'
 
 test('home-page-navigation-to-eye-tracking', async () => {

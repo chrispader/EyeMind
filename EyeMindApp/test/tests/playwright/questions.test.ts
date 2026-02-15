@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { _electron as electron } from 'playwright'
+
 import { delay, dragAndDropFile } from '../utils/utils'
 
 const fs = require('fs')

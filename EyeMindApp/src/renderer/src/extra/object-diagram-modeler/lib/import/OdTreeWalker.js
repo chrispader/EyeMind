@@ -1,5 +1,6 @@
 import { find, forEach } from 'min-dash'
 import Refs from 'object-refs'
+
 import { elementToString } from './Util'
 
 var diRefs = new Refs(
@@ -222,7 +223,7 @@ export default function OdTreeWalker(handler, translate) {
     var fn
 
     // drain deferred until empty
-    while (deferred.length) {
+    while (deferred.length > 0) {
       fn = deferred.shift()
 
       fn()

@@ -2,6 +2,7 @@ import OverlaysModule from 'diagram-js/lib/features/overlays'
 import SelectionModule from 'diagram-js/lib/features/selection'
 import TranslateModule from 'diagram-js/lib/i18n/translate'
 import inherits from 'inherits'
+
 import BaseViewer from './BaseViewer'
 import CoreModule from './core'
 

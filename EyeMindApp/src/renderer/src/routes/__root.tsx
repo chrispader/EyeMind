@@ -63,7 +63,7 @@ function RootComponent(): React.ReactElement {
 }
 
 function ErrorBoundary({ error }: { error: Error }) {
-  let message: string = LANG.errorOops
+  const message: string = LANG.errorOops
   let details: string = LANG.errorUnexpected
   let stack: string | undefined
 

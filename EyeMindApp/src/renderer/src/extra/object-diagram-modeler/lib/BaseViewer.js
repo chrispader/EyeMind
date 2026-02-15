@@ -4,6 +4,7 @@ import { assign, find, isNumber, omit } from 'min-dash'
 import { query as domQuery, remove as domRemove, domify } from 'min-dom'
 import { event as domEvent } from 'min-dom'
 import { innerSVG } from 'tiny-svg'
+
 import { importOdDiagram } from './import/Importer'
 import Moddle from './moddle'
 /* <project-logo> */
@@ -303,7 +304,7 @@ BaseViewer.prototype.open = function (rootBoardOrId) {
  * returns {Promise<SaveXMLResult, Error>}
  */
 BaseViewer.prototype.saveXML = function (options) {
-  options = options || {}
+  options = options != null || {}
 
   var self = this
 
@@ -390,7 +391,7 @@ BaseViewer.prototype.saveSVG = function (options) {
         defsNode = domQuery('defs', canvas._svg)
 
       var contents = innerSVG(contentNode),
-        defs = defsNode ? '<defs>' + innerSVG(defsNode) + '</defs>' : ''
+        defs = defsNode != null ? '<defs>' + innerSVG(defsNode) + '</defs>' : ''
 
       var bbox = contentNode.getBBox()
 
@@ -572,7 +573,7 @@ BaseViewer.prototype.detach = function () {
   var container = this._container,
     parentNode = container.parentNode
 
-  if (!parentNode) {
+  if (parentNode == null) {
     return
   }
 
@@ -654,7 +655,7 @@ function checkValidationError(err) {
   var pattern = /unparsable content <([^>]+)> detected([\s\S]*)$/
   var match = pattern.exec(err.message)
 
-  if (match) {
+  if (match != null) {
     err.message =
       'unparsable content <' +
       match[1] +

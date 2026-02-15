@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { _electron as electron } from 'playwright'
+
 import { elementAttributesToRemove } from '../utils/globals'
 import {
   delay,

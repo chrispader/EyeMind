@@ -57,8 +57,8 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
   }
 
   function addDroppedQuestions(files: File[]) {
-    let questionFilesToAdd: QuestionFile[] = []
-    let newErrors: string[] = []
+    const questionFilesToAdd: QuestionFile[] = []
+    const newErrors: string[] = []
 
     for (const file of files) {
       const questionFileId = getQuestionFileIdFromFileName(file.name)

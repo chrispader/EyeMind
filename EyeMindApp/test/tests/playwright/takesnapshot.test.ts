@@ -25,6 +25,7 @@ window-events.js (tested manually on 24/09/2022, no automated testing, as these 
 */
 import { expect, test } from '@playwright/test'
 import { _electron as electron } from 'playwright'
+
 import { elementAttributesToRemove } from '../utils/globals'
 import {
   delay,

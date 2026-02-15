@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type ImageViewerProps = {
   src: string
@@ -45,7 +45,7 @@ export function ImageViewer({
       e.preventDefault()
 
       const container = containerRef.current
-      if (!container) return
+      if (container == null) return
 
       const rect = container.getBoundingClientRect()
       const mouseX = e.clientX - rect.left
@@ -138,7 +138,7 @@ export function ImageViewer({
         if (currentDistance === null) return
 
         const container = containerRef.current
-        if (!container) return
+        if (container == null) return
 
         const rect = container.getBoundingClientRect()
         const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left
@@ -191,8 +191,7 @@ export function ImageViewer({
         onMouseLeave={handleMouseUp}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
+        onTouchEnd={handleTouchEnd}>
         <img
           ref={imageRef}
           src={src}
@@ -218,8 +217,7 @@ export function ImageViewer({
             }))
           }
           className='px-3 py-1 bg-white/80 hover:bg-white rounded shadow text-lg font-bold'
-          title='Zoom in'
-        >
+          title='Zoom in'>
           +
         </button>
         <button
@@ -231,16 +229,14 @@ export function ImageViewer({
             }))
           }
           className='px-3 py-1 bg-white/80 hover:bg-white rounded shadow text-lg font-bold'
-          title='Zoom out'
-        >
+          title='Zoom out'>
           -
         </button>
         <button
           type='button'
           onClick={resetTransform}
           className='px-3 py-1 bg-white/80 hover:bg-white rounded shadow text-sm'
-          title='Reset zoom'
-        >
+          title='Reset zoom'>
           Reset
         </button>
       </div>

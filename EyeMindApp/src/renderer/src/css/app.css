@@ -122,8 +122,6 @@ a:link {
   background: var(--color-scrollbar-thumb);
 }
 
-.finished-processing-gaze-data {
-}
 
 .wait-processing-gaze-data,
 .finished-processing-gaze-data,
@@ -192,11 +190,6 @@ body::-webkit-scrollbar {
   padding: var(--radius-md);
 }
 
-.content:not(.with-error) .error,
-.content.with-error .intro,
-.content.with-diagram .intro {
-}
-
 .content .canvas,
 .content.with-error .canvas {
   visibility: hidden;
@@ -248,18 +241,6 @@ body::-webkit-scrollbar {
   float: right;
   padding: 0;
   margin: 0;
-}
-
-.top-menu .icons-container .eye-tracking-icons {
-}
-
-.top-menu .icons-container .analysis-icons {
-}
-
-.top-menu .icon {
-  margin-top: 6px;
-  margin-right: 20px;
-  cursor: pointer;
 }
 
 /* loaded-content-view, tab and container */
@@ -389,13 +370,6 @@ body::-webkit-scrollbar {
   margin-left: 13px;
   cursor: pointer;
   width: max-content;
-}
-
-.nav-tabs-and-tabs
-  .nav-tabs-container
-  .nav-tabs
-  > .tab-link
-  .fileName::-webkit-scrollbar {
 }
 
 .nav-tabs-and-tabs .nav-tabs-container .nav-tabs > .tab-link .close {

@@ -1,4 +1,4 @@
-import LANG from '@renderer/LANG'
+import LANG, { translate } from '@renderer/LANG'
 import { setMainTab, setUnclosableTabs } from '@renderer/actions/tabs'
 import { assignModelsToGroups } from '@renderer/components/FileImport/loadFile'
 import { RecordButton } from '@renderer/components/RecordButton'
@@ -48,14 +48,6 @@ function ExperimentLayout(): React.ReactElement {
       setUnclosableTabs()
     }
 
-    const modeText = document.getElementById('mode-text')
-    const featureText = document.getElementById('feature-text')
-    const etIcons = document.getElementById('eye-tracking-icons')
-
-    if (modeText != null) modeText.innerText = LANG.eyeTrackingMode
-    if (featureText != null) featureText.innerText = ''
-    if (etIcons != null) etIcons.style.display = 'block'
-
     // window.electron.putFullScreen()
   }, [])
 
@@ -64,14 +56,10 @@ function ExperimentLayout(): React.ReactElement {
       {/* Top bar: mode/feature labels left, record/stop icons right */}
       <div className='flex h-12 shrink-0 items-center bg-page-bg px-0 py-0'>
         <div className='flex w-1/2 items-center'>
-          <div
-            id='mode-text'
-            className='ml-tab mt-[15px] min-w-[250px] text-lg font-bold'
-          />
-          <div
-            id='feature-text'
-            className='ml-tab mt-[15px] min-w-[700px] text-lg font-bold text-error'
-          />
+          <div className='ml-tab mt-[15px] min-w-[250px] text-xl font-bold'>
+            {translate('eyeTrackingMode')}
+          </div>
+          <div className='ml-tab mt-[15px] min-w-[700px] text-lg font-bold text-error' />
         </div>
         <div className='flex flex-1 items-center justify-end gap-4'>
           <RecordButton isRecording={false} />
@@ -91,12 +79,12 @@ function ExperimentLayout(): React.ReactElement {
           className='mx-auto h-[105px] max-h-[105px] max-w-[1000px] overflow-auto border border-border bg-white'>
           <div
             id='questions-ready'
-            className='gaze-element h-full w-full'
+            className='h-full w-full'
             data-element-id='questions-ready'>
             <div className='flex w-full flex-col'>
               <div className='flex h-full w-full items-center justify-center pt-[35px]'>
                 <button
-                  className='gaze-element h-8 w-[300px] cursor-pointer rounded-sm border-none bg-success text-white'
+                  className='h-8 w-[300px] cursor-pointer rounded-sm border-none bg-success text-white'
                   data-element-id='start-questions-btn'
                   id='start-questions-btn'>
                   {LANG.startQuestions}
@@ -107,10 +95,10 @@ function ExperimentLayout(): React.ReactElement {
 
           <div
             id='questions-over'
-            className='gaze-element h-full w-full'
+            className='h-full w-full'
             data-element-id='questions-over'>
             <div
-              className='gaze-element mx-auto w-[200px] pt-2.5 text-lg'
+              className='mx-auto w-[200px] pt-2.5 text-lg'
               data-element-id='questions-finished-text'>
               {LANG.questionsFinished}
             </div>
@@ -177,9 +165,9 @@ function ExperimentLayout(): React.ReactElement {
             ref={toTabLeft}
             id='to-tab-left'
             onClick={handleToTabLeftClick}
-            className='gaze-element w-[25px] shrink-0 cursor-pointer text-xl text-text-muted'
+            className='w-[25px] shrink-0 cursor-pointer text-xl text-text-muted'
             data-element-id='to-tab-left-button'>
-            &lt;&lt;
+            &lt;
           </div>
           <div
             ref={navTabs}
@@ -190,7 +178,7 @@ function ExperimentLayout(): React.ReactElement {
             ref={toTabRight}
             id='to-tab-right'
             onClick={handleToTabRightClick}
-            className='gaze-element w-[25px] shrink-0 cursor-pointer text-xl text-text-muted'
+            className='w-[25px] shrink-0 cursor-pointer text-xl text-text-muted'
             data-element-id='to-tab-right-button'>
             &gt;
           </div>
@@ -200,7 +188,7 @@ function ExperimentLayout(): React.ReactElement {
           {isExplorerVisible && (
             <div
               id='explorer'
-              className='gaze-element h-full min-w-[300px] w-[300px] overflow-auto border border-b-0 border-l-0 border-t-0 border-border'
+              className='h-full min-w-[300px] w-[300px] overflow-auto border border-b-0 border-l-0 border-t-0 border-border'
               data-element-id='file-explorer-area'>
               <ul id='explorer-groups' className='ml-0 border-l-0 pl-0' />
             </div>
@@ -209,7 +197,7 @@ function ExperimentLayout(): React.ReactElement {
             <div id='process-hierarchy' className='z-10 h-[45px] pt-5 pl-5'>
               <div
                 id='process-hierarchy-content'
-                className='gaze-element w-fit p-2.5'
+                className='w-fit p-2.5'
                 data-element-id='process-hierarchy-content-area'
               />
             </div>

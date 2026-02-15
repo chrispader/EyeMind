@@ -101,3 +101,9 @@ outputData
 
 # TanStack Router
 src/renderer/src/routeTree.gen.ts
+
+# Claude
+.claude/**/*.local.*
+
+# Cursor
+.cursor/**/*.local.*

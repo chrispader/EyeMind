@@ -45,6 +45,27 @@ const defaultValues: RecordingSettingsFormValues = {
   additionalNotes: '',
 }
 
+type RecordingFieldKey = keyof RecordingSettingsFormValues
+
+interface RecordingFieldConfig {
+  /** Used as form key, DOM id, and key into LANG.FORM.RECORDING_SETTINGS for the label. */
+  key: RecordingFieldKey
+  required: boolean
+  type: 'input' | 'textarea'
+}
+
+const RECORDING_FIELDS: RecordingFieldConfig[] = [
+  { key: 'xScreenDimension', required: true, type: 'input' },
+  { key: 'yScreenDimension', required: true, type: 'input' },
+  { key: 'screenDistance', required: true, type: 'input' },
+  { key: 'monitorSize', required: true, type: 'input' },
+  { key: 'recordingId', required: true, type: 'input' },
+  { key: 'participantId', required: true, type: 'input' },
+  { key: 'experimentId', required: true, type: 'input' },
+  { key: 'experimenterId', required: true, type: 'input' },
+  { key: 'additionalNotes', required: false, type: 'textarea' },
+]
+
 function RecordingSettingsPage(): React.ReactElement {
   const navigate = useNavigate({ from: '/experiment/recording-settings' })
   const store = useGlobalStore()
@@ -89,59 +110,26 @@ function RecordingSettingsPage(): React.ReactElement {
       <form
         onSubmit={handleFormSubmit(onStartRecording)}
         className='grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1'>
-        <InputField
-          label={LANG.xScreenDimension}
-          id='x-dim'
-          required
-          {...register('xScreenDimension')}
-        />
-        <InputField
-          label={LANG.yScreenDimension}
-          id='y-dim'
-          required
-          {...register('yScreenDimension')}
-        />
-        <InputField
-          label={LANG.screenDistance}
-          id='screen-distance'
-          required
-          {...register('screenDistance')}
-        />
-        <InputField
-          label={LANG.monitorSize}
-          id='monitor-size'
-          required
-          {...register('monitorSize')}
-        />
-        <InputField
-          label={LANG.recordingId}
-          id='recording-id'
-          required
-          {...register('recordingId')}
-        />
-        <InputField
-          label={LANG.participantId}
-          id='participant-id'
-          required
-          {...register('participantId')}
-        />
-        <InputField
-          label={LANG.experimentId}
-          id='experiment-id'
-          required
-          {...register('experimentId')}
-        />
-        <InputField
-          label={LANG.experimenterId}
-          id='experimenter-id'
-          required
-          {...register('experimenterId')}
-        />
-        <TextareaField
-          label={LANG.additionalNotes}
-          id='additional-notes'
-          {...register('additionalNotes')}
-        />
+        {RECORDING_FIELDS.map((field) => {
+          const label = LANG.FORM.RECORDING_SETTINGS[field.key]
+          return field.type === 'textarea' ? (
+            <TextareaField
+              key={field.key}
+              label={label}
+              id={field.key}
+              required={field.required}
+              {...register(field.key)}
+            />
+          ) : (
+            <InputField
+              key={field.key}
+              label={label}
+              id={field.key}
+              required={field.required}
+              {...register(field.key)}
+            />
+          )
+        })}
 
         <div className='col-span-2 flex flex-col gap-4'>
           <div className='flex justify-center gap-4'>

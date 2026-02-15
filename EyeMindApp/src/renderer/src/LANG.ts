@@ -63,18 +63,23 @@ const LANG = {
 
   // Recording Settings Modal
   dataCollectionSettings: 'Data Collection Settings',
-  xScreenDimension: ' X Screen dimension in pixels*: ',
-  yScreenDimension: ' Y Screen dimension in pixels*: ',
-  screenDistance: ' Screen distance in centimeters*: ',
-  monitorSize: ' Monitor size in inches*: ',
-  recordingId: ' Recording ID*: ',
-  participantId: ' Participant ID: ',
-  experimentId: ' Experiment ID: ',
-  experimenterId: ' Experimenter ID:',
-  additionalNotes: ' Additional notes: ',
   startRecording: 'Start recording',
   saveSession: 'Save Session',
   requiredFields: '* required fields',
+
+  FORM: {
+    RECORDING_SETTINGS: {
+      xScreenDimension: ' X Screen dimension in pixels*: ',
+      yScreenDimension: ' Y Screen dimension in pixels*: ',
+      screenDistance: ' Screen distance in centimeters*: ',
+      monitorSize: ' Monitor size in inches*: ',
+      recordingId: ' Recording ID*: ',
+      participantId: ' Participant ID: ',
+      experimentId: ' Experiment ID: ',
+      experimenterId: ' Experimenter ID:',
+      additionalNotes: ' Additional notes: ',
+    },
+  },
 
   // Heatmap Settings Modal
   heatmapSettings: 'Heatmap Settings',
@@ -143,7 +148,8 @@ const LANG = {
   errorFailedToSaveSession: 'Failed to save session',
 } as const
 
-export type LangKey = keyof typeof LANG
+/** Top-level LANG keys that resolve to strings (excludes nested objects like FORM). */
+export type LangKey = Exclude<keyof typeof LANG, 'FORM'>
 
 export const translate = (key: LangKey): string => LANG[key]
 

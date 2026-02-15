@@ -29,7 +29,8 @@ export function SelectField({
   className,
   children,
 }: SelectFieldProps): React.ReactElement {
-  const selectClassName = className ?? (multiple ? 'form-select-multiple' : 'form-select')
+  const formSelectClass = multiple ? 'form-select-multiple' : 'form-select'
+  const selectClassName = `w-full ${className ?? formSelectClass}`
 
   return (
     <FormRow label={label}>

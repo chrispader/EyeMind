@@ -15,6 +15,7 @@ import '@renderer/extra/object-diagram-modeler/starter/app/css/app.css'
 import { loadServerStateIntoClient, useGlobalStore } from '@renderer/state/global'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { Toaster } from 'react-hot-toast'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 import 'bpmn-js/dist/assets/bpmn-js.css'
 import 'bpmn-js/dist/assets/diagram-js.css'
@@ -56,6 +57,12 @@ function RootComponent(): React.ReactElement {
       {/* <ProcessingStates /> */}
 
       <LoadingScreen message={loadingMessage ?? ''} visible={isLoading ?? false} />
+
+      <Toaster
+        position='top-center'
+        containerStyle={{ zIndex: 9999 }}
+        toastOptions={{ duration: 3000 }}
+      />
 
       <TanStackRouterDevtools />
     </>

@@ -20,15 +20,15 @@ export const Route = createFileRoute('/config/eye-tracking/new-session')({
 
 function EyeTrackingNewSessionPage(): React.ReactElement {
   const { updateSessionSettings } = useSessionActions()
-  const { resetModels } = useModelActions()
-  const { resetQuestions } = useQuestionActions()
+  const { reset: resetSession } = useSessionActions()
   const navigate = useNavigate()
 
   // Starting a new session: clear models and questions from any previous flow
   useEffect(() => {
-    resetModels()
-    resetQuestions()
-  }, [resetModels, resetQuestions])
+    resetSession()
+
+    return () => resetSession
+  }, [resetSession])
 
   const [subProcessLinkingMode, setSubProcessLinkingMode] =
     useState<SubProcessLinkingMode>('no-support')

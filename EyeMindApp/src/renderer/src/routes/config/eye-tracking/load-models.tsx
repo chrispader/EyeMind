@@ -8,7 +8,6 @@ import {
   createDefaultImageModel,
   createDefaultModel,
   getModelIdFromFileName,
-  isImageModel,
 } from '@renderer/model/models'
 import { readFileContent } from '@renderer/modules/utils/utils'
 import { useDraftModels, useModelActions } from '@renderer/state/session'
@@ -34,7 +33,7 @@ function EyeTrackingLoadModelsPage() {
   const navigate = useNavigate()
 
   const draftModels = useDraftModels()
-  const { addModels, removeModel, updateModel } = useModelActions()
+  const { addModels, removeModel } = useModelActions()
 
   const draftModelValues = Object.values(draftModels)
   const draftBpmnModels = draftModelValues.filter((m) => m.xml != null && m.xml !== '')
@@ -59,13 +58,6 @@ function EyeTrackingLoadModelsPage() {
     if (modelErrors.length > 0) {
       setErrors(modelErrors)
       return
-    }
-
-    for (const model of draftModelValues) {
-      updateModel(model.id, {
-        isDraft: false,
-        groupId: model.groupId ?? CONST.DEFAULT_MODEL_GROUP_ID,
-      })
     }
 
     navigate({ to: loadQuestionsRoute.to })

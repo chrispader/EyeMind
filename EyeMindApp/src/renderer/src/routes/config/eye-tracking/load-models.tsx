@@ -152,38 +152,44 @@ function DraftModelItem({ model }: { model: Model }) {
 
   return (
     <>
-      <div className='column file-info'>{model.fileName}</div>
-      <div className='column'>
-        <input
-          type='checkbox'
-          className='set-as-main'
-          id={`set-as-main-${model.id}`}
-          name='set-as-main'
-          defaultChecked={model.isMain}
-          onChange={(e) => {
-            updateModel(model.id, { isMain: e.target.checked })
-          }}
-        />
-        {translate('setAsMain')}
+      <div className='table-cell p-1.5 list-none text-[17px] font-normal h-10 align-middle'>
+        {model.fileName}
       </div>
-      <div className='column'>
-        <input
-          type='checkbox'
-          className='unclosable-tab'
-          id={`unclosable-tab-${model.id}`}
-          onChange={(e) => {
-            updateModel(model.id, { unclosable: e.target.checked })
-          }}
-          defaultChecked={model.unclosable}
-        />
-        {translate('unclosableTab')}
+      <div className='table-cell p-1.5 align-middle'>
+        <div className='flex items-center gap-3'>
+          <input
+            type='checkbox'
+            id={`set-as-main-${model.id}`}
+            name='set-as-main'
+            defaultChecked={model.isMain}
+            onChange={(e) => {
+              updateModel(model.id, { isMain: e.target.checked })
+            }}
+          />
+          <label htmlFor={`set-as-main-${model.id}`}>{translate('setAsMain')}</label>
+        </div>
       </div>
-      <div className='column'>
-        {LANG.group}
+      <div className='table-cell p-1.5 align-middle'>
+        <div className='flex items-center gap-3'>
+          <input
+            type='checkbox'
+            id={`unclosable-tab-${model.id}`}
+            onChange={(e) => {
+              updateModel(model.id, { unclosable: e.target.checked })
+            }}
+            defaultChecked={model.unclosable}
+          />
+          <label htmlFor={`unclosable-tab-${model.id}`}>
+            {translate('unclosableTab')}
+          </label>
+        </div>
+      </div>
+      <div className='table-cell p-1.5 align-middle'>
+        <span className='mr-2'>{LANG.group}</span>
         <input
-          className='group-assignement'
           type='text'
           size={2}
+          className='w-12 border border-gray-300 rounded px-1 py-0.5'
           onChange={(e) => {
             updateModel(model.id, { groupId: e.target.value })
           }}

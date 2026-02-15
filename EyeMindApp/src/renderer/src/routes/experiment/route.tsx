@@ -1,8 +1,10 @@
 import LANG from '@renderer/LANG'
 import { setMainTab, setUnclosableTabs } from '@renderer/actions/tabs'
 import { assignModelsToGroups } from '@renderer/components/FileImport/loadFile'
+import { RecordButton } from '@renderer/components/RecordButton'
+import { StopButton } from '@renderer/components/StopButton'
 import { useGlobalStore } from '@renderer/state/global'
-import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
 
 const NAV_TABS_SCROLL_DISTANCE = 20
@@ -54,110 +56,47 @@ function ExperimentLayout(): React.ReactElement {
     if (featureText != null) featureText.innerText = ''
     if (etIcons != null) etIcons.style.display = 'block'
 
-    if (window.hasOwnProperty('electron')) {
-      window.electron.putFullScreen()
-    }
+    // window.electron.putFullScreen()
   }, [])
 
   return (
-    <div className='loaded-content-view' id='loaded-content-view'>
-      <div className='top-menu'>
-        <div className='row'>
-          <div className='column'>
-            <div className='row'>
-              <div className='column'>
-                <div id='mode-text' className='mode-text'></div>
-              </div>
-              <div className='column'>
-                <div id='feature-text' className='feature-text'></div>
-              </div>
-            </div>
-          </div>
-          <div className='column'>
-            <div className='icons-container'>
-              <div id='eye-tracking-icons' className='eye-tracking-icons'>
-                <Link to='/experiment/recording-settings'>
-                  <img
-                    id='record-btn'
-                    className='icon'
-                    src='icons/record_enabled.svg'
-                    width='20px'
-                    height='20px'
-                    alt={LANG.iconRecord}
-                  />
-                </Link>
-                <img
-                  src='icons/stop_disabled.svg'
-                  id='stop-btn'
-                  style={{ marginTop: '10px', marginRight: '50px' }}
-                  width='20px'
-                  height='20px'
-                  alt={LANG.iconStop}
-                />
-              </div>
-
-              <div id='analysis-icons' className='analysis-icons'>
-                <img
-                  id='fixation-filter-btn'
-                  title={LANG.iconFixationFilter}
-                  className='icon'
-                  src='icons/fixation-filter.svg'
-                  width='90px'
-                  height='40px'
-                  alt={LANG.iconFixationFilter}
-                />
-                {/* <Link to='/experiment/gaze-projection-settings'>
-                  <img
-                    id='projections-mapping-btn'
-                    title={LANG.titleGazeProjections}
-                    className='icon'
-                    style={{ marginLeft: '-50px' }}
-                    src='icons/projections-mapping.svg'
-                    width='90px'
-                    height='40px'
-                    alt={LANG.iconProjectionsMapping}
-                  />
-                </Link> */}
-                {/* <Link to='/experiment/heatmap-settings'>
-                  <img
-                    id='heatmap-btn'
-                    title={LANG.titleHeatmapOverlays}
-                    className='icon'
-                    src='icons/heatmap_disabled.svg'
-                    style={{ marginLeft: '-50px', paddingTop: '3px' }}
-                    width='90px'
-                    height='40px'
-                    alt={LANG.iconHeatmap}
-                  />
-                </Link> */}
-                {/* <Link to='/experiment/export-options'>
-                  <img
-                    id='download-btn'
-                    title={LANG.download}
-                    className='icon'
-                    src='icons/download.svg'
-                    style={{ marginLeft: '-50px' }}
-                    width='90px'
-                    height='40px'
-                    alt={LANG.iconDownload}
-                  />
-                </Link> */}
-              </div>
-            </div>
+    <div id='loaded-content-view' className='relative flex h-full w-full flex-col'>
+      {/* Top bar: mode/feature labels left, record/stop icons right */}
+      <div className='flex h-12 shrink-0 items-center bg-page-bg px-0 py-0'>
+        <div className='flex w-1/2 items-center'>
+          <div
+            id='mode-text'
+            className='ml-tab mt-[15px] min-w-[250px] text-lg font-bold'
+          />
+          <div
+            id='feature-text'
+            className='ml-tab mt-[15px] min-w-[700px] text-lg font-bold text-error'
+          />
+        </div>
+        <div className='flex flex-1 items-center justify-end gap-4'>
+          <RecordButton isRecording={false} />
+          <StopButton isRecording={false} />
+          <div id='analysis-icons'>
+            {/* <img id='fixation-filter-btn' ... /> */}
+            {/* <Link to='/experiment/gaze-projection-settings'>...</Link> */}
+            {/* <Link to='/experiment/heatmap-settings'>...</Link> */}
+            {/* <Link to='/experiment/export-options'>...</Link> */}
           </div>
         </div>
       </div>
 
-      <div className='questions-container' id='questions-container'>
-        <div className='questions' id='questions'>
+      <div id='questions-container' className='w-full bg-page-bg'>
+        <div
+          id='questions'
+          className='mx-auto h-[105px] max-h-[105px] max-w-[1000px] overflow-auto border border-border bg-white'>
           <div
             id='questions-ready'
-            className='question gaze-element'
+            className='gaze-element h-full w-full'
             data-element-id='questions-ready'>
-            <div className='answer-and-next'>
-              <div className='start-questions'>
+            <div className='flex w-full flex-col'>
+              <div className='flex h-full w-full items-center justify-center pt-[35px]'>
                 <button
-                  className='start-questions-btn gaze-element'
+                  className='gaze-element h-8 w-[300px] cursor-pointer rounded-sm border-none bg-success text-white'
                   data-element-id='start-questions-btn'
                   id='start-questions-btn'>
                   {LANG.startQuestions}
@@ -168,10 +107,10 @@ function ExperimentLayout(): React.ReactElement {
 
           <div
             id='questions-over'
-            className='question gaze-element'
+            className='gaze-element h-full w-full'
             data-element-id='questions-over'>
             <div
-              className='finished gaze-element'
+              className='gaze-element mx-auto w-[200px] pt-2.5 text-lg'
               data-element-id='questions-finished-text'>
               {LANG.questionsFinished}
             </div>
@@ -230,45 +169,52 @@ function ExperimentLayout(): React.ReactElement {
         </div>
       </div> */}
 
-      <div className='nav-tabs-and-tabs' id='nav-tabs-and-tabs'>
-        <div id='nav-tabs-container' className='nav-tabs-container'>
+      <div
+        id='nav-tabs-and-tabs'
+        className='relative flex min-h-0 flex-1 flex-col bg-page-bg pt-5'>
+        <div className='flex border border-border border-t-0 border-l-0 border-r-0'>
           <div
             ref={toTabLeft}
             id='to-tab-left'
             onClick={handleToTabLeftClick}
-            className='to-tab-left gaze-element'
+            className='gaze-element w-[25px] shrink-0 cursor-pointer text-xl text-text-muted'
             data-element-id='to-tab-left-button'>
             &lt;&lt;
           </div>
-          <div ref={navTabs} className='nav-tabs' id='nav-tabs'></div>
+          <div
+            ref={navTabs}
+            id='nav-tabs'
+            className='m-0 flex min-w-0 max-h-[35px] flex-1 list-none overflow-x-auto overflow-y-hidden leading-[35px] [&::-webkit-scrollbar]:hidden'
+          />
           <div
             ref={toTabRight}
             id='to-tab-right'
             onClick={handleToTabRightClick}
-            className='to-tab-right gaze-element'
+            className='gaze-element w-[25px] shrink-0 cursor-pointer text-xl text-text-muted'
             data-element-id='to-tab-right-button'>
             &gt;
           </div>
         </div>
 
-        <div className='tabs' id='tabs'>
+        <div className='flex min-h-0 flex-1 flex-row bg-white' id='tabs'>
           {isExplorerVisible && (
             <div
               id='explorer'
-              className='explorer gaze-element'
+              className='gaze-element h-full min-w-[300px] w-[300px] overflow-auto border border-b-0 border-l-0 border-t-0 border-border'
               data-element-id='file-explorer-area'>
-              <ul id='explorer-groups' className='root'></ul>
+              <ul id='explorer-groups' className='ml-0 border-l-0 pl-0' />
             </div>
           )}
-          <div id='tabs-containers' className='tabs-containers'>
-            <div id='process-hierarchy' className='process-hierarchy'>
+          <div className='flex min-h-0 flex-1 flex-col' id='tabs-containers'>
+            <div id='process-hierarchy' className='z-10 h-[45px] pt-5 pl-5'>
               <div
                 id='process-hierarchy-content'
-                className='process-hierarchy-content gaze-element'
-                data-element-id='process-hierarchy-content-area'></div>
+                className='gaze-element w-fit p-2.5'
+                data-element-id='process-hierarchy-content-area'
+              />
             </div>
             {isIndexTabVisible && (
-              <div id='index-tab' className='index-tab'>
+              <div id='index-tab' className='font-quicksand z-3 text-center font-medium'>
                 {/* Could be used for instructions */}
               </div>
             )}
@@ -276,8 +222,10 @@ function ExperimentLayout(): React.ReactElement {
         </div>
       </div>
 
-      {/* Modal overlay: child routes (e.g. recording-settings) render on top of the experiment screen */}
-      <div className='experiment-route-modal-outlet' aria-hidden='true'>
+      {/* Modal overlay: child routes (e.g. recording-settings) render on top */}
+      <div
+        aria-hidden='true'
+        className='pointer-events-none fixed inset-0 z-0 *:pointer-events-auto'>
         <Outlet />
       </div>
     </div>

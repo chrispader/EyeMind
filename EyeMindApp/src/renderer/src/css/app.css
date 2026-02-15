@@ -26,12 +26,60 @@ SOFTWARE.*/
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
 
 @theme {
-  /* Base UI font (body, html, #root) */
+  /* Fonts */
   --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  /* Headings and emphasized UI text */
   --font-quicksand: 'Quicksand', sans-serif;
-  /* Tooltip value text that should inherit parent font */
   --font-inherit: inherit;
+
+  /* Spacing (semantic + common px values) */
+  --spacing-cell: 5px;
+  --spacing-scrollbar: 7px;
+  --spacing-section: 20px;
+  --spacing-tab: 30px;
+  --spacing-modal: 100px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-btn: 5px;
+  --radius-md: 10px;
+  --radius-tab: 18px;
+
+  /* App colors */
+  --color-page-bg: #e7eaed;
+  --color-surface: #eeecec;
+  --color-surface-alt: #f0f0f0;
+  --color-surface-panel: var(--color-surface-panel);
+  --color-border: #ccc;
+  --color-border-strong: #aaa; /* also used for muted icons #aaaaaa */
+  --color-text: #111;
+  --color-black: #000;
+  --color-text-muted: #565656;
+  --color-text-placeholder: #cccccc;
+  --color-error: #bd2020;
+  --color-primary: #1e57b0;
+  --color-secondary: #2aa4d1; /* save-session / secondary action */
+  --color-success: #45a049;
+  --color-success-disabled: rgba(69, 160, 73, 0.5);
+  --color-remove-btn: #a70000;
+  --color-upload-active: #5081bf;
+  --color-upload-idle: #8fa3bd;
+  --color-overlay: rgba(0, 0, 0, 0.4);
+  --color-wait-overlay: rgba(231, 234, 237, 0.5);
+  --color-scrollbar-track: rgba(0, 0, 0, 0.3);
+  --color-scrollbar-thumb: rgba(255, 255, 255, 0.3);
+  --color-scrollbar-thumb-shadow: rgba(0, 0, 0, 0.5);
+  --color-box-shadow: rgba(0, 0, 0, 0.5);
+  --color-input-bg: #eee;
+  --color-white: #ffffff;
+  --color-modal-bg: #fefefe;
+  --color-border-muted: #888;
+  --color-border-light: #e6e1e0;
+  --color-divider: #ddd;
+  --color-text-dark: #444444;
+  --color-text-soft: #777;
+  --color-warning: #fcba03; /* yellow accent / hover */
+  --color-gradient-start: #f9f9f9;
+  --color-shadow-soft: rgba(0, 0, 0, 0.1);
 }
 
 body,
@@ -44,7 +92,7 @@ html,
   margin: 0;
   display: flex;
   flex-direction: column;
-  background-color: #e7eaed;
+  background-color: var(--color-page-bg);
 }
 
 a:link {
@@ -53,25 +101,25 @@ a:link {
 
 /* customized scrollbars (adapted from https://codepen.io/Kraisorn_R/pen/QObZVm) */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: var(--spacing-scrollbar);
+  height: var(--spacing-scrollbar);
 }
 
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px var(--color-scrollbar-track);
+  -webkit-border-radius: var(--radius-md);
+  border-radius: var(--radius-md);
 }
 
 ::-webkit-scrollbar-thumb {
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.3);
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  -webkit-border-radius: var(--radius-md);
+  border-radius: var(--radius-md);
+  background: var(--color-scrollbar-thumb);
+  -webkit-box-shadow: inset 0 0 6px var(--color-scrollbar-thumb-shadow);
 }
 
 ::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--color-scrollbar-thumb);
 }
 
 .finished-processing-gaze-data {
@@ -81,14 +129,14 @@ a:link {
 .finished-processing-gaze-data,
 .wait {
   @apply font-quicksand font-medium;
-  background: rgba(231, 234, 237, 0.5);
+  background: var(--color-wait-overlay);
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   text-align: center;
-  padding-top: 30px;
+  padding-top: var(--spacing-tab);
   font-size: 20px;
   position: relative;
 }
@@ -121,9 +169,8 @@ body::-webkit-scrollbar {
 .content > .message {
   text-align: center;
   display: table;
-
   font-size: 16px;
-  color: #111;
+  color: var(--color-text);
 }
 
 .content > .message .note {
@@ -135,14 +182,14 @@ body::-webkit-scrollbar {
 .content .error .details {
   max-width: 500px;
   font-size: 12px;
-  margin: 20px auto;
+  margin: var(--spacing-section) auto;
   text-align: left;
 }
 
 .content .error pre {
-  border: solid 1px #ccc;
-  background: #eee;
-  padding: 10px;
+  border: solid 1px var(--color-border);
+  background: var(--color-input-bg);
+  padding: var(--radius-md);
 }
 
 .content:not(.with-error) .error,
@@ -162,7 +209,7 @@ body::-webkit-scrollbar {
 /* Style for the top menu  */
 
 .top-menu {
-  background: #e7eaed;
+  background: var(--color-page-bg);
   margin: 0;
   padding: 0;
   height: 48px;
@@ -192,7 +239,7 @@ body::-webkit-scrollbar {
   margin-left: 30px;
   font-size: 18px;
   font-weight: bolder;
-  color: #bd2020;
+  color: var(--color-error);
   min-width: 700px;
 }
 
@@ -227,7 +274,7 @@ body::-webkit-scrollbar {
 }
 
 .nav-tabs-and-tabs {
-  background: #e7eaed;
+  background: var(--color-page-bg);
 
   margin: 0;
   padding-top: 20px;
@@ -245,27 +292,27 @@ body::-webkit-scrollbar {
 .nav-tabs-and-tabs .nav-tabs > .tab-link {
   margin: 0 -10px 0;
 
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
+  border-top-left-radius: var(--radius-tab);
+  border-top-right-radius: var(--radius-tab);
 
   height: 38px;
   width: max-content;
 
-  background: #eeecec;
+  background: var(--color-surface);
   position: relative;
 
-  padding-left: 5px;
+  padding-left: var(--spacing-cell);
   padding-right: 40px;
 
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 6px var(--color-box-shadow);
 
-  border: 1px solid #aaa;
+  border: 1px solid var(--color-border-strong);
 
   font-size: 15px;
 }
 
 .nav-tabs-and-tabs .nav-tabs-container {
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-border);
   border-top: 0px;
   border-left: 0px;
   border-right: 0px;
@@ -276,7 +323,7 @@ body::-webkit-scrollbar {
   width: 25px;
   cursor: pointer;
   font-size: 20px;
-  color: #565656;
+  color: var(--color-text-muted);
 }
 
 .nav-tabs-and-tabs .nav-tabs-container .to-tab-right {
@@ -284,7 +331,7 @@ body::-webkit-scrollbar {
   width: 25px;
   cursor: pointer;
   font-size: 20px;
-  color: #565656;
+  color: var(--color-text-muted);
 }
 
 .nav-tabs-and-tabs .nav-tabs-container .nav-tabs {
@@ -317,7 +364,7 @@ body::-webkit-scrollbar {
 
 .nav-tabs-and-tabs .nav-tabs-container .nav-tabs > .tab-link:focus,
 .nav-tabs-and-tabs .nav-tabs-container .nav-tabs > .tab-link:hover {
-  background-color: #f0f0f0;
+  background-color: var(--color-surface-alt);
 }
 
 .nav-tabs-and-tabs .nav-tabs-container .nav-tabs > .tab-link.active {
@@ -328,12 +375,12 @@ body::-webkit-scrollbar {
     linear,
     50% 0%,
     50% 30,
-    color-stop(0%, #ffffff),
-    color-stop(100%, #f7f7f7)
+    color-stop(0%, var(--color-white)),
+    color-stop(100%, var(--color-surface-panel))
   );
-  background-image: -moz-linear-gradient(#ffffff, #f7f7f7 30px);
-  background-image: -webkit-linear-gradient(#ffffff, #f7f7f7 30px);
-  background-image: linear-gradient(#ffffff, #f7f7f7 30px);
+  background-image: -moz-linear-gradient(var(--color-white), var(--color-surface-panel) var(--spacing-tab));
+  background-image: -webkit-linear-gradient(var(--color-white), var(--color-surface-panel) var(--spacing-tab));
+  background-image: linear-gradient(var(--color-white), var(--color-surface-panel) var(--spacing-tab));
 }
 
 .nav-tabs-and-tabs .nav-tabs-container .nav-tabs > .tab-link .fileName {
@@ -382,7 +429,7 @@ body::-webkit-scrollbar {
   width: 300px;
   min-width: 300px;
 
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-border);
   border-top: 0px;
   border-bottom: 0px;
   border-left: 0px;
@@ -443,7 +490,7 @@ process hierarchy within the tab container
   @apply font-quicksand font-medium;
   cursor: pointer;
   font-size: 20px;
-  color: #1e57b0;
+  color: var(--color-primary);
   padding: 10px;
 }
 
@@ -451,14 +498,14 @@ process hierarchy within the tab container
   @apply font-quicksand font-medium;
   cursor: pointer;
   font-size: 20px;
-  color: #000;
+  color: var(--color-black);
   padding: 10px;
 }
 
 .tabs-containers .process-hierarchy .process-hierarchy-content .arrowhead {
   @apply font-quicksand font-medium;
   font-size: 20px;
-  color: #000;
+  color: var(--color-black);
 }
 
 .tabs-containers .process-hierarchy-content {
@@ -475,7 +522,7 @@ process hierarchy within the tab container
   line-height: 300px;
   height: 300px;
   font-size: 20px;
-  color: #444444;
+  color: var(--color-text-dark);
 }
 
 /* main view */
@@ -503,15 +550,15 @@ process hierarchy within the tab container
 .import-view {
   width: 100%;
   height: 100%;
-  background-color: #e7eaed;
+  background-color: var(--color-page-bg);
   align-items: center;
   justify-content: center;
 }
 
 .import-box {
-  background: #fff;
+  background: var(--color-white);
   border-radius: 2px;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 50px var(--color-shadow-soft);
 
   width: 100%;
   max-width: 800px;
@@ -529,7 +576,7 @@ process hierarchy within the tab container
 .upload-zone {
   flex: 1;
   overflow: auto;
-  border: 4px dashed #8fa3bd;
+  border: 4px dashed var(--color-upload-idle);
   position: relative;
 }
 
@@ -577,11 +624,11 @@ process hierarchy within the tab container
   width: 100px;
   vertical-align: middle;
   margin-left: 25px;
-  background-color: #a70000;
+  background-color: var(--color-remove-btn);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -594,16 +641,16 @@ process hierarchy within the tab container
   margin-top: 35px;
   width: 300px;
   text-align: center;
-  background-color: #45a049;
+  background-color: var(--color-success);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .process-files-btn:disabled {
-  background-color: rgba(69, 160, 73, 0.5);
+  background-color: var(--color-success-disabled);
   cursor: not-allowed;
 }
 
@@ -613,12 +660,12 @@ process hierarchy within the tab container
   left: 265px;
   position: absolute;
   font-size: 20px;
-  color: #cccccc;
+  color: var(--color-text-placeholder);
 }
 
 .upload-zone-active {
-  border: 4px dashed #5081bf;
-  border-radius: 10px;
+  border: 4px dashed var(--color-upload-active);
+  border-radius: var(--radius-md);
 }
 
 /*start-tracking-modal adapted from https://codepen.io/colbyalbo/pen/gRogbE
@@ -628,14 +675,14 @@ process hierarchy within the tab container
 .startET-modal {
   position: fixed; /* Stay in place */
   z-index: 20; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
+  padding-top: var(--spacing-modal); /* Location of the box */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  background-color: var(--color-overlay);
 }
 
 .startET-modal .content .row :after {
@@ -662,49 +709,49 @@ process hierarchy within the tab container
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
 }
 
 .startET-modal .content .submit-form-button {
   width: 35%;
   vertical-align: center;
-  background-color: #a70000;
+  background-color: var(--color-remove-btn);
   color: white;
   padding: 14px 10px;
   margin: 16px 0;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .startET-modal .content .submit-form-button:hover {
-  background-color: #45a049;
+  background-color: var(--color-success);
 }
 
 .startET-modal .content .save-session {
   width: 35%;
   vertical-align: center;
-  background-color: #2aa4d1;
+  background-color: var(--color-secondary);
   color: white;
   padding: 14px 10px;
   margin: 16px 0;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .startET-modal .content .save-session:hover {
-  background-color: #fcba03;
+  background-color: var(--color-warning);
 }
 
 /* Modal Content */
 .startET-modal .content {
-  background-color: #fefefe;
+  background-color: var(--color-modal-bg);
   margin: auto;
   padding: 20px;
-  border: 1px solid #888;
+  border: 1px solid var(--color-border-muted);
   width: 550px;
   height: 750px;
 }
@@ -718,7 +765,7 @@ process hierarchy within the tab container
 
 /* The Close Button */
 .startET-modal .content .close {
-  color: #aaaaaa;
+  color: var(--color-border-strong);
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -726,7 +773,7 @@ process hierarchy within the tab container
 
 .startET-modal .content .close :hover,
 .startET-modal .content .close :focus {
-  color: #000;
+  color: var(--color-black);
   text-decoration: none;
   cursor: pointer;
 }
@@ -736,21 +783,21 @@ process hierarchy within the tab container
 .heatmap-settings-modal {
   position: fixed; /* Stay in place */
   z-index: 20; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
+  padding-top: var(--spacing-modal); /* Location of the box */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  background-color: var(--color-overlay);
 }
 
 .heatmap-settings-modal .content {
-  background-color: #fefefe;
+  background-color: var(--color-modal-bg);
   margin: auto;
   padding: 20px;
-  border: 1px solid #888;
+  border: 1px solid var(--color-border-muted);
   width: 600px;
   height: 840px;
 }
@@ -778,8 +825,8 @@ process hierarchy within the tab container
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
 }
 
@@ -801,8 +848,8 @@ process hierarchy within the tab container
   min-width: 15ch;
   max-width: 30ch;
   cursor: pointer;
-  background-color: #fff;
-  background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+  background-color: var(--color-white);
+  background-image: linear-gradient(to top, var(--color-gradient-start), var(--color-white) 33%);
 }
 
 .heatmap-settings-modal .content .column .form-select-multiple {
@@ -811,24 +858,24 @@ process hierarchy within the tab container
   min-width: 15ch;
   max-width: 30ch;
   cursor: pointer;
-  background-color: #fff;
-  background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+  background-color: var(--color-white);
+  background-image: linear-gradient(to top, var(--color-gradient-start), var(--color-white) 33%);
 }
 
 .heatmap-settings-modal .content .submit-form-button {
   width: 50%;
   vertical-align: center;
-  background-color: #2aa4d1;
+  background-color: var(--color-secondary);
   color: white;
   padding: 14px 20px;
   margin: 30px 0;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .heatmap-settings-modal .content .submit-form-button:hover {
-  background-color: #fcba03;
+  background-color: var(--color-warning);
 }
 
 .heatmap-settings-modal .content .close-icon {
@@ -840,7 +887,7 @@ process hierarchy within the tab container
 
 /* The Close Button */
 .heatmap-settings-modal .content .close {
-  color: #aaaaaa;
+  color: var(--color-border-strong);
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -848,7 +895,7 @@ process hierarchy within the tab container
 
 .heatmap-settings-modal .content .close :hover,
 .heatmap-settings-modal .content .close :focus {
-  color: #000;
+  color: var(--color-black);
   text-decoration: none;
   cursor: pointer;
 }
@@ -867,14 +914,14 @@ process hierarchy within the tab container
   left: 50%;
   margin-left: -60px;
   padding: 5px 10px;
-  border-radius: 5px;
+  border-radius: var(--radius-btn);
   min-width: 150px;
   max-width: 410px;
   width: max-content;
   width: -moz-max-content;
   background-color: black;
   color: white;
-  box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.8);
+  box-shadow: 3px 5px 10px var(--color-box-shadow);
   /*border: 1px solid rgba(169,169,169, .8);*/
 }
 
@@ -931,15 +978,15 @@ process hierarchy within the tab container
 .fixation-settings-view {
   width: 100%;
   height: 100%;
-  background-color: #e7eaed;
+  background-color: var(--color-page-bg);
   align-items: center;
   justify-content: center;
 }
 
 .fixation-settings-box {
-  background: #fff;
+  background: var(--color-white);
   border-radius: 2px;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 50px var(--color-shadow-soft);
 
   width: 1000px;
   height: 715px;
@@ -958,7 +1005,7 @@ process hierarchy within the tab container
 
 /* The Close Button */
 .fixation-settings-box .close {
-  color: #aaaaaa;
+  color: var(--color-border-strong);
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -966,7 +1013,7 @@ process hierarchy within the tab container
 
 .fixation-settings-box .close :hover,
 .fixation-settings-box .close :focus {
-  color: #000;
+  color: var(--color-black);
   text-decoration: none;
   cursor: pointer;
 }
@@ -980,16 +1027,16 @@ process hierarchy within the tab container
   margin-top: 5px;
   width: 300px;
   text-align: center;
-  background-color: #45a049;
+  background-color: var(--color-success);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .fixation-settings-box .section {
-  border: 1px solid #e6e1e0;
+  border: 1px solid var(--color-border-light);
   margin-bottom: 20px;
 }
 
@@ -1022,8 +1069,8 @@ process hierarchy within the tab container
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
 }
 
@@ -1033,8 +1080,8 @@ process hierarchy within the tab container
   margin: 8px 0;
   display: inline-block;
   cursor: pointer;
-  background-color: #fff;
-  background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+  background-color: var(--color-white);
+  background-image: linear-gradient(to top, var(--color-gradient-start), var(--color-white) 33%);
 }
 
 .fixation-settings-box .section .column .form-select-long {
@@ -1042,8 +1089,8 @@ process hierarchy within the tab container
   margin: 8px 0;
   display: inline-block;
   cursor: pointer;
-  background-color: #fff;
-  background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+  background-color: var(--color-white);
+  background-image: linear-gradient(to top, var(--color-gradient-start), var(--color-white) 33%);
 }
 
 .fixation-settings-box .section .column .text {
@@ -1066,13 +1113,13 @@ process hierarchy within the tab container
 .explorer ul {
   margin-left: 10px;
   padding-left: 20px;
-  border-left: 1px dashed #ddd;
+  border-left: 1px dashed var(--color-divider);
   width: max-content;
 }
 
 .explorer li {
   list-style: none;
-  color: #888;
+  color: var(--color-border-muted);
   font-size: 16px;
   font-weight: normal;
   min-width: 200px;
@@ -1082,14 +1129,14 @@ process hierarchy within the tab container
 
 .explorer a {
   border-bottom: 1px solid transparent;
-  color: #888;
+  color: var(--color-border-muted);
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .explorer .folder,
 .explorer .folder > a {
-  color: #777;
+  color: var(--color-text-soft);
   font-weight: bold;
 }
 
@@ -1119,9 +1166,9 @@ process hierarchy within the tab container
 /* data collection settings view */
 
 .data-collection-settings-box {
-  background: #fff;
+  background: var(--color-white);
   border-radius: 2px;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 50px var(--color-shadow-soft);
 
   width: 800px;
   height: 300px;
@@ -1156,8 +1203,8 @@ process hierarchy within the tab container
   height: 35px;
 
   cursor: pointer;
-  background-color: #fff;
-  background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+  background-color: var(--color-white);
+  background-image: linear-gradient(to top, var(--color-gradient-start), var(--color-white) 33%);
 }
 
 .data-collection-settings-box .settings .info-link {
@@ -1174,28 +1221,28 @@ process hierarchy within the tab container
   margin-top: 35px;
   width: 300px;
   text-align: center;
-  background-color: #45a049;
+  background-color: var(--color-success);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .questions-container {
-  background: #e7eaed;
+  background: var(--color-page-bg);
   width: 100%;
 }
 
 .questions-container .questions {
-  background-color: #fff;
+  background-color: var(--color-white);
 
   height: 105px;
   max-width: 1000px;
   max-height: 105px;
   overflow: auto;
   margin: auto;
-  border: solid 1px #ccc;
+  border: solid 1px var(--color-border);
 }
 
 .questions-container .question {
@@ -1225,8 +1272,8 @@ process hierarchy within the tab container
   padding: 12px 20px;
   margin: auto;
   display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
 }
 
@@ -1296,11 +1343,11 @@ process hierarchy within the tab container
   width: 140px;
   vertical-align: middle;
   margin-left: 25px;
-  background-color: #45a049;
+  background-color: var(--color-success);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -1320,11 +1367,11 @@ process hierarchy within the tab container
   .start-questions
   .start-questions-btn {
   width: 300px;
-  background-color: #45a049;
+  background-color: var(--color-success);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -1347,7 +1394,7 @@ process hierarchy within the tab container
 }
 
 .projections-container .projected-snapshot .snapshot {
-  border: 1px solid #bd2020;
+  border: 1px solid var(--color-error);
 
   margin: auto;
   transform: scale(0.7);
@@ -1367,11 +1414,11 @@ process hierarchy within the tab container
   margin-left: 20px;
   width: 300px;
   text-align: center;
-  background-color: #bd2020;
+  background-color: var(--color-error);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -1380,16 +1427,16 @@ process hierarchy within the tab container
   margin-left: 20px;
   width: 300px;
   text-align: center;
-  background-color: #f0f0f0;
+  background-color: var(--color-surface-alt);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: default;
 }
 
 .gaze-correction {
-  background-color: #e7eaed;
+  background-color: var(--color-page-bg);
 }
 
 .gaze-correction .row {
@@ -1426,8 +1473,8 @@ process hierarchy within the tab container
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
 }
 
@@ -1435,11 +1482,11 @@ process hierarchy within the tab container
   margin: auto;
   width: 150px;
   text-align: center;
-  background-color: #45a049;
+  background-color: var(--color-success);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -1447,11 +1494,11 @@ process hierarchy within the tab container
   margin: auto;
   width: 250px;
   text-align: center;
-  background-color: #45a049;
+  background-color: var(--color-success);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -1459,18 +1506,18 @@ process hierarchy within the tab container
   margin: auto;
   width: 250px;
   text-align: center;
-  background-color: #f0f0f0;
+  background-color: var(--color-surface-alt);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: default;
 }
 
 /* user configuration */
 
 .user-configuration {
-  background-color: #e7eaed;
+  background-color: var(--color-page-bg);
   padding-top: 15px;
 }
 
@@ -1511,21 +1558,21 @@ process hierarchy within the tab container
 .download-modal {
   position: fixed; /* Stay in place */
   z-index: 20; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
+  padding-top: var(--spacing-modal); /* Location of the box */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  background-color: var(--color-overlay);
 }
 
 .download-modal .content {
-  background-color: #fefefe;
+  background-color: var(--color-modal-bg);
   margin: auto;
   padding: 20px;
-  border: 1px solid #888;
+  border: 1px solid var(--color-border-muted);
   width: 600px;
   height: 215px;
 }
@@ -1555,24 +1602,24 @@ process hierarchy within the tab container
   min-width: 15ch;
   max-width: 30ch;
   cursor: pointer;
-  background-color: #fff;
-  background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+  background-color: var(--color-white);
+  background-image: linear-gradient(to top, var(--color-gradient-start), var(--color-white) 33%);
 }
 
 .download-modal .content .submit-form-button {
   width: 50%;
   vertical-align: center;
-  background-color: #2aa4d1;
+  background-color: var(--color-secondary);
   color: white;
   padding: 14px 20px;
   margin: 30px 0;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .download-modal .content .submit-form-button:hover {
-  background-color: #fcba03;
+  background-color: var(--color-warning);
 }
 
 .download-modal .content .close-icon {
@@ -1584,7 +1631,7 @@ process hierarchy within the tab container
 
 /* The Close Button */
 .download-modal .content .close {
-  color: #aaaaaa;
+  color: var(--color-border-strong);
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -1592,7 +1639,7 @@ process hierarchy within the tab container
 
 .download-modal .content .close :hover,
 .download-modal .content .close :focus {
-  color: #000;
+  color: var(--color-black);
   text-decoration: none;
   cursor: pointer;
 }
@@ -1602,21 +1649,21 @@ process hierarchy within the tab container
 .gaze-projection-modal {
   position: fixed; /* Stay in place */
   z-index: 20; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
+  padding-top: var(--spacing-modal); /* Location of the box */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  background-color: var(--color-overlay);
 }
 
 .gaze-projection-modal .content {
-  background-color: #fefefe;
+  background-color: var(--color-modal-bg);
   margin: auto;
   padding: 20px;
-  border: 1px solid #888;
+  border: 1px solid var(--color-border-muted);
   width: 600px;
   height: 300px;
 }
@@ -1645,8 +1692,8 @@ process hierarchy within the tab container
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
 }
 
@@ -1655,19 +1702,19 @@ process hierarchy within the tab container
   height: 35px;
 
   cursor: pointer;
-  background-color: #fff;
-  background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+  background-color: var(--color-white);
+  background-image: linear-gradient(to top, var(--color-gradient-start), var(--color-white) 33%);
 }
 
 .gaze-projection-modal .content .submit-form-button {
   width: 50%;
   vertical-align: center;
-  background-color: #2aa4d1;
+  background-color: var(--color-secondary);
   color: white;
   padding: 14px 20px;
   margin-bottom: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -1677,7 +1724,7 @@ process hierarchy within the tab container
 }
 
 .gaze-projection-modal .content .submit-form-button:hover {
-  background-color: #fcba03;
+  background-color: var(--color-warning);
 }
 
 .gaze-projection-modal .content .close-icon {
@@ -1689,7 +1736,7 @@ process hierarchy within the tab container
 
 /* The Close Button */
 .gaze-projection-modal .content .close {
-  color: #aaaaaa;
+  color: var(--color-border-strong);
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -1697,7 +1744,7 @@ process hierarchy within the tab container
 
 .gaze-projection-modal .content .close :hover,
 .gaze-projection-modal .content .close :focus {
-  color: #000;
+  color: var(--color-black);
   text-decoration: none;
   cursor: pointer;
 }
@@ -1709,11 +1756,11 @@ process hierarchy within the tab container
   margin-left: 20px;
   width: 300px;
   text-align: center;
-  background-color: #45a049;
+  background-color: var(--color-success);
   color: white;
   height: 30px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 

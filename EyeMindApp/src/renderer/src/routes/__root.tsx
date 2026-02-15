@@ -26,8 +26,8 @@ import { HeaderBar } from '../components/HeaderBar'
 /** Close modal when clicking outside modal content area (legacy pattern for imperative modals) */
 function closeModalOutsideClickInteraction(event: MouseEvent) {
   const target = event.target as HTMLElement
+  // Legacy imperative modals: close on backdrop click (record settings uses route + navigate)
   if (
-    target === document.getElementById('startET-modal') ||
     target === document.getElementById('heatmap-settings-modal') ||
     target === document.getElementById('download-modal')
   ) {

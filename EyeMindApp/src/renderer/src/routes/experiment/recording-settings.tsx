@@ -1,5 +1,6 @@
 import LANG from '@renderer/LANG'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useEffect } from 'react'
 
 import { ModalContainer } from '../../components/ModalContainer'
 import { InputField, TextareaField } from '../../components/form'
@@ -8,13 +9,42 @@ export const Route = createFileRoute('/experiment/recording-settings')({
   component: RecordingSettingsPage,
 })
 
+const MODAL_ID = 'startET-modal'
+const CLOSE_BTN_ID = 'close-startET-modal'
+
 function RecordingSettingsPage(): React.ReactElement {
+  const navigate = useNavigate({ from: '/experiment/recording-settings' })
+
+  useEffect(() => {
+    const goBack = () => navigate({ to: '/experiment' })
+
+    const closeBtn = document.getElementById(CLOSE_BTN_ID)
+    const modalEl = document.getElementById(MODAL_ID)
+
+    const onCloseClick = (e: Event) => {
+      e.preventDefault()
+      goBack()
+    }
+
+    const onBackdropClick = (e: MouseEvent) => {
+      if (e.target === modalEl) goBack()
+    }
+
+    closeBtn?.addEventListener('click', onCloseClick)
+    modalEl?.addEventListener('click', onBackdropClick)
+
+    return () => {
+      closeBtn?.removeEventListener('click', onCloseClick)
+      modalEl?.removeEventListener('click', onBackdropClick)
+    }
+  }, [navigate])
+
   return (
     <ModalContainer
-      id='startET-modal'
+      id={MODAL_ID}
       className='startET-modal'
       title={LANG.dataCollectionSettings}
-      closeId='close-startET-modal'>
+      closeId={CLOSE_BTN_ID}>
       <InputField label={LANG.xScreenDimension} id='x-dim' />
       <InputField label={LANG.yScreenDimension} id='y-dim' />
       <InputField label={LANG.screenDistance} id='screen-distance' />

@@ -668,6 +668,18 @@ process hierarchy within the tab container
   border-radius: var(--radius-md);
 }
 
+/* Outlet wrapper for experiment modal routes (e.g. recording-settings). Lets modal content sit on top; clicks pass through when no modal is rendered. */
+.experiment-route-modal-outlet {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.experiment-route-modal-outlet > * {
+  pointer-events: auto;
+}
+
 /*start-tracking-modal adapted from https://codepen.io/colbyalbo/pen/gRogbE
 */
 

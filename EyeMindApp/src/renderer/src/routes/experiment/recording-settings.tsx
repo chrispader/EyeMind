@@ -42,38 +42,36 @@ function RecordingSettingsPage(): React.ReactElement {
   return (
     <ModalContainer
       id={MODAL_ID}
-      className='startET-modal'
       title={LANG.dataCollectionSettings}
       closeId={CLOSE_BTN_ID}>
-      <InputField label={LANG.xScreenDimension} id='x-dim' />
-      <InputField label={LANG.yScreenDimension} id='y-dim' />
-      <InputField label={LANG.screenDistance} id='screen-distance' />
-      <InputField label={LANG.monitorSize} id='monitor-size' />
-      <InputField label={LANG.recordingId} id='recording-id' />
-      <InputField label={LANG.participantId} id='participant-id' />
-      <InputField label={LANG.experimentId} id='experiment-id' />
-      <InputField label={LANG.experimenterId} id='experimenter-id' />
-      <TextareaField label={LANG.additionalNotes} id='additional-notes' />
-
-      <div className='row'>
-        <div style={{ textAlign: 'center' }}>
-          <input
-            type='submit'
-            className='submit-form-button'
-            id='submit-recording-form'
-            value={LANG.startRecording}
-          />
-          <input
-            type='submit'
-            className='save-session'
-            id='save-session'
-            value={LANG.saveSession}
-          />
-        </div>
+      <div className='flex flex-col gap-1'>
+        <InputField label={LANG.xScreenDimension} id='x-dim' />
+        <InputField label={LANG.yScreenDimension} id='y-dim' />
+        <InputField label={LANG.screenDistance} id='screen-distance' />
+        <InputField label={LANG.monitorSize} id='monitor-size' />
+        <InputField label={LANG.recordingId} id='recording-id' />
+        <InputField label={LANG.participantId} id='participant-id' />
+        <InputField label={LANG.experimentId} id='experiment-id' />
+        <InputField label={LANG.experimenterId} id='experimenter-id' />
+        <TextareaField label={LANG.additionalNotes} id='additional-notes' />
       </div>
 
-      <div className='row'>
-        <div style={{ textAlign: 'center' }}>{LANG.requiredFields}</div>
+      <div className='flex flex-col gap-4'>
+        <div className='flex justify-center gap-4'>
+          <input
+            type='submit'
+            id='submit-recording-form'
+            value={LANG.startRecording}
+            className='w-[35%] cursor-pointer rounded-sm border-none bg-remove-btn px-2.5 py-3.5 text-white hover:bg-success'
+          />
+          <input
+            type='submit'
+            id='save-session'
+            value={LANG.saveSession}
+            className='w-[35%] cursor-pointer rounded-sm border-none bg-secondary px-2.5 py-3.5 text-white hover:bg-warning'
+          />
+        </div>
+        <div className='text-center text-sm text-text-muted'>{LANG.requiredFields}</div>
       </div>
     </ModalContainer>
   )

@@ -7,11 +7,11 @@ interface FormRowProps {
 
 export function FormRow({ label, children }: FormRowProps): React.ReactElement {
   return (
-    <div className='row'>
-      <div className='column'>
-        <span className='text'>{label}</span>
+    <div className='flex min-h-[60px] flex-row items-center gap-4'>
+      <div className='min-w-[120px] shrink-0'>
+        <span className='text-[15px]'>{label}</span>
       </div>
-      <div className='column'>{children}</div>
+      <div className='flex min-h-[60px] flex-1 items-center'>{children}</div>
     </div>
   )
 }

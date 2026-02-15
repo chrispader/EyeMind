@@ -10,6 +10,9 @@ interface InputFieldProps {
   suffix?: string
 }
 
+const inputClassName =
+  'box-border inline-block w-full rounded-sm border border-border px-5 py-3 my-2'
+
 export function InputField({
   label,
   id,
@@ -19,8 +22,15 @@ export function InputField({
 }: InputFieldProps): React.ReactElement {
   return (
     <FormRow label={label}>
-      <input className='form-input' id={id} type={type} defaultValue={defaultValue} />
-      {suffix && ` ${suffix}`}
+      <>
+        <input
+          className={inputClassName}
+          id={id}
+          type={type}
+          defaultValue={defaultValue}
+        />
+        {suffix != null && suffix !== '' && ` ${suffix}`}
+      </>
     </FormRow>
   )
 }

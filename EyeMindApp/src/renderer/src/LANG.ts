@@ -69,15 +69,15 @@ const LANG = {
 
   FORM: {
     RECORDING_SETTINGS: {
-      xScreenDimension: ' X Screen dimension in pixels*: ',
-      yScreenDimension: ' Y Screen dimension in pixels*: ',
-      screenDistance: ' Screen distance in centimeters*: ',
-      monitorSize: ' Monitor size in inches*: ',
-      recordingId: ' Recording ID*: ',
-      participantId: ' Participant ID: ',
-      experimentId: ' Experiment ID: ',
-      experimenterId: ' Experimenter ID:',
-      additionalNotes: ' Additional notes: ',
+      xScreenDimension: 'X Screen dimension in pixels',
+      yScreenDimension: 'Y Screen dimension in pixels',
+      screenDistance: 'Screen distance in centimeters',
+      monitorSize: 'Monitor size in inches',
+      recordingId: 'Recording ID',
+      participantId: 'Participant ID',
+      experimentId: 'Experiment ID',
+      experimenterId: 'Experimenter ID',
+      additionalNotes: 'Additional notes',
     },
   },
 

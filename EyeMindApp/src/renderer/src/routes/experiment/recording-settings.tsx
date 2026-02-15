@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import LANG from '@renderer/LANG'
+import LANG, { translate } from '@renderer/LANG'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
@@ -60,9 +60,9 @@ const RECORDING_FIELDS: RecordingFieldConfig[] = [
   { key: 'screenDistance', required: true, type: 'input' },
   { key: 'monitorSize', required: true, type: 'input' },
   { key: 'recordingId', required: true, type: 'input' },
-  { key: 'participantId', required: true, type: 'input' },
-  { key: 'experimentId', required: true, type: 'input' },
-  { key: 'experimenterId', required: true, type: 'input' },
+  { key: 'participantId', required: false, type: 'input' },
+  { key: 'experimentId', required: false, type: 'input' },
+  { key: 'experimenterId', required: false, type: 'input' },
   { key: 'additionalNotes', required: false, type: 'textarea' },
 ]
 
@@ -111,7 +111,7 @@ function RecordingSettingsPage(): React.ReactElement {
         onSubmit={handleFormSubmit(onStartRecording)}
         className='grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1'>
         {RECORDING_FIELDS.map((field) => {
-          const label = LANG.FORM.RECORDING_SETTINGS[field.key]
+          const label = `${LANG.FORM.RECORDING_SETTINGS[field.key]}:`
           return field.type === 'textarea' ? (
             <TextareaField
               key={field.key}

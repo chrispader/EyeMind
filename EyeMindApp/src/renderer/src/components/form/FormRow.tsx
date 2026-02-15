@@ -5,13 +5,13 @@ interface FormRowProps {
   children: React.ReactNode
 }
 
+// Renders two cells (label + control) so a parent grid can align all inputs.
+// Parent should use e.g. grid-cols-[auto_1fr] to control input column width.
 export function FormRow({ label, children }: FormRowProps): React.ReactElement {
   return (
-    <div className='flex min-h-[60px] flex-row items-center gap-4'>
-      <div className='min-w-[120px] shrink-0'>
-        <span className='text-[15px]'>{label}</span>
-      </div>
-      <div className='flex min-h-[60px] flex-1 items-center'>{children}</div>
-    </div>
+    <>
+      <div className='flex min-h-[60px] items-center text-[15px]'>{label}</div>
+      <div className='flex min-h-[60px] items-center'>{children}</div>
+    </>
   )
 }

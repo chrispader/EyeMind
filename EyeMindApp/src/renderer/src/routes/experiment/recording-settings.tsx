@@ -44,7 +44,7 @@ function RecordingSettingsPage(): React.ReactElement {
       id={MODAL_ID}
       title={LANG.dataCollectionSettings}
       closeId={CLOSE_BTN_ID}>
-      <div className='flex flex-col gap-1'>
+      <div className='grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1'>
         <InputField label={LANG.xScreenDimension} id='x-dim' />
         <InputField label={LANG.yScreenDimension} id='y-dim' />
         <InputField label={LANG.screenDistance} id='screen-distance' />

@@ -165,7 +165,7 @@ function ExperimentLayout(): React.ReactElement {
             ref={toTabLeft}
             id='to-tab-left'
             onClick={handleToTabLeftClick}
-            className='w-[25px] shrink-0 cursor-pointer text-xl text-text-muted'
+            className='px-2.5 shrink-0 cursor-pointer text-xl text-text-muted'
             data-element-id='to-tab-left-button'>
             &lt;
           </div>
@@ -178,7 +178,7 @@ function ExperimentLayout(): React.ReactElement {
             ref={toTabRight}
             id='to-tab-right'
             onClick={handleToTabRightClick}
-            className='w-[25px] shrink-0 cursor-pointer text-xl text-text-muted'
+            className='px-2.5 shrink-0 cursor-pointer text-xl text-text-muted'
             data-element-id='to-tab-right-button'>
             &gt;
           </div>

@@ -3,8 +3,8 @@ import FileImport from '@renderer/components/FileImport'
 import { isSessionFile, loadFiles } from '@renderer/components/FileImport/loadFile'
 import type { FileImportConfig } from '@renderer/components/FileImport/types'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import toast from 'react-hot-toast'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 import { Route as experimentRoute } from '../../experiment'
 
@@ -36,7 +36,7 @@ function EyeTrackingLoadSessionPage(): React.ReactElement {
         }
 
         const file = files[0]
-        if (!file) {
+        if (file == null) {
           return
         }
 

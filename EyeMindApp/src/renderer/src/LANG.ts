@@ -140,6 +140,7 @@ const LANG = {
   errorNotSupportedImageFormat: 'is not a supported image format',
   errorFailedToRead: 'Failed to read',
   errorInvalidModelFileType: 'is not a valid file (expected image or BPMN/ODM model)',
+  errorFailedToSaveSession: 'Failed to save session',
 } as const
 
 export type LangKey = keyof typeof LANG

@@ -1,5 +1,6 @@
 import { getMid } from 'diagram-js/lib/layout/LayoutUtil'
 import { assign } from 'min-dash'
+
 import { getLabel } from '../features/label-editing/LabelUtil'
 import { getExternalLabelBounds, isLabelExternal } from '../util/LabelUtil'
 import { is } from '../util/ModelUtil'

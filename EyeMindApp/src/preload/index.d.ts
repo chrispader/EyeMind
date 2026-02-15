@@ -6,8 +6,8 @@
  *
  * Types are imported from @/types/IpcApi.ts (single source of truth).
  */
+import type { ElectronAPI } from '@electron-toolkit/preload'
 
-import { ElectronAPI } from '@electron-toolkit/preload'
 import type {
   Analysis,
   EyeTracker,
@@ -38,7 +38,9 @@ type RendererAnalysis = Analysis & {
   onApplyCorrectionOnGazeFragment: (
     func: IpcEventCallback<'applyCorrectionOnGazeFragment'>,
   ) => void
-  onCompleteCorrectionListener: (func: IpcEventCallback<'completeCorrectionListener'>) => void
+  onCompleteCorrectionListener: (
+    func: IpcEventCallback<'completeCorrectionListener'>,
+  ) => void
 }
 
 /** EyeTracker API with event listeners */
@@ -66,7 +68,9 @@ type RendererUtils = Utils & {
 
 /** Progress event API */
 type Progress = {
-  onUpdateProcessingMessage: (callback: IpcEventCallback<'updateProcessingMessage'>) => void
+  onUpdateProcessingMessage: (
+    callback: IpcEventCallback<'updateProcessingMessage'>,
+  ) => void
 }
 
 /** Server test utilities */

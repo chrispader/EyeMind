@@ -1,4 +1,5 @@
-import { Model, createDefaultModel } from '@renderer/model/models'
+import type { Model } from '@renderer/model/models'
+import { createDefaultModel } from '@renderer/model/models'
 import { type StateCreator, create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { useShallow } from 'zustand/react/shallow'
@@ -95,7 +96,7 @@ const createModelsSlice: StateCreator<
 
     updateModel: (modelId, modelDelta) => {
       set((state) => {
-        const existingModel = state.models?.[modelId]
+        const existingModel = state.models[modelId]
 
         const newModel = {
           ...existingModel!,
@@ -155,7 +156,7 @@ const createQuestionFilesSlice: StateCreator<
 
     updateQuestionFile: (questionFileId, questionFileDelta) => {
       set((state) => {
-        const existingQuestionFile = state.questionFiles?.[questionFileId]
+        const existingQuestionFile = state.questionFiles[questionFileId]
 
         const newQuestionFile = {
           ...existingQuestionFile!,
@@ -224,7 +225,7 @@ export const useSessionActions = () => useSessionStore((state) => state.actions)
 export const useModels = (predicate?: (model: Model) => boolean | undefined) =>
   useSessionStore(
     useShallow((state) =>
-      predicate
+      predicate != null
         ? Object.fromEntries(
             Object.entries(state.models).filter(([_, model]) => predicate(model)),
           )

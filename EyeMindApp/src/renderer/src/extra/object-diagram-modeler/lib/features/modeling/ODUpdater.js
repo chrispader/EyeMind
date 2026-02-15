@@ -3,6 +3,7 @@ import { Label } from 'diagram-js/lib/model'
 import { remove as collectionRemove } from 'diagram-js/lib/util/Collections'
 import inherits from 'inherits'
 import { assign, forEach } from 'min-dash'
+
 import { getBusinessObject, is } from '../../util/ModelUtil'
 
 /**

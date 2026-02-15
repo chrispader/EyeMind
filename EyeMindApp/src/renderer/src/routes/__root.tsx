@@ -99,7 +99,8 @@ async function initializeApp(): Promise<void> {
     // Expose test utilities to window.clientTests
     window.clientTests = {
       getClientState: () => useGlobalStore.getState(),
-      openMainTabInWithinTabLinks: (modelsGroupId: string) => openMainTab(true, false, modelsGroupId),
+      openMainTabInWithinTabLinks: (modelsGroupId: string) =>
+        openMainTab(true, false, modelsGroupId),
       resetModel: (fileId: string) => resetModel(fileId),
       resetNavTabsAndTabs: (modelsGroupId: string) => resetNavTabsAndTabs(modelsGroupId),
     }

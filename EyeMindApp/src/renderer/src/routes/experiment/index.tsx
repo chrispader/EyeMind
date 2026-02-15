@@ -23,12 +23,12 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
   const toTabRight = useRef<HTMLDivElement>(null)
   const navTabs = useRef<HTMLDivElement>(null)
   function handleToTabLeftClick() {
-    if (!navTabs.current) return
+    if (navTabs.current == null) return
 
     navTabs.current.scrollLeft -= NAV_TABS_SCROLL_DISTANCE
   }
   function handleToTabRightClick() {
-    if (!navTabs.current) return
+    if (navTabs.current == null) return
     navTabs.current.scrollLeft += NAV_TABS_SCROLL_DISTANCE
   }
 
@@ -47,9 +47,9 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
     const featureText = document.getElementById('feature-text')
     const etIcons = document.getElementById('eye-tracking-icons')
 
-    if (modeText) modeText.innerText = LANG.eyeTrackingMode
-    if (featureText) featureText.innerText = ''
-    if (etIcons) etIcons.style.display = 'block'
+    if (modeText != null) modeText.innerText = LANG.eyeTrackingMode
+    if (featureText != null) featureText.innerText = ''
+    if (etIcons != null) etIcons.style.display = 'block'
 
     // put in fullscreen
     if (window.hasOwnProperty('electron')) {
@@ -273,7 +273,6 @@ function EyeTrackingExperimentPage({}): React.ReactElement {
           </div>
         </div>
       </div>
-
     </div>
   )
 }

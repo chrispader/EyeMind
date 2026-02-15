@@ -20,9 +20,14 @@ export function ModalContainer({
 }: ModalContainerProps): React.ReactElement {
   return (
     <div id={id} className={className} style={{ display: visible ? 'flex' : 'none' }}>
-      <div className="content">
-        <span className="close" id={closeId}>
-          <img className="close-icon" id="close-icon" src="icons/close.svg" alt={LANG.close} />
+      <div className='content'>
+        <span className='close' id={closeId}>
+          <img
+            className='close-icon'
+            id='close-icon'
+            src='icons/close.svg'
+            alt={LANG.close}
+          />
         </span>
 
         <h2>{title}</h2>

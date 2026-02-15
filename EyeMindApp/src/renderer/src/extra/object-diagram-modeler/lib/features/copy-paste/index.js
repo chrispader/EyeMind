@@ -1,4 +1,5 @@
 import CopyPasteModule from 'diagram-js/lib/features/copy-paste'
+
 import ModdleCopy from './ModdleCopy'
 import ODCopyPaste from './ODCopyPaste'
 

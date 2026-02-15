@@ -87,7 +87,7 @@ export default function ModdleCopy(eventBus, odFactory, moddle) {
     if (
       propertyName &&
       parentDescriptor &&
-      !find(parentDescriptor.properties, matchPattern({ name: propertyName }))
+      find(parentDescriptor.properties, matchPattern({ name: propertyName })) == null
     ) {
       // disallow copying property
       return false
@@ -113,11 +113,11 @@ ModdleCopy.prototype.copyElement = function (
 ) {
   var self = this
 
-  if (propertyNames && !isArray(propertyNames)) {
+  if (propertyNames != null && !isArray(propertyNames)) {
     propertyNames = [propertyNames]
   }
 
-  propertyNames = propertyNames || getPropertyNames(sourceElement.$descriptor)
+  propertyNames = propertyNames != null || getPropertyNames(sourceElement.$descriptor)
 
   var canCopyProperties = this._eventBus.fire('moddleCopy.canCopyProperties', {
     propertyNames: propertyNames,

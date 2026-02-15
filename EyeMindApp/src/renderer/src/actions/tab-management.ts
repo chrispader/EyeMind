@@ -19,15 +19,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-import { cancelDefault } from '@renderer/modules/utils/utils'
-import { useGlobalStore } from '@renderer/state/global'
-
 import { sendClickEvent } from '@renderer/actions/click-stream'
-import { takesnapshot } from '@renderer/actions/snapshot'
 import {
   createUpdateProcessHierarchyExplorer,
   renderProcessHierarchyExplorer,
 } from '@renderer/actions/process-hierarchy'
+import { takesnapshot } from '@renderer/actions/snapshot'
+import { cancelDefault } from '@renderer/modules/utils/utils'
+import { useGlobalStore } from '@renderer/state/global'
 
 // Forward declaration for circular dependency with canvas.ts
 let _resetModel: ((fileId: string) => void) | null = null
@@ -37,7 +36,7 @@ export function setResetModelFn(fn: (fileId: string) => void) {
 }
 
 function resetModel(fileId: string) {
-  if (_resetModel) {
+  if (_resetModel != null) {
     _resetModel(fileId)
   } else {
     console.error('resetModel not initialized')
@@ -150,7 +149,7 @@ function setScrollPosition(
 ) {
   console.log('setScrollPosition', arguments)
 
-  if (!container) return
+  if (container == null) return
 
   const tabHeaderStartPos = tabHeader.offsetLeft
   const tabHeaderEndPos = tabHeaderStartPos + tabHeader.offsetWidth
@@ -208,7 +207,8 @@ function tabDragStart(e: DragEvent) {
 
   // find its index
   const navTabs = document.getElementById('nav-tabs')
-  const index = navTabs ? Array.prototype.slice.call(navTabs.children).indexOf(target) : -1
+  const index =
+    navTabs != null ? Array.prototype.slice.call(navTabs.children).indexOf(target) : -1
   // console.log("index", index);
 
   // start the transfer of this index
@@ -244,14 +244,15 @@ function tabDropped(e: DragEvent) {
   // console.log("dropped target",target);
   // find its index which will be the new index
   const navTabs = document.getElementById('nav-tabs')
-  const newIndex = navTabs ? Array.prototype.slice.call(navTabs.children).indexOf(target) : -1
+  const newIndex =
+    navTabs != null ? Array.prototype.slice.call(navTabs.children).indexOf(target) : -1
   // console.log("newIndex", newIndex);
 
   /// only when the indices are different
-  if (oldIndex != newIndex && navTabs && target) {
+  if (oldIndex != newIndex && navTabs != null && target != null) {
     // remove the dropped item from the old place
     const element = navTabs.children[oldIndex]
-    element?.remove()
+    element.remove()
 
     // insert the dropped item at the new place
     if (element) {
@@ -281,7 +282,11 @@ function tabDropped(e: DragEvent) {
  * Additional notes: none
  *
  */
-export function closeTabInteraction(id: string, tabHeader: HTMLElement, takeSnapshot: boolean) {
+export function closeTabInteraction(
+  id: string,
+  tabHeader: HTMLElement,
+  takeSnapshot: boolean,
+) {
   console.log('closeTabInteraction', arguments)
 
   const { setState } = useGlobalStore.getState()
@@ -333,7 +338,7 @@ export function changeTab(
 
   /// hide index-tab once tabs are changed. The goal of this tab is to prevent users from seeing the models before the data collection
   const indexTab = document.getElementById('index-tab')
-  if (indexTab && indexTab.style.display != 'none') {
+  if (indexTab != null && indexTab.style.display != 'none') {
     indexTab.style.display = 'none'
   }
 
@@ -348,7 +353,7 @@ export function changeTab(
   const destinationIdTabContainer = document.getElementById(
     'model' + destinationId + '-container',
   )
-  if (destinationIdTabContainer) {
+  if (destinationIdTabContainer != null) {
     destinationIdTabContainer.style.display = 'flex' //"block";
   }
 
@@ -362,11 +367,15 @@ export function changeTab(
 
     // ´activate the destination tab link
     const destinationIdTabLink = document.getElementById('model' + destinationId)
-    if (destinationIdTabLink) {
+    if (destinationIdTabLink != null) {
       destinationIdTabLink.className += ' active'
 
       // set scroll position
-      setScrollPosition(document.getElementById('nav-tabs'), 'changingTab', destinationIdTabLink)
+      setScrollPosition(
+        document.getElementById('nav-tabs'),
+        'changingTab',
+        destinationIdTabLink,
+      )
     }
   }
 
@@ -459,8 +468,11 @@ export function openMainTab(
   const state = useGlobalStore.getState()
 
   type ModelEntry = { mainTab?: boolean; groupId?: string }
-  for (const [key, model] of Object.entries(state.models ?? {}) as [string, ModelEntry][]) {
-    if (model?.mainTab && model.groupId == modelsGroupId) {
+  for (const [key, model] of Object.entries(state.models ?? {}) as [
+    string,
+    ModelEntry,
+  ][]) {
+    if (model.mainTab && model.groupId == modelsGroupId) {
       if (!ignoreTabLinks) addToTabHeader(key)
       changeTab(key, ignoreTabLinks, takeSnapshot)
       break

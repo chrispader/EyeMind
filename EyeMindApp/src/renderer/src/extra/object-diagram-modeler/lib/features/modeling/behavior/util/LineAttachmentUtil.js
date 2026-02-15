@@ -116,7 +116,7 @@ export function getAttachment(point, line) {
 
     attachmentDistance = getDistance(attachment.position, point)
 
-    if (!closestAttachment || closestAttachmentDistance > attachmentDistance) {
+    if (closestAttachment == null || closestAttachmentDistance > attachmentDistance) {
       closestAttachment = attachment
       closestAttachmentDistance = attachmentDistance
     }

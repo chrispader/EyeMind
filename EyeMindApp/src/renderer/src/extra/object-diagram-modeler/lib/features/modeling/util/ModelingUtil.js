@@ -1,4 +1,5 @@
 import { some } from 'min-dash'
+
 import { is } from '../../../util/ModelUtil'
 
 /**

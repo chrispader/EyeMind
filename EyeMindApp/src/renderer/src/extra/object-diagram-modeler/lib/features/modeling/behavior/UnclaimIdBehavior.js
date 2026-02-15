@@ -1,5 +1,6 @@
 import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor'
 import inherits from 'inherits'
+
 import { isLabel } from '../../../util/LabelUtil'
 
 /**

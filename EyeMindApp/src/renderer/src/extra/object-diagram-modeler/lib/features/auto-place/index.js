@@ -1,4 +1,5 @@
 import AutoPlaceModule from 'diagram-js/lib/features/auto-place'
+
 import ODAutoPlace from './ODAutoPlace'
 
 export default {

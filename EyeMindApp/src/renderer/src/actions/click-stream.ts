@@ -33,7 +33,10 @@ async function sendClickEvent(clickTimestamp: number, clickedElement: string) {
   const state = useGlobalStore.getState()
 
   if (state.isEtOn) {
-    const res = (await window.eyeTracker.sendClickEvent(clickTimestamp, clickedElement)) as {
+    const res = (await window.eyeTracker.sendClickEvent(
+      clickTimestamp,
+      clickedElement,
+    )) as {
       success: boolean
       msg?: string
     }

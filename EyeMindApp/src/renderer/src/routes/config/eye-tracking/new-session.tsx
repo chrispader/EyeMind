@@ -27,7 +27,7 @@ function EyeTrackingNewSessionPage(): React.ReactElement {
   useEffect(() => {
     resetSession()
 
-    return () => resetSession
+    return resetSession
   }, [resetSession])
 
   const [subProcessLinkingMode, setSubProcessLinkingMode] =

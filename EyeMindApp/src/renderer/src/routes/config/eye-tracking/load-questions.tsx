@@ -1,7 +1,7 @@
 import LANG from '@renderer/LANG'
 import FileImport from '@renderer/components/FileImport'
 import { isQuestionsFile } from '@renderer/components/FileImport/loadFile'
-import { FileImportConfig } from '@renderer/components/FileImport/types'
+import type { FileImportConfig } from '@renderer/components/FileImport/types'
 import {
   type QuestionFile,
   createDefaultQuestionFile,
@@ -70,7 +70,7 @@ function EyeTrackingLoadQuestionsPage(): React.ReactElement {
         continue
       }
 
-      if (questionFiles?.[questionFileId] !== undefined) {
+      if (questionFiles[questionFileId] !== undefined) {
         newErrors.push(`${file.name} (id: ${questionFileId}) ${LANG.errorAlreadyAdded}`)
         continue
       }

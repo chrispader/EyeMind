@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { GlobalState } from '@/types/GlobalState'
+
+import type { GlobalState } from '@/types/GlobalState'
 
 export type GlobalStore = GlobalState & {
   setState: (

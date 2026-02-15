@@ -4,6 +4,7 @@ import {
   getConnectedDistance,
 } from 'diagram-js/lib/features/auto-place/AutoPlaceUtil'
 import { asTRBL, getMid } from 'diagram-js/lib/layout/LayoutUtil'
+
 import { is } from '../../util/ModelUtil'
 
 /**

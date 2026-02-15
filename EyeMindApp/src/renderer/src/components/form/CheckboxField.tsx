@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { FormRow } from './FormRow'
 
 interface CheckboxFieldProps {
@@ -14,7 +15,12 @@ export function CheckboxField({
 }: CheckboxFieldProps): React.ReactElement {
   return (
     <FormRow label={label}>
-      <input className="form-check-box" type="checkbox" id={id} defaultChecked={defaultChecked} />
+      <input
+        className='form-check-box'
+        type='checkbox'
+        id={id}
+        defaultChecked={defaultChecked}
+      />
     </FormRow>
   )
 }

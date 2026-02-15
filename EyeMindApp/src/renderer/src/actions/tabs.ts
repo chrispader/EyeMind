@@ -19,7 +19,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
-
 import { useGlobalStore } from '@renderer/state/global'
 
 /**
@@ -33,9 +32,9 @@ export function setMainTab() {
   ) as HTMLCollectionOf<HTMLInputElement>
 
   for (let i = 0; i < setAsMainRadioBoxList.length; i++) {
-    const checked = setAsMainRadioBoxList[i]?.checked ?? false
+    const checked = setAsMainRadioBoxList[i].checked ?? false
     if (checked) {
-      const modelId = setAsMainRadioBoxList[i]?.getAttribute('modelId')
+      const modelId = setAsMainRadioBoxList[i].getAttribute('modelId')
       if (modelId == null || state.models == null) {
         continue
       }
@@ -69,9 +68,9 @@ export function setUnclosableTabs() {
   ) as HTMLCollectionOf<HTMLInputElement>
 
   for (let i = 0; i < setUnclosableTabCheckBoxList.length; i++) {
-    const checked = setUnclosableTabCheckBoxList[i]?.checked ?? false
+    const checked = setUnclosableTabCheckBoxList[i].checked ?? false
     if (checked) {
-      const modelId = setUnclosableTabCheckBoxList[i]?.getAttribute('modelId')
+      const modelId = setUnclosableTabCheckBoxList[i].getAttribute('modelId')
       if (modelId == null || state.models == null) {
         continue
       }

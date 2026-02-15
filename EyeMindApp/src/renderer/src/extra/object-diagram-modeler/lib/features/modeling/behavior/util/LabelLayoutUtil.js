@@ -1,4 +1,5 @@
 import { roundPoint } from 'diagram-js/lib/layout/LayoutUtil'
+
 import { getAngle, getDistancePointPoint, rotateVector } from './GeometricUtil'
 import { getAttachment } from './LineAttachmentUtil'
 

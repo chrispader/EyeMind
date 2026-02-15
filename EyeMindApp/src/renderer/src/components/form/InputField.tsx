@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { FormRow } from './FormRow'
 
 interface InputFieldProps {
@@ -18,7 +19,7 @@ export function InputField({
 }: InputFieldProps): React.ReactElement {
   return (
     <FormRow label={label}>
-      <input className="form-input" id={id} type={type} defaultValue={defaultValue} />
+      <input className='form-input' id={id} type={type} defaultValue={defaultValue} />
       {suffix && ` ${suffix}`}
     </FormRow>
   )

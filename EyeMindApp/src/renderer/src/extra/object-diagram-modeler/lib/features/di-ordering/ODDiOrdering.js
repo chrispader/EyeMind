@@ -1,5 +1,6 @@
 import { selfAndAllChildren } from 'diagram-js/lib/util/Elements'
 import { filter, map } from 'min-dash'
+
 import { getDi } from '../../draw/ODRendererUtil'
 import { getBusinessObject } from '../../util/ModelUtil'
 

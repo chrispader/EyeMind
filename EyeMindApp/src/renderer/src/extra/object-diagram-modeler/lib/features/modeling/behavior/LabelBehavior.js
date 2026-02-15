@@ -5,6 +5,7 @@ import { delta } from 'diagram-js/lib/util/PositionUtil'
 import inherits from 'inherits'
 import { assign } from 'min-dash'
 import { sortBy } from 'min-dash'
+
 import {
   getExternalLabelMid,
   hasExternalLabel,
@@ -247,7 +248,7 @@ export function getReferencePointDelta(referencePoint, oldBounds, newBounds) {
  * @param {Point}
  */
 export function getReferencePoint(point, lines) {
-  if (!lines.length) {
+  if (lines.length === 0) {
     return
   }
 

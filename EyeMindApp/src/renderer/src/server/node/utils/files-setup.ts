@@ -1,10 +1,10 @@
-import { FileImportConfig } from '@renderer/components/FileImport/types'
+import type { FileImportConfig } from '@renderer/components/FileImport/types'
 import { addState } from '@renderer/server/node/dataModels/state'
 import json from 'big-json'
-import { BrowserWindow } from 'electron'
+import type { BrowserWindow } from 'electron'
 import fs from 'fs'
 
-import { GlobalState } from '@/types/GlobalState'
+import type { GlobalState } from '@/types/GlobalState'
 
 export function readState(
   fileName: string,

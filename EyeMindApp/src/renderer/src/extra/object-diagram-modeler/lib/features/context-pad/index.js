@@ -3,6 +3,7 @@ import ConnectModule from 'diagram-js/lib/features/connect'
 import ContextPadModule from 'diagram-js/lib/features/context-pad'
 import CreateModule from 'diagram-js/lib/features/create'
 import SelectionModule from 'diagram-js/lib/features/selection'
+
 import ContextPadProvider from './ContextPadProvider'
 
 export default {

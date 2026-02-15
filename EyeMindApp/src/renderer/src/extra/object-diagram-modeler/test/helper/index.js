@@ -31,6 +31,7 @@
  */
 import { forEach, isFunction, merge } from 'min-dash'
 import TestContainer from 'mocha-test-container-support'
+
 import Modeler from '../../lib/Modeler'
 
 var OPTIONS, POSTIT_JS

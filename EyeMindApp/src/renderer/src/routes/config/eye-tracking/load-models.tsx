@@ -49,7 +49,7 @@ function EyeTrackingLoadModelsPage() {
     } else {
       // When there are BPMN models, exactly one must be marked as main
       if (draftBpmnModels.length > 0) {
-        const mainModels = draftBpmnModels.filter((m) => m?.isMain === true)
+        const mainModels = draftBpmnModels.filter((m) => m.isMain === true)
         if (mainModels.length !== 1) {
           modelErrors.push(LANG.errorExactlyOneMain)
         }
@@ -78,7 +78,7 @@ function EyeTrackingLoadModelsPage() {
     for (const file of files) {
       if (isImageFile(file)) {
         const imageModelId = getModelIdFromFileName(file.name)
-        if (draftModels?.[imageModelId] !== undefined) {
+        if (draftModels[imageModelId] !== undefined) {
           newErrors.push(`${file.name} ${LANG.errorAlreadyAdded}`)
           continue
         }
@@ -99,13 +99,13 @@ function EyeTrackingLoadModelsPage() {
 
       // BPMN models use file.name as id (see createDefaultModel)
       const bpmnModelId = file.name
-      if (draftModels?.[bpmnModelId] !== undefined) {
+      if (draftModels[bpmnModelId] !== undefined) {
         newErrors.push(`${file.name} ${LANG.errorAlreadyAdded}`)
         continue
       }
 
       const model = createDefaultModel(file, true)
-      const doesMainModelExist = draftBpmnModels.some((m) => m?.isMain)
+      const doesMainModelExist = draftBpmnModels.some((m) => m.isMain)
       model.isMain = !doesMainModelExist
       model.groupId = CONST.DEFAULT_MODEL_GROUP_ID
 

@@ -12,6 +12,7 @@ import MoveCanvasModule from 'diagram-js/lib/navigation/movecanvas'
 import TouchModule from 'diagram-js/lib/navigation/touch'
 import ZoomScrollModule from 'diagram-js/lib/navigation/zoomscroll'
 import inherits from 'inherits'
+
 import BaseModeler from './BaseModeler'
 import NavigatedViewer from './NavigatedViewer'
 import Viewer from './Viewer'

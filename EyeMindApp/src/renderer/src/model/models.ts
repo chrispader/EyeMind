@@ -21,7 +21,7 @@ export function getModelIdFromFileName(fileName: string) {
   return fileName.replace(new RegExp(CONST.MODELS_ID_REGEX, 'g'), '')
 }
 
-export function createDefaultModel(file: File, isDraft: boolean = false): Model {
+export function createDefaultModel(file: File, isDraft = false): Model {
   return {
     id: file.name,
     fileName: file.name,
@@ -35,7 +35,7 @@ export function createDefaultModel(file: File, isDraft: boolean = false): Model 
 export function createDefaultImageModel(
   file: File,
   dataUrl: string,
-  isDraft: boolean = false,
+  isDraft = false,
 ): Model {
   return {
     id: getModelIdFromFileName(file.name),
@@ -48,9 +48,6 @@ export function createDefaultImageModel(
 }
 
 /** Type guard: true when the model is an image model (has dataUrl, no BPMN xml). */
-export function isImageModel(
-  model: Model,
-): model is Model & { dataUrl: string } {
+export function isImageModel(model: Model): model is Model & { dataUrl: string } {
   return model.dataUrl != null && model.dataUrl !== ''
 }
-

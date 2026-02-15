@@ -1,6 +1,7 @@
 import RuleProvider from 'diagram-js/lib/features/rules/RuleProvider'
 import inherits from 'inherits'
 import { every } from 'min-dash'
+
 import { isLabel } from '../../util/LabelUtil'
 import { is } from '../../util/ModelUtil'
 import { isAny } from '../modeling/util/ModelingUtil'

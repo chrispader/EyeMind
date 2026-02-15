@@ -68,7 +68,9 @@ export async function applyFixationFilter(fixationFilterSettings, id, state, mai
     '',
   )
 
-  let message: { params?: Record<string, unknown>; dataFragment?: unknown } = { params: params }
+  let message: { params?: Record<string, unknown>; dataFragment?: unknown } = {
+    params: params,
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let communication: any = {
     method: CONST.COMMUNICATION_METHOD_TO_R_SERVER,

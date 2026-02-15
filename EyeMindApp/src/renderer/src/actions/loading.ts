@@ -53,7 +53,4 @@ async function hideGeneralWaitingScreen() {
   await delay(CONST.DELAY_FOR_RENDRING)
 }
 
-export {
-  showGeneralWaitingScreen,
-  hideGeneralWaitingScreen,
-}
+export { showGeneralWaitingScreen, hideGeneralWaitingScreen }

@@ -1,4 +1,5 @@
 import { forEach, isArray, isUndefined, omit, reduce } from 'min-dash'
+
 import { getBusinessObject } from '../../util/ModelUtil'
 
 function copyProperties(source, target, properties) {

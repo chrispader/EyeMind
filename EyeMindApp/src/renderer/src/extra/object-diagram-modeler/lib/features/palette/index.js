@@ -5,6 +5,7 @@ import LassoToolModule from 'diagram-js/lib/features/lasso-tool'
 import PaletteModule from 'diagram-js/lib/features/palette'
 import SpaceToolModule from 'diagram-js/lib/features/space-tool'
 import translate from 'diagram-js/lib/i18n/translate'
+
 import PaletteProvider from './PaletteProvider'
 
 export default {

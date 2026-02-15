@@ -1,5 +1,6 @@
 import Ids from 'ids'
 import inherits from 'inherits'
+
 import BaseViewer from './BaseViewer'
 
 /**

@@ -1,7 +1,7 @@
 import LANG from '@renderer/LANG'
 import FileImport from '@renderer/components/FileImport'
 import { loadFiles } from '@renderer/components/FileImport/loadFile'
-import { FileImportConfig } from '@renderer/components/FileImport/types'
+import type { FileImportConfig } from '@renderer/components/FileImport/types'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
@@ -25,7 +25,7 @@ function EyeTrackingLoadSessionPage(): React.ReactElement {
 
   return (
     <FileImport
-      items={sessionFile ? [sessionFile] : []}
+      items={sessionFile != null ? [sessionFile] : []}
       errors={errors}
       onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
       uploadLabel={LANG.dropSessionFile}
@@ -41,7 +41,7 @@ function EyeTrackingLoadSessionPage(): React.ReactElement {
         }
       }}
       onSubmit={() => {
-        if (sessionFile) {
+        if (sessionFile != null) {
           loadFiles([sessionFile], fileImportConfig)
           navigate({ to: experimentRoute.to })
         }

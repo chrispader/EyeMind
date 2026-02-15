@@ -1,4 +1,5 @@
 import { getMid } from 'diagram-js/lib/layout/LayoutUtil'
+
 import { getNewShapePosition } from '../../auto-place/ODAutoPlaceUtil'
 
 var HIGH_PRIORITY = 2000

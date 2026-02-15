@@ -17,10 +17,7 @@ export function getQuestionFileIdFromFileName(fileName: string) {
   return fileName.replace(new RegExp(CONST.QUESTIONS_ID_REGEX, 'g'), '')
 }
 
-export function createDefaultQuestionFile(
-  file: File,
-  isDraft: boolean = false,
-): QuestionFile {
+export function createDefaultQuestionFile(file: File, isDraft = false): QuestionFile {
   return {
     id: file.name,
     fileName: file.name,

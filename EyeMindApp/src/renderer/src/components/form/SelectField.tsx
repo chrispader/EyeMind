@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { FormRow } from './FormRow'
 
 export interface SelectOption {
@@ -32,7 +33,11 @@ export function SelectField({
 
   return (
     <FormRow label={label}>
-      <select className={selectClassName} id={id} multiple={multiple} defaultValue={defaultValue}>
+      <select
+        className={selectClassName}
+        id={id}
+        multiple={multiple}
+        defaultValue={defaultValue}>
         {children ??
           options?.map((opt) => (
             <option
@@ -41,7 +46,10 @@ export function SelectField({
               id={opt.id}
               className={opt.className}
               {...Object.fromEntries(
-                Object.entries(opt.dataAttributes ?? {}).map(([k, v]) => [`data-${k}`, v])
+                Object.entries(opt.dataAttributes ?? {}).map(([k, v]) => [
+                  `data-${k}`,
+                  v,
+                ]),
               )}>
               {opt.label}
             </option>

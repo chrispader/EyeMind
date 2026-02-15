@@ -1,6 +1,7 @@
 import $ from 'jquery'
 import 'object-diagram-modeler/assets/odm.css'
 import ODModeler from 'object-diagram-modeler/lib/Modeler'
+
 import emptyBoardXML from '../resources/emptyBoard.xml'
 import sampleBoardXML from '../resources/sampleBoard.xml'
 

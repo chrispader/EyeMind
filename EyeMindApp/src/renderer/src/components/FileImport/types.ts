@@ -1,4 +1,4 @@
-import { GlobalState } from '@/types/GlobalState'
+import type { GlobalState } from '@/types/GlobalState'
 
 export type FileImportConfig = {
   mode?: GlobalState['mode']

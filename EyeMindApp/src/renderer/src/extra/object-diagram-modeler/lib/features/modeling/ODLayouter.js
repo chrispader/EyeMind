@@ -6,6 +6,7 @@ import {
 } from 'diagram-js/lib/layout/ManhattanLayout'
 import inherits from 'inherits'
 import { assign } from 'min-dash'
+
 import { is } from '../../util/ModelUtil'
 
 export default function ODLayouter() {}
@@ -49,7 +50,7 @@ ODLayouter.prototype.layoutConnection = function (connection, hints) {
     }
   }
 
-  if (manhattanOptions) {
+  if (manhattanOptions != null) {
     manhattanOptions = assign(manhattanOptions, hints)
 
     updatedWaypoints = withoutRedundantPoints(

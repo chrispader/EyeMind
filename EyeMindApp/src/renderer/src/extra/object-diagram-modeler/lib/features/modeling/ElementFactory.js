@@ -1,6 +1,7 @@
 import BaseElementFactory from 'diagram-js/lib/core/ElementFactory'
 import inherits from 'inherits'
 import { assign, forEach } from 'min-dash'
+
 import { DEFAULT_LABEL_SIZE } from '../../util/LabelUtil'
 import { is } from '../../util/ModelUtil'
 

@@ -2,6 +2,7 @@ import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor'
 import { asTRBL, getMid, getOrientation } from 'diagram-js/lib/layout/LayoutUtil'
 import { substract } from 'diagram-js/lib/util/Math'
 import inherits from 'inherits'
+
 import { hasExternalLabel } from '../../../util/LabelUtil'
 
 var ALIGNMENTS = ['top', 'bottom', 'left', 'right']

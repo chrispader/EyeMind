@@ -1,6 +1,7 @@
 import OrderingProvider from 'diagram-js/lib/features/ordering/OrderingProvider'
 import inherits from 'inherits'
 import { find, findIndex } from 'min-dash'
+
 import { isAny } from '../modeling/util/ModelingUtil'
 
 /**
@@ -31,7 +32,7 @@ export default function ODOrderingProvider(eventBus, canvas, translate) {
       return isAny(element, [o.type])
     })
 
-    return (entry && entry.order) || { level: 1 }
+    return (entry != null && entry.order) || { level: 1 }
   }
 
   function getOrder(element) {

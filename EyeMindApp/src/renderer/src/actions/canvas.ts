@@ -19,13 +19,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
+import { resetProcessHierarchy } from '@renderer/actions/process-hierarchy'
+import { takesnapshot } from '@renderer/actions/snapshot'
+import {
+  closeTabInteraction,
+  openMainTab,
+  setResetModelFn,
+} from '@renderer/actions/tab-management'
 import { useGlobalStore } from '@renderer/state/global'
 
 import { CONST } from '@/CONST'
-
-import { takesnapshot } from '@renderer/actions/snapshot'
-import { resetProcessHierarchy } from '@renderer/actions/process-hierarchy'
-import { closeTabInteraction, openMainTab, setResetModelFn } from '@renderer/actions/tab-management'
 
 /**
  * Title: Reset model
@@ -97,7 +100,7 @@ export function resetNavTabsAndTabs(modelsGroupId?: string) {
 
       for (let i = 0; i < navTabs.length; ++i) {
         const tabHeader = navTabs[i]
-        const fileName = tabHeader?.getAttribute('file')
+        const fileName = tabHeader.getAttribute('file')
         const fileId = fileName?.replace(new RegExp(CONST.MODELS_ID_REGEX, 'g'), '') ?? ''
 
         // close tab
@@ -141,7 +144,7 @@ export function resetNavTabsAndTabs(modelsGroupId?: string) {
   } else {
     // hide nav-tabs-and-tabs
     const navTabsAndTabs = document.getElementById('nav-tabs-and-tabs')
-    if (navTabsAndTabs) navTabsAndTabs.style.display = 'none'
+    if (navTabsAndTabs != null) navTabsAndTabs.style.display = 'none'
 
     // takesnapshot
     takesnapshot(Date.now(), document.body.innerHTML, window.screenX, window.screenY)
@@ -174,14 +177,14 @@ export function showModelsGroup(groupId: string | null) {
       //console.log(model,model.id,document.getElementById("model"+model.id+"-explorerItem"))
 
       const el = document.getElementById('model' + model.id + '-explorerItem')
-      if (el) {
-        el.style.display = model?.groupId == groupId ? 'block' : 'none'
+      if (el != null) {
+        el.style.display = model.groupId == groupId ? 'block' : 'none'
       }
     }
   } else {
     for (const model of Object.values(state.models ?? {}) as ModelEntry[]) {
       const el = document.getElementById('model' + model.id + '-explorerItem')
-      if (el) el.style.display = 'none'
+      if (el != null) el.style.display = 'none'
     }
   }
 }

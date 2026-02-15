@@ -4,8 +4,9 @@
  * These helpers reduce boilerplate when registering IPC handlers
  * while maintaining type safety for parameter types.
  */
+import type { IpcMainInvokeEvent } from 'electron'
+import { ipcMain } from 'electron'
 
-import { ipcMain, IpcMainInvokeEvent } from 'electron'
 import type { IpcApiMap, IpcListenerParameters } from '@/types/IpcApi'
 
 /**
@@ -101,7 +102,10 @@ export function createNamespaceRegistrar<NS extends keyof IpcApiMap>() {
      * Register a handler with no arguments.
      * Channel name is validated against the namespace API.
      */
-    noArgs<FN extends keyof IpcApiMap[NS] & string>(channel: FN, handler: () => unknown): void {
+    noArgs<FN extends keyof IpcApiMap[NS] & string>(
+      channel: FN,
+      handler: () => unknown,
+    ): void {
       ipcMain.handle(channel, () => handler())
     },
 
@@ -125,9 +129,15 @@ export function createNamespaceRegistrar<NS extends keyof IpcApiMap>() {
      */
     custom<FN extends keyof IpcApiMap[NS] & string>(
       channel: FN,
-      handler: (event: IpcMainInvokeEvent, args: IpcListenerParameters<NS, FN>) => unknown,
+      handler: (
+        event: IpcMainInvokeEvent,
+        args: IpcListenerParameters<NS, FN>,
+      ) => unknown,
     ): void {
-      ipcMain.handle(channel, handler as (event: IpcMainInvokeEvent, args: unknown) => unknown)
+      ipcMain.handle(
+        channel,
+        handler as (event: IpcMainInvokeEvent, args: unknown) => unknown,
+      )
     },
   }
 }

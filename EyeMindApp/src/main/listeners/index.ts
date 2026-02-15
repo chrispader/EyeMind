@@ -4,8 +4,7 @@
  * This file registers all IPC handlers for main process communication.
  * Organized by namespace/domain.
  */
-
-import { FileImportConfig } from '@renderer/components/FileImport/types'
+import type { FileImportConfig } from '@renderer/components/FileImport/types'
 import {
   applyCorrectionOffset,
   gazeDataFragmentMapped,
@@ -15,7 +14,6 @@ import {
   shouldEnableHeatmap,
   summerizedFixationLog,
 } from '@renderer/server/node/analysis/analysis'
-import { fixationFilter } from '@renderer/server/node/connectors/fixation-filter'
 import {
   dataMapped,
   processGazeData,
@@ -25,6 +23,7 @@ import {
   sendSnapshotID,
   setupTracking,
 } from '@renderer/server/node/connectors/eye-tracker'
+import { fixationFilter } from '@renderer/server/node/connectors/fixation-filter'
 import { getLocalRpid, setLocalRpid } from '@renderer/server/node/dataModels/processes'
 import {
   areAreGazesCorrectedOfState,
@@ -45,25 +44,28 @@ import { recoverSession, saveSession } from '@renderer/server/node/utils/session
 import { getServerState } from '@renderer/server/node/utils/test'
 import child from 'child_process'
 import detect from 'detect-port'
-import { app, BrowserWindow, dialog, ipcMain } from 'electron'
+import type { BrowserWindow } from 'electron'
+import { app, dialog, ipcMain } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import kill from 'tree-kill'
 
 import { CONST } from '@/CONST'
-import { GlobalState } from '@/types/GlobalState'
-import { IpcListenerParameters } from '@/types/IpcApi'
-
-import { createNamespaceRegistrar } from './ipc-helpers'
-
+import type { GlobalState } from '@/types/GlobalState'
+import type { IpcListenerParameters } from '@/types/IpcApi'
 // ============================================================================
 // Type Helpers
 // ============================================================================
 
 import type { Analysis, EyeTracker, Rserver, Utils } from '@/types/IpcApi'
 
+import { createNamespaceRegistrar } from './ipc-helpers'
+
 type AnalysisParams<FN extends keyof Analysis> = IpcListenerParameters<'analysis', FN>
-type EyeTrackerParams<FN extends keyof EyeTracker> = IpcListenerParameters<'eyeTracker', FN>
+type EyeTrackerParams<FN extends keyof EyeTracker> = IpcListenerParameters<
+  'eyeTracker',
+  FN
+>
 type RserverParams<FN extends keyof Rserver> = IpcListenerParameters<'Rserver', FN>
 type UtilsParams<FN extends keyof Utils> = IpcListenerParameters<'utils', FN>
 
@@ -101,28 +103,34 @@ function registerStateListeners() {
 // ============================================================================
 
 function registerAnalysisListeners(mainWindow: BrowserWindow) {
-  ipcMain.handle('summerizedFixationLog', (_e, args: AnalysisParams<'summerizedFixationLog'>) =>
-    summerizedFixationLog(...args),
+  ipcMain.handle(
+    'summerizedFixationLog',
+    (_e, args: AnalysisParams<'summerizedFixationLog'>) => summerizedFixationLog(...args),
   )
 
   ipcMain.handle('generateHeatMap', (_e, args: AnalysisParams<'generateHeatMap'>) =>
     generateHeatMap(...args),
   )
 
-  ipcMain.handle('shouldEnableHeatmap', (_e, args: AnalysisParams<'shouldEnableHeatmap'>) =>
-    shouldEnableHeatmap(...args),
+  ipcMain.handle(
+    'shouldEnableHeatmap',
+    (_e, args: AnalysisParams<'shouldEnableHeatmap'>) => shouldEnableHeatmap(...args),
   )
 
   ipcMain.handle('getRandomGazeSet', (_e, args: AnalysisParams<'getRandomGazeSet'>) =>
     getRandomGazeSet(...args),
   )
 
-  ipcMain.handle('applyCorrectionOffset', (_e, args: AnalysisParams<'applyCorrectionOffset'>) =>
-    applyCorrectionOffset(...args, mainWindow),
+  ipcMain.handle(
+    'applyCorrectionOffset',
+    (_e, args: AnalysisParams<'applyCorrectionOffset'>) =>
+      applyCorrectionOffset(...args, mainWindow),
   )
 
-  ipcMain.handle('gazeDataFragmentMapped', (_e, args: AnalysisParams<'gazeDataFragmentMapped'>) =>
-    gazeDataFragmentMapped(...args, mainWindow),
+  ipcMain.handle(
+    'gazeDataFragmentMapped',
+    (_e, args: AnalysisParams<'gazeDataFragmentMapped'>) =>
+      gazeDataFragmentMapped(...args, mainWindow),
   )
 
   ipcMain.handle('getStatesInfo', (_e, args: AnalysisParams<'getStatesInfo'>) =>
@@ -188,7 +196,13 @@ function registerFixationFilterListeners(mainWindow: BrowserWindow) {
     const mainRPath = path
       .join(app.getAppPath(), 'app', 'server', 'R', 'fixationDetection', 'main.R')
       .replace(/\\/g, '\\\\')
-    const execPath = path.join(app.getAppPath(), 'environments', 'R', 'bin', 'RScript.exe')
+    const execPath = path.join(
+      app.getAppPath(),
+      'environments',
+      'R',
+      'bin',
+      'RScript.exe',
+    )
 
     const childRProcess = child.spawn(execPath, [
       '-e',
@@ -198,7 +212,9 @@ function registerFixationFilterListeners(mainWindow: BrowserWindow) {
       console.log(`stdout -:${data}`)
 
       if (CONST.R_SERVER_PID_PRINT_PATTERN.test(data)) {
-        logRserverPid(parseInt(CONST.R_SERVER_PID_PRINT_PATTERN.exec(data.toString())?.[1] ?? '-1'))
+        logRserverPid(
+          parseInt(CONST.R_SERVER_PID_PRINT_PATTERN.exec(data.toString())?.[1] ?? '-1'),
+        )
       }
     })
     childRProcess.stderr.on('data', (data) => {
@@ -240,7 +256,9 @@ function registerUtilsListeners() {
   )
 
   // Session
-  ipcMain.handle('saveSession', (_e, args: UtilsParams<'saveSession'>) => saveSession(...args))
+  ipcMain.handle('saveSession', (_e, args: UtilsParams<'saveSession'>) =>
+    saveSession(...args),
+  )
 
   ipcMain.handle('recoverSession', (_e, args: UtilsParams<'recoverSession'>) =>
     recoverSession(...args),
@@ -256,7 +274,12 @@ function registerFileSetupListeners(mainWindow: BrowserWindow) {
     'readState',
     (
       _e,
-      args: [fileName: string, filePath: string, state: GlobalState, config: FileImportConfig],
+      args: [
+        fileName: string,
+        filePath: string,
+        state: GlobalState,
+        config: FileImportConfig,
+      ],
     ) => readState(...args, mainWindow),
   )
 }

@@ -1,4 +1,4 @@
-import { GlobalState } from '@/types/GlobalState'
+import type { GlobalState } from '@/types/GlobalState'
 
 /* inits */
 let state: GlobalState = {
@@ -64,24 +64,24 @@ export function doesStateExist(filePath: string) {
 }
 
 export function getSnapshotsOfState(filePath: string) {
-  return states[filePath]?.snapshots
+  return states[filePath].snapshots
 }
 
 export function getStyleParametersOfState(filePath: string) {
   console.log(filePath)
-  console.log(states[filePath]?.styleParameters)
-  return states[filePath]?.styleParameters
+  console.log(states[filePath].styleParameters)
+  return states[filePath].styleParameters
 }
 
 export function setAreGazesCorrectedOfState(filePath: string, val: boolean) {
   const stateAtPath = states[filePath]
-  if (stateAtPath?.processedGazeData) {
+  if (stateAtPath.processedGazeData) {
     stateAtPath.processedGazeData.areGazesCorrected = val
   }
 }
 
 export function areAreGazesCorrectedOfState(filePath: string) {
-  return states[filePath]?.processedGazeData?.areGazesCorrected
+  return states[filePath].processedGazeData.areGazesCorrected
 }
 
 export function getQuestions() {

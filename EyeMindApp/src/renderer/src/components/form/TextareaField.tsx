@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { FormRow } from './FormRow'
 
 interface TextareaFieldProps {
@@ -18,7 +19,13 @@ export function TextareaField({
 }: TextareaFieldProps): React.ReactElement {
   return (
     <FormRow label={label}>
-      <textarea className="form-input" id={id} rows={rows} cols={cols} defaultValue={defaultValue} />
+      <textarea
+        className='form-input'
+        id={id}
+        rows={rows}
+        cols={cols}
+        defaultValue={defaultValue}
+      />
     </FormRow>
   )
 }

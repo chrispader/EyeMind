@@ -20,10 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /* Process hierarchy explorer */
-import { useGlobalStore } from '@renderer/state/global'
-
 import { sendClickEvent } from '@renderer/actions/click-stream'
 import { openWithinTab } from '@renderer/actions/tab-management'
+import { useGlobalStore } from '@renderer/state/global'
 
 /**
  * Title: create or update the process hierarchy explorer
@@ -100,7 +99,7 @@ export function renderProcessHierarchyExplorer(
   const state = useGlobalStore.getState()
 
   const container = document.getElementById('process-hierarchy-content')
-  if (!container) return
+  if (container == null) return
 
   container.innerHTML = ''
 
@@ -163,7 +162,7 @@ export function resetProcessHierarchy() {
   const container = document.getElementById('process-hierarchy-content')
 
   // reset destination
-  if (container) container.innerHTML = ''
+  if (container != null) container.innerHTML = ''
 
   // set state.processHierarchyExplorer to null
   setState({

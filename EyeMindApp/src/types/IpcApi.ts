@@ -5,8 +5,7 @@
  * This is the SINGLE SOURCE OF TRUTH for all IPC types.
  * Both preload/index.ts and preload/index.d.ts should derive types from here.
  */
-
-import { GlobalState, ProcessedGazeData } from './GlobalState'
+import type { GlobalState, ProcessedGazeData } from './GlobalState'
 
 // ============================================================================
 // Common Result Types

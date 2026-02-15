@@ -1,4 +1,5 @@
 import { assign } from 'min-dash'
+
 import {
   getExternalLabelMid,
   hasExternalLabel,

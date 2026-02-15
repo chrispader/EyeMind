@@ -1,5 +1,6 @@
 import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor'
 import inherits from 'inherits'
+
 import { getBusinessObject, is } from '../../../util/ModelUtil'
 
 export default function EmptyTextBoxBehavior(eventBus, modeling, directEditing) {

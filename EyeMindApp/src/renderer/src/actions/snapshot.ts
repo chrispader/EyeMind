@@ -52,7 +52,12 @@ type Snapshot = {
  *
  */
 
-function takesnapshot(_timestamp: number, _code: string, _screenX: number, _screenY: number): void {
+function takesnapshot(
+  _timestamp: number,
+  _code: string,
+  _screenX: number,
+  _screenY: number,
+): void {
   const { setState, ...state } = useGlobalStore.getState()
   console.log('state to be used in snapshot', state)
 
@@ -86,7 +91,8 @@ function takesnapshot(_timestamp: number, _code: string, _screenX: number, _scre
     // console.log("shownTabs",shownTabs);
     // console.log("selected svg",svg);
 
-    snapshot.boundingClientRect = svg ? JSON.stringify(svg.getBoundingClientRect()) : null
+    snapshot.boundingClientRect =
+      svg != null ? JSON.stringify(svg.getBoundingClientRect()) : null
     // console.log("snapshot.boundingClientRect",snapshot.boundingClientRect)
   } else {
     snapshot.boundingClientRect = null
@@ -111,7 +117,9 @@ function takesnapshot(_timestamp: number, _code: string, _screenX: number, _scre
 
   // for testing purpose
   if ('clientTests' in window) {
-    ;(window.clientTests as typeof window.clientTests & { lastSnapshot?: Snapshot }).lastSnapshot = snapshot
+    ;(
+      window.clientTests as typeof window.clientTests & { lastSnapshot?: Snapshot }
+    ).lastSnapshot = snapshot
   }
 }
 

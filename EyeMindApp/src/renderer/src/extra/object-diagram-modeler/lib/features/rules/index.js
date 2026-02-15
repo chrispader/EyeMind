@@ -1,4 +1,5 @@
 import RulesModule from 'diagram-js/lib/features/rules'
+
 import ODRules from './ODRules'
 
 export default {

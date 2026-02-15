@@ -1,5 +1,6 @@
 import BaseModeling from 'diagram-js/lib/features/modeling/Modeling'
 import inherits from 'inherits'
+
 import UpdateLabelHandler from '../label-editing/cmd/UpdateLabelHandler'
 import IdClaimHandler from './cmd/IdClaimHandler'
 import UpdateCanvasRootHandler from './cmd/UpdateCanvasRootHandler'

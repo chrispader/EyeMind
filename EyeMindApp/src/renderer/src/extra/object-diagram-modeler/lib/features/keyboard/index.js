@@ -1,4 +1,5 @@
 import KeyboardModule from 'diagram-js/lib/features/keyboard'
+
 import ODKeyboardBindings from './ODKeyboardBindings'
 
 export default {

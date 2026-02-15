@@ -6,6 +6,7 @@ import SelectionModule from 'diagram-js/lib/features/selection'
 import SpaceToolModule from 'diagram-js/lib/features/space-tool'
 import TooltipsModule from 'diagram-js/lib/features/tooltips'
 import CroppingConnectionDocking from 'diagram-js/lib/layout/CroppingConnectionDocking'
+
 import DiOrderingModule from '../di-ordering'
 import OrderingModule from '../ordering'
 import RulesModule from '../rules'

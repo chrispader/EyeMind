@@ -32,10 +32,11 @@ import {
   openInTab,
   openWithinTab,
 } from '@renderer/actions/tab-management'
-import { FileImportConfig } from '@renderer/components/FileImport/types'
+import type { FileImportConfig } from '@renderer/components/FileImport/types'
 import OdmModeler from '@renderer/extra/object-diagram-modeler/lib/Modeler'
 import OdmNavigatedViewer from '@renderer/extra/object-diagram-modeler/lib/NavigatedViewer'
-import { Model, getModelIdFromFileName } from '@renderer/model/models'
+import type { Model } from '@renderer/model/models'
+import { getModelIdFromFileName } from '@renderer/model/models'
 import { cancelDefault, errorAlert, readFileContent } from '@renderer/modules/utils/utils'
 import { addModel } from '@renderer/state/generalModelsRegistry'
 import { useGlobalStore } from '@renderer/state/global'
@@ -199,9 +200,9 @@ function loadModelFile(file: File, content: string, path = file.path) {
   const modelId = getModelIdFromFileName(file.name)
 
   // if the file has not been already added to the processing buffer
-  if (models?.[modelId] == null) {
+  if (models[modelId] == null) {
     const existsMainModel = Object.values(models ?? {}).some(
-      (model) => model?.isMain === true,
+      (model) => model.isMain === true,
     )
 
     // create file object
@@ -333,7 +334,7 @@ async function stateRead(res: {
   const { setState, ...state } = useGlobalStore.getState()
 
   // if the server res.success coming from the server is true
-  if (res.success && res.data) {
+  if (res.success && res.data != null) {
     //process the models within the loaded state
     for (const key of Object.keys(res.data.models)) {
       // add the new models to (client) state.models
@@ -441,7 +442,7 @@ async function sessionRead(res: {
   const msg = res.msg ?? ''
   const data = res.data
 
-  if (success && data) {
+  if (success && data != null) {
     setState(data)
 
     const state = useGlobalStore.getState()
@@ -892,7 +893,7 @@ function linkSubProcesses(
           '[data-element-id="' + subProcessFileName + '"]',
         ) as HTMLElement | null
 
-      if (!subProcessActivitySVGObjectInMainModel) return
+      if (subProcessActivitySVGObjectInMainModel == null) return
 
       if (state.linkingSubProcessesMode == 'newTab') {
         subProcessActivitySVGObjectInMainModel.addEventListener('click', function (e) {
@@ -998,8 +999,8 @@ function assignModelsToGroups() {
   ) as HTMLCollectionOf<HTMLInputElement>
 
   for (let i = 0; i < groupAssignementList.length; i++) {
-    const modelId = groupAssignementList[i]?.getAttribute('modelId') ?? ''
-    const groupId = groupAssignementList[i]?.value
+    const modelId = groupAssignementList[i].getAttribute('modelId') ?? ''
+    const groupId = groupAssignementList[i].value
 
     updateModel(modelId, {
       groupId,

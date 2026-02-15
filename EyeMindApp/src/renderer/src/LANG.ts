@@ -27,8 +27,7 @@ const LANG = {
   dropQuestionsFile: 'Drop a questions csv file',
   dropSessionFile: 'Drop a session file',
   dropImageFiles: 'Drop image files here (PNG, JPEG, GIF, WebP)',
-  dropImageAndModelFiles:
-    'Drop image files (optional) and/or BPMN/ODM model files',
+  dropImageAndModelFiles: 'Drop image files (optional) and/or BPMN/ODM model files',
 
   // Home Page
   eyeTracking: 'Eye-tracking',

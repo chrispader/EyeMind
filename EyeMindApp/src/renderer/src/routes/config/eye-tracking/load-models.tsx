@@ -190,10 +190,13 @@ function DraftModelItem({ model }: { model: Model }) {
           type='text'
           size={2}
           className='w-12 border border-gray-300 rounded px-1 py-0.5'
+          value={model.groupId}
           onChange={(e) => {
-            updateModel(model.id, { groupId: e.target.value })
+            updateModel(model.id, {
+              groupId: e.target.value === '' ? undefined : e.target.value,
+            })
           }}
-          placeholder={model.groupId}
+          placeholder='0'
           name={`group-assignement-for-file-${model.id}`}
           id={`group-assignement-for-file-${model.id}`}
         />

@@ -2,12 +2,18 @@ import React from 'react'
 
 import { FormRow } from './FormRow'
 
-interface TextareaFieldProps {
+interface TextareaFieldProps
+  extends Omit<
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    'id' | 'rows' | 'cols' | 'defaultValue'
+  > {
   label: string
   id: string
   rows?: number
   cols?: number
   defaultValue?: string
+  /** When true, label shows " *" and the field is treated as required for validation. */
+  required?: boolean
 }
 
 const textareaClassName =
@@ -19,15 +25,19 @@ export function TextareaField({
   rows = 4,
   cols = 25,
   defaultValue,
+  required = false,
+  ...rest
 }: TextareaFieldProps): React.ReactElement {
   return (
-    <FormRow label={label}>
+    <FormRow label={label} required={required}>
       <textarea
         className={textareaClassName}
         id={id}
         rows={rows}
         cols={cols}
         defaultValue={defaultValue}
+        aria-required={required}
+        {...rest}
       />
     </FormRow>
   )

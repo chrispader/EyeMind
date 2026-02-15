@@ -2,12 +2,18 @@ import React from 'react'
 
 import { FormRow } from './FormRow'
 
-interface InputFieldProps {
+interface InputFieldProps
+  extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    'id' | 'type' | 'defaultValue'
+  > {
   label: string
   id: string
   type?: 'text' | 'number'
   defaultValue?: string
   suffix?: string
+  /** When true, label shows " *" and the field is treated as required for validation. */
+  required?: boolean
 }
 
 const inputClassName =
@@ -19,15 +25,19 @@ export function InputField({
   type = 'text',
   defaultValue,
   suffix,
+  required = false,
+  ...rest
 }: InputFieldProps): React.ReactElement {
   return (
-    <FormRow label={label}>
+    <FormRow label={label} required={required}>
       <>
         <input
           className={inputClassName}
           id={id}
           type={type}
           defaultValue={defaultValue}
+          aria-required={required}
+          {...rest}
         />
         {suffix != null && suffix !== '' && ` ${suffix}`}
       </>

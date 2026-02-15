@@ -68,9 +68,7 @@ function EyeTrackingLoadModelsPage() {
     const newErrors: string[] = []
 
     const isAcceptedModelFile = (file: File): boolean =>
-      Boolean(
-        isImageFile(file) || isModelsFile(file, fileImportConfig),
-      )
+      Boolean(isImageFile(file) || isModelsFile(file, fileImportConfig))
 
     for (const file of files) {
       if (!isAcceptedModelFile(file)) {

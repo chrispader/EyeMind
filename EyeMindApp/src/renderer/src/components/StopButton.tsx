@@ -1,6 +1,7 @@
 import LANG from '@renderer/LANG'
 import stopDisabledIcon from '@renderer/assets/icons/stop_disabled.svg'
 import stopEnabledIcon from '@renderer/assets/icons/stop_enabled.svg'
+
 import { ToggleButton } from './ToggleButton'
 
 export interface StopButtonProps {

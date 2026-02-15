@@ -401,8 +401,6 @@ function sessionReadListener() {
  * Additional notes: none
  *
  */
-type ModelData = { xml: string; id: string; fileName: string; path: string }
-
 async function sessionRead(res: { success: boolean; msg?: string; data?: Record<string, unknown> }) {
   const { setState } = useGlobalStore.getState()
 
@@ -423,9 +421,14 @@ async function sessionRead(res: { success: boolean; msg?: string; data?: Record<
     // sessionRead is called from data-collection mode (via sessionReadListener)
     const config: FileImportConfig = { mode: 'data-collection' }
 
-    //process the open the models within the loaded state
-    for (const model of Object.values(state.models ?? {}) as ModelData[]) {
-      await processModel(config, model.xml, model.id, model.fileName, model.path)
+    // Process only BPMN/diagram models (skip image models which have dataUrl but no xml)
+    const allModels = Object.values(state.models ?? {}) as Model[]
+    const bpmnModels = allModels.filter(
+      (model): model is Model & { xml: string } =>
+        model.xml != null && model.xml !== '',
+    )
+    for (const model of bpmnModels) {
+      await processModel(config, model.xml, model.id, model.fileName ?? '', model.path ?? '')
     }
 
     //infoAlert(msg);

@@ -1,4 +1,3 @@
-import type { ImageFile } from '@renderer/model/images'
 import { Model, createDefaultModel } from '@renderer/model/models'
 import { type StateCreator, create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
@@ -45,19 +44,6 @@ type QuestionsSlice = {
   questionActions: QuestionActions
 }
 
-type ImageActions = {
-  addImageFile: (imageFile: ImageFile) => void
-  addImageFiles: (imageFiles: ImageFile[]) => void
-  removeImageFile: (imageFileId: string) => void
-  updateImageFile: (imageFileId: string, imageDelta: Partial<ImageFile>) => void
-  resetImages: () => void
-}
-
-type ImagesSlice = {
-  images: Record<string, ImageFile>
-  imageActions: ImageActions
-}
-
 type SessionSlice = {
   settings: SessionSettings
 
@@ -68,7 +54,7 @@ type SessionSlice = {
   }
 }
 
-export type SessionStore = ModelsSlice & QuestionsSlice & ImagesSlice & SessionSlice
+export type SessionStore = ModelsSlice & QuestionsSlice & SessionSlice
 
 const createModelsSlice: StateCreator<
   SessionStore,
@@ -196,57 +182,6 @@ const createQuestionFilesSlice: StateCreator<
   },
 })
 
-const createImagesSlice: StateCreator<
-  SessionStore,
-  [['zustand/immer', never]],
-  [],
-  ImagesSlice
-> = (set) => ({
-  images: {},
-
-  imageActions: {
-    addImageFile: (newImageFile) => {
-      set((state) => {
-        state.images[newImageFile.id] = newImageFile
-      })
-    },
-
-    addImageFiles: (newImageFiles) => {
-      set((state) => {
-        for (const imageFile of newImageFiles) {
-          state.images[imageFile.id] = imageFile
-        }
-      })
-    },
-
-    removeImageFile: (imageFileId) => {
-      set((state) => {
-        delete state.images[imageFileId]
-      })
-    },
-
-    updateImageFile: (imageFileId, imageDelta) => {
-      set((state) => {
-        const existingImage = state.images?.[imageFileId]
-
-        const newImage = {
-          ...existingImage!,
-          ...imageDelta,
-          id: imageFileId,
-        }
-
-        state.images[imageFileId] = newImage
-      })
-    },
-
-    resetImages: () => {
-      set((state) => {
-        state.images = {}
-      })
-    },
-  },
-})
-
 const createSessionSlice: StateCreator<
   SessionStore,
   [['zustand/immer', never]],
@@ -267,10 +202,9 @@ const createSessionSlice: StateCreator<
     },
 
     reset: () => {
-      const { actions, modelActions, questionActions: questionFilesActions, imageActions } = get()
+      const { actions, modelActions, questionActions: questionFilesActions } = get()
       modelActions.resetModels()
       questionFilesActions.resetQuestions()
-      imageActions.resetImages()
       actions.resetSessionSettings()
     },
   },
@@ -280,7 +214,6 @@ export const useSessionStore = create<SessionStore>()(
   immer((...args) => ({
     ...createModelsSlice(...args),
     ...createQuestionFilesSlice(...args),
-    ...createImagesSlice(...args),
     ...createSessionSlice(...args),
   })),
 )
@@ -306,18 +239,5 @@ export const useQuestionFiles = () => useSessionStore((state) => state.questionF
 export const useQuestions = () => useSessionStore((state) => state.questions)
 export const useQuestionActions = () => useSessionStore((state) => state.questionActions)
 
-export const useImages = (predicate?: (image: ImageFile) => boolean | undefined) =>
-  useSessionStore(
-    useShallow((state) =>
-      predicate
-        ? Object.fromEntries(
-            Object.entries(state.images).filter(([_, image]) => predicate(image)),
-          )
-        : state.images,
-    ),
-  )
-export const useImageActions = () => useSessionStore((state) => state.imageActions)
-export const useDraftImages = () => useImages((image) => image.isDraft)
-
-export { createDefaultImageFile, readFileAsDataUrl } from '@renderer/model/images'
-export type { ImageFile } from '@renderer/model/images'
+export { readFileAsDataUrl } from '@renderer/model/images'
+export { isImageFile } from '@renderer/model/images'

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { createDefaultModel, getModelIdFromFileName } from './models'
+import {
+  createDefaultImageModel,
+  createDefaultModel,
+  getModelIdFromFileName,
+  isImageModel,
+} from './models'
 
 describe('models', () => {
   describe('getModelIdFromFileName', () => {
@@ -51,6 +56,47 @@ describe('models', () => {
       const model = createDefaultModel(mockFile)
 
       expect(model.isDraft).toBe(false)
+    })
+  })
+
+  describe('createDefaultImageModel', () => {
+    const mockFile = {
+      name: 'test-image.png',
+      path: '/path/to/test-image.png',
+    } as File
+    const mockDataUrl = 'data:image/png;base64,abc123'
+
+    it('creates image model with dataUrl and no xml', () => {
+      const model = createDefaultImageModel(mockFile, mockDataUrl)
+
+      expect(model.id).toBe('testimagepng')
+      expect(model.fileName).toBe('test-image.png')
+      expect(model.dataUrl).toBe(mockDataUrl)
+      expect(model.xml).toBeUndefined()
+      expect(model.file).toBe(mockFile)
+      expect(model.isDraft).toBe(false)
+    })
+
+    it('creates draft image model when isDraft is true', () => {
+      const model = createDefaultImageModel(mockFile, mockDataUrl, true)
+
+      expect(model.isDraft).toBe(true)
+    })
+  })
+
+  describe('isImageModel', () => {
+    it('returns true for model with dataUrl', () => {
+      const model = createDefaultImageModel(
+        { name: 'x.png' } as File,
+        'data:image/png;base64,x',
+      )
+      expect(isImageModel(model)).toBe(true)
+    })
+
+    it('returns false for model with xml only', () => {
+      const model = createDefaultModel({ name: 'a.bpmn' } as File)
+      model.xml = '<xml/>'
+      expect(isImageModel(model)).toBe(false)
     })
   })
 })

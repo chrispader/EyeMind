@@ -6,7 +6,10 @@ export type Model = Draftable & {
   id: string
   fileName?: string
   path?: string
+  /** BPMN/ODM XML content. When set, this model is a diagram model. */
   xml?: string
+  /** Base64 data URL for image models. When set (and no xml), this model is an image model. */
+  dataUrl?: string
   isMain?: boolean
   groupId?: string
   unclosable?: boolean
@@ -26,5 +29,28 @@ export function createDefaultModel(file: File, isDraft: boolean = false): Model 
     file: file,
     isDraft: isDraft,
   }
+}
+
+/** Creates a model that represents an image file (no BPMN xml). */
+export function createDefaultImageModel(
+  file: File,
+  dataUrl: string,
+  isDraft: boolean = false,
+): Model {
+  return {
+    id: getModelIdFromFileName(file.name),
+    fileName: file.name,
+    path: file.path,
+    file,
+    dataUrl,
+    isDraft,
+  }
+}
+
+/** Type guard: true when the model is an image model (has dataUrl, no BPMN xml). */
+export function isImageModel(
+  model: Model,
+): model is Model & { dataUrl: string } {
+  return model.dataUrl != null && model.dataUrl !== ''
 }
 

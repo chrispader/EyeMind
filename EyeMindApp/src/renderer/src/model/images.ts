@@ -1,32 +1,6 @@
-import type { Draftable } from '../types/Draftable'
-
-export type ImageFile = Draftable & {
-  id: string
-  fileName: string
-  path?: string
-  dataUrl: string // Base64 data URL for displaying the image
-  file: File
-  groupId?: string
-}
-
-export function getImageIdFromFileName(fileName: string): string {
-  return fileName.replace(/[\W_.]/g, '')
-}
-
-export function createDefaultImageFile(
-  file: File,
-  dataUrl: string,
-  isDraft: boolean = false,
-): ImageFile {
-  return {
-    id: getImageIdFromFileName(file.name),
-    fileName: file.name,
-    path: file.path,
-    dataUrl,
-    file,
-    isDraft,
-  }
-}
+/**
+ * Image file utilities. Image content is stored as Model with dataUrl (see model/models.ts).
+ */
 
 export function isImageFile(file: File): boolean {
   const extension = file.name.split('.').pop()?.toLowerCase() ?? ''

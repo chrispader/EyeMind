@@ -23,11 +23,12 @@ const LANG = {
   unclosableTab: 'Unclosable Tab',
   loadFiles: 'Load files',
   dropFiles: 'Drop files',
-  dropModelsFiles: 'Drop models files',
+  dropModelFiles: 'Drop model files here (BPMN/ODM or image files)',
   dropQuestionsFile: 'Drop a questions csv file',
   dropSessionFile: 'Drop a session file',
   dropImageFiles: 'Drop image files here (PNG, JPEG, GIF, WebP)',
-  dropImageAndModelFiles: 'Drop model files here (BPMN/ODM or image files)',
+  dropImageAndModelFiles:
+    'Drop image files (optional) and/or BPMN/ODM model files',
 
   // Home Page
   eyeTracking: 'Eye-tracking',

@@ -15,11 +15,11 @@ import '@renderer/extra/object-diagram-modeler/starter/app/css/app.css'
 import { loadServerStateIntoClient, useGlobalStore } from '@renderer/state/global'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { Toaster } from 'react-hot-toast'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 import 'bpmn-js/dist/assets/bpmn-js.css'
 import 'bpmn-js/dist/assets/diagram-js.css'
 import { useEffect } from 'react'
+import { Toaster } from 'react-hot-toast'
 
 import { HeaderBar } from '../components/HeaderBar'
 
@@ -61,8 +61,12 @@ function RootComponent(): React.ReactElement {
       <Toaster
         position='top-center'
         containerStyle={{ zIndex: 9999 }}
-        containerClassName='app-toaster'
-        toastOptions={{ duration: 3000 }}
+        toastOptions={{
+          duration: 3000,
+          style: {
+            wordBreak: 'break-word',
+          },
+        }}
       />
 
       <TanStackRouterDevtools />

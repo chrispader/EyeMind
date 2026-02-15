@@ -9,6 +9,8 @@ interface ModalContainerProps {
   closeId: string
   children: React.ReactNode
   visible?: boolean
+  /** Called when the user closes the modal (close button or backdrop click). */
+  onClose?: () => void
 }
 
 export function ModalContainer({
@@ -18,24 +20,42 @@ export function ModalContainer({
   closeId,
   children,
   visible = true,
+  onClose,
 }: ModalContainerProps): React.ReactElement {
   if (!visible) {
     return <div id={id} className='hidden' aria-hidden />
   }
 
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return
+    onClose?.()
+  }
+
+  const handleCloseKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      onClose?.()
+    }
+  }
+
   return (
     <div
       id={id}
-      className={`fixed inset-0 z-20 flex items-center justify-center overflow-auto bg-overlay ${className}`.trim()}>
+      className={`fixed inset-0 z-20 flex items-center justify-center overflow-auto bg-overlay p-4 ${className}`.trim()}
+      onClick={handleBackdropClick}
+      role='dialog'
+      aria-modal='true'>
       <div
-        className='content relative max-h-[90vh] max-w-[550px] w-full overflow-auto rounded border border-border-muted bg-modal-bg p-5 shadow-lg'
+        className='content relative max-h-[calc(100vh-2rem)] max-w-[550px] w-full overflow-auto rounded border border-border-muted bg-modal-bg p-5 shadow-lg sm:min-h-0'
         onClick={(e) => e.stopPropagation()}>
         <span
           id={closeId}
           className='float-right cursor-pointer text-2xl font-bold text-border-strong hover:text-black focus:text-black'
           role='button'
           tabIndex={0}
-          aria-label={LANG.close}>
+          aria-label={LANG.close}
+          onClick={onClose}
+          onKeyDown={handleCloseKeyDown}>
           <img
             className='h-8 w-8 cursor-pointer'
             id='close-icon'

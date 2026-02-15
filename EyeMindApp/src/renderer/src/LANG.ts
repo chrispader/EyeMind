@@ -27,6 +27,7 @@ const LANG = {
   dropQuestionsFile: 'Drop a questions csv file',
   dropSessionFile: 'Drop a session file',
   dropImageFiles: 'Drop image files here (PNG, JPEG, GIF, WebP)',
+  dropImageAndModelFiles: 'Drop model files here (BPMN/ODM or image files)',
 
   // Home Page
   eyeTracking: 'Eye-tracking',
@@ -120,13 +121,15 @@ const LANG = {
   gazeProjectionSettings: 'Gaze Projection Settings',
   gazeSampleSize: 'Gaze sample Size* ',
   generateGazeProjections: 'Generate Gaze Projections',
-  gazeProjectionsInfo: '*For better performance, it is recommended to choose a small sample size.',
+  gazeProjectionsInfo:
+    '*For better performance, it is recommended to choose a small sample size.',
 
   // Error Messages
   errorsHeader: 'Errors:',
   errorOops: 'Oops!',
   errorUnexpected: 'An unexpected error occurred.',
-  errorNoQuestionsFiles: 'No questions files to load. Please drop a questions file first.',
+  errorNoQuestionsFiles:
+    'No questions files to load. Please drop a questions file first.',
   errorValidatingQuestions: 'An error occured while validating the questions file',
   errorNotValidQuestionsFile: 'is not a valid questions file',
   errorAlreadyAdded: 'is already added',

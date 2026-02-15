@@ -3,12 +3,23 @@ import FileImport from '@renderer/components/FileImport'
 import { isModelsFile } from '@renderer/components/FileImport/loadFile'
 import type { FileImportConfig } from '@renderer/components/FileImport/types'
 import {
+  type ImageFile,
+  createDefaultImageFile,
+  isImageFile,
+  readFileAsDataUrl,
+} from '@renderer/model/images'
+import {
   type Model,
   createDefaultModel,
   getModelIdFromFileName,
 } from '@renderer/model/models'
 import { readFileContent } from '@renderer/modules/utils/utils'
-import { useDraftModels, useModelActions } from '@renderer/state/session'
+import {
+  useDraftImages,
+  useDraftModels,
+  useImageActions,
+  useModelActions,
+} from '@renderer/state/session'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
@@ -23,6 +34,12 @@ const fileImportConfig: FileImportConfig = {
   expectedExtensions: ['bpmn', 'odm'],
 }
 
+type DraftItem = ImageFile | Model
+
+function isDraftImage(item: DraftItem): item is ImageFile {
+  return 'dataUrl' in item
+}
+
 export const Route = createFileRoute('/config/eye-tracking/load-models')({
   component: EyeTrackingLoadModelsPage,
 })
@@ -30,29 +47,41 @@ export const Route = createFileRoute('/config/eye-tracking/load-models')({
 function EyeTrackingLoadModelsPage() {
   const navigate = useNavigate()
 
+  const draftImages = useDraftImages()
   const draftModels = useDraftModels()
+  const { addImageFiles, removeImageFile, updateImageFile } = useImageActions()
   const { addModels, removeModel, updateModel } = useModelActions()
 
+  const draftImageValues = Object.values(draftImages)
   const draftModelValues = Object.values(draftModels)
+  const combinedItems: DraftItem[] = [...draftImageValues, ...draftModelValues]
 
   const [errors, setErrors] = useState<string[]>([])
 
-  function validateModels() {
-    const mainModels = draftModelValues.filter((model) => model?.isMain === true)
+  function validateAndProceed() {
+    const modelErrors: string[] = []
 
+    const mainModels = draftModelValues.filter((model) => model?.isMain === true)
     if (mainModels.length !== 1) {
-      setErrors([LANG.errorExactlyOneMain])
-      return
+      modelErrors.push(LANG.errorExactlyOneMain)
     }
 
     if (draftModelValues.some((model) => (model?.groupId ?? '') === '')) {
-      setErrors([LANG.errorAllModelsNeedGroup])
-      return
+      modelErrors.push(LANG.errorAllModelsNeedGroup)
     }
 
     if (draftModelValues.length === 0) {
-      setErrors([LANG.errorNoModelsToLoad])
+      modelErrors.push(LANG.errorNoModelsToLoad)
+    }
+
+    if (modelErrors.length > 0) {
+      setErrors(modelErrors)
       return
+    }
+
+    // Mark all draft images as not draft
+    for (const image of Object.values(draftImages)) {
+      updateImageFile(image.id, { isDraft: false })
     }
 
     // Mark all draft models as not draft
@@ -63,76 +92,121 @@ function EyeTrackingLoadModelsPage() {
     navigate({ to: loadQuestionsRoute.to })
   }
 
-  async function addDraftModels(files: File[]) {
-    let draftModelsToAdd: Model[] = []
-    let newErrors: string[] = []
+  async function addDraftItems(files: File[]) {
+    const imagesToAdd: ImageFile[] = []
+    const modelsToAdd: Model[] = []
+    const newErrors: string[] = []
 
     for (const file of files) {
-      const modelId = getModelIdFromFileName(file.name)
+      if (isImageFile(file)) {
+        const existingImage = draftImages[file.name.replace(/[\W_.]/g, '')]
+        if (existingImage !== undefined) {
+          newErrors.push(`${file.name} ${LANG.errorAlreadyAdded}`)
+          continue
+        }
+        try {
+          const dataUrl = await readFileAsDataUrl(file)
+          const imageFile = createDefaultImageFile(file, dataUrl, true)
+          imageFile.groupId = CONST.DEFAULT_MODEL_GROUP_ID
+          imagesToAdd.push(imageFile)
+        } catch {
+          newErrors.push(`${LANG.errorFailedToRead} ${file.name}`)
+        }
+        continue
+      }
 
       if (!isModelsFile(file, fileImportConfig)) {
         continue
       }
 
+      const modelId = getModelIdFromFileName(file.name)
       if (draftModels?.[modelId] !== undefined) {
         newErrors.push(`${file.name} (id: ${modelId}) ${LANG.errorAlreadyAdded}`)
         continue
       }
 
       const model = createDefaultModel(file, true)
-
-      const doesMainModelExist = Object.values(draftModels ?? {}).some(
-        (model) => model?.isMain,
-      )
+      const doesMainModelExist = draftModelValues.some((m) => m?.isMain)
       model.isMain = !doesMainModelExist
       model.groupId = CONST.DEFAULT_MODEL_GROUP_ID
 
       const content = await new Promise<string>((resolve, reject) => {
         try {
-          // readFileContent then traverseDataCollectionFile and traverseMoreItems
-          readFileContent(file, async (content) => {
-            resolve(content as string)
-          })
+          readFileContent(file, (content) => resolve(content as string))
         } catch (error) {
           reject(error)
         }
       })
       model.xml = content
-
-      draftModelsToAdd.push(model)
-
-      // try {
-      //   // process model
-      //   // await processModel(config, file.xml, file.id, file.fileName, file.path)
-      //   // create file info menu
-      //   // createModelFileInfoBlock(file)
-      // } catch (error) {
-      //   // something wrong happened with the opening of the diagram
-      //   removeModelFile(file)
-      //   console.error(file.fileName + ' is invalid')
-      //   errorAlert(file.fileName + ' is invalid')
-      // }
+      modelsToAdd.push(model)
     }
 
     if (newErrors.length > 0) {
       setErrors(newErrors)
-      return
     }
 
-    addModels(draftModelsToAdd)
+    if (imagesToAdd.length > 0) {
+      addImageFiles(imagesToAdd)
+    }
+    if (modelsToAdd.length > 0) {
+      addModels(modelsToAdd)
+    }
   }
 
   return (
-    <FileImport
-      items={draftModelValues}
+    <FileImport<DraftItem>
+      items={combinedItems}
+      getItemId={(item) => item.id}
       errors={errors}
       onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
-      uploadLabel={translate('dropModelsFiles')}
-      onSubmit={validateModels}
-      onDrop={addDraftModels}
-      onRemove={(model) => removeModel(model.id)}
-      renderItem={(model) => <DraftModelItem model={model} />}
+      uploadLabel={LANG.dropImageAndModelFiles}
+      submitLabel={LANG.continue}
+      onSubmit={validateAndProceed}
+      onDrop={addDraftItems}
+      onRemove={(item) => {
+        if (isDraftImage(item)) {
+          removeImageFile(item.id)
+        } else {
+          removeModel(item.id)
+        }
+      }}
+      renderItem={(item) =>
+        isDraftImage(item) ? (
+          <DraftImageItem image={item} />
+        ) : (
+          <DraftModelItem model={item} />
+        )
+      }
     />
+  )
+}
+
+function DraftImageItem({ image }: { image: ImageFile }) {
+  const { updateImageFile } = useImageActions()
+
+  return (
+    <>
+      <div className='column file-info'>
+        <img
+          src={image.dataUrl}
+          alt={image.fileName}
+          className='h-16 w-16 object-cover rounded border'
+        />
+        <span>{image.fileName}</span>
+      </div>
+      <div className='column'>
+        <span>{LANG.group}</span>
+        <input
+          className='w-12 px-2 py-1 border rounded group-assignement'
+          type='text'
+          onChange={(e) => {
+            updateImageFile(image.id, { groupId: e.target.value })
+          }}
+          placeholder={image.groupId}
+          defaultValue={image.groupId}
+        />
+      </div>
+    </>
   )
 }
 

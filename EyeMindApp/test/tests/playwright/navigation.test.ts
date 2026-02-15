@@ -58,14 +58,14 @@ test('new-session-flow-navigation', async () => {
   const proceedBtn = firstWindow.locator('id=proceed-data-collection-settings')
   await expect(proceedBtn).toBeVisible()
 
-  // Proceed to load-images step
+  // Proceed to load-models step (images and BPMN models on same screen)
   await firstWindow.locator('id=linking-sub-processes').selectOption('newTab')
   await proceedBtn.click()
   await delay(500)
 
-  // Verify we're on load-images page (file import with skip option)
-  const skipBtn = firstWindow.locator('id=process-files')
-  await expect(skipBtn).toBeVisible()
+  // Verify we're on load-models page (file import for images and/or BPMN models)
+  const processFilesBtn = firstWindow.locator('id=process-files')
+  await expect(processFilesBtn).toBeVisible()
 
   await electronApp.close()
 })

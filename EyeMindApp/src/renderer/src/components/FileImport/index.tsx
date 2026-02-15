@@ -68,9 +68,18 @@ function FileImport<FileType>({
             e.dataTransfer.dropEffect = 'copy'
           }}
           onDragLeave={() => setIsActive(false)}>
-          <span id='upload-label' className='upload-label'>
-            {uploadLabel}
-          </span>
+          {items.length === 0 && (
+            <span
+              className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center font-quicksand font-medium text-2xl text-gray-300'
+              style={{
+                pointerEvents: 'none',
+                width: '100%',
+                height: '100%',
+                textAlign: 'center',
+              }}>
+              {uploadLabel}
+            </span>
+          )}
           {shouldHoldItems && (
             <div className='file-list' id='file-list'>
               {items.map((item, index) => {

@@ -621,15 +621,6 @@ process hierarchy within the tab container
   border-radius: 10px;
 }
 
-.upload-zone .upload-label {
-  @apply font-quicksand font-medium;
-  top: 200px;
-  left: 285px;
-  position: absolute;
-  font-size: 20px;
-  color: #ccc;
-}
-
 /*start-tracking-modal adapted from https://codepen.io/colbyalbo/pen/gRogbE
 */
 

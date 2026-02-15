@@ -137,47 +137,17 @@ function EyeTrackingLoadModelsPage() {
       getItemId={(item) => item.id}
       errors={errors}
       onDismissError={(error) => setErrors(errors.filter((e) => e !== error))}
-      uploadLabel={LANG.dropImageAndModelFiles}
-      submitLabel={LANG.continue}
+      uploadLabel={translate('dropImageAndModelFiles')}
+      submitLabel={translate('continue')}
       onSubmit={validateAndProceed}
       onDrop={addDraftItems}
       onRemove={(model) => removeModel(model.id)}
-      renderItem={(model) =>
-        isImageModel(model) ? (
-          <DraftImageModelItem model={model} />
-        ) : (
-          <DraftBpmnModelItem model={model} />
-        )
-      }
+      renderItem={(model) => <DraftModelItem model={model} />}
     />
   )
 }
 
-function DraftImageModelItem({ model }: { model: Model & { dataUrl: string } }) {
-  const { updateModel } = useModelActions()
-
-  return (
-    <>
-      <div className='column file-info'>
-        <span>{model.fileName ?? model.id}</span>
-      </div>
-      <div className='column'>
-        <span>{LANG.group}</span>
-        <input
-          className='w-12 px-2 py-1 border rounded group-assignement'
-          type='text'
-          onChange={(e) => {
-            updateModel(model.id, { groupId: e.target.value })
-          }}
-          placeholder={model.groupId}
-          defaultValue={model.groupId}
-        />
-      </div>
-    </>
-  )
-}
-
-function DraftBpmnModelItem({ model }: { model: Model }) {
+function DraftModelItem({ model }: { model: Model }) {
   const { updateModel } = useModelActions()
 
   return (

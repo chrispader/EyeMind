@@ -20,6 +20,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 /*  Files setup   */
+import { sendClickEvent } from '@renderer/actions/click-stream'
+import {
+  hideGeneralWaitingScreen,
+  showGeneralWaitingScreen,
+} from '@renderer/actions/loading'
+import { takesnapshot } from '@renderer/actions/snapshot'
+import {
+  addToTabHeader,
+  changeTab,
+  openInTab,
+  openWithinTab,
+} from '@renderer/actions/tab-management'
 import { FileImportConfig } from '@renderer/components/FileImport/types'
 import OdmModeler from '@renderer/extra/object-diagram-modeler/lib/Modeler'
 import OdmNavigatedViewer from '@renderer/extra/object-diagram-modeler/lib/NavigatedViewer'
@@ -32,18 +44,6 @@ import BpmnNavigatedViewer from 'bpmn-js/lib/NavigatedViewer'
 
 import { CONST } from '@/CONST'
 
-import { sendClickEvent } from '@renderer/actions/click-stream'
-import { takesnapshot } from '@renderer/actions/snapshot'
-import {
-  hideGeneralWaitingScreen,
-  showGeneralWaitingScreen,
-} from '@renderer/actions/loading'
-import {
-  addToTabHeader,
-  changeTab,
-  openInTab,
-  openWithinTab,
-} from '@renderer/actions/tab-management'
 import { useSessionStore } from '../../state/session'
 
 // types of modeler objects supported by the tool
@@ -286,7 +286,17 @@ function createAnalysisFileInfoBlock(file: { name: string; path: string }) {
 function stateReadListener() {
   return new Promise<void>((resolve) => {
     window.utils.onStateRead(async function (args: unknown[]) {
-      const res = args[0] as { success: boolean; msg?: string; data?: { models: Record<string, { xml: string; id: string; fileName: string; path: string }>; questions: Array<{ id: string }> } }
+      const res = args[0] as {
+        success: boolean
+        msg?: string
+        data?: {
+          models: Record<
+            string,
+            { xml: string; id: string; fileName: string; path: string }
+          >
+          questions: Array<{ id: string }>
+        }
+      }
       const file = { name: args[1] as string, path: args[2] as string }
       createAnalysisFileInfoBlock(file)
 
@@ -309,7 +319,14 @@ function stateReadListener() {
  * Additional notes: none
  *
  */
-async function stateRead(res: { success: boolean; msg?: string; data?: { models: Record<string, { xml: string; id: string; fileName: string; path: string }>; questions: Array<{ id: string }> } }) {
+async function stateRead(res: {
+  success: boolean
+  msg?: string
+  data?: {
+    models: Record<string, { xml: string; id: string; fileName: string; path: string }>
+    questions: Array<{ id: string }>
+  }
+}) {
   console.log('stateRead', arguments)
 
   // get client state
@@ -334,13 +351,21 @@ async function stateRead(res: { success: boolean; msg?: string; data?: { models:
 
         // stateRead is called from analysis mode (via onStateRead listener)
         const config: FileImportConfig = { mode: 'analysis' }
-        await processModel(config, newModel.xml, newModel.id, newModel.fileName, newModel.path)
+        await processModel(
+          config,
+          newModel.xml,
+          newModel.id,
+          newModel.fileName,
+          newModel.path,
+        )
       }
     }
 
     //process the questions within the loaded state
     // Cast to array - in this context we're adding plain objects
-    const questions = (Array.isArray(state.questions) ? state.questions : []) as Array<{ id: string } & Record<string, unknown>>
+    const questions = (Array.isArray(state.questions) ? state.questions : []) as Array<
+      { id: string } & Record<string, unknown>
+    >
     res.data.questions.forEach(function (question: { id: string }) {
       // add the new questions to (client) state.quetions
       const existingQuestion = questions.find((eq) => eq.id === question.id)
@@ -381,7 +406,11 @@ function sessionReadListener() {
 
   window.utils.onSessionRead(async function (args: unknown[]) {
     console.log('onSessionRead', arguments)
-    const res = args[0] as { success: boolean; msg?: string; data?: Record<string, unknown> }
+    const res = args[0] as {
+      success: boolean
+      msg?: string
+      data?: Record<string, unknown>
+    }
     await sessionRead(res)
   })
 }
@@ -401,7 +430,11 @@ function sessionReadListener() {
  * Additional notes: none
  *
  */
-async function sessionRead(res: { success: boolean; msg?: string; data?: Record<string, unknown> }) {
+async function sessionRead(res: {
+  success: boolean
+  msg?: string
+  data?: Record<string, unknown>
+}) {
   const { setState } = useGlobalStore.getState()
 
   const success = res.success
@@ -424,11 +457,16 @@ async function sessionRead(res: { success: boolean; msg?: string; data?: Record<
     // Process only BPMN/diagram models (skip image models which have dataUrl but no xml)
     const allModels = Object.values(state.models ?? {}) as Model[]
     const bpmnModels = allModels.filter(
-      (model): model is Model & { xml: string } =>
-        model.xml != null && model.xml !== '',
+      (model): model is Model & { xml: string } => model.xml != null && model.xml !== '',
     )
     for (const model of bpmnModels) {
-      await processModel(config, model.xml, model.id, model.fileName ?? '', model.path ?? '')
+      await processModel(
+        config,
+        model.xml,
+        model.id,
+        model.fileName ?? '',
+        model.path ?? '',
+      )
     }
 
     //infoAlert(msg);
@@ -480,7 +518,10 @@ async function processModel(
   // differ the execution depending on the state.mode
   if (config.mode == 'data-collection') {
     const previousModel = state.models?.[id] ?? {}
-    const newModel = { ...(previousModel as Record<string, unknown>), isMain: isMain(modeler) }
+    const newModel = {
+      ...(previousModel as Record<string, unknown>),
+      isMain: isMain(modeler),
+    }
 
     // state.models[id].isMain if the model is the main model of the process (cf. isMain())
     setState({
@@ -797,7 +838,21 @@ function removeBPMNioLogo(container: string): void {
  *
  */
 function linkSubProcesses(
-  mainModel: { get: (name: string) => { _elements: Record<string, { element: { type: string; collapsed: boolean; id: string; businessObject: { name: string } } }> } },
+  mainModel: {
+    get: (name: string) => {
+      _elements: Record<
+        string,
+        {
+          element: {
+            type: string
+            collapsed: boolean
+            id: string
+            businessObject: { name: string }
+          }
+        }
+      >
+    }
+  },
   mainModelId: string,
   mainModelprocessId: string,
   currentTabContainerId: string,
@@ -833,7 +888,9 @@ function linkSubProcesses(
       // locate the svg element refering to a collasped subprocess
       const subProcessActivitySVGObjectInMainModel = document
         .getElementById(currentTabContainerId)
-        ?.querySelector('[data-element-id="' + subProcessFileName + '"]') as HTMLElement | null
+        ?.querySelector(
+          '[data-element-id="' + subProcessFileName + '"]',
+        ) as HTMLElement | null
 
       if (!subProcessActivitySVGObjectInMainModel) return
 

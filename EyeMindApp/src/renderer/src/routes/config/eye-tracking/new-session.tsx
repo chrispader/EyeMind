@@ -4,9 +4,13 @@ import {
   SUB_PROCESS_LINKING_MODES,
   type SubProcessLinkingMode,
 } from '@renderer/model/settings'
-import { useSessionActions } from '@renderer/state/session'
+import {
+  useModelActions,
+  useQuestionActions,
+  useSessionActions,
+} from '@renderer/state/session'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Route as loadModelsRoute } from './load-models'
 
@@ -16,7 +20,15 @@ export const Route = createFileRoute('/config/eye-tracking/new-session')({
 
 function EyeTrackingNewSessionPage(): React.ReactElement {
   const { updateSessionSettings } = useSessionActions()
+  const { resetModels } = useModelActions()
+  const { resetQuestions } = useQuestionActions()
   const navigate = useNavigate()
+
+  // Starting a new session: clear models and questions from any previous flow
+  useEffect(() => {
+    resetModels()
+    resetQuestions()
+  }, [resetModels, resetQuestions])
 
   const [subProcessLinkingMode, setSubProcessLinkingMode] =
     useState<SubProcessLinkingMode>('no-support')

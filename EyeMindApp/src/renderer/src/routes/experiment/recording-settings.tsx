@@ -39,7 +39,7 @@ const defaultValues: RecordingSettingsFormValues = {
   yScreenDimension: '',
   screenDistance: '',
   monitorSize: '',
-  recordingId: '',
+  recordingId: `R${Date.now()}`,
   participantId: '',
   experimentId: '',
   experimenterId: '',

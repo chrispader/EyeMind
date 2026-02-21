@@ -12,8 +12,6 @@ interface TextareaFieldProps
   rows?: number
   cols?: number
   defaultValue?: string
-  /** When true, label shows " *" and the field is treated as required for validation. */
-  required?: boolean
   /** When true, textarea is marked invalid for accessibility and styling. */
   invalid?: boolean
   /** Validation error message shown below the textarea. */
@@ -29,20 +27,18 @@ export function TextareaField({
   rows = 4,
   cols = 25,
   defaultValue,
-  required = false,
   invalid = false,
   error,
   ...rest
 }: TextareaFieldProps): React.ReactElement {
   return (
-    <FormRow label={label} required={required} invalid={invalid} error={error}>
+    <FormRow label={label} invalid={invalid} error={error}>
       <textarea
         className={`${textareaBaseClassName} ${invalid ? 'border-red-500' : 'border-border'}`}
         id={id}
         rows={rows}
         cols={cols}
         defaultValue={defaultValue}
-        aria-required={required}
         aria-invalid={invalid}
         {...rest}
       />

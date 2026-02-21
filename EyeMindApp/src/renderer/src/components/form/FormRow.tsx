@@ -4,8 +4,6 @@ interface FormRowProps {
   label: string
   children: React.ReactNode
   /** When true, appends " *" to the label to indicate a required field. */
-  required?: boolean
-  /** When true, the row is styled as invalid (e.g. for validation errors). */
   invalid?: boolean
   /** Validation error message shown below the control. */
   error?: string
@@ -16,14 +14,12 @@ interface FormRowProps {
 export function FormRow({
   label,
   children,
-  required = false,
   invalid = false,
   error,
 }: FormRowProps): React.ReactElement {
-  const displayLabel = required ? `${label} *` : label
   return (
     <>
-      <div className='flex min-h-[60px] items-center text-[15px]'>{displayLabel}</div>
+      <div className='flex min-h-[60px] items-center text-[15px]'>{label}</div>
       <div
         className='flex min-h-[60px] flex-col justify-center'
         data-invalid={invalid || undefined}>

@@ -32,6 +32,8 @@ export async function stateDownload(
   fileName: string,
   includeTimeStampInFileName: boolean,
   type: string,
+  /** When type is 'session-data', write this instead of getState() so app state is not overwritten. */
+  stateOverride?: unknown,
 ) {
   const fileExtension =
     type == 'analysis-data' || type == 'collected-data' || type == 'session-data'
@@ -45,6 +47,7 @@ export async function stateDownload(
     fileExtension,
     includeTimeStampInFileName,
     timestamp,
+    stateOverride,
   )
 }
 
@@ -59,6 +62,7 @@ async function downloadFile(
   fileExtension: string,
   includeTimeStampInFileName: boolean,
   timestamp: number,
+  stateOverride?: unknown,
 ) {
   const res: DownloadFileResult = {
     msg: '',
@@ -75,9 +79,11 @@ async function downloadFile(
       type +
       '.' +
       fileExtension
-    const state = getState()
+    const state =
+      type === 'session-data' && stateOverride !== undefined ? stateOverride : getState()
 
-    // create file
+    // Ensure output directory exists so openSync does not throw ENOENT
+    fs.mkdirSync(CONST.SAVING_PATH, { recursive: true })
     fs.closeSync(fs.openSync(savingPath, 'w'))
 
     // populate json to file using bfj

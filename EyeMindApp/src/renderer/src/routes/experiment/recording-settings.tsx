@@ -5,9 +5,11 @@ import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { z } from 'zod'
 
+import type { SessionStatePayload } from '@/types/IpcApi'
+
 import { ModalContainer } from '../../components/ModalContainer'
 import { InputField, TextareaField } from '../../components/form'
-import { useGlobalStore } from '../../state/global'
+import { useSessionStore } from '../../state/session'
 
 export const Route = createFileRoute('/experiment/recording-settings')({
   component: RecordingSettingsPage,
@@ -18,6 +20,7 @@ const CLOSE_BTN_ID = 'close-startET-modal'
 
 /** Required: non-empty string. Used for all fields that show " *" in the label. */
 const requiredString = z.string().min(1, 'Required')
+const optionalString = z.string().optional()
 
 const recordingSettingsSchema = z.object({
   xScreenDimension: requiredString,
@@ -25,10 +28,10 @@ const recordingSettingsSchema = z.object({
   screenDistance: requiredString,
   monitorSize: requiredString,
   recordingId: requiredString,
-  participantId: requiredString,
-  experimentId: requiredString,
-  experimenterId: requiredString,
-  additionalNotes: z.string().optional(),
+  participantId: optionalString,
+  experimentId: optionalString,
+  experimenterId: optionalString,
+  additionalNotes: optionalString,
 })
 
 type RecordingSettingsFormValues = z.infer<typeof recordingSettingsSchema>
@@ -66,10 +69,19 @@ const RECORDING_FIELDS: RecordingFieldConfig[] = [
   { key: 'additionalNotes', required: false, type: 'textarea' },
 ]
 
+/** Serializable session data saved to file (no action functions). */
+function getSessionPayload(): SessionStatePayload {
+  const store = useSessionStore.getState()
+  return {
+    models: store.models,
+    questionFiles: store.questionFiles,
+    questions: store.questions,
+    settings: store.settings,
+  }
+}
+
 function RecordingSettingsPage(): React.ReactElement {
   const navigate = useNavigate({ from: '/experiment/recording-settings' })
-  const store = useGlobalStore()
-  const { setState: _setState, ...stateToSave } = store
 
   const {
     control,
@@ -92,7 +104,7 @@ function RecordingSettingsPage(): React.ReactElement {
 
   const onSaveSession = async () => {
     try {
-      await window.utils.saveSession(stateToSave)
+      await window.utils.saveSession(getSessionPayload())
       handleClose()
     } catch {
       toast.error(LANG.errorFailedToSaveSession)

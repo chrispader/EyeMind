@@ -25,6 +25,9 @@ const fileImportConfig: FileImportConfig = {
   expectedExtensions: ['bpmn', 'odm'],
 }
 
+const isAcceptedModelFile = (file: File): boolean =>
+  Boolean(isImageFile(file) || isModelsFile(file, fileImportConfig))
+
 export const Route = createFileRoute('/config/eye-tracking/load-models')({
   component: EyeTrackingLoadModelsPage,
 })
@@ -67,15 +70,13 @@ function EyeTrackingLoadModelsPage() {
     const modelsToAdd: Model[] = []
     const newErrors: string[] = []
 
-    const isAcceptedModelFile = (file: File): boolean =>
-      Boolean(isImageFile(file) || isModelsFile(file, fileImportConfig))
-
     for (const file of files) {
       if (!isAcceptedModelFile(file)) {
         newErrors.push(`${file.name} ${LANG.errorInvalidModelFileType}`)
         continue
       }
 
+      const isMain = draftModelValues.length === 0
       if (isImageFile(file)) {
         const imageModelId = getModelIdFromFileName(file.name)
         if (draftModels[imageModelId] !== undefined) {
@@ -84,7 +85,7 @@ function EyeTrackingLoadModelsPage() {
         }
         try {
           const dataUrl = await readFileAsDataUrl(file)
-          const imageModel = createDefaultImageModel(file, dataUrl, true)
+          const imageModel = createDefaultImageModel(file, dataUrl, true, isMain)
           imageModel.groupId = CONST.DEFAULT_MODEL_GROUP_ID
           modelsToAdd.push(imageModel)
         } catch {
@@ -102,7 +103,7 @@ function EyeTrackingLoadModelsPage() {
         continue
       }
 
-      const model = createDefaultModel(file, true)
+      const model = createDefaultModel(file, true, isMain)
       const doesMainModelExist = draftBpmnModels.some((m) => m.isMain)
       model.isMain = !doesMainModelExist
       model.groupId = CONST.DEFAULT_MODEL_GROUP_ID

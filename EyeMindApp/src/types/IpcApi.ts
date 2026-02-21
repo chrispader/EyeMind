@@ -163,11 +163,20 @@ export type Utils = {
     state: GlobalState,
     config: { expectedArtifact?: string; expectedExtensions?: string[] },
   ) => Promise<IpcResult>
-  saveSession: (state: GlobalState) => Promise<IpcResult>
+  /** Serializable session store slice (models, questionFiles, questions, settings). */
+  saveSession: (sessionPayload: SessionStatePayload) => Promise<IpcResult>
   recoverSession: (
     gazeDataFilename: string,
     snapshotsContentDataFilename: string,
   ) => Promise<IpcResult<GlobalState>>
+}
+
+/** Serializable part of the session store (no action functions). */
+export type SessionStatePayload = {
+  models: Record<string, unknown>
+  questionFiles: Record<string, unknown>
+  questions: unknown
+  settings: Record<string, unknown>
 }
 
 export type Download = {
@@ -179,7 +188,7 @@ export type Download = {
 }
 
 export type Session = {
-  saveSession: (state: GlobalState) => Promise<IpcResult>
+  saveSession: (sessionPayload: SessionStatePayload) => Promise<IpcResult>
   recoverSession: (
     gazeDataFilename: string,
     snapshotsContentDataFilename: string,

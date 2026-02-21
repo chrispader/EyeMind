@@ -21,13 +21,14 @@ export function getModelIdFromFileName(fileName: string) {
   return fileName.replace(new RegExp(CONST.MODELS_ID_REGEX, 'g'), '')
 }
 
-export function createDefaultModel(file: File, isDraft = false): Model {
+export function createDefaultModel(file: File, isDraft = false, isMain = false): Model {
   return {
     id: file.name,
     fileName: file.name,
     path: file.path,
     file: file,
-    isDraft: isDraft,
+    isDraft,
+    isMain,
   }
 }
 
@@ -36,6 +37,7 @@ export function createDefaultImageModel(
   file: File,
   dataUrl: string,
   isDraft = false,
+  isMain = false,
 ): Model {
   return {
     id: getModelIdFromFileName(file.name),
@@ -44,6 +46,7 @@ export function createDefaultImageModel(
     file,
     dataUrl,
     isDraft,
+    isMain,
   }
 }
 

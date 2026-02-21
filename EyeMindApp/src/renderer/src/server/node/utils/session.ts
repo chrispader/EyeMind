@@ -1,14 +1,16 @@
-import { setState } from '@renderer/server/node/dataModels/state'
 import { stateDownload } from '@renderer/server/node/utils/download'
 import request from 'request-promise'
 
 import { CONST } from '@/CONST'
 
-export async function saveSession(state) {
-  setState(state)
-
-  const downloadOutput = await stateDownload('EyeMind', true, 'session-data')
-
+/** Saves session payload to file without overwriting the app's global state. */
+export async function saveSession(sessionPayload: unknown) {
+  const downloadOutput = await stateDownload(
+    'EyeMind',
+    true,
+    'session-data',
+    sessionPayload,
+  )
   return downloadOutput
 }
 

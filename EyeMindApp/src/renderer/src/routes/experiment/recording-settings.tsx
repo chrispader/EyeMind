@@ -66,22 +66,29 @@ function RecordingSettingsPage(): React.ReactElement {
     },
   })
 
-  const handleClose = () => {
-    router.history.back()
-  }
+  const closeModal = () => router.history.back()
 
-  const onStartRecording = (data: RecordingSettings) => {
+  const startRecording = (data: RecordingSettings) => {
     updateRecordingSettings(data)
-    handleClose()
+    closeModal()
   }
 
-  const onSaveSession = async (data: RecordingSettings) => {
+  const saveSession = async (data: RecordingSettings) => {
     updateRecordingSettings(data)
 
     try {
       const sessionData = getSessionData()
-      await window.utils.saveSession(sessionData)
-      handleClose()
+      const result = await window.session.saveSession(sessionData)
+      if (!result.success) {
+        toast.error(LANG.errorFailedToSaveSession)
+        return
+      }
+
+result.data
+
+      toast.success(LANG.sessionSaved, result.data.)
+
+      closeModal()
     } catch {
       toast.error(LANG.errorFailedToSaveSession)
     }
@@ -94,9 +101,9 @@ function RecordingSettingsPage(): React.ReactElement {
       id={MODAL_ID}
       title={LANG.dataCollectionSettings}
       closeId={CLOSE_BTN_ID}
-      onClose={handleClose}>
+      onClose={closeModal}>
       <form
-        onSubmit={handleFormSubmit(onStartRecording)}
+        onSubmit={handleFormSubmit(startRecording)}
         className='grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1'>
         {RECORDING_FIELDS.map((fieldConfig) => {
           const label = `${LANG.FORM.RECORDING_SETTINGS[fieldConfig.key]}:`
@@ -137,14 +144,14 @@ function RecordingSettingsPage(): React.ReactElement {
               type='submit'
               id='submit-recording-form'
               disabled={!canSubmit}
-              onClick={handleFormSubmit(onStartRecording)}
+              onClick={handleFormSubmit(startRecording)}
               className='w-[35%] cursor-pointer rounded-sm border-none bg-remove-btn px-2.5 py-3.5 text-white hover:bg-success disabled:cursor-not-allowed disabled:opacity-50'>
               {LANG.startRecording}
             </button>
             <button
               type='button'
               id='save-session'
-              onClick={handleFormSubmit(onSaveSession)}
+              onClick={handleFormSubmit(saveSession)}
               disabled={!canSubmit}
               className='w-[35%] cursor-pointer rounded-sm border-none bg-secondary px-2.5 py-3.5 text-white hover:bg-warning disabled:cursor-not-allowed disabled:opacity-50'>
               {LANG.saveSession}

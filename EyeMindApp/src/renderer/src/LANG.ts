@@ -50,6 +50,7 @@ const LANG = {
   applyCorrectionToData: 'Apply correction to data',
   startQuestions: 'Start questions',
   questionsFinished: 'Questions finished',
+  sessionSaved: 'Session saved',
 
   // Icon Alt Text
   iconRecord: 'Record',

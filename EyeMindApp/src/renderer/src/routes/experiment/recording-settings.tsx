@@ -1,13 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import LANG from '@renderer/LANG'
+import { ModalContainer } from '@renderer/components/ModalContainer'
+import { InputField, TextareaField } from '@renderer/components/form'
+import { useSessionActions } from '@renderer/state/session'
+import {
+  type RecordingSettings,
+  RecordingSettingsSchema,
+} from '@renderer/state/session/recording'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { z } from 'zod'
-
-import { ModalContainer } from '../../components/ModalContainer'
-import { InputField, TextareaField } from '../../components/form'
-import { useSessionActions } from '../../state/session'
 
 export const Route = createFileRoute('/experiment/recording-settings')({
   component: RecordingSettingsPage,
@@ -16,55 +18,22 @@ export const Route = createFileRoute('/experiment/recording-settings')({
 const MODAL_ID = 'startET-modal'
 const CLOSE_BTN_ID = 'close-startET-modal'
 
-/** Required: non-empty string. Used for all fields that show " *" in the label. */
-const requiredString = z.string().min(1, 'Required')
-const optionalString = z.string().optional()
-
-const recordingSettingsSchema = z.object({
-  xScreenDimension: requiredString,
-  yScreenDimension: requiredString,
-  screenDistance: requiredString,
-  monitorSize: requiredString,
-  recordingId: requiredString,
-  participantId: optionalString,
-  experimentId: optionalString,
-  experimenterId: optionalString,
-  additionalNotes: optionalString,
-})
-
-type RecordingSettingsFormValues = z.infer<typeof recordingSettingsSchema>
-
-const defaultValues: RecordingSettingsFormValues = {
-  xScreenDimension: '',
-  yScreenDimension: '',
-  screenDistance: '',
-  monitorSize: '',
-  recordingId: `R${Date.now()}`,
-  participantId: '',
-  experimentId: '',
-  experimenterId: '',
-  additionalNotes: '',
-}
-
-type RecordingFieldKey = keyof RecordingSettingsFormValues
-
 interface RecordingFieldConfig {
   /** Used as form key, DOM id, and key into LANG.FORM.RECORDING_SETTINGS for the label. */
-  key: RecordingFieldKey
-  required: boolean
+  key: keyof RecordingSettings
   type: 'input' | 'textarea'
 }
 
 const RECORDING_FIELDS: RecordingFieldConfig[] = [
-  { key: 'xScreenDimension', required: true, type: 'input' },
-  { key: 'yScreenDimension', required: true, type: 'input' },
-  { key: 'screenDistance', required: true, type: 'input' },
-  { key: 'monitorSize', required: true, type: 'input' },
-  { key: 'recordingId', required: true, type: 'input' },
-  { key: 'participantId', required: false, type: 'input' },
-  { key: 'experimentId', required: false, type: 'input' },
-  { key: 'experimenterId', required: false, type: 'input' },
-  { key: 'additionalNotes', required: false, type: 'textarea' },
+  { key: 'xScreenDimension', type: 'input' },
+  { key: 'yScreenDimension', type: 'input' },
+  { key: 'screenDistance', type: 'input' },
+  { key: 'monitorSize', type: 'input' },
+  { key: 'recordingId', type: 'input' },
+  { key: 'participantId', type: 'input' },
+  { key: 'experimentId', type: 'input' },
+  { key: 'experimenterId', type: 'input' },
+  { key: 'additionalNotes', type: 'textarea' },
 ]
 
 function RecordingSettingsPage(): React.ReactElement {
@@ -75,10 +44,12 @@ function RecordingSettingsPage(): React.ReactElement {
     control,
     handleSubmit: handleFormSubmit,
     formState: { isValid },
-  } = useForm<RecordingSettingsFormValues>({
-    resolver: zodResolver(recordingSettingsSchema),
+  } = useForm({
+    resolver: zodResolver(RecordingSettingsSchema),
     mode: 'onChange',
-    defaultValues,
+    defaultValues: {
+      recordingId: `R${Date.now()}`,
+    },
   })
 
   const handleClose = () => {
@@ -121,11 +92,11 @@ function RecordingSettingsPage(): React.ReactElement {
               render={({ field, fieldState }) => {
                 const invalid = fieldState.invalid
                 const errorMessage = fieldState.error?.message
+
                 return fieldConfig.type === 'textarea' ? (
                   <TextareaField
                     label={label}
                     id={fieldConfig.key}
-                    required={fieldConfig.required}
                     invalid={invalid}
                     error={errorMessage}
                     {...field}
@@ -134,7 +105,6 @@ function RecordingSettingsPage(): React.ReactElement {
                   <InputField
                     label={label}
                     id={fieldConfig.key}
-                    required={fieldConfig.required}
                     invalid={invalid}
                     error={errorMessage}
                     {...field}
@@ -163,7 +133,6 @@ function RecordingSettingsPage(): React.ReactElement {
               {LANG.saveSession}
             </button>
           </div>
-          <div className='text-center text-sm text-text-muted'>{LANG.requiredFields}</div>
         </div>
       </form>
     </ModalContainer>

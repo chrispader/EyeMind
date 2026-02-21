@@ -210,10 +210,10 @@ function ExperimentLayout(): React.ReactElement {
         </div>
       </div>
 
-      {/* Modal overlay: child routes (e.g. recording-settings) render on top */}
+      {/* Modal overlay: child routes (e.g. recording-settings) render on top. z-30 so we sit above process-hierarchy (z-10). */}
       <div
         aria-hidden='true'
-        className='pointer-events-none fixed inset-0 z-0 *:pointer-events-auto'>
+        className='pointer-events-none fixed inset-0 z-30 *:pointer-events-auto'>
         <Outlet />
       </div>
     </div>

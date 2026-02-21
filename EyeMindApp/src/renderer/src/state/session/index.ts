@@ -5,6 +5,7 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { createModelsSlice } from './models'
 import { createQuestionsSlice } from './questions'
+import { createRecordingSlice } from './recording'
 import { createSessionSlice } from './session'
 import type { SessionStore } from './types'
 
@@ -12,6 +13,7 @@ export const useSessionStore = create<SessionStore>()(
   immer((...args) => ({
     ...createModelsSlice(...args),
     ...createQuestionsSlice(...args),
+    ...createRecordingSlice(...args),
     ...createSessionSlice(...args),
   })),
 )

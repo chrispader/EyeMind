@@ -11,6 +11,11 @@ import {
 } from '../model/questions'
 import type { SessionSettings } from '../model/settings'
 
+type ModelsSlice = {
+  models: Record<string, Model>
+  modelActions: ModelActions
+}
+
 type ModelActions = {
   addModel: (model: Model | File, isDraft?: boolean) => void
   addModels: (models: (Model | File)[], isDraft?: boolean) => void
@@ -19,9 +24,11 @@ type ModelActions = {
   resetModels: () => void
 }
 
-type ModelsSlice = {
-  models: Record<string, Model>
-  modelActions: ModelActions
+type QuestionsSlice = {
+  questionFiles: Record<string, QuestionFile>
+  questions: Questions
+
+  questionActions: QuestionActions
 }
 
 type QuestionActions = {
@@ -38,21 +45,23 @@ type QuestionActions = {
   resetQuestions: () => void
 }
 
-type QuestionsSlice = {
-  questionFiles: Record<string, QuestionFile>
-  questions: Questions
-
-  questionActions: QuestionActions
-}
-
 type SessionSlice = {
   settings: SessionSettings
+  actions: SessionActions
+}
 
-  actions: {
-    updateSessionSettings: (advancedSettings: Partial<SessionSettings>) => void
-    resetSessionSettings: () => void
-    reset: () => void
-  }
+type SessionData = {
+  settings: SessionSettings
+  models: Record<string, Model>
+  questionFiles: Record<string, QuestionFile>
+  questions: Questions
+}
+
+type SessionActions = {
+  updateSessionSettings: (advancedSettings: Partial<SessionSettings>) => void
+  resetSessionSettings: () => void
+  reset: () => void
+  getSessionData: () => SessionData
 }
 
 export type SessionStore = ModelsSlice & QuestionsSlice & SessionSlice
@@ -207,6 +216,15 @@ const createSessionSlice: StateCreator<
       modelActions.resetModels()
       questionFilesActions.resetQuestions()
       actions.resetSessionSettings()
+    },
+
+    getSessionData: () => {
+      return {
+        settings: get().settings,
+        models: get().models,
+        questionFiles: get().questionFiles,
+        questions: get().questions,
+      }
     },
   },
 })

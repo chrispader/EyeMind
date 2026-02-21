@@ -5,11 +5,9 @@ import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { z } from 'zod'
 
-import type { SessionStatePayload } from '@/types/IpcApi'
-
 import { ModalContainer } from '../../components/ModalContainer'
 import { InputField, TextareaField } from '../../components/form'
-import { useSessionStore } from '../../state/session'
+import { useSessionActions } from '../../state/session'
 
 export const Route = createFileRoute('/experiment/recording-settings')({
   component: RecordingSettingsPage,
@@ -69,19 +67,9 @@ const RECORDING_FIELDS: RecordingFieldConfig[] = [
   { key: 'additionalNotes', required: false, type: 'textarea' },
 ]
 
-/** Serializable session data saved to file (no action functions). */
-function getSessionPayload(): SessionStatePayload {
-  const store = useSessionStore.getState()
-  return {
-    models: store.models,
-    questionFiles: store.questionFiles,
-    questions: store.questions,
-    settings: store.settings,
-  }
-}
-
 function RecordingSettingsPage(): React.ReactElement {
   const navigate = useNavigate({ from: '/experiment/recording-settings' })
+  const { getSessionData } = useSessionActions()
 
   const {
     control,
@@ -104,7 +92,8 @@ function RecordingSettingsPage(): React.ReactElement {
 
   const onSaveSession = async () => {
     try {
-      await window.utils.saveSession(getSessionPayload())
+      const sessionData = getSessionData()
+      await window.utils.saveSession(sessionData)
       handleClose()
     } catch {
       toast.error(LANG.errorFailedToSaveSession)

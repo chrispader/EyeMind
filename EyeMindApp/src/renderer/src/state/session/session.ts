@@ -3,6 +3,7 @@ import type { StateCreator } from 'zustand'
 import type { Model } from '../../model/models'
 import type { QuestionFile, Questions } from '../../model/questions'
 import type { SessionSettings } from '../../model/settings'
+import type { RecordingSettings } from './recording'
 import type { SessionStore } from './types'
 
 export type SessionSlice = {
@@ -15,6 +16,7 @@ export type SessionData = {
   models: Record<string, Model>
   questionFiles: Record<string, QuestionFile>
   questions: Questions
+  recordingSettings: RecordingSettings | null
 }
 
 export type SessionActions = {
@@ -51,11 +53,14 @@ export const createSessionSlice: StateCreator<
     },
 
     getSessionData: () => {
+      const { settings, models, questionFiles, questions, recordingSettings } = get()
+
       return {
-        settings: get().settings,
-        models: get().models,
-        questionFiles: get().questionFiles,
-        questions: get().questions,
+        settings,
+        models,
+        questionFiles,
+        questions,
+        recordingSettings,
       }
     },
   },

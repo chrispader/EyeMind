@@ -37,3 +37,8 @@ export const useDraftModels = () => useModels((model) => model.isDraft)
 export const useQuestionFiles = () => useSessionStore((state) => state.questionFiles)
 export const useQuestions = () => useSessionStore((state) => state.questions)
 export const useQuestionActions = () => useSessionStore((state) => state.questionActions)
+
+export const useRecordingSettings = () =>
+  useSessionStore((state) => state.recordingSettings)
+export const useRecordingActions = () =>
+  useSessionStore((state) => state.recordingActions)

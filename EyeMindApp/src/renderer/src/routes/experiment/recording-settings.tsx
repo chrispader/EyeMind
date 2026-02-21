@@ -2,12 +2,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import LANG from '@renderer/LANG'
 import { ModalContainer } from '@renderer/components/ModalContainer'
 import { InputField, TextareaField } from '@renderer/components/form'
-import { useSessionActions } from '@renderer/state/session'
+import {
+  useRecordingActions,
+  useRecordingSettings,
+  useSessionActions,
+} from '@renderer/state/session'
 import {
   type RecordingSettings,
   RecordingSettingsSchema,
 } from '@renderer/state/session/recording'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
@@ -37,7 +41,9 @@ const RECORDING_FIELDS: RecordingFieldConfig[] = [
 ]
 
 function RecordingSettingsPage(): React.ReactElement {
-  const navigate = useNavigate({ from: '/experiment/recording-settings' })
+  const router = useRouter()
+  const recordingSettings = useRecordingSettings()
+  const { updateRecordingSettings } = useRecordingActions()
   const { getSessionData } = useSessionActions()
 
   const {
@@ -48,20 +54,30 @@ function RecordingSettingsPage(): React.ReactElement {
     resolver: zodResolver(RecordingSettingsSchema),
     mode: 'onChange',
     defaultValues: {
-      recordingId: `R${Date.now()}`,
+      xScreenDimension: recordingSettings?.xScreenDimension.toString(),
+      yScreenDimension: recordingSettings?.yScreenDimension.toString(),
+      screenDistance: recordingSettings?.screenDistance.toString(),
+      monitorSize: recordingSettings?.monitorSize.toString(),
+      recordingId: recordingSettings?.recordingId ?? `R${Date.now()}`,
+      participantId: recordingSettings?.participantId,
+      experimentId: recordingSettings?.experimentId,
+      experimenterId: recordingSettings?.experimenterId,
+      additionalNotes: recordingSettings?.additionalNotes,
     },
   })
 
   const handleClose = () => {
-    navigate({ to: '/experiment' })
+    router.history.back()
   }
 
-  const onStartRecording = () => {
-    // TODO: apply form values to state, then start recording
+  const onStartRecording = (data: RecordingSettings) => {
+    updateRecordingSettings(data)
     handleClose()
   }
 
-  const onSaveSession = async () => {
+  const onSaveSession = async (data: RecordingSettings) => {
+    updateRecordingSettings(data)
+
     try {
       const sessionData = getSessionData()
       await window.utils.saveSession(sessionData)
@@ -121,13 +137,14 @@ function RecordingSettingsPage(): React.ReactElement {
               type='submit'
               id='submit-recording-form'
               disabled={!canSubmit}
+              onClick={handleFormSubmit(onStartRecording)}
               className='w-[35%] cursor-pointer rounded-sm border-none bg-remove-btn px-2.5 py-3.5 text-white hover:bg-success disabled:cursor-not-allowed disabled:opacity-50'>
               {LANG.startRecording}
             </button>
             <button
               type='button'
               id='save-session'
-              onClick={onSaveSession}
+              onClick={handleFormSubmit(onSaveSession)}
               disabled={!canSubmit}
               className='w-[35%] cursor-pointer rounded-sm border-none bg-secondary px-2.5 py-3.5 text-white hover:bg-warning disabled:cursor-not-allowed disabled:opacity-50'>
               {LANG.saveSession}

@@ -1,8 +1,8 @@
+import type { Model } from '@renderer/model/models'
+import type { QuestionFile, Questions } from '@renderer/model/questions'
+import type { SessionSettings } from '@renderer/model/settings'
 import type { StateCreator } from 'zustand'
 
-import type { Model } from '../../model/models'
-import type { QuestionFile, Questions } from '../../model/questions'
-import type { SessionSettings } from '../../model/settings'
 import type { RecordingSettings } from './recording'
 import type { SessionStore } from './types'
 

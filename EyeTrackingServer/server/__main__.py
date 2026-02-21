@@ -57,6 +57,7 @@ fileWrittingSnapshotLock = threading.Lock()
 
 # constants
 GAZE_BUFFER_SIZE = 10000
+SERVER_PORT = 5000
 COMMUNICATION_PORT_WITH_EYE_MIND = 5100
 N_CONNECTION_TRIALS = 10
 #############
@@ -875,7 +876,8 @@ def process():
     return "";
 
 if __name__ == "__main__":
-    #app.run(port=5000)
+    print("Starting EyeMind Eye Tracking Server...")
+    app.run(port=SERVER_PORT)
     serve(app, host="0.0.0.0", port=COMMUNICATION_PORT_WITH_EYE_MIND)
 
 import signal

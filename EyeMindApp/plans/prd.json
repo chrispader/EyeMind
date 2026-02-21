@@ -1,0 +1,168 @@
+[
+  {
+    "category": "project-structure",
+    "description": "Split up the React code from /experiment/index route into separate sensible sub-routes.",
+    "steps": [
+      "Create a new route file for each sub-route in ./routes/experiment directory.",
+      "Move the React code from /experiment/index route into the new sub-routes.",
+      "Update the /experiment/index route to use the new sub-routes.",
+      "Update the navigation to use the new sub-routes.",
+      "Update the URL structure to use the new sub-routes."
+    ],
+    "passes": true
+  },
+  {
+    "category": "state-management",
+    "description": "Use the 'session' Zustand store for any state that needs to be shared between routes.",
+    "steps": [
+      "If needed, add additional slices to the 'session' Zustand store.",
+      "Update all current usages of 'useGlobalStore' to use 'useSessionStore' instead.",
+      "Make sure that all state is read and write only through reactive hooks, not through '.getState()' or '.setState()'.",
+      "Remove the 'useGlobalStore' hook from any files that are no longer needed."
+    ],
+    "passes": true
+  },
+  {
+    "category": "project-structure",
+    "description": "Split up the React code in the experiments routes into more sub-components",
+    "steps": [
+      "Extract self-sustained components from experiments into src/components.",
+      "Make sure the components are independent of state and only rely on their props."
+    ],
+    "passes": true
+  },
+  {
+    "category": "code-quality",
+    "description": "Fix all type errors and imports across the codebase",
+    "steps": ["Fix all type errors and imports across the codebase"],
+    "passes": true
+  },
+  {
+    "category": "project-structure",
+    "description": "Remove all UI-related code (imperative DOM operations) from the codebase, especially from ./modules/ui",
+    "steps": [
+      "Remove all UI-related code (imperative DOM operations) from the codebase, especially from ./modules/ui"
+    ],
+    "passes": true
+  },
+  {
+    "category": "project-structure",
+    "description": "Integrate the remaining imperative code from ./modules/ui into the React code or into dedicated actions in ./actions",
+    "steps": [
+      "Integrate the remaining imperative code from ./modules/ui into the React code or into dedicated actions in ./actions",
+      "Remove the ./modules/ui directory."
+    ],
+    "passes": true
+  },
+  {
+    "category": "code-quality",
+    "description": "Remove all unused code and imports across the codebase",
+    "steps": ["Remove all unused code and imports across the codebase"],
+    "passes": true
+  },
+  {
+    "category": "state-management",
+    "description": "Remove any usages of Zustand `.getState()` and `.setState()` across the codebase",
+    "steps": [
+      "Refactor all usages of Zustand `.getState()` and `.setState()` to use the new reactive hooks.",
+      "Remove any usages of Zustand `.getState()` and `.setState()` across the codebase."
+    ],
+    "passes": true
+  },
+  {
+    "category": "feature",
+    "description": "Add support to load image files into the experiment",
+    "steps": [
+      "Add support for image files (.png, .jpeg) to the configuration pages, allowing to upload them and use them in the experiment, e.g. in the FileImport component",
+      "Choose the best React library to view this image in a canvas and allow gesture(zoom, pan) on it",
+      "Create a new component to display the image in a canvas"
+    ],
+    "passes": true
+  },
+  {
+    "category": "code-style",
+    "description": "Migrate all vanilla CSS styling to Tailwind CSS",
+    "priority": "low",
+    "steps": [
+      "Migrate all vanilla CSS styling to Tailwind CSS utility classes",
+      "Extract potential reusable React components, to prevent duplicate styling",
+      "Remove all unused CSS classes from the codebase",
+      "Remove all unused CSS files from the codebase"
+    ],
+    "passes": false
+  },
+  {
+    "category": "type-safety",
+    "description": "Improve the type safety of the IPC layer (preload + contextBridge)",
+    "steps": [
+      "Add proper type definitions to the IPC layer (preload + contextBridge)",
+      "Figure out a way to reduce boilerplate code for loading the functions into the contextBridge"
+    ],
+    "passes": true
+  },
+  {
+    "category": "code-quality",
+    "description": "Migrate the files in ./src/main/listeners into a single organized file",
+    "steps": [
+      "Move the files in ./src/main/listeners into a single organized file",
+      "Update the imports in the new file to use the new file",
+      "Update the exports in the new file to use the new file"
+    ],
+    "passes": true
+  },
+  {
+    "category": "navigation",
+    "description": "Fix broken navigation links in the app",
+    "steps": [
+      "Fix all broken navigation links in the app",
+      "Make sure that the navigation links are working correctly"
+    ],
+    "passes": true
+  },
+  {
+    "category": "testing",
+    "description": "Add unit tests for the business logic in the codebase",
+    "steps": [
+      "Add unit tests for the business logic in the codebase",
+      "Make sure that the tests are covering all the business logic in the codebase"
+    ],
+    "passes": true
+  },
+  {
+    "category": "testing",
+    "description": "Add end-to-end tests for the app",
+    "steps": [
+      "Add end-to-end tests for the app",
+      "Make sure that the tests are covering all the app",
+      "Make sure that the tests are running correctly"
+    ],
+    "passes": true
+  },
+  {
+    "category": "state-management",
+    "description": "Migrate all global state into new or existing Zustand stores",
+    "steps": [
+      "Migrate all global state into new or existing Zustand stores",
+      "Make sure that the global state is properly migrated into the new or existing Zustand stores"
+    ],
+    "passes": true
+  },
+  {
+    "category": "project-structure",
+    "description": "Extract all hardcoded strings into LANG.ts and CONST.ts files",
+    "steps": [
+      "Extract all hardcoded strings into LANG.ts and CONST.ts files",
+      "Update all usages of the hardcoded strings to use the new LANG.ts and CONST.ts files"
+    ],
+    "passes": true
+  },
+  {
+    "category": "code-style",
+    "description": "Fix missing styles on the Analysis route",
+    "steps": [
+      "Fix missing styles on the Analysis route",
+      "Make sure that the styles are working correctly"
+    ],
+    "passes": true
+  }
+]

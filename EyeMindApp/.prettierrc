@@ -3,6 +3,7 @@
   "bracketSameLine": true,
   "quoteProps": "consistent",
   "singleQuote": true,
+  "jsxSingleQuote": true,
   "trailingComma": "all",
   "semi": false,
   "tabWidth": 2,
@@ -12,5 +13,6 @@
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrder": ["^@/(.*)$", "^@extra/(.*)$", "^[./]"],
   "importOrderSortSpecifiers": true,
+  "importOrderSeparation": true,
   "endOfLine": "auto"
 }

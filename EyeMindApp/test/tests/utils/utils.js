@@ -1,6 +1,6 @@
-const fs = require('fs')
-const jsdom = require('jsdom')
-const { JSDOM } = jsdom
+import fs from 'fs'
+import jsdom from 'jsdom'
+import { JSDOM } from 'jsdom'
 
 async function dragAndDropFile(page, selector, filePath, fileName, fileType = '') {
   const buffer = fs.readFileSync(filePath).toString('base64')

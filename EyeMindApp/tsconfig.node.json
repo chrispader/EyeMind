@@ -1,0 +1,23 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+  "include": [
+    "electron.vite.config.*",
+    "eslintrc.js",
+    "src/types/**/*",
+    "src/main/**/*",
+    "src/preload/**/*"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "types": ["electron-vite/node"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noUncheckedIndexedAccess": true,
+    "paths": {
+      "*": ["node_modules/*"],
+      "@/*": ["src/*"],
+      "@renderer/*": ["src/renderer/src/*"]
+    }
+  }
+}

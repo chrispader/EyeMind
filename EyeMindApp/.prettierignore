@@ -1,1 +1,8 @@
+out
+dist
 environments
+bun.lock
+Elecron-LICENSE.md
+tsconfig.json
+tsconfig.*.json
+src/renderer/src/routeTree.gen.ts
